@@ -1,0 +1,25 @@
+{
+  "name": "projectfinannee",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build:api && npm run build:client",
+    "build:api": "cd api && composer install --no-dev --optimize-autoloader",
+    "build:client": "cd client && npm run build",
+    "install": "npm run install:api && npm run install:client",
+    "install:api": "cd api && composer install --no-dev --optimize-autoloader",
+    "install:client": "cd client && npm run install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/N0SAFE/concoursPhoto-g3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/N0SAFE/concoursPhoto-g3/issues"
+  },
+  "homepage": "https://github.com/N0SAFE/concoursPhoto-g3#readme"
+}
