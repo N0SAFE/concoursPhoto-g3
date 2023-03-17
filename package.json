@@ -8,7 +8,7 @@
     "build:client": "cd client && npm run build",
     "install": "npm run install:api && npm run install:client",
     "install:api": "cd api && composer install --no-dev --optimize-autoloader",
-    "install:client": "cd client && npm install --omit=dev",
+    "install:client": "cd client && npm install",
     "install:prod": "npm run install:api:prod && npm run install:client",
     "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader"
   },
