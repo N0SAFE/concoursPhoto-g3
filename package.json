@@ -10,7 +10,7 @@
     "install:api": "cd api && composer install",
     "install:client": "cd client && npm install",
     "install:prod": "npm run install:api:prod && npm run install:client",
-    "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader",
+    "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader"
   },
   "repository": {
     "type": "git",
