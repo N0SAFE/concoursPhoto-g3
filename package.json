@@ -10,7 +10,10 @@
     "install:api": "cd api && composer install",
     "install:client": "cd client && npm install",
     "install:prod": "npm run install:api:prod && npm run install:client",
-    "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader"
+    "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\"",
+    "dev:api": "cd api && symfony server:start --port=8000",
+    "dev:client": "cd client && npm run dev",
   },
   "repository": {
     "type": "git",
@@ -22,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/N0SAFE/concoursPhoto-g3/issues"
   },
-  "homepage": "https://github.com/N0SAFE/concoursPhoto-g3#readme"
+  "homepage": "https://github.com/N0SAFE/concoursPhoto-g3#readme",
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
 }
