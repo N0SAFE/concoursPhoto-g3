@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -60,6 +62,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Member $member = null;
+
+    #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
+    private Collection $Manage;
+
+    public function __construct()
+    {
+        $this->Manage = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -254,7 +267,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_MEMBER';
+        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -273,6 +286,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getMember(): ?Member
+    {
+        return $this->member;
+    }
+
+    public function setMember(?Member $member): self
+    {
+        $this->member = $member;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Organization>
+     */
+    public function getManage(): Collection
+    {
+        return $this->Manage;
+    }
+
+    public function addManage(Organization $manage): self
+    {
+        if (!$this->Manage->contains($manage)) {
+            $this->Manage->add($manage);
+        }
+
+        return $this;
+    }
+
+    public function removeManage(Organization $manage): self
+    {
+        $this->Manage->removeElement($manage);
+
+        return $this;
     }
 
 }
