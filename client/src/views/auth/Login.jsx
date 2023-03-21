@@ -1,34 +1,19 @@
 import React from "react";
-import {useAuthContext} from "../../contexts/AuthContext";
+import useAuth from "../../hooks/useAuth.js";
 
 export default function Login() {
-    const { setToken } = useAuthContext();
+    const { login } = useAuth();
 
     const handleSubmit = async e => {
         e.preventDefault();
         const { email, password } = e.target.elements;
-        try {
-            console.log(fetch("/api/login_check"))
-            await fetch("/api/login_check", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email.value,
-                    password: password.value
-                })
+        login({ email: email.value, password: password.value })
+            .then(function() {
+                console.log("Logged in");
             })
-                .then(res => res.text())
-                .then(data => {
-                    console.log(data);
-                    return data;
-                }).catch(error => {
-                    console.log(error);
-                });
-        } catch (error) {
-            alert(error);
-        }
+            .catch(function(error) {
+                console.error(error);
+            });
     };
 
     return (

@@ -1,28 +1,39 @@
 import { useAuthContext } from "../contexts/AuthContext.jsx";
 
-function login({email, password}) {
-    const { setToken } = useAuthContext();
-    return fetch('/api/login_check', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            email,
-            password
+function login(setToken, { email, password }) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(import.meta.env.VITE_API_URL + "/api/login_check"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                password
+            })
         })
-    }).then(res => res.json()).then(data => {
-        setToken(data.token);
-        return data;
+            .then(res => res.json())
+            .then(data => {
+                if (data.code === 401) {
+                    throw new Error(data.message);
+                }
+                if (!data.token) {
+                    throw new Error("No token");
+                }
+                setToken(data.token);
+                resolve();
+            }).catch(error => {
+                console.error(error);
+                reject(error);
+            });
     });
 }
 
-function register({email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username}){
-    const { setToken } = useAuthContext();
-    return fetch('/api/register', {
-        method: 'POST',
+function register(setToken, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username }) {
+    return fetch("/api/register", {
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
             email,
@@ -38,25 +49,34 @@ function register({email, password, passwordverify, firstname, lastname, gender,
             birthofdate,
             username
         })
-    }).then(res => res.json()).then(data => {
-        setToken(data.token);
-        return data;
-    }).catch(error => {
-        console.log(error);
-    });
+    })
+        .then(res => res.json())
+        .then(data => {
+            setToken(data.token);
+            return data;
+        })
+        .catch(error => {
+            console.log(error);
+        });
 }
 
-function logout(){
-    const { setToken } = useAuthContext();
+function logout(setToken) {
     setToken(null);
 }
 
 function useAuth() {
+    const { setToken } = useAuthContext();
     return {
-        login,
-        register,
-        logout
-    }
+        login: function({ email, password }) {
+            return login(setToken, { email, password });
+        },
+        register: function({ email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username }) {
+            register(setToken, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username });
+        },
+        logout: function() {
+            logout(setToken);
+        }
+    };
 }
 
 export default useAuth;
