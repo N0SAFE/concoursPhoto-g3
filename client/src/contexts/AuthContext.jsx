@@ -5,19 +5,12 @@ const AuthContext = createContext({
 });
 
 function AuthProvider(props) {
-    const [token, _setToken] = useState(null);
+    const [token, _setToken] = useState(localStorage.getItem('token'));
     
     function setToken(newToken){
         localStorage.setItem('token', newToken);
         _setToken(newToken);
     }
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            _setToken(token);
-        }
-    }, []);
 
     return (
         <AuthContext.Provider value={{ token, setToken }}>
