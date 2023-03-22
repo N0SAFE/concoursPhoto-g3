@@ -23,7 +23,7 @@ export default function UserList() {
                 if (data.code === 401) {
                     throw new Error(data.message)
                 }
-                setUsers(data);
+                setUsers(data['hydra:member']);
                 console.log(data);
             })
             .catch(error => {
@@ -71,7 +71,7 @@ export default function UserList() {
                     {property: "firstname", display: "Prénom"},
                     {property: "lastname", display: "Nom"},
                     {property: "creationDate", display: "Date de création"},
-                    // {property: "gender", display: "Genre"}
+                    {property: "gender", display: "Genre"},
                     {property: "address", display: "Adresse"},
                     {property: "postcode", display: "Code postal"},
                     {property: "city", display: "Ville"},
@@ -94,6 +94,11 @@ export default function UserList() {
 
                     if (property === "creationDate") {
                         return format(new Date(entity.creationDate), 'dd/MM/yyyy')
+                    }
+
+                    if (property === "gender") {
+                        return entity.gender.label;
+
                     }
 
                 }}
