@@ -87,20 +87,20 @@ class Competition
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
-    #[ORM\Column(length: 255)]
-    private ?string $country_criteria = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $region_criteria = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $department_criteria = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $city_criteria = null;
-
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Picture::class)]
     private Collection $pictures;
+
+    #[ORM\Column(type: 'json')]
+    private array $country_criteria = [];
+
+    #[ORM\Column(type: 'json')]
+    private array $region_criteria = [];
+
+    #[ORM\Column(type: 'json')]
+    private array $department_criteria = [];
+
+    #[ORM\Column(type: 'json')]
+    private array $city_criteria = [];
 
     public function __construct()
     {
@@ -464,54 +464,6 @@ class Competition
         return $this;
     }
 
-    public function getCountryCriteria(): ?string
-    {
-        return $this->country_criteria;
-    }
-
-    public function setCountryCriteria(string $country_criteria): self
-    {
-        $this->country_criteria = $country_criteria;
-
-        return $this;
-    }
-
-    public function getRegionCriteria(): ?string
-    {
-        return $this->region_criteria;
-    }
-
-    public function setRegionCriteria(string $region_criteria): self
-    {
-        $this->region_criteria = $region_criteria;
-
-        return $this;
-    }
-
-    public function getDepartmentCriteria(): ?string
-    {
-        return $this->department_criteria;
-    }
-
-    public function setDepartmentCriteria(string $department_criteria): self
-    {
-        $this->department_criteria = $department_criteria;
-
-        return $this;
-    }
-
-    public function getCityCriteria(): ?string
-    {
-        return $this->city_criteria;
-    }
-
-    public function setCityCriteria(string $city_criteria): self
-    {
-        $this->city_criteria = $city_criteria;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Picture>
      */
@@ -538,6 +490,54 @@ class Competition
                 $picture->setCompetition(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCountryCriteria(): array
+    {
+        return $this->country_criteria;
+    }
+
+    public function setCountryCriteria(array $country_criteria): self
+    {
+        $this->country_criteria = $country_criteria;
+
+        return $this;
+    }
+
+    public function getRegionCriteria(): array
+    {
+        return $this->region_criteria;
+    }
+
+    public function setRegionCriteria(array $region_criteria): self
+    {
+        $this->region_criteria = $region_criteria;
+
+        return $this;
+    }
+
+    public function getDepartmentCriteria(): array
+    {
+        return $this->department_criteria;
+    }
+
+    public function setDepartmentCriteria(array $department_criteria): self
+    {
+        $this->department_criteria = $department_criteria;
+
+        return $this;
+    }
+
+    public function getCityCriteria(): array
+    {
+        return $this->city_criteria;
+    }
+
+    public function setCityCriteria(array $city_criteria): self
+    {
+        $this->city_criteria = $city_criteria;
 
         return $this;
     }
