@@ -7,3 +7,8 @@ controllers:
 # config/routes.yaml
 api_login_check:
     path: /api/login_check
+    
+# api/config/routes.yaml
+auth:
+    path: /auth
+    methods: ['POST']
