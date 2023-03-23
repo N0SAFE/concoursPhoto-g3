@@ -1,11 +1,12 @@
 import { Route, Routes } from "react-router-dom";
-import Login from "@views/auth/Login";
-import UserList from "@views/BO/user/List";
-import UserEdit from "@views/BO/user/Edit";
-import UserCreate from "@views/BO/user/Create";
-import BO from "@views/BO";
-import Home from "@views/Home";
-import NotFound from "@views/error/NotFound";
+import Login from "@/views/auth/Login";
+import Logout from "@/views/auth/Logout"
+import UserList from "@/views/BO/user/List";
+import UserEdit from "@/views/BO/user/Edit";
+import UserCreate from "@/views/BO/user/Create";
+import BO from "@/views/BO";
+import Home from "@/views/Home";
+import NotFound from "@/views/error/NotFound";
 
 function Router() {
     return (

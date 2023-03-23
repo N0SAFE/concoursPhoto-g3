@@ -16,10 +16,7 @@ export default defineConfig({
       '@' : path.resolve(__dirname, './src'),
       '@@': path.resolve(__dirname, './'),
       '~': path.resolve(__dirname, './src'),
-      '~~': path.resolve(__dirname, './'),
-      '@assets': path.resolve(__dirname, './src/assets'),
-      '@views': path.resolve(__dirname, './src/views'),
-      '@components': path.resolve(__dirname, './src/components')
+      '~~': path.resolve(__dirname, './') 
     },
   },
   server : {
