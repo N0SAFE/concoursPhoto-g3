@@ -2,7 +2,6 @@ import {useState, useEffect} from 'react';
 import {useAuthContext} from "../../contexts/AuthContext";
 import {Link, useNavigate} from "react-router-dom";
 import BOList from "../../components/BOList.jsx";
-import { format } from 'date-fns'
 
 export default function UserList() {
     const {token} = useAuthContext()
@@ -94,7 +93,7 @@ export default function UserList() {
                     }
 
                     if (property === "creationDate") {
-                        return format(new Date(entity.creationDate), 'dd/MM/yyyy')
+                        return new Date(entity.creationDate).toLocaleDateString();
                     }
 
                     if (property === "gender") {
