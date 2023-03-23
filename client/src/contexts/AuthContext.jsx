@@ -8,8 +8,12 @@ function AuthProvider(props) {
     const [token, _setToken] = useState(localStorage.getItem('token'));
     
     function setToken(newToken){
-        localStorage.setItem('token', newToken);
-        _setToken(newToken);
+        if(newToken){
+            localStorage.setItem('token', newToken);
+        }else {
+            localStorage.removeItem('token')
+        }
+        _setToken(localStorage.getItem('token'));
     }
 
     return (
