@@ -20,7 +20,6 @@ function Router() {
                 <Route path="user/:id" element={<UserEdit />} />
                 <Route path="user/create" element={<UserCreate />} />
             </Route>
-            <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );
