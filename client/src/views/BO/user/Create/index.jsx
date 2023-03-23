@@ -1,4 +1,4 @@
-import BOCreate from '../../components/BOCreate';
+import BOCreate from '@components/organisms/BO/create';
 
 export default function UserCreate() {
     return (

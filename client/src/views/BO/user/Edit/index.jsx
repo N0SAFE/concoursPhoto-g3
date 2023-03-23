@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuthContext } from "../../contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 import {useParams} from "react-router-dom";
 
 export default function UserEdit() {
