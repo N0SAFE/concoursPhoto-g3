@@ -1,4 +1,4 @@
-import { useAuthContext } from "../contexts/AuthContext.jsx";
+import { useAuthContext } from "@/contexts/AuthContext.jsx";
 
 function login(setToken, { email, password }) {
     return new Promise((resolve, reject) => {
