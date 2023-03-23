@@ -60,6 +60,7 @@ export default function UserList() {
 
     return (
         <div>
+            <Link to={"/BO/user/create"}>Créer un utilisateur</Link>
             <h1>Listes des utilisateurs</h1>
             <BOList
                 entityList={users}

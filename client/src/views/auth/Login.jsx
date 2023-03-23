@@ -1,14 +1,17 @@
 import React from "react";
 import useAuth from "../../hooks/useAuth.js";
+import {useNavigate} from "react-router-dom";
 
 export default function Login() {
     const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async e => {
         e.preventDefault();
         const { email, password } = e.target.elements;
         login({ email: email.value, password: password.value })
             .then(function() {
+                navigate("/BO");
                 console.log("Logged in");
             })
             .catch(function(error) {
