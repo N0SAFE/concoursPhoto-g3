@@ -5,6 +5,7 @@ import UserEdit from "./views/BO/UserEdit";
 import UserCreate from "./views/BO/UserCreated.jsx";
 import BO from "./views/BO/BO";
 import Home from "./views/Home.jsx";
+import NotFound from "./views/error/NotFound";
 
 function Router() {
     return (
@@ -19,6 +20,8 @@ function Router() {
                 <Route path="user/:id" element={<UserEdit />} />
                 <Route path="user/create" element={<UserCreate />} />
             </Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 }
