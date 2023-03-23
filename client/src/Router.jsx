@@ -14,6 +14,7 @@ function Router() {
             <Route path="/" element={<Home />} />
             <Route path="/" >
                 <Route path="login" element={<Login />} />
+                <Route path="logout" element={<Logout />} />
             </Route>
             <Route path="/BO">
                 <Route path="" element={<BO />} />

@@ -1,61 +1,42 @@
-import { useState, useEffect } from 'react';
-import { useAuthContext } from "@/contexts/AuthContext";
-import {useParams} from "react-router-dom";
-
-export default function UserEdit() {
-    const {token} = useAuthContext()
-    const [users, setUsers] = useState([]);
-
-    useEffect(() => {
-        fetch(new URL(import.meta.env.VITE_API_URL + "/api/users").href, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.code === 401) {
-                    throw new Error(data.message)
-                }
-                setUsers(data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, [token]);
-
-    const handleEdit = (id) => {
-        fetch(new URL(import.meta.env.VITE_API_URL + "/api/user/" + id).href, {
-            method: "UPDATE",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.code === 401) {
-                    throw new Error(data.message)
-                }
-                setUsers(data);
-            })
-            .catch(error => {
-                    console.error(error);
-                }
-            );
-    }
-
+export default function BOList({ fields, entityList, customAction = () => true, useId = true, actions = []}) {
     return (
-        <div>
-            <h1>Editer</h1>
-            <form>
-                <label>
-                    Email
-                    <input name="email" type="email" placeholder="Email" />
-                </label>
-            </form>
-        </div>
+        <table>
+            <thead>
+            <tr>
+                {fields.map(({display}, index) => (
+                    <th key={index}>{display}</th>
+                ))}
+            </tr>
+            </thead>
+            <tbody>
+            {entityList.map((entity, index) => (
+                <tr key={useId ? entity.id : index}>
+                    {fields.map(({property}, index) => {
+                        if (typeof customAction !== 'function') {
+                            throw new Error('customAction must be a function');
+                        }
+
+                        const customActionResponse = customAction({entity, property});
+                        if (!customActionResponse) {
+                            return <td key={index}>{entity[property]}</td>
+                        }
+
+                        return (
+                            <td key={index}>
+                                {customActionResponse}
+                            </td>
+                        );
+                    })}
+                    <td>
+                        {
+                            actions.map(({action, label}, index) => {
+                               return <button key={index} onClick={() => action({entity})}>{label}</button>
+                            })
+                        }
+                    </td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
     )
 }
