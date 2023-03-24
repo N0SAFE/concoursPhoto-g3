@@ -1,4 +1,4 @@
-import { useAuthContext } from "../contexts/AuthContext.jsx";
+import { useAuthContext } from "@/contexts/AuthContext.jsx";
 
 function login(setToken, { email, password }) {
     return new Promise((resolve, reject) => {
@@ -61,7 +61,10 @@ function register(setToken, { email, password, passwordverify, firstname, lastna
 }
 
 function logout(setToken) {
-    setToken(null);
+    return new Promise((resolve)=> {
+        setToken(null)
+        resolve()
+    })
 }
 
 function useAuth() {
@@ -71,10 +74,10 @@ function useAuth() {
             return login(setToken, { email, password });
         },
         register: function({ email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username }) {
-            register(setToken, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username });
+            return register(setToken, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username });
         },
         logout: function() {
-            logout(setToken);
+            return logout(setToken);
         }
     };
 }
