@@ -1,6 +1,7 @@
 import React from "react";
 import useAuth from "@/hooks/useAuth.js";
 import {useNavigate} from "react-router-dom";
+import Icon from "@/components/atoms/Icon";
 
 export default function Login() {
     const { login } = useAuth();
@@ -31,7 +32,7 @@ export default function Login() {
                     Password
                     <input name="password" type="password" placeholder="Password" />
                 </label>
-                <button type="submit">Login</button>
+                <button type="submit">Login<Icon icon="sign-out" size={20} color="black" /></button>
             </form>
         </div>
     );
