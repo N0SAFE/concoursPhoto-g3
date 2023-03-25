@@ -5,7 +5,7 @@ namespace App\Listeners;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\Cookie;
 
-class AuthentificationSuccessListener
+class AuthenticationSuccessListener
 {
     private $secure = false;
 
