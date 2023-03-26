@@ -1,36 +1,53 @@
 import style from "@/components/atoms/Dropdown/style.module.scss";
 import {Link} from "react-router-dom";
-import Icon from "@/components/atoms/Icon/index.jsx";
-import {useAuthContext} from "@/contexts/AuthContext.jsx";
+import Icon from "@/components/atoms/Icon";
+import React, { useRef, useState } from "react";
 
-const handleDropdown = () => {
-    const dropdown = document.querySelector(`.${style.dropdown}`);
-    dropdown.classList.toggle(style.show);
+export default function Dropdown({title, links, token, requireToken }) {
+    const dropdownRef = useRef('');
+    const [isIconRotated, setIsIconRotated] = useState(false);
 
-    const icon = document.querySelector(`.${style.icon}`);
-    icon.classList.toggle(style.rotate);
-}
-
-export default function Dropdown() {
-    const {token} = useAuthContext();
+    const handleDropdown = (e) => {
+        e.preventDefault();
+        dropdownRef.current.classList.toggle(style.show);
+        // 'react-icomoon' doesn't support useRef, we have to use a state to rotate the icon
+        setIsIconRotated(!isIconRotated);
+    }
 
     return (
         <div>
             <div className={style.alignDropdown}>
-                <Link onClick={() => handleDropdown()}>Mon compte</Link>
-                <Icon className={style.icon} icon="cheveron-up" size={20} color="white" />
+                {requireToken === true && token !== null || !requireToken ? (
+                    <div>
+                        <Link onClick={(e) => handleDropdown(e)}>{title}</Link>
+                        <Icon className={`${style.icon} ${isIconRotated ? style.rotate : ''}`} icon="cheveron-up" size={20} color="white" />
+                    </div>
+                    ) : null
+                }
             </div>
-            <div className={style.dropdown}>
-                {token === null ? (
-                    <li>
-                        <Link to={"/login"}>Connexion</Link>
-                    </li>
-                ) : (
-                    <li>
-                        <Link to={"/logout"}>Déconnexion</Link>
-                    </li>
-                )}
+            <div ref={dropdownRef} className={style.dropdown}>
+                {links.map((link, index) => {
+                    if (link.requireToken === true && token === null) {
+                        return (
+                            <li key={index}>
+                                <Link to={link.to}>{link.title}</Link>
+                            </li>
+                        )
+                    } else if (link.requireToken === true) {
+                        return (
+                            <li key={index}>
+                                <Link to={link.alternativeTo}>{link.alternative}</Link>
+                            </li>
+                        )
+                    } else {
+                        return (
+                            <li key={index}>
+                                <Link to={link.to}>{link.title}</Link>
+                            </li>
+                        )
+                    }
+                })}
             </div>
         </div>
-    )
+    );
 }

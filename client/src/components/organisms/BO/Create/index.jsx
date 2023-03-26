@@ -44,25 +44,26 @@ export default function BOCreate() {
         }
     }
 
-    // function getGenders() {
-    //     fetch(new URL(import.meta.env.VITE_API_URL + "/api/users").href, {
-    //         method: "GET",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             Authorization: `Bearer ${token}`,
-    //         },
-    //     })
-    //         .then(res => res.json())
-    //         .then(data => {
-    //             if (data.code === 401) {
-    //                 throw new Error(data.message)
-    //             }
-    //             setGenders(data.gender);
-    //         })
-    //         .catch(error => {
-    //             console.error(error);
-    //         });
-    // }
+    function getGenders() {
+        fetch(new URL(import.meta.env.VITE_API_URL + "/api/genders?page=1").href, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.code === 401) {
+                    throw new Error(data.message)
+                }
+                console.log(data);
+                setGenders(data.gender);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
 
     function apiGet() {
         fetch('https://geo.api.gouv.fr/communes', {
@@ -82,33 +83,46 @@ export default function BOCreate() {
     }
 
     useEffect(() => {
-    // getGenders();
+    getGenders();
         apiGet();
     }, [token]);
 
     return (
         <form onSubmit={() => handleSubmit()}>
-            <label>Adresse mail</label>
-            <input type="email" value={email}/>
+            <div>
+                <label>Adresse mail</label>
+                <input type="email" value={email}/>
+            </div>
+            <div>
+                <label>Mot de passe</label>
+                <input type="password" value={password} />
+            </div>
+            <div>
+                <label>Etat</label>
+                <input type="checkbox" value={state}/>
+            </div>
+            <div>
+                <label>Date de création</label>
+                <input type="date" value={creationDate}/>
+            </div>
+            <div>
+                <label>Ville/Code postal</label>
+                <ReactSearchAutocomplete items={postcode} formatResult={formatResult} autoFocus />
+            </div>
+            <div>
+                <label>Genre</label>
+                <select>
 
-            <label>Mot de passe</label>
-            <input type="password" value={password} />
-
-            <label>Etat</label>
-            <input type="checkbox" value={state}/>
-
-            <label>Date de création</label>
-            <input type="date" value={creationDate}/>
-
-            <label>Ville/Code postal</label>
-            <ReactSearchAutocomplete items={postcode} formatResult={formatResult} autoFocus />
-
-            <label>Numéro de téléphone</label>
-            <input type="tel" value={phone}/>
-
-            <label>Roles</label>
-            <input />
-
+                </select>
+            </div>
+            <div>
+                <label>Numéro de téléphone</label>
+                <input type="tel" value={phone}/>
+            </div>
+            <div>
+                <label>Roles</label>
+                <input />
+            </div>
             <button type="submit">Ajouter</button>
         </form>
     )

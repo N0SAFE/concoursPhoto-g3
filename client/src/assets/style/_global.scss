@@ -1,5 +1,8 @@
+@import 'fonts.scss';
+
 /* NORMALIZE FOR GLOBAL PROJECT*/
 body {
+    font-family: $bo-font-family;
     margin: 0;
     padding: 0;
 }
