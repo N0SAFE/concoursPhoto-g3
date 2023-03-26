@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import {useAuthContext} from "@/contexts/AuthContext";
 import {Link, useNavigate} from "react-router-dom";
-import BOList from "@/components/organisms/BO/List/index.jsx";
+import BOList from "@/components/organisms/BO/List";
 
 export default function UserList() {
     const {token} = useAuthContext()
