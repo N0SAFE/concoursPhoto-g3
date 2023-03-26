@@ -7,16 +7,27 @@ import UserCreate from "@/views/BO/user/Create";
 import BO from "@/views/BO";
 import Home from "@/views/Home";
 import NotFound from "@/views/error/NotFound";
+import Navbar from "@/components/molecules/Navbar/index.jsx";
+import { Outlet } from 'react-router-dom';
+
+function Header() {
+    return (
+        <header>
+            <Navbar />
+            <Outlet />
+        </header>
+    );
+}
 
 function Router() {
     return (
         <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/" >
+            <Route path="/" element={<Header />}>
                 <Route path="login" element={<Login />} />
                 <Route path="logout" element={<Logout />} />
             </Route>
-            <Route path="/BO">
+            <Route path="/BO" element={<Header />}>
                 <Route path="" element={<BO />} />
                 <Route path="user" element={<UserList />} />
                 <Route path="user/:id" element={<UserEdit />} />
