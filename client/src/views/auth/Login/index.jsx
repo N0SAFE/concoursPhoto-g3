@@ -3,6 +3,8 @@ import useAuth from "@/hooks/useAuth.js";
 import { useNavigate } from "react-router-dom";
 import Icon from "@/components/atoms/Icon";
 import style from "./style.module.scss";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
 
 export default function Login() {
     const { login } = useAuth();
@@ -27,18 +29,13 @@ export default function Login() {
             <form onSubmit={handleSubmit} className={style.input}>
                 <label>
                     Email
-                    <input name="email" type="email" placeholder="Email" />
+                    <Input name="email" type="email" placeholder="Email" />
                 </label>
-                <br />
                 <label>
                     Password
-                    <input name="password" type="password" placeholder="Password" />
+                    <Input name="password" type="password" placeholder="Password" />
                 </label>
-                <br />
-                <button type="submit">
-                    Login
-                    <Icon icon="sign-out" size={20} color="black" />
-                </button>
+                <Button type="submit" name="Login" />
             </form>
         </div>
     );
