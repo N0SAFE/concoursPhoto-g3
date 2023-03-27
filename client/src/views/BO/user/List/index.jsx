@@ -6,7 +6,7 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 export default function UserList() {
     const apiFetch = useApiFetch()
     const [users, setUsers] = useState([]);
-    const [filterState, setFilterState] = useState('');
+    const [filterState, setFilterState] = useState('all');
 
     const navigate = useNavigate();
 
