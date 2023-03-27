@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import Icon from "@/components/atoms/Icon";
 import React, { useRef, useState } from "react";
 
-export default function Dropdown({title, links, token, requireToken }) {
+export default function Dropdown({title, links, requireLogin, requireToken }) {
     const dropdownRef = useRef('');
     const [isIconRotated, setIsIconRotated] = useState(false);
 
@@ -17,7 +17,7 @@ export default function Dropdown({title, links, token, requireToken }) {
     return (
         <div className={style.containerDropdown}>
             <div className={style.alignDropdown}>
-                {requireToken === true && token !== null || !requireToken ? (
+                {requireToken === true && requireLogin === true || !requireToken ? (
                     <div>
                         <Link onClick={(e) => handleDropdown(e)}>{title}</Link>
                         <Icon className={`${style.icon} ${isIconRotated ? style.rotate : ''}`} icon="cheveron-up" size={20} color="white" />
@@ -27,7 +27,7 @@ export default function Dropdown({title, links, token, requireToken }) {
             </div>
             <div ref={dropdownRef} className={style.dropdown}>
                 {links.map((link, index) => {
-                    if (link.requireToken === true && token === null) {
+                    if (link.requireToken === true && requireLogin === false) {
                         return (
                             <li key={index}>
                                 <Link to={link.to}>{link.title}</Link>

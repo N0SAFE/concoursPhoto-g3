@@ -4,7 +4,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import Dropdown from "@/components/atoms/Dropdown";
 
 export default function Navbar() {
-    const { token } = useAuthContext();
+    const { isLogged } = useAuthContext();
     return (
         <nav className={style.nav}>
             <ul>
@@ -17,7 +17,7 @@ export default function Navbar() {
                         {'title': 'Ajout d\'un utilisateur', 'to': '/BO/user/create'},
                     ]}
                     title={'Utilisateur'}
-                    token={token}
+                    requireLogin={isLogged}
                     requireToken={true}
                 />
                 <Dropdown
@@ -26,7 +26,7 @@ export default function Navbar() {
                         {'title': 'Ajout d\'une organisation', 'to': '/BO/organization/create'},
                     ]}
                     title={'Organisations'}
-                    token={token}
+                    requireLogin={isLogged}
                     requireToken={true}
                 />
             </ul>
@@ -37,7 +37,7 @@ export default function Navbar() {
                         {'title': 'Mon profil', 'to': '/register'},
                     ]}
                     title={'Mon compte'}
-                    token={token}
+                    requireLogin={isLogged}
                 />
             </ul>
         </nav>

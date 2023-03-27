@@ -6,10 +6,22 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 export default function UserList() {
     const apiFetch = useApiFetch()
     const [users, setUsers] = useState([]);
+    const [filterState, setFilterState] = useState('');
 
     const navigate = useNavigate();
 
     function getUsers() {
+        const params = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+        if (filterState) {
+            params.params = {
+                state: filterState
+            }
+        }
         apiFetch("/users", {
             method: "GET",
             headers: {
@@ -31,7 +43,7 @@ export default function UserList() {
 
     useEffect(() => {
         getUsers();
-    }, []);
+    }, [filterState]);
 
     const handleDelete = (id) => {
         fetch(new URL(import.meta.env.VITE_API_URL + "/users/" + id).href, {
@@ -55,12 +67,35 @@ export default function UserList() {
             });
     }
 
+    const handleFilterChange = (e) => {
+        setFilterState(e.target.value);
+    };
+
+    const userFiltering = () => {
+        let filteredUsers = users.filter((user) => {
+            if (filterState === "all") {
+                return true;
+            } else {
+                return user.state === (filterState === "true");
+            }
+        });
+        return filteredUsers;
+    };
+
     return (
         <div>
             <Link to={"/BO/user/create"}>Créer un utilisateur</Link>
             <h1>Listes des utilisateurs</h1>
+            <div>
+                <label htmlFor="state-filter">Filtrer par état:</label>
+                <select id="state-filter" value={filterState} onChange={handleFilterChange}>
+                    <option value="all">Tous</option>
+                    <option value="true">Actif</option>
+                    <option value="false">Inactif</option>
+                </select>
+            </div>
             <BOList
-                entityList={users}
+                entityList={userFiltering()}
                 fields={[
                     {property: "id", display: "ID"},
                     {property: "state", display: "Etat"},
