@@ -69,7 +69,13 @@ export default function OrganizationList() {
                     { property: "organizer_name", display: "Nom de l'organisation" },
                     { property: "description", display: "description" },
                     { property: "address", display: "address" },
+                    { property: "postcode", display: "code postal" },
+                    { property: "city", display: "ville" },
+                    { property: "number_phone", display: "téléphone" },
+                    { property: "email", display: "email" },
+                    { property: "website_url", display: "site web" },
                     { property: "organization_type", display: "type d'organisation" },
+                    { property: "country", display: "Pays" },
                 ]}
                 customAction={({ entity, property }) => {
                     if (property === "organization_type") {
@@ -79,7 +85,6 @@ export default function OrganizationList() {
                         return entity.state === "validated" ? "Validée" : "En attente";
                     }
                     return entity[property];
-                    
                 }}
                 actions={[
                     {
