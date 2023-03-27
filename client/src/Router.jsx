@@ -7,7 +7,9 @@ import UserCreate from "@/views/BO/user/Create";
 import BO from "@/views/BO";
 import Home from "@/views/Home";
 import NotFound from "@/views/error/NotFound";
-import OrganizationList from "./views/BO/organization/List";
+import OrganizationList from "@/views/BO/organization/List";
+import Header from "@/layout/Header";
+import CompetitionsList from "@/views/BO/competition/List";
 
 function Router() {
     return (

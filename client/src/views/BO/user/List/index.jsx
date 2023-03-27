@@ -73,7 +73,7 @@ export default function UserList() {
 
     const userFiltering = () => {
         let filteredUsers = users.filter((user) => {
-            if (filterState === "") {
+            if (filterState === "all") {
                 return true;
             } else {
                 return user.state === (filterState === "true");
@@ -89,7 +89,7 @@ export default function UserList() {
             <div>
                 <label htmlFor="state-filter">Filtrer par état:</label>
                 <select id="state-filter" value={filterState} onChange={handleFilterChange}>
-                    <option value="">Tous</option>
+                    <option value="all">Tous</option>
                     <option value="true">Actif</option>
                     <option value="false">Inactif</option>
                 </select>
