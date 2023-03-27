@@ -1,7 +1,6 @@
 import React from "react";
 import useAuth from "@/hooks/useAuth.js";
 import { useNavigate } from "react-router-dom";
-import Icon from "@/components/atoms/Icon";
 import style from "./style.module.scss";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";

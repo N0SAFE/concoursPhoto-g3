@@ -1,6 +1,6 @@
 import { useAuthContext } from "@/contexts/AuthContext.jsx";
 
-function login(setToken, { email, password }) {
+function login(checkLogged, { email, password }) {
     return new Promise((resolve, reject) => {
         fetch(new URL(import.meta.env.VITE_API_URL + "/login_check"), {
             method: "POST",
@@ -10,19 +10,20 @@ function login(setToken, { email, password }) {
             body: JSON.stringify({
                 email,
                 password
-            })
+            }),
+            credentials: "include"
         })
             .then(res => res.json())
             .then(data => {
-                if (data.code === 401) {    
+                if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                console.log(data)
-                if (!data.token) {
-                    throw new Error("No token");
-                }
-                setToken(data.token);
-                resolve();
+                return checkLogged().then((isLogged) => {
+                    if(!isLogged){
+                        throw new Error("an error occured");
+                    }
+                    resolve();
+                })
             }).catch(error => {
                 console.error(error);
                 reject(error);
@@ -30,7 +31,7 @@ function login(setToken, { email, password }) {
     });
 }
 
-function register(setToken, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username }) {
+function register(checkLogged, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username }) {
     return fetch("/api/register", {
         method: "POST",
         headers: {
@@ -53,32 +54,39 @@ function register(setToken, { email, password, passwordverify, firstname, lastna
     })
         .then(res => res.json())
         .then(data => {
-            setToken(data.token);
-            return data;
+            return login(checkLogged, { email, password })
         })
         .catch(error => {
             console.log(error);
         });
 }
 
-function logout(setToken) {
-    return new Promise((resolve)=> {
-        setToken(null)
-        resolve()
+function logout(checkLogged) {
+    return new Promise(async (resolve)=> {
+        await fetch(new URL(import.meta.env.VITE_API_URL + "/logout"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        })
+        checkLogged().then(()=> {
+            resolve()
+        })
     })
 }
 
 function useAuth() {
-    const { setToken } = useAuthContext();
+    const { checkLogged } = useAuthContext();
     return {
         login: function({ email, password }) {
-            return login(setToken, { email, password });
+            return login(checkLogged, { email, password });
         },
         register: function({ email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username }) {
-            return register(setToken, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username });
+            return register(checkLogged, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username });
         },
         logout: function() {
-            return logout(setToken);
+            return logout(checkLogged);
         }
     };
 }

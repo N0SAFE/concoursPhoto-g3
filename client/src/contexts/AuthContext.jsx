@@ -5,20 +5,45 @@ const AuthContext = createContext({
 });
 
 function AuthProvider(props) {
-    const [token, _setToken] = useState(localStorage.getItem('token'));
+    const [isLogged, setIsLogged] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [me, setMe] = useState(null);
     
-    function setToken(newToken){
-        if(newToken){
-            localStorage.setItem('token', newToken);
+    async function checkLogged(){
+        const response = await fetch(new URL(import.meta.env.VITE_API_URL + "/token/refresh").href, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: 'include',
+        })
+        if(response.ok){
+            setIsLogged(true);
+            const whoami = await fetch(new URL(import.meta.env.VITE_API_URL + "/whoami").href, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+            })
+            const data = await whoami.json();
+            setMe(data);
         }else {
-            localStorage.removeItem('token')
+            setIsLogged(false);
+            setMe(null);
         }
-        _setToken(localStorage.getItem('token'));
+        return response.ok
     }
+    
+    useEffect(() => {
+        checkLogged().then(() => {
+            setIsLoading(false);
+        })
+    }, [])
 
     return (
-        <AuthContext.Provider value={{ token, setToken }}>
-            {props.children}
+        <AuthContext.Provider value={{ isLogged, checkLogged, me }}>
+            {!isLoading && props.children}
         </AuthContext.Provider>
     );
 }

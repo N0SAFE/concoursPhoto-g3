@@ -98,8 +98,6 @@ export default function BOCreate({ handleSubmit }) {
     const [ postcode, setPostcode ] = useState([]);
     const [ phone, setPhone ] = useState('');
 
-    const { token } = useAuthContext();
-
     const formatResult = (item) => {
         return (
             <>
@@ -132,7 +130,6 @@ export default function BOCreate({ handleSubmit }) {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
         })
             .then(res => res.json())
@@ -167,7 +164,7 @@ export default function BOCreate({ handleSubmit }) {
     useEffect(() => {
         getGenders();
         apiGet();
-    }, [token]);
+    }, []);
 
     return (
         <form onSubmit={() => handleSubmit()}>

@@ -1,20 +1,19 @@
 import {useState, useEffect} from 'react';
-import {useAuthContext} from "@/contexts/AuthContext";
 import {Link, useNavigate} from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
+import useApiFetch from '@/hooks/useApiFetch.js';
 
 export default function UserList() {
-    const {token} = useAuthContext()
+    const apiFetch = useApiFetch()
     const [users, setUsers] = useState([]);
 
     const navigate = useNavigate();
 
     function getUsers() {
-        fetch(new URL(import.meta.env.VITE_API_URL + "/users").href, {
+        apiFetch("/users", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
         })
             .then(res => res.json())
@@ -32,14 +31,13 @@ export default function UserList() {
 
     useEffect(() => {
         getUsers();
-    }, [token]);
+    }, []);
 
     const handleDelete = (id) => {
         fetch(new URL(import.meta.env.VITE_API_URL + "/users/" + id).href, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
         })
             .then(res => res.json())
