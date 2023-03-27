@@ -19,8 +19,6 @@ class AuthenticationSuccessListener
         $data = $event->getData();
 
         $token = $data['token'];
-        unset($data['token']);
-        unset($data['refresh_token']);
         $event->setData($data);
 
         $response->headers->setCookie(

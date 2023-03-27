@@ -4,12 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "env-cmd vite",
+    "dev": "vite",
     "build": "vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {
-    "env-cmd": "^10.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icomoon": "^2.5.7",
