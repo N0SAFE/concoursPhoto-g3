@@ -10,7 +10,7 @@ export default function UserList() {
     const navigate = useNavigate();
 
     function getUsers() {
-        fetch(new URL(import.meta.env.VITE_API_URL + "/api/users").href, {
+        fetch(new URL(import.meta.env.VITE_API_URL + "/users").href, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -19,6 +19,7 @@ export default function UserList() {
         })
             .then(res => res.json())
             .then(data => {
+                console.log(data)
                 if (data.code === 401) {
                     throw new Error(data.message)
                 }

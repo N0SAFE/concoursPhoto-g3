@@ -2,7 +2,7 @@ import { useAuthContext } from "@/contexts/AuthContext.jsx";
 
 function login(setToken, { email, password }) {
     return new Promise((resolve, reject) => {
-        fetch(new URL(import.meta.env.VITE_API_URL + "/api/login_check"), {
+        fetch(new URL(import.meta.env.VITE_API_URL + "/login_check"), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -14,9 +14,10 @@ function login(setToken, { email, password }) {
         })
             .then(res => res.json())
             .then(data => {
-                if (data.code === 401) {
+                if (data.code === 401) {    
                     throw new Error(data.message);
                 }
+                console.log(data)
                 if (!data.token) {
                     throw new Error("No token");
                 }
