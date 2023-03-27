@@ -1,6 +1,8 @@
+import style from "./style.module.scss";
+
 export default function BOList({ fields, entityList, customAction = () => true, useId = true, actions = [] }) {
     return (
-        <table>
+        <table className={style.table}>
             <thead>
                 <tr>
                     {fields.map(({ display }, index) =>
@@ -8,6 +10,9 @@ export default function BOList({ fields, entityList, customAction = () => true, 
                             {display}
                         </th>
                     )}
+                    <th>
+                        Actions
+                    </th>
                 </tr>
             </thead>
             <tbody>

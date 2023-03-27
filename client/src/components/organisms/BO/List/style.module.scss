@@ -1,0 +1,14 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+
+    & td {
+        border: 1px solid #333;
+    }
+}
+
+thead,
+tfoot {
+    background-color: lightgrey;
+    color: black;
+}
