@@ -10,7 +10,7 @@ lexik_jwt_authentication:
         password_path: security.credentials.password
     token_extractors:
         authorization_header:
-            enabled: false
+            enabled: true
             prefix:  Bearer
             name:    Authorization
         cookie:
