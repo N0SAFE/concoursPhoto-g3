@@ -8,8 +8,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+
+#[ApiResource (normalizationContext: ['groups' => ['competition']])]
+
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
 {
@@ -19,39 +22,52 @@ class Competition
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups('competition')]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['competition', 'organization'])]
     private ?string $competition_name = null;
 
     #[ORM\Column(length: 255)]
+    
     private ?string $competition_visual = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups('competition')]
+
     private ?string $description = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups('competition')]
     private ?string $rules = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups('competition')]
     private ?string $endowments = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('competition')]
     private ?\DateTimeInterface $creation_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('competition')]
     private ?\DateTimeInterface $publication_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('competition')]
     private ?\DateTimeInterface $publication_start_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('competition')]
     private ?\DateTimeInterface $submission_start_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('competition')]
     private ?\DateTimeInterface $submission_end_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('competition')]
     private ?\DateTimeInterface $voting_start_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

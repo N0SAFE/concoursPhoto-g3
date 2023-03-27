@@ -73,8 +73,9 @@ class Organization
 
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Rent::class)]
     private Collection $rents;
-
+    
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Competition::class)]
+    #[Groups('organization')]
     private Collection $competitions;
 
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Sponsors::class)]

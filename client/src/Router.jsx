@@ -10,6 +10,7 @@ import NotFound from "@/views/error/NotFound";
 import Navbar from "@/components/molecules/Navbar/index.jsx";
 import { Outlet } from "react-router-dom";
 import OrganizationList from "./views/BO/organization/List";
+import CompetitionsList from "./views/BO/Competition/List";
 
 function Header() {
     return (
@@ -34,6 +35,7 @@ function Router() {
                 <Route path="user/:id" element={<UserEdit />} />
                 <Route path="user/create" element={<UserCreate />} />
                 <Route path="organization" element={<OrganizationList />} />
+                <Route path="competition" element={<CompetitionsList />} />
             </Route>
             <Route path="*" element={<NotFound />} />
         </Routes>
