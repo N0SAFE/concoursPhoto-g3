@@ -8,29 +8,36 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[ApiResource(normalizationContext: ['groups' => ['organization']])]
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 class Organization
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('organization')]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups('organization')]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $organizer_name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $logo = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $address = null;
 
     #[ORM\Column]
@@ -52,6 +59,7 @@ class Organization
     private ?string $country = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizations')]
+    #[Groups('organization')]
     private ?OrganizationType $organization_type = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Manage')]
