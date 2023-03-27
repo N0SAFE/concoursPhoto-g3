@@ -10,58 +10,75 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[ApiResource(normalizationContext: ['groups' => ['user']])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    #[Groups('user')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    #[Groups('user')]
     #[ORM\Column]
     private ?bool $state = null;
 
+    #[Groups('user')]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $creation_date = null;
 
+    #[Groups('user')]
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
+    #[Groups('user')]
     #[ORM\Column(length: 255)]
     private ?string $firstname = null;
 
+    #[Groups('user')]
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
 
+    #[Groups('user')]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date_of_birth = null;
 
+    #[Groups('user')]
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
+    #[Groups('user')]
     #[ORM\Column(length: 255)]
     private ?string $postcode = null;
 
+    #[Groups('user')]
     #[ORM\Column(length: 255)]
     private ?string $city = null;
 
+    #[Groups('user')]
     #[ORM\Column(length: 255)]
     private ?string $country = null;
 
+    #[Groups('user')]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     private $email;
 
+    #[Groups('user')]
     #[ORM\Column(length: 255)]
     private ?string $phone_number = null;
 
+    #[Groups('user')]
     #[ORM\Column(type: 'string')]
     private $password;
 
+    #[Groups('user')]
     #[ORM\Column(type: 'string', length: 180)]
     private $username;
 
+    #[Groups('user')]
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
