@@ -31,11 +31,17 @@ function Router() {
             </Route>
             <Route path="/BO" element={<Header />}>
                 <Route path="" element={<BO />} />
-                <Route path="user" element={<UserList />} />
-                <Route path="user/:id" element={<UserEdit />} />
-                <Route path="user/create" element={<UserCreate />} />
-                <Route path="organization" element={<OrganizationList />} />
-                <Route path="competition" element={<CompetitionsList />} />
+                <Route path="user">
+                    <Route path="" element={<UserList />} />
+                    <Route path=":id" element={<UserEdit />} />
+                    <Route path="create" element={<UserCreate />} />
+                </Route>
+                <Route path="organization">
+                    <Route path="" element={<OrganizationList />} />
+                </Route>
+                <Route path="competition">
+                    <Route path="" element={<CompetitionsList />} />
+                </Route>
             </Route>
             <Route path="*" element={<NotFound />} />
         </Routes>
