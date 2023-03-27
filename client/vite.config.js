@@ -16,7 +16,15 @@ export default defineConfig({
       '@' : path.resolve(__dirname, './src'),
       '@@': path.resolve(__dirname, './'),
       '~': path.resolve(__dirname, './src'),
-      '~~': path.resolve(__dirname, './') 
+      '~~': path.resolve(__dirname, './')
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // include the style.sccs file in every scss file
+        additionalData: `@import "@/assets/style/style.scss";`
+      },
     },
   },
   server : {

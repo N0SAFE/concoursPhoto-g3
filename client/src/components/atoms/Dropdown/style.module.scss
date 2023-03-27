@@ -1,13 +1,13 @@
-@import '../../../assets/style/style.scss';
+.containerDropdown {
+    position: relative;
 
-div {
     .dropdown {
+        z-index: 100;
         overflow: hidden;
         position: absolute;
         background-color: lightgrey;
         transition: 0.25s ease-in-out;
         max-height: 0;
-        width: 145px;
         border-radius: 5px;
         padding-left: 5px;
 
