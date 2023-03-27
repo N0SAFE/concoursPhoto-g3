@@ -20,6 +20,15 @@ export default function Navbar() {
                     token={token}
                     requireToken={true}
                 />
+                <Dropdown
+                    links={[
+                        {'title': 'Liste des organisations', 'to': '/BO/organization'},
+                        {'title': 'Ajout d\'une organisation', 'to': '/BO/organization/create'},
+                    ]}
+                    title={'Organisations'}
+                    token={token}
+                    requireToken={true}
+                />
             </ul>
             <ul>
                 <Dropdown

@@ -15,7 +15,7 @@ export default function Dropdown({title, links, token, requireToken }) {
     }
 
     return (
-        <div>
+        <div className={style.containerDropdown}>
             <div className={style.alignDropdown}>
                 {requireToken === true && token !== null || !requireToken ? (
                     <div>
