@@ -41,21 +41,27 @@ class Organization
     private ?string $address = null;
 
     #[ORM\Column]
+    #[Groups('organization')]
     private ?int $postcode = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $website_url = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $number_phone = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $country = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizations')]
