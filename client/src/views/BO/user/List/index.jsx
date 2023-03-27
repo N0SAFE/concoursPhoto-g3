@@ -35,7 +35,7 @@ export default function UserList() {
     }, [token]);
 
     const handleDelete = (id) => {
-        fetch(new URL(import.meta.env.VITE_API_URL + "/api/user/" + id).href, {
+        fetch(new URL(import.meta.env.VITE_API_URL + "/users/" + id).href, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -70,13 +70,13 @@ export default function UserList() {
                     {property: "roles", display: "Roles"},
                     {property: "firstname", display: "Prénom"},
                     {property: "lastname", display: "Nom"},
-                    {property: "creationDate", display: "Date de création"},
+                    {property: "creation_date", display: "Date de création"},
                     {property: "gender", display: "Genre"},
                     {property: "address", display: "Adresse"},
                     {property: "postcode", display: "Code postal"},
                     {property: "city", display: "Ville"},
                     {property: "country", display: "Pays"},
-                    {property: "phoneNumber", display: "Numéro de téléphone"},
+                    {property: "phone_number", display: "Numéro de téléphone"},
                 ]}
                 customAction={({entity, property}) => {
                     if (property === "roles") {
@@ -92,8 +92,12 @@ export default function UserList() {
                         return entity.state ? "Actif" : "Inactif"
                     }
 
-                    if (property === "creationDate") {
-                        return new Date(entity.creationDate)
+                    if (property === "creation_date") {
+                        return new Date(entity.creation_date).toLocaleDateString("fr-FR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        });
                     }
 
                     if (property === "gender") {
