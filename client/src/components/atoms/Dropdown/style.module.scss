@@ -1,0 +1,42 @@
+.containerDropdown {
+    position: relative;
+
+    .dropdown {
+        z-index: 100;
+        overflow: hidden;
+        position: absolute;
+        background-color: lightgrey;
+        transition: 0.25s ease-in-out;
+        max-height: 0;
+        border-radius: 5px;
+        padding-left: 5px;
+
+        & > li {
+            margin-top: 10px;
+
+            & > a {
+                color: white;
+                text-decoration: none;
+                font-size: 25px;
+            }
+        }
+    }
+
+    .show {
+        max-height: 200px;
+    }
+
+    .icon {
+        transform: rotate(180deg);
+        transition-duration: 0.5s;
+    }
+
+    .rotate {
+        transform: none;
+    }
+
+    .alignDropdown {
+        display: flex;
+        align-items: center;
+    }
+}

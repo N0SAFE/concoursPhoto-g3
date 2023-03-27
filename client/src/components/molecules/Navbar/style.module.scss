@@ -1,0 +1,24 @@
+.nav {
+    display: flex;
+    height: auto;
+    background-color: lightgrey;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    padding: 0 15px 0 15px;
+
+    ul {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        gap: 15px;
+
+        & > li, div {
+            & > a {
+                color: white;
+                text-decoration: none;
+                font-size: 25px;
+            }
+        }
+    }
+}

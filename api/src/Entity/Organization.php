@@ -8,50 +8,64 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[ApiResource(normalizationContext: ['groups' => ['organization']])]
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 class Organization
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('organization')]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups('organization')]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $organizer_name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $logo = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $address = null;
 
     #[ORM\Column]
+    #[Groups('organization')]
     private ?int $postcode = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $website_url = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $number_phone = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $country = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizations')]
+    #[Groups('organization')]
     private ?OrganizationType $organization_type = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Manage')]
@@ -59,8 +73,9 @@ class Organization
 
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Rent::class)]
     private Collection $rents;
-
+    
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Competition::class)]
+    #[Groups('organization')]
     private Collection $competitions;
 
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Sponsors::class)]

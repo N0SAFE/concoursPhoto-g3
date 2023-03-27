@@ -5,7 +5,7 @@ namespace App\Listeners;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\Cookie;
 
-class AuthentificationSuccessListener
+class AuthenticationSuccessListener
 {
     private $secure = false;
 
@@ -19,8 +19,6 @@ class AuthentificationSuccessListener
         $data = $event->getData();
 
         $token = $data['token'];
-        unset($data['token']);
-        unset($data['refresh_token']);
         $event->setData($data);
 
         $response->headers->setCookie(

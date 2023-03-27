@@ -9,7 +9,6 @@ export default function(){
     
     useEffect(()=> {
         logout().then(()=>{
-            console.log("ui")
             navigate("/login")
         })
     })

@@ -1,0 +1,102 @@
+/**
+* Used to declare media queries. Usage examples :
+* - @include above(sm) {...}
+* - @include below(sm) {...}
+* - @include between(sm, md) {...}
+ */
+
+// @include above(sm) {}
+@mixin above($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+        @media (min-width: $breakpoint-value) {
+            @content;
+        }
+    } @else {
+        @warn 'Invalid breakpoint: #{$breakpoint}.';
+    }
+}
+
+// @include height-above(600px) {}
+@mixin height-above($breakpoint) {
+    @media (min-height: ($breakpoint - 1)) {
+        @content;
+    }
+}
+
+// @include below(sm) {}
+@mixin below($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+        @media (max-width: ($breakpoint-value - 1)) {
+            @content;
+        }
+    } @else {
+        @warn 'Invalid breakpoint: #{$breakpoint}.';
+    }
+}
+
+// @include height-below(600px) {}
+@mixin height-below($breakpoint) {
+    @media (max-height: ($breakpoint - 1)) {
+        @content;
+    }
+}
+
+// @include between(sm, md) {}
+@mixin between($lower, $upper) {
+    @if map-has-key($breakpoints, $lower) and map-has-key($breakpoints, $upper) {
+        $lower-breakpoint: map-get($breakpoints, $lower);
+        $upper-breakpoint: map-get($breakpoints, $upper);
+
+        @media (min-width: $lower-breakpoint) and (max-width: ($upper-breakpoint - 1)) {
+            @content;
+        }
+    } @else {
+        @if (map-has-key($breakpoints, $lower) == false) {
+            @warn 'Your lower breakpoint was invalid: #{$lower}.';
+        }
+
+        @if (map-has-key($breakpoints, $upper) == false) {
+            @warn 'Your upper breakpoint was invalid: #{$upper}.';
+        }
+    }
+}
+
+@mixin extra-small-mobile() {
+    @include below(xs) {
+        @content;
+    }
+}
+
+@mixin small-mobile() {
+    @include below(sm) {
+        @content;
+    }
+}
+
+@mixin mobile() {
+    @include below(md) {
+        @content;
+    }
+}
+
+@mixin desktop() {
+    @include above(md) {
+        @content;
+    }
+}
+
+@mixin large-desktop() {
+    @include above(lg) {
+        @content;
+    }
+}
+
+@mixin extra-large-desktop() {
+    @include above(xl) {
+        @content;
+    }
+}

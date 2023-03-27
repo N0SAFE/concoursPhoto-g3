@@ -7,6 +7,7 @@ use App\Repository\OrganizationTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: OrganizationTypeRepository::class)]
@@ -15,9 +16,11 @@ class OrganizationType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('organization')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('organization')]
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'organization_type', targetEntity: Organization::class)]
