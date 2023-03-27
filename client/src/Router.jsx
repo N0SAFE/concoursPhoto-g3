@@ -7,19 +7,7 @@ import UserCreate from "@/views/BO/user/Create";
 import BO from "@/views/BO";
 import Home from "@/views/Home";
 import NotFound from "@/views/error/NotFound";
-import Navbar from "@/components/molecules/Navbar/index.jsx";
-import { Outlet } from "react-router-dom";
 import OrganizationList from "./views/BO/organization/List";
-import CompetitionsList from "./views/BO/Competition/List";
-
-function Header() {
-    return (
-        <header>
-            <Navbar />
-            <Outlet />
-        </header>
-    );
-}
 
 function Router() {
     return (
