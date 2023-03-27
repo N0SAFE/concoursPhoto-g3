@@ -3,14 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
 
-export default function OrganizationList() {
-    const [Organizations, setOrganizations] = useState([]);
+export default function CompetitionsList() {
+    const [Competitions, setCompetitions] = useState([]);
     const apiFetch = useApiFetch();
-
     const navigate = useNavigate();
 
-    function getOrganizations() {
-        apiFetch("/organizations", {
+    function getCompetitions() {
+        apiFetch("/competitions", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -23,7 +22,7 @@ export default function OrganizationList() {
                     throw new Error(data.message);
                 }
                 console.log(data["hydra:member"]);
-                setOrganizations(data["hydra:member"]);
+                setCompetitions(data["hydra:member"]);
             })
             .catch((error) => {
                 console.error(error);
@@ -31,11 +30,11 @@ export default function OrganizationList() {
     }
 
     useEffect(() => {
-        getOrganizations();
+        getCompetitions();
     }, []);
 
     const handleDelete = (id) => {
-        apiFetch("/organizations/" + id, {
+        apiFetch("/competitions/" + id, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -51,37 +50,56 @@ export default function OrganizationList() {
                 console.error(error);
             })
             .finally(() => {
-                getOrganizations();
+                getCompetitions();
             });
     };
 
     return (
         <div>
-            <Link to={"/BO/organization/create"}>Créer un utilisateur</Link>
-            <h1>Listes des organisations</h1>
+            <Link to={"/BO/competitions/create"}>Créer un concour</Link>
+            <h1>Listes des concours</h1>
             <BOList
-                entityList={Organizations}
+                entityList={Competitions}
                 fields={[
                     { property: "id", display: "ID" },
                     { property: "state", display: "Statut" },
-                    { property: "organizer_name", display: "Nom de l'organisation" },
+                    { property: "competition_name", display: "Nom" },
                     { property: "description", display: "description" },
-                    { property: "address", display: "address" },
-                    { property: "postcode", display: "code postal" },
-                    { property: "city", display: "ville" },
-                    { property: "number_phone", display: "téléphone" },
-                    { property: "email", display: "email" },
-                    { property: "website_url", display: "site web" },
-                    { property: "organization_type", display: "type d'organisation" },
-                    { property: "country", display: "Pays" },
-                    { property: "competitions", display: "Nom du Concour" },
+                    { property: "rules", display: "Régle" },
+                    { property: "endowments", display: "Dotation" },
+                    { property: "creation_date", display: "Date de création" },
+                    { property: "publication_date", display: "Date de publication" },
+                    { property: "publication_start_date", display: "Date de commencement" },
+                    { property: "voting_start_date", display: "Date début vote" },
                 ]}
                 customAction={({ entity, property }) => {
-                    if (property === "organization_type") {
-                        return entity.organization_type.label;
+                    if (property === "creation_date") {
+                        return new Date(entity.creation_date).toLocaleDateString("fr-FR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        });
                     }
-                    if (property === "competitions") {
-                        return entity.competitions.map((competition) => competition.competition_name).join(", ");
+                    if (property === "voting_start_date") {
+                        return new Date(entity.creation_date).toLocaleDateString("fr-FR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        });
+                    }
+                    if (property === "publication_date") {
+                        return new Date(entity.creation_date).toLocaleDateString("fr-FR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        });
+                    }
+                    if (property === "publication_start_date") {
+                        return new Date(entity.creation_date).toLocaleDateString("fr-FR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        });
                     }
                     if (property === "state") {
                         return entity.state === "validated" ? "Validée" : "En attente";
