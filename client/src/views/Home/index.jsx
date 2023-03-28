@@ -10,7 +10,7 @@ export default function Home() {
             if(me.roles.includes("ROLE_ADMIN")){
                 navigate("/BO");
             }
-        }else {
+        } else {
             navigate("/login");
         }
     }, []);
