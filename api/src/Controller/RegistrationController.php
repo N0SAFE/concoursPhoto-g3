@@ -46,9 +46,10 @@ class RegistrationController extends AbstractController
         $user->setEmail($decoded->email);
         $user->setPhoneNumber($decoded->phone_number);
         $user->setPassword($hashedPassword);
+        $user->setIsVerified($decoded->is_verified);
 
         $user->setPseudonym($decoded->email);
-        $user->setRoles([$decoded->role]);  
+        $user->setRoles([$decoded->role]);
 
         $em->persist($user);
         $em->flush();
