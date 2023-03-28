@@ -120,6 +120,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
+    #[Groups('user')]
+    #[ORM\Column]
+    private ?bool $is_verified = null;
+
     public function __construct()
     {
         $this->Manage = new ArrayCollection();
@@ -561,6 +565,18 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function isIsVerified(): ?bool
+    {
+        return $this->is_verified;
+    }
+
+    public function setIsVerified(bool $is_verified): self
+    {
+        $this->is_verified = $is_verified;
 
         return $this;
     }
