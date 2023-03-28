@@ -20,7 +20,7 @@ use App\Entity\Gender;
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'register', methods: ['POST'])]
-    public function index(ManagerRegistry $doctrine, Request $request, UserPasswordHasherInterface $passwordHasher, GenderRepository $genderRepository, RoleRepository $roleRepository): Response
+    public function index(ManagerRegistry $doctrine, Request $request, UserPasswordHasherInterface $passwordHasher, GenderRepository $genderRepository): Response
     {
 
         $em = $doctrine->getManager();
