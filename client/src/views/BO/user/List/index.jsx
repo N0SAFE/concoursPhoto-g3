@@ -101,7 +101,7 @@ export default function UserList() {
     return (
         <div>
             <Link to={"/BO/user/create"}>Créer un utilisateur</Link>
-            <h1>Listes des utilisateurs</h1>
+            <h1>Liste des utilisateurs</h1>
             <div>
                 <label htmlFor="state-filter">Filtrer par état :</label>
                 <select id="state-filter" value={filterState} onChange={handleFilterChange}>
