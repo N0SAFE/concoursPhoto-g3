@@ -17,7 +17,7 @@ class Organization
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('organization')]
+    #[Groups(['organization', 'competition'])]
     private ?int $id = null;
 
     #[ORM\Column]
@@ -25,7 +25,7 @@ class Organization
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'competition'])]
     private ?string $organizer_name = null;
 
     #[ORM\Column(length: 255)]
@@ -73,9 +73,9 @@ class Organization
 
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Rent::class)]
     private Collection $rents;
-    
+
+    #[Groups(['organization'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Competition::class)]
-    #[Groups('organization')]
     private Collection $competitions;
 
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Sponsors::class)]

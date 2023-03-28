@@ -7,6 +7,7 @@ use App\Repository\ParticipantCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: ParticipantCategoryRepository::class)]
@@ -15,12 +16,15 @@ class ParticipantCategory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('competition')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('competition')]
     private ?string $label = null;
 
     #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'participant_category')]
+    #[Groups('competition')]
     private Collection $competitions;
 
     public function __construct()
