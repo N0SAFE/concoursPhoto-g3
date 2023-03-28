@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Role;
 use App\Repository\GenderRepository;
+use App\Repository\RoleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,7 +20,7 @@ use App\Entity\Gender;
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'register', methods: ['POST'])]
-    public function index(ManagerRegistry $doctrine, Request $request, UserPasswordHasherInterface $passwordHasher, GenderRepository $genderRepository): Response
+    public function index(ManagerRegistry $doctrine, Request $request, UserPasswordHasherInterface $passwordHasher, GenderRepository $genderRepository, RoleRepository $roleRepository): Response
     {
 
         $em = $doctrine->getManager();
@@ -45,8 +47,8 @@ class RegistrationController extends AbstractController
         $user->setPhoneNumber($decoded->phone_number);
         $user->setPassword($hashedPassword);
 
-        $user->setUsername($decoded->email);
-        $user->setRoles([$decoded->roles]);
+        $user->setPseudonym($decoded->email);
+        $user->setRole($roleRepository->find($decoded->role));
 
         $em->persist($user);
         $em->flush();

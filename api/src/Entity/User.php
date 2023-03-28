@@ -8,13 +8,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(normalizationContext: ['groups' => ['user']])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[Groups('user')]
     #[ORM\Id]
@@ -74,23 +74,59 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private $password;
 
-    #[Groups('user')]
-    #[ORM\Column(type: 'string', length: 180)]
-    private $username;
+    #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
+    private Collection $Manage;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?PhotographerCategory $photographer_category = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: MemberOfTheJury::class)]
+    private Collection $memberOfTheJuries;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Picture::class)]
+    private Collection $pictures;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]
+    private Collection $votes;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $registration_date = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $delete_date = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $update_date = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $last_connection_date = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $picture_profil = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photographer_description = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $website_url = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $socials_networks = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pseudonym = null;
 
     #[Groups('user')]
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Member $member = null;
-
-    #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
-    private Collection $Manage;
-
     public function __construct()
     {
         $this->Manage = new ArrayCollection();
+        $this->memberOfTheJuries = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
+        $this->votes = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -257,18 +293,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUsername(): string
-    {
-        return (string) $this->username;
-    }
-
-    public function setUsername(string $username): self
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
     /**
      * A visual identifier that represents this user.
      *
@@ -282,41 +306,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
-
-    public function getMember(): ?Member
-    {
-        return $this->member;
-    }
-
-    public function setMember(?Member $member): self
-    {
-        $this->member = $member;
-
-        return $this;
     }
 
     /**
@@ -339,6 +332,235 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeManage(Organization $manage): self
     {
         $this->Manage->removeElement($manage);
+
+        return $this;
+    }
+
+    public function getPhotographerCategory(): ?PhotographerCategory
+    {
+        return $this->photographer_category;
+    }
+
+    public function setPhotographerCategory(?PhotographerCategory $photographer_category): self
+    {
+        $this->photographer_category = $photographer_category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MemberOfTheJury>
+     */
+    public function getMemberOfTheJuries(): Collection
+    {
+        return $this->memberOfTheJuries;
+    }
+
+    public function addMemberOfTheJury(MemberOfTheJury $memberOfTheJury): self
+    {
+        if (!$this->memberOfTheJuries->contains($memberOfTheJury)) {
+            $this->memberOfTheJuries->add($memberOfTheJury);
+            $memberOfTheJury->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMemberOfTheJury(MemberOfTheJury $memberOfTheJury): self
+    {
+        if ($this->memberOfTheJuries->removeElement($memberOfTheJury)) {
+            // set the owning side to null (unless already changed)
+            if ($memberOfTheJury->getUser() === $this) {
+                $memberOfTheJury->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Picture>
+     */
+    public function getPictures(): Collection
+    {
+        return $this->pictures;
+    }
+
+    public function addPicture(Picture $picture): self
+    {
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures->add($picture);
+            $picture->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(Picture $picture): self
+    {
+        if ($this->pictures->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getUser() === $this) {
+                $picture->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vote>
+     */
+    public function getVotes(): Collection
+    {
+        return $this->votes;
+    }
+
+    public function addVote(Vote $vote): self
+    {
+        if (!$this->votes->contains($vote)) {
+            $this->votes->add($vote);
+            $vote->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVote(Vote $vote): self
+    {
+        if ($this->votes->removeElement($vote)) {
+            // set the owning side to null (unless already changed)
+            if ($vote->getUser() === $this) {
+                $vote->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getRegistrationDate(): ?\DateTimeInterface
+    {
+        return $this->registration_date;
+    }
+
+    public function setRegistrationDate(\DateTimeInterface $registration_date): self
+    {
+        $this->registration_date = $registration_date;
+
+        return $this;
+    }
+
+    public function getDeleteDate(): ?\DateTimeInterface
+    {
+        return $this->delete_date;
+    }
+
+    public function setDeleteDate(\DateTimeInterface $delete_date): self
+    {
+        $this->delete_date = $delete_date;
+
+        return $this;
+    }
+
+    public function getUpdateDate(): ?\DateTimeInterface
+    {
+        return $this->update_date;
+    }
+
+    public function setUpdateDate(\DateTimeInterface $update_date): self
+    {
+        $this->update_date = $update_date;
+
+        return $this;
+    }
+
+    public function getLastConnectionDate(): ?\DateTimeInterface
+    {
+        return $this->last_connection_date;
+    }
+
+    public function setLastConnectionDate(\DateTimeInterface $last_connection_date): self
+    {
+        $this->last_connection_date = $last_connection_date;
+
+        return $this;
+    }
+
+    public function getPictureProfil(): ?string
+    {
+        return $this->picture_profil;
+    }
+
+    public function setPictureProfil(string $picture_profil): self
+    {
+        $this->picture_profil = $picture_profil;
+
+        return $this;
+    }
+
+    public function getPhotographerDescription(): ?string
+    {
+        return $this->photographer_description;
+    }
+
+    public function setPhotographerDescription(string $photographer_description): self
+    {
+        $this->photographer_description = $photographer_description;
+
+        return $this;
+    }
+
+    public function getWebsiteUrl(): ?string
+    {
+        return $this->website_url;
+    }
+
+    public function setWebsiteUrl(string $website_url): self
+    {
+        $this->website_url = $website_url;
+
+        return $this;
+    }
+
+    public function getSocialsNetworks(): ?string
+    {
+        return $this->socials_networks;
+    }
+
+    public function setSocialsNetworks(?string $socials_networks): self
+    {
+        $this->socials_networks = $socials_networks;
+
+        return $this;
+    }
+
+    public function getPseudonym(): ?string
+    {
+        return $this->pseudonym;
+    }
+
+    public function setPseudonym(?string $pseudonym): self
+    {
+        $this->pseudonym = $pseudonym;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }

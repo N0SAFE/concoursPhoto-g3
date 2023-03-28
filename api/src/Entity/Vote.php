@@ -17,29 +17,17 @@ class Vote
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'votes')]
-    private ?Member $member = null;
-
-    #[ORM\ManyToOne(inversedBy: 'votes')]
     private ?Picture $picture = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $vote_date = null;
 
+    #[ORM\ManyToOne(inversedBy: 'votes')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getMember(): ?Member
-    {
-        return $this->member;
-    }
-
-    public function setMember(?Member $member): self
-    {
-        $this->member = $member;
-
-        return $this;
     }
 
     public function getPicture(): ?Picture
@@ -62,6 +50,18 @@ class Vote
     public function setVoteDate(\DateTimeInterface $vote_date): self
     {
         $this->vote_date = $vote_date;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

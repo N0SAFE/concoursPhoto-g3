@@ -20,12 +20,12 @@ class PhotographerCategory
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[ORM\OneToMany(mappedBy: 'photographer_category', targetEntity: Member::class)]
-    private Collection $members;
+    #[ORM\OneToMany(mappedBy: 'photographer_category', targetEntity: User::class)]
+    private Collection $users;
 
     public function __construct()
     {
-        $this->members = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -46,29 +46,29 @@ class PhotographerCategory
     }
 
     /**
-     * @return Collection<int, Member>
+     * @return Collection<int, User>
      */
-    public function getMembers(): Collection
+    public function getUsers(): Collection
     {
-        return $this->members;
+        return $this->users;
     }
 
-    public function addMember(Member $member): self
+    public function addUser(User $user): self
     {
-        if (!$this->members->contains($member)) {
-            $this->members->add($member);
-            $member->setPhotographerCategory($this);
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->setPhotographerCategory($this);
         }
 
         return $this;
     }
 
-    public function removeMember(Member $member): self
+    public function removeUser(User $user): self
     {
-        if ($this->members->removeElement($member)) {
+        if ($this->users->removeElement($user)) {
             // set the owning side to null (unless already changed)
-            if ($member->getPhotographerCategory() === $this) {
-                $member->setPhotographerCategory(null);
+            if ($user->getPhotographerCategory() === $this) {
+                $user->setPhotographerCategory(null);
             }
         }
 
