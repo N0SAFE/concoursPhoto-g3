@@ -10,6 +10,7 @@ import NotFound from "@/views/error/NotFound";
 import OrganizationList from "@/views/BO/organization/List";
 import Header from "@/layout/Header";
 import CompetitionsList from "@/views/BO/competition/List";
+import OrganizationCreate from "@/views/BO/organization/Create";
 
 function Router() {
     return (
@@ -28,6 +29,7 @@ function Router() {
                 </Route>
                 <Route path="organization">
                     <Route path="" element={<OrganizationList />} />
+                    <Route path="create" element={<OrganizationCreate />} />
                 </Route>
                 <Route path="competition">
                     <Route path="" element={<CompetitionsList />} />

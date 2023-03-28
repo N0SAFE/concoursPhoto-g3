@@ -32,7 +32,7 @@ export default function Navbar() {
                 <Dropdown
                     links={[
                         { title: "Liste des concours", to: "/BO/competition" },
-                        { title: "Ajout d'un concour", to: "/BO/competition/create" },
+                        { title: "Ajout d'un concours", to: "/BO/competition/create" },
                     ]}
                     title={"Concours"}
                     requireLogin={isLogged}

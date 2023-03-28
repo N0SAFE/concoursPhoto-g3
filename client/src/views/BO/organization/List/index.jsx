@@ -57,7 +57,7 @@ export default function OrganizationList() {
 
     return (
         <div>
-            <Link to={"/BO/organization/create"}>Créer un utilisateur</Link>
+            <Link to={"/BO/organization/create"}>Créer une organisation</Link>
             <h1>Listes des organisations</h1>
             <BOList
                 entityList={Organizations}
@@ -78,6 +78,7 @@ export default function OrganizationList() {
                 ]}
                 customAction={({ entity, property }) => {
                     if (property === "organization_type") {
+                        console.log(entity);
                         return entity.organization_type.label;
                     }
                     if (property === "competitions") {
