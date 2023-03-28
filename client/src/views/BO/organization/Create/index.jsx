@@ -3,37 +3,35 @@ import BOCreate from "@/components/organisms/BO/Create";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
 
-export default function UserCreate() {
+export default function OrganizationCreate() {
     const apiFetch = useApiFetch();
-
-    const [gendersPossibility, setGendersPossibility] = useState([]);
     const [citiesPossibility, setCitiesPossibility] = useState([]);
     const [postalCodesPossibility, setPostalCodesPossibility] = useState([]);
-    const [rolesPossibility, setRolesPossibility] = useState([]);
+    const [typePossibility, setTypePossibility] = useState([]);
 
-    const getGendersPossibility = () => {
-        apiFetch("/genders", {
-            method: "GET",
-        })
-            .then((r) => r.json())
-            .then((data) => {
-                console.log(data);
-                setGendersPossibility(
-                    data["hydra:member"].map(function (item) {
-                        return { label: item.label, value: item.id };
-                    })
-                );
-            });
+    const [state, setState] = useState(false);
+    const [organizerName, setOrganizerName] = useState("");
+    const [description, setDescription] = useState("");
+    const [address, setAddress] = useState("");
+    const [city, setCity] = useState("");
+    const [postcode, setPostcode] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [email, setEmail] = useState("");
+    const [logo, setLogo] = useState("");
+    const [websiteUrl, setWebsiteUrl] = useState([]);
+    const [type, setType] = useState([]);
+    const [errors, setErrors] = useState({});
+    const onClear = () => {
+        setValue("");
     };
-
-    const getRolesPossibility = () => {
-        apiFetch("/roles", {
+    const getTypePossibility = () => {
+        apiFetch("/organization_types", {
             method: "GET",
         })
             .then((r) => r.json())
             .then((data) => {
                 console.log(data);
-                setRolesPossibility(
+                setTypePossibility(
                     data["hydra:member"].map(function (item) {
                         return { label: item.label, value: item.id };
                     })
@@ -68,58 +66,39 @@ export default function UserCreate() {
                 console.log("data", postcode);
             });
     };
-
-    const [state, setState] = useState(false);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState();
-    const [passwordConfirm, setPasswordConfirm] = useState("");
-    const [firstname, setFirstname] = useState("");
-    const [lastname, setLastname] = useState("");
-    const [address, setAddress] = useState("");
-    const [city, setCity] = useState("");
-    const [postcode, setPostcode] = useState();
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [role, setRole] = useState([]);
-    const [errors, setErrors] = useState({});
-    const [gender, setGender] = useState();
-    const [dateOfBirth, setDateOfBirth] = useState();
-
     useEffect(() => {
-        getGendersPossibility();
-        getRolesPossibility();
+        getTypePossibility();
     }, []);
-
     useEffect(() => {
         getCitiesPossibility();
     }, [postcode, city]);
 
+    console.log("postalCodesPossibility", postalCodesPossibility);
+
     return (
         <div>
-            <h1>Ajout d'un utilisateur</h1>
+            <h1>Ajout d'une organisation</h1>
             <BOCreate
                 handleSubmit={function () {
                     console.log("handleSubmit");
                     console.log("fetch");
                     const data = {
-                        state,
-                        email,
-                        password,
-                        passwordConfirm,
-                        firstname,
-                        lastname,
-                        address,
-                        city,
+                        organizerName: organizerName,
+                        description: description,
+                        address: address,
+                        city: city,
                         postcode: parseInt(postcode),
-                        phoneNumber,
-                        role,
-                        gender: "/api/genders/" + gender.value,
-                        creationDate: new Date().toISOString(),
-                        dateOfBirth,
+                        numberPhone: phoneNumber,
+                        email: email,
+                        state,
+                        logo: logo,
                         country: "France",
-                        isVerified: true,
+                        creationDate: new Date().toISOString(),
+                        websiteUrl,
+                        organizationType: "/api/organization_types/" + type.value,
                     };
                     console.log("data", data);
-                    apiFetch("/users", {
+                    apiFetch("/organizations", {
                         method: "POST",
                         body: JSON.stringify(data),
                         headers: {
@@ -133,21 +112,25 @@ export default function UserCreate() {
                 }}
             >
                 <div>
-                    <label htmlFor="firstname">Prenom</label>
-                    <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} setState={setFirstname} defaultValue={firstname} />
-                    <div>{errors.firstname}</div>
+                    <label htmlFor="organizerName">organizerName</label>
+                    <Input type="text" name="organizerName" label="Nom de l'organisation" extra={{ required: true }} setState={setOrganizerName} />
+                    <div>{errors.organizerName}</div>
                 </div>
                 <div>
-                    <label htmlFor="lastname">Nom</label>
-                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} setState={setLastname} defaultValue={lastname} />
-                    <div>{errors.lastname}</div>
+                    <label htmlFor="description">description</label>
+                    <Input type="text" name="description" label="Description" extra={{ required: true }} setState={setDescription} />
+                    <div>{errors.description}</div>
                 </div>
                 <div>
-                    <label htmlFor="dateOfBirth">dateOfBirth</label>
-                    <Input type="date" name="dateOfBirth" label="Date de Naissance" extra={{ required: true }} setState={setDateOfBirth} defaultValue={dateOfBirth} />
-                    <div>{errors.dateOfBirth}</div>
+                    <label htmlFor="phoneNumber">phoneNumber</label>
+                    <Input type="text" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} setState={setPhoneNumber} />
+                    <div>{errors.phoneNumber}</div>
                 </div>
-
+                <div>
+                    <label htmlFor="logo">logo</label>
+                    <Input type="file" name="logo" label="Logo" setState={setLogo} />
+                    <div>{errors.logo}</div>
+                </div>
                 <div>
                     <label htmlFor="email">email</label>
                     <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} setState={setEmail} defaultValue={email} />
@@ -162,6 +145,16 @@ export default function UserCreate() {
                     <label htmlFor="address">address</label>
                     <Input type="text" name="address" label="Adresse" defaultValue={address} extra={{ required: true }} setState={setAddress} />
                     <div>{errors.address}</div>
+                </div>
+                <div>
+                    <label htmlFor="websiteUrl">websiteUrl</label>
+                    <Input type="text" name="websiteUrl" label="WebsiteUrl" defaultValue={websiteUrl} extra={{ required: true }} setState={setWebsiteUrl} />
+                    <div>{errors.websiteUrl}</div>
+                </div>
+                <div>
+                    <label htmlFor="type">Type</label>
+                    <Input type="select" name="type" label="Type" defaultValue={type} extra={{ required: true, options: typePossibility, required: true }} setState={setType} />
+                    <div>{errors.type}</div>
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
                     <div>
@@ -207,36 +200,6 @@ export default function UserCreate() {
                         />
                         <div>{errors.postalCode}</div>
                     </div>
-                </div>
-                <div>
-                    <label htmlFor="phoneNumber">phoneNumber</label>
-                    <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} setState={setPhoneNumber} defaultValue={phoneNumber} />
-                    <div>{errors.phoneNumber}</div>
-                </div>
-                <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="role">role</label>
-                        <Input
-                            type="select"
-                            name="role"
-                            label="Rôle"
-                            defaultValue={role}
-                            extra={{ required: true, options: rolesPossibility, required: true, isMulti: true, closeMenuOnSelect: false }}
-                            setState={setRole}
-                        />
-                        <div>{errors.role}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="gender">genre</label>
-                        <Input type="select" name="gender" label="Genre" defaultValue={gender} extra={{ required: true, options: gendersPossibility, required: true }} setState={setGender} />
-                        <div>{errors.gender}</div>
-                    </div>
-                </div>
-                <div>
-                    <label htmlFor="password">password</label>
-                    <Input type="password" name="password" label="Mot de passe" extra={{ required: true }} setState={setPassword} defaultValue={password} />
-                    <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" extra={{ required: true }} setState={setPasswordConfirm} defaultValue={passwordConfirm} />
-                    <div>{errors.password}</div>
                 </div>
             </BOCreate>
         </div>

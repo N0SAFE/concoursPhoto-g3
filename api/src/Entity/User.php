@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -52,7 +53,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups('user')]
     #[ORM\Column(length: 255)]
-    private ?string $postcode = null;
+    private ?int $postcode = null;
 
     #[Groups('user')]
     #[ORM\Column(length: 255)]
@@ -222,12 +223,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getPostcode(): ?string
+    public function getPostcode(): ?int
     {
         return $this->postcode;
     }
 
-    public function setPostcode(string $postcode): self
+    public function setPostcode(int $postcode): self
     {
         $this->postcode = $postcode;
 
