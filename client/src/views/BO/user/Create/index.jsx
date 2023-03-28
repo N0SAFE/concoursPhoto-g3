@@ -4,165 +4,6 @@ import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
 
 export default function UserCreate() {
-    const formFields = [
-        {
-            name: "email",
-            type: "email",
-            label: "Adresse mail",
-            extra: {
-                required: true,
-            },
-        },
-        {
-            name: "state",
-            type: "checkbox",
-            label: "Actif",
-            defaultValue: true,
-            extra: {
-                required: true,
-            },
-        },
-        {
-            name: "gender",
-            type: "select",
-            label: "Genre",
-            extra: {
-                required: true,
-                options: [
-                    {
-                        value: "1",
-                        label: "Homme",
-                    },
-                    {
-                        value: "2",
-                        label: "Femme",
-                    },
-                ],
-                multiple: false,
-            },
-        },
-        {
-            name: "firstName",
-            type: "text",
-            label: "Prénom",
-            extra: {
-                required: true,
-            },
-        },
-        {
-            name: "lastName",
-            type: "text",
-            label: "Nom",
-            extra: {
-                required: true,
-            },
-        },
-        {
-            name: "address",
-            type: "text",
-            label: "Adresse",
-            defaultValue: "1 rue de la paix",
-            extra: {
-                required: true,
-            },
-        },
-        {
-            name: "role",
-            type: "select",
-            label: "Rôle",
-            defaultValue: [
-                {
-                    value: "1",
-                    label: "Administrateur",
-                },
-                {
-                    value: "2",
-                    label: "Utilisateur",
-                },
-            ],
-            extra: {
-                required: true,
-                options: [
-                    {
-                        value: "1",
-                        label: "Administrateur",
-                    },
-                    {
-                        value: "2",
-                        label: "Utilisateur",
-                    },
-                ],
-                required: true,
-                isMulti: true,
-                closeMenuOnSelect: false,
-            },
-        },
-        {
-            name: "city",
-            type: "select",
-            label: "Ville",
-            extra: {
-                required: true,
-                options: [
-                    {
-                        label: "Paris",
-                        codePostal: "75000",
-                        value: "Paris",
-                    },
-                    {
-                        label: "Lyon",
-                        codePostal: "69000",
-                        value: "Lyon",
-                    },
-                ],
-                multiple: false,
-            },
-        },
-        {
-            name: "postalCode",
-            type: "select",
-            label: "Code postal",
-            extra: {
-                required: true,
-                options: [
-                    {
-                        value: "1",
-                        label: "75000",
-                    },
-                    {
-                        value: "2",
-                        label: "69000",
-                    },
-                ],
-                multiple: false,
-            },
-        },
-        {
-            name: "password",
-            type: "password",
-            label: "Mot de passe",
-            extra: {
-                required: true,
-            },
-        },
-        {
-            name: "passwordConfirm",
-            type: "password",
-            label: "Confirmation du mot de passe",
-            extra: {
-                required: true,
-            },
-        },
-        {
-            name: "phoneNumber",
-            type: "tel",
-            label: "Numéro de téléphone",
-            extra: {
-                required: true,
-            },
-        },
-    ];
-    
     const apiFetch = useApiFetch()
     
     const [gendersPossibility, setGendersPossibility] = useState([]);
@@ -173,25 +14,27 @@ export default function UserCreate() {
     const getGendersPossibility = () => {
         apiFetch("/genders", {
             method: "GET",
-        }).then((response) => {}).then((data) => {
-            setGendersPossibility(data);
+        }).then(r => r.json()).then((data) => {
+            console.log(data)
+            setGendersPossibility(data['hydra:member'].map(function(item){return {label: item.label, value: item.id}}));
         });
     };
     
     const getRolesPossibility = () => {
         apiFetch("/roles", {
             method: "GET",
-        }).then((response) => {}).then((data) => {
-            setRolesPossibility(data);
+        }).then(r => r.json()).then((data) => {
+            console.log(data)
+            setRolesPossibility(data['hydra:member'].map(function(item){return {label: item.label, value: item.id}}));
         });
     };
     
     const getCitiesPossibility = () => {
-        console.log("postalCode", postalCode)
+        console.log("postalCode", postcode)
         console.log("city", city)
         
         const filter = [
-            postalCode ? `codePostal=${postalCode}` : "",
+            postcode ? `codePostal=${postcode}` : "",
             city ? `nom=${city}` : "",
         ]
         
@@ -208,21 +51,19 @@ export default function UserCreate() {
             }, [[], []]);
             setCitiesPossibility(cityPossibility);
             setPostalCodesPossibility(postalCodesPossibility.map(c => ({label: c, value: c})));
-            console.log("data", postalCode)
+            console.log("data", postcode)
         });
     }
-    
-    console.log(citiesPossibility)
     
     const [state, setState] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState();
     const [passwordConfirm, setPasswordConfirm] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
+    const [firstname, setFirstname] = useState("");
+    const [lastname, setLastname] = useState("");
     const [address, setAddress] = useState("");
     const [city, setCity] = useState("");
-    const [postalCode, setPostalCode] = useState();
+    const [postcode, setPostcode] = useState();
     const [phoneNumber, setPhoneNumber] = useState("");
     const [role, setRole] = useState([]);
     const [errors, setErrors] = useState({});
@@ -235,7 +76,7 @@ export default function UserCreate() {
     
     useEffect(() => {
         getCitiesPossibility();
-    }, [postalCode, city]);
+    }, [postcode, city]);
 
     return (
         <div>
@@ -243,20 +84,45 @@ export default function UserCreate() {
             <BOCreate
                 handleSubmit={function () {
                     console.log("handleSubmit");
-                    fetch(function(){
-                        
-                    })
+                    console.log("fetch")
+                        const data = {
+                            state,
+                            email,
+                            password,
+                            passwordConfirm,
+                            firstname,
+                            lastname,
+                            address,
+                            city,
+                            postcode,
+                            phoneNumber,
+                            role,
+                            gender: "/api/genders/" + gender.value,
+                            creationDate: new Date().toISOString(),
+                            dateOfBirth: new Date().toISOString(),
+                            country: "France"
+                        }
+                        console.log("data", data)
+                        apiFetch("/users", {
+                            method: "POST",
+                            body: JSON.stringify(data),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        }).then(r => r.json()).then((data) => {
+                            console.log(data)
+                        }); 
                 }}
             >
                 <div>
-                    <label htmlFor="firstName">Prenom</label>
-                    <Input type="text" name="firstName" label="Prénom" extra={{ required: true }} setState={setFirstName} defaultValue={firstName} />
-                    <div>{errors.firstName}</div>
+                    <label htmlFor="firstname">Prenom</label>
+                    <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} setState={setFirstname} defaultValue={firstname} />
+                    <div>{errors.firstname}</div>
                 </div>
                 <div>
-                    <label htmlFor="lastName">Nom</label>
-                    <Input type="text" name="lastName" label="Nom" extra={{ required: true }} setState={setLastName} defaultValue={lastName} />
-                    <div>{errors.lastName}</div>
+                    <label htmlFor="lastname">Nom</label>
+                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} setState={setLastname} defaultValue={lastname} />
+                    <div>{errors.lastname}</div>
                 </div>
                 <div>
                     <label htmlFor="email">email</label>
@@ -281,7 +147,7 @@ export default function UserCreate() {
                     </div>
                     <div>
                         <label htmlFor="postalCode">postalCode</label>
-                        <Input type="select" name="postalCode" label="Code postal" extra={{ clearable: true, required: true, options: postalCodesPossibility, multiple: false, onInputChange: (item, {action}) => {if(action === "input-change") {setPostalCode(item)}} }} setState={(item) => setPostalCode(item.label)} defaultValue={postalCode} />
+                        <Input type="select" name="postalCode" label="Code postal" extra={{ clearable: true, required: true, options: postalCodesPossibility, multiple: false, onInputChange: (item, {action}) => {if(action === "input-change") {setPostcode(item)}} }} setState={(item) => setPostcode(item.label)} defaultValue={postcode} />
                         <div>{errors.postalCode}</div>
                     </div>
                 </div>
@@ -290,10 +156,17 @@ export default function UserCreate() {
                     <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} setState={setPhoneNumber} defaultValue={phoneNumber} />
                     <div>{errors.phoneNumber}</div>
                 </div>
-                <div>
-                    <label htmlFor="role">role</label>
-                    <Input type="select" name="role" label="Rôle" defaultValue={role} extra={{ required: true, options: [{ value: "1", label: "Administrateur" }, { value: "2", label: "Utilisateur" }], required: true, isMulti: true, closeMenuOnSelect: false }} setState={setRole} />
-                    <div>{errors.role}</div>
+                <div style={{display: "flex", gap: "30px"}}>
+                    <div>
+                        <label htmlFor="role">role</label>
+                        <Input type="select" name="role" label="Rôle" defaultValue={role} extra={{ required: true, options: rolesPossibility, required: true, isMulti: true, closeMenuOnSelect: false }} setState={setRole} />
+                        <div>{errors.role}</div>
+                    </div>
+                    <div>
+                        <label htmlFor="gender">genre</label>
+                        <Input type="select" name="gender" label="Genre" defaultValue={gender} extra={{ required: true, options: gendersPossibility, required: true }} setState={setGender} />
+                        <div>{errors.gender}</div>
+                    </div>
                 </div>
                 <div>
                     <label htmlFor="password">password</label>

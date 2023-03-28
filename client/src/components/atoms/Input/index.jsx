@@ -1,7 +1,7 @@
 import style from "@/components/atoms/Input/style.module.scss";
 import Select from "react-select";
 
-export default function Input({ type, name, defaultValue, extra, setState }) {
+export default function Input({ type, name, defaultValue, extra, setState = function (){}}) {
     switch (type) {
         case "email":
             return <input className={style.componemtInput} type="email" {...extra} name={name} onChange={(e) => setState(e.target.value)} defaultValue={defaultValue} />;
