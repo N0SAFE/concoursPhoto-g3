@@ -39,14 +39,14 @@ class Picture
     #[ORM\Column]
     private ?int $price_rank = null;
 
-    #[ORM\ManyToOne(inversedBy: 'pictures')]
-    private ?Member $member = null;
-
     #[ORM\OneToMany(mappedBy: 'picture', targetEntity: Vote::class)]
     private Collection $votes;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
     private ?Competition $competition = null;
+
+    #[ORM\ManyToOne(inversedBy: 'pictures')]
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -142,18 +142,6 @@ class Picture
         return $this;
     }
 
-    public function getMember(): ?Member
-    {
-        return $this->member;
-    }
-
-    public function setMember(?Member $member): self
-    {
-        $this->member = $member;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Vote>
      */
@@ -192,6 +180,18 @@ class Picture
     public function setCompetition(?Competition $competition): self
     {
         $this->competition = $competition;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

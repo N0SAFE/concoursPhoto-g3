@@ -17,9 +17,6 @@ class MemberOfTheJury
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'memberOfTheJuries')]
-    private ?Member $member = null;
-
-    #[ORM\ManyToOne(inversedBy: 'memberOfTheJuries')]
     private ?Competition $competition = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -31,21 +28,12 @@ class MemberOfTheJury
     #[ORM\Column(length: 255)]
     private ?string $theFunction = null;
 
+    #[ORM\ManyToOne(inversedBy: 'memberOfTheJuries')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getMember(): ?Member
-    {
-        return $this->member;
-    }
-
-    public function setMember(?Member $member): self
-    {
-        $this->member = $member;
-
-        return $this;
     }
 
     public function getCompetition(): ?Competition
@@ -92,6 +80,18 @@ class MemberOfTheJury
     public function setTheFunction(string $theFunction): self
     {
         $this->theFunction = $theFunction;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
