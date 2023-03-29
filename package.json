@@ -6,7 +6,7 @@
   "scripts": {
     "deployment": "npm run install:prod && concurrently \"npm run migration\" \"npm run build\"",
     "migration": "npm run migration:api",
-    "migration:api": "cd api && php bin/console doctrine:migration:migrate",
+    "migration:api": "cd api && php bin/console doctrine:migration:migrate --no-interaction",
     "build": "npm run build:client",
     "build:client": "cd client && npm run build",
     "install": "concurrently \"npm run install:api\" \"npm run install:client\"",
