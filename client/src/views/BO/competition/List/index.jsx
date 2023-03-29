@@ -4,9 +4,9 @@ import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
 
 export default function CompetitionsList() {
-    const [Competitions, setCompetitions] = useState([]);
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
+    const [competitions, setCompetitions] = useState([]);
 
     function getCompetitions() {
         apiFetch("/competitions", {
@@ -17,11 +17,10 @@ export default function CompetitionsList() {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                console.log(data["hydra:member"]);
+                console.log(data);
                 setCompetitions(data["hydra:member"]);
             })
             .catch((error) => {
@@ -56,16 +55,16 @@ export default function CompetitionsList() {
 
     return (
         <div>
-            <Link to={"/BO/competitions/create"}>Créer un concour</Link>
-            <h1>Listes des concours</h1>
+            <Link to={"/BO/competitions/create"}>Créer un concours</Link>
+            <h1>Liste des concours</h1>
             <BOList
-                entityList={Competitions}
+                entityList={competitions}
                 fields={[
                     { property: "id", display: "ID" },
                     { property: "state", display: "Statut" },
                     { property: "competition_name", display: "Nom" },
                     { property: "description", display: "description" },
-                    { property: "rules", display: "Régle" },
+                    { property: "rules", display: "Règlement" },
                     { property: "endowments", display: "Dotation" },
                     { property: "creation_date", display: "Date de création" },
                     { property: "publication_date", display: "Date de publication" },
@@ -81,28 +80,28 @@ export default function CompetitionsList() {
                         });
                     }
                     if (property === "voting_start_date") {
-                        return new Date(entity.creation_date).toLocaleDateString("fr-FR", {
+                        return new Date(entity.voting_start_date).toLocaleDateString("fr-FR", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
                         });
                     }
                     if (property === "publication_date") {
-                        return new Date(entity.creation_date).toLocaleDateString("fr-FR", {
+                        return new Date(entity.publication_date).toLocaleDateString("fr-FR", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
                         });
                     }
                     if (property === "publication_start_date") {
-                        return new Date(entity.creation_date).toLocaleDateString("fr-FR", {
+                        return new Date(entity.publication_start_date).toLocaleDateString("fr-FR", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
                         });
                     }
                     if (property === "state") {
-                        return entity.state === "validated" ? "Validée" : "En attente";
+                        return entity.state ? "Validée" : "En attente";
                     }
                     return entity[property];
                 }}

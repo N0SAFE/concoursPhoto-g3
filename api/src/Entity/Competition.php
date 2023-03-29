@@ -12,13 +12,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ApiResource (normalizationContext: ['groups' => ['competition']])]
-
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('competition')]
     private ?int $id = null;
 
     #[ORM\Column]
@@ -30,12 +30,10 @@ class Competition
     private ?string $competition_name = null;
 
     #[ORM\Column(length: 255)]
-    
     private ?string $competition_visual = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups('competition')]
-
     private ?string $description = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -71,34 +69,45 @@ class Competition
     private ?\DateTimeInterface $voting_start_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('competition')]
     private ?\DateTimeInterface $voting_end_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('competition')]
     private ?\DateTimeInterface $results_date = null;
 
     #[ORM\Column]
+    #[Groups('competition')]
     private ?float $weighting_of_jury_votes = null;
 
     #[ORM\Column]
+    #[Groups('competition')]
     private ?int $number_of_max_votes = null;
 
     #[ORM\Column]
+    #[Groups('competition')]
     private ?int $number_of_prices = null;
 
     #[ORM\Column]
+    #[Groups('competition')]
     private ?int $min_age_criteria = null;
 
     #[ORM\Column]
+    #[Groups('competition')]
     private ?int $max_age_criteria = null;
 
     #[ORM\ManyToMany(targetEntity: Theme::class, inversedBy: 'competitions')]
+    #[Groups('competition')]
     private Collection $theme;
 
     #[ORM\ManyToMany(targetEntity: ParticipantCategory::class, inversedBy: 'competitions')]
+    #[Groups('competition')]
     private Collection $participant_category;
 
+    #[Groups('competition')]
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     private ?Organization $organization = null;
+
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 

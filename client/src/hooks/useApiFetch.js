@@ -17,10 +17,10 @@ export default function () {
             return response
         }
         try {
-            if (response.status === 401 || response.status === 403) {
+            if (response.status === 401) {
                 const data = await response.json();
-                if (((response.status === 401 && data.message === "Expired JWT Token") || (reponse.status === 403 && data.message === "Missing token")) && path !== "/token/refresh") {
-                    const isLogged = checkLogged();
+                if ((data.message === "Expired JWT Token" || data.message === "Missing token") && path !== "/token/refresh") {
+                    const isLogged = await checkLogged();
                     if(!isLogged){
                         navigate("/login");
                         return response;

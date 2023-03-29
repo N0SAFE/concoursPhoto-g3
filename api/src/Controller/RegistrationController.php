@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Role;
 use App\Repository\GenderRepository;
+use App\Repository\RoleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,9 +46,10 @@ class RegistrationController extends AbstractController
         $user->setEmail($decoded->email);
         $user->setPhoneNumber($decoded->phone_number);
         $user->setPassword($hashedPassword);
+        $user->setIsVerified($decoded->is_verified);
 
-        $user->setUsername($decoded->email);
-        $user->setRoles([$decoded->roles]);
+        $user->setPseudonym($decoded->email);
+        $user->setRoles([$decoded->role]);
 
         $em->persist($user);
         $em->flush();
