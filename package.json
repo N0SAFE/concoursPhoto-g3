@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deployment": "npm run install:prod && concurrently \"npm run migration\" \"npm run build\""
+    "deployment": "npm run install:prod && concurrently \"npm run migration\" \"npm run build\"",
     "migration": "npm run migration:api",
     "migration:api": "cd api && php bin/console doctrine:migration:migrate",
     "build": "npm run build:client",
