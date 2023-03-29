@@ -21,6 +21,6 @@ jobs:
                   echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
                   ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
             - name: connect and pull
-              run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git fetch --all && git reset --hard origin/${{ secrets.MAIN_BRANCH }} && npm run install:prod && npm run build && exit"
+              run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git fetch --all && git reset --hard origin/${{ secrets.MAIN_BRANCH }} && npm run deployment && exit"
             - name: cleanup
               run: rm -rf ~/.ssh
