@@ -15,7 +15,7 @@ export default function UserCreate() {
         apiFetch("/genders", {
             method: "GET",
         })
-            .then((r) => r.json())
+               .then((r) => r.json())
             .then((data) => {
                 console.log(data);
                 setGendersPossibility(
@@ -40,35 +40,33 @@ export default function UserCreate() {
                 );
             });
     };
-
-    const getCitiesPossibility = () => {
-        console.log("postalCode", postcode);
-        console.log("city", city);
-
-        const filter = [postcode ? `codePostal=${postcode}` : "", city ? `nom=${city}` : ""];
-
-        console.log(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`);
-
-        fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                data.length = 30;
-                const [cityPossibility, postalCodesPossibility] = data.reduce(
-                    ([cityResponse, postalCodeResponse], c) => {
-                        cityResponse.push({ label: c.nom, value: c.code });
-                        postalCodeResponse.push(...c.codesPostaux);
-                        return [cityResponse, postalCodeResponse];
-                    },
-                    [[], []]
-                );
-                setCitiesPossibility(cityPossibility);
-                setPostalCodesPossibility(postalCodesPossibility.map((c) => ({ label: c, value: c })));
-                console.log("data", postcode);
-            });
-    };
-
+    
+    const getCitiesPossibility = ({_cityname, _postcode} = {}) => {
+        console.log("postalCode", postcode)
+        console.log("city", city)
+        
+        const filter = [
+            postcode && postcode.value ? `codePostal=${postcode.value}` : "" || _postcode ? `codePostal=${_postcode}` : "",
+            city && city.value ? `code=${city.value}` : "" || _cityname ? `nom=${_cityname}` : "",
+        ].filter((f) => f !== "");
+        
+        console.log(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`)
+        
+        fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`).then((response) => {
+            return response.json();
+        }).then((data) => {
+            data.length = 30
+            const [cityPossibility, postalCodesPossibility] = data.reduce(([cityResponse, postalCodeResponse], c) => {
+                cityResponse.push({label: c.nom, value: c.code});
+                postalCodeResponse.push(...c.codesPostaux);
+                return [cityResponse, postalCodeResponse];
+            }, [[], []]);
+            setCitiesPossibility(cityPossibility);
+            setPostalCodesPossibility(postalCodesPossibility.map(c => ({label: c, value: c})));
+            console.log("data", data)
+        });
+    }
+    
     const [state, setState] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState();
@@ -76,14 +74,14 @@ export default function UserCreate() {
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [address, setAddress] = useState("");
-    const [city, setCity] = useState("");
-    const [postcode, setPostcode] = useState();
+    const [city, setCity] = useState({value: ""});
+    const [postcode, setPostcode] = useState({value: ""});
     const [phoneNumber, setPhoneNumber] = useState("");
     const [role, setRole] = useState([]);
     const [errors, setErrors] = useState({});
     const [gender, setGender] = useState();
     const [dateOfBirth, setDateOfBirth] = useState();
-
+    
     useEffect(() => {
         getGendersPossibility();
         getRolesPossibility();
@@ -99,37 +97,35 @@ export default function UserCreate() {
             <BOCreate
                 handleSubmit={function () {
                     console.log("handleSubmit");
-                    console.log("fetch");
-                    const data = {
-                        state,
-                        email,
-                        password,
-                        passwordConfirm,
-                        firstname,
-                        lastname,
-                        address,
-                        city,
-                        postcode: parseInt(postcode),
-                        phoneNumber,
-                        role,
-                        gender: "/api/genders/" + gender.value,
-                        creationDate: new Date().toISOString(),
-                        dateOfBirth,
-                        country: "France",
-                        isVerified: true,
-                    };
-                    console.log("data", data);
-                    apiFetch("/users", {
-                        method: "POST",
-                        body: JSON.stringify(data),
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    })
-                        .then((r) => r.json())
-                        .then((data) => {
-                            console.log(data);
-                        });
+                    console.log("fetch")
+                        const data = {
+                            state,
+                            email,
+                            password,
+                            passwordConfirm,
+                            firstname,
+                            lastname,
+                            address,
+                            city: city.value,   
+                            postcode: parseInt(postcode.value),
+                            phoneNumber,
+                            role,
+                            gender: "/api/genders/" + gender.value,
+                            creationDate: new Date().toISOString(),
+                            dateOfBirth: new Date().toISOString(),
+                            country: "France",
+                            isVerified: true,
+                        }
+                        console.log("data", data)
+                        apiFetch("/users", {
+                            method: "POST",
+                            body: JSON.stringify(data),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        }).then(r => r.json()).then((data) => {
+                            console.log(data)
+                        }); 
                 }}
             >
                 <div>
@@ -166,45 +162,12 @@ export default function UserCreate() {
                 <div style={{ display: "flex", gap: "30px" }}>
                     <div>
                         <label htmlFor="city">city</label>
-                        <Input
-                            type="select"
-                            name="city"
-                            label="Ville"
-                            extra={{
-                                clearable: true,
-                                required: true,
-                                options: citiesPossibility,
-                                multiple: false,
-                                onInputChange: (item, { action }) => {
-                                    if (action === "input-change") {
-                                        setCity(item);
-                                    }
-                                },
-                            }}
-                            setState={(item) => setCity(item.label)}
-                        />
+                        <Input type="select" name="city" label="Ville" extra={{ isClearable: true, required: true, options: citiesPossibility, multiple: false, onInputChange: (text, {action}) => {if(action === "input-change"){getCitiesPossibility({_cityname: text})}}}} setState={(item) => setCity(item)}/>
                         <div>{errors.city}</div>
                     </div>
                     <div>
                         <label htmlFor="postalCode">postalCode</label>
-                        <Input
-                            type="select"
-                            name="postalCode"
-                            label="Code postal"
-                            extra={{
-                                clearable: true,
-                                required: true,
-                                options: postalCodesPossibility,
-                                multiple: false,
-                                onInputChange: (item, { action }) => {
-                                    if (action === "input-change") {
-                                        setPostcode(item);
-                                    }
-                                },
-                            }}
-                            setState={(item) => setPostcode(item.label)}
-                            defaultValue={postcode}
-                        />
+                        <Input type="select" name="postalCode" label="Code postal" extra={{ isClearable: true, required: true, options: postalCodesPossibility, multiple: false, onInputChange: (postcode, {action}) => {if(postcode.length === 5){if(action === "input-change") {getCitiesPossibility({_postcode: postcode})}}} }} setState={(item) => setPostcode(item)} defaultValue={postcode} />
                         <div>{errors.postalCode}</div>
                     </div>
                 </div>
