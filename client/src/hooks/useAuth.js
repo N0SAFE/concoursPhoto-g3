@@ -18,11 +18,12 @@ function login(checkLogged, { email, password }) {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                return checkLogged().then((isLogged) => {
+                return checkLogged().then(({isLogged, me}) => {
                     if(!isLogged){
                         throw new Error("an error occured");
                     }
-                    resolve();
+                    console.log(me);
+                    resolve(me);
                 })
             }).catch(error => {
                 console.error(error);

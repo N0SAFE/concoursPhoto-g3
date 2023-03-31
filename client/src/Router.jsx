@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Login from "@/views/auth/Login";
 import Logout from "@/views/auth/Logout";
 import UserList from "@/views/BO/user/List";
@@ -12,30 +12,36 @@ import Header from "@/layout/Header";
 import CompetitionsList from "@/views/BO/competition/List";
 import OrganizationCreate from "@/views/BO/organization/Create";
 import CompetitionCreate from "@/views/BO/competition/Create";
+import GuardedRoute from "./layout/GuardedRoute.jsx";
+import { Navigate } from "react-router-dom";
 
 function Router() {
     return (
         <Routes>
-            <Route path="/" element={<Home />} />
             <Route path="/" element={<Header />}>
                 <Route path="login" element={<Login />} />
                 <Route path="logout" element={<Logout />} />
             </Route>
-            <Route path="/BO" element={<Header />}>
-                <Route path="" element={<BO />} />
-                <Route path="user">
-                    <Route path="" element={<UserList />} />
-                    <Route path=":id" element={<UserEdit />} />
-                    <Route path="create" element={<UserCreate />} />
+            <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={<Navigate to="/login" replace={true} />}/>}>
+                <Route path="" element={<Header />}>
+                    <Route element={<BO />} />
+                    <Route path="user">
+                        <Route path="" element={<UserList />} />
+                        <Route path=":id" element={<UserEdit />} />
+                        <Route path="create" element={<UserCreate />} />
+                    </Route>
+                    <Route path="organization">
+                        <Route path="" element={<OrganizationList />} />
+                        <Route path="create" element={<OrganizationCreate />} />
+                    </Route>
+                    <Route path="competition">
+                        <Route path="" element={<CompetitionsList />} />
+                        <Route path="create" element={<CompetitionCreate />} />
+                    </Route>
                 </Route>
-                <Route path="organization">
-                    <Route path="" element={<OrganizationList />} />
-                    <Route path="create" element={<OrganizationCreate />} />
-                </Route>
-                <Route path="competition">
-                    <Route path="" element={<CompetitionsList />} />
-                    <Route path="create" element={<CompetitionCreate />} />
-                </Route>
+            </Route>
+            <Route path="/" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/login" replace={true} />}/>}>
+                <Route path="" element={<Home />} />
             </Route>
             <Route path="*" element={<NotFound />} />
         </Routes>

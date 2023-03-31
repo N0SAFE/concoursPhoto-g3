@@ -18,7 +18,6 @@ function AuthProvider(props) {
             credentials: 'include',
         })
         if(response.ok){
-            setIsLogged(true);
             const whoami = await fetch(new URL(import.meta.env.VITE_API_URL + "/whoami").href, {
                 method: "GET",
                 headers: {
@@ -28,11 +27,13 @@ function AuthProvider(props) {
             })
             const data = await whoami.json();
             setMe(data);
+            setIsLogged(true);
+            return {isLogged: true, me: data}
         }else {
             setIsLogged(false);
             setMe(null);
+            return {isLogged: false, me: null}
         }
-        return response.ok
     }
     
     useEffect(() => {
