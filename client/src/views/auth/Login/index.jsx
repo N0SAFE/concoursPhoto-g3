@@ -13,8 +13,13 @@ export default function Login() {
         e.preventDefault();
         const { email, password } = e.target.elements;
         login({ email: email.value, password: password.value })
-            .then(function () {
-                navigate("/BO");
+            .then(function (me) {
+                console.log(me)
+                if (me.roles.includes("ROLE_ADMIN")) {
+                    navigate("/BO");
+                } else {
+                    navigate("/");
+                }
                 console.log("Logged in");
             })
             .catch(function (error) {
