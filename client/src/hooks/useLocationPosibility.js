@@ -10,7 +10,7 @@ const getRegionsPossibility = (event, state, { name, code } = {}) => {
             code ? `code=${code}` : "" || state.actual.value.codeRegion ? `code=${state.actual.value.codeRegion}` : "",
             name ? `nom=${name}` : "" || state.actual.value.region ? `nom=${state.actual.value.region}` : "",
         ].filter((c) => c !== "");
-        console.log(`https://geo.api.gouv.fr/regions?${filter.join("&")}`);
+        console.debug(`https://geo.api.gouv.fr/regions?${filter.join("&")}`);
         promiseArray.push(fetch(`https://geo.api.gouv.fr/regions?${filter.join("&")}`)
             .then((response) => {
                 return response.json();
@@ -44,7 +44,7 @@ const getDepartmentsPossibility = (event, state, { codeRegion, name, code } = {}
             code ? `code=${code}` : "" || state.actual.value.codeDepartment ? `code=${state.actual.value.codeDepartment}` : "",
             name ? `nom=${name}` : "" || state.actual.value.department ? `nom=${state.actual.value.department}` : "",
         ].filter((c) => c !== "");
-        console.log(`https://geo.api.gouv.fr/departements?${filter.join("&")}`);
+        console.debug(`https://geo.api.gouv.fr/departements?${filter.join("&")}`);
         promiseArray.push(fetch(`https://geo.api.gouv.fr/departements?${filter.join("&")}`)
             .then((response) => {
                 return response.json();
@@ -77,7 +77,7 @@ const getCitiesPossibility = async (event, state, { codeRegion, codeDepartment, 
             name ? `nom=${name}` : "" || state.actual.value.city ? `nom=${state.actual.value.city}` : "",
             postcode ? `codePostal=${postcode}` : "" || state.actual.value.postcode ? `codePostal=${state.actual.value.postcode}` : "",
         ].filter((c) => c !== "");
-        console.log("https://geo.api.gouv.fr/communes?" + filter.join("&") + "");
+        console.debug("https://geo.api.gouv.fr/communes?" + filter.join("&") + "");
         promiseArray.push(
             fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}`)
                 .then((response) => {

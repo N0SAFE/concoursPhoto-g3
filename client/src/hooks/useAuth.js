@@ -22,7 +22,7 @@ function login(checkLogged, { email, password }) {
                     if(!isLogged){
                         throw new Error("an error occured");
                     }
-                    console.log(me);
+                    console.debug(me);
                     resolve(me);
                 })
             }).catch(error => {
@@ -58,7 +58,7 @@ function register(checkLogged, { email, password, passwordverify, firstname, las
             return login(checkLogged, { email, password })
         })
         .catch(error => {
-            console.log(error);
+            console.debug(error);
         });
 }
 

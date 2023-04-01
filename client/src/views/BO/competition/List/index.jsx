@@ -20,7 +20,7 @@ export default function CompetitionsList() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                console.log(data);
+                console.debug(data);
                 setCompetitions(data["hydra:member"]);
             })
             .catch((error) => {

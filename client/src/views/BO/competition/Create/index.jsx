@@ -84,7 +84,7 @@ export default function CompetitionCreate() {
             method: "GET",
             headers: { "Content-Type": "multipart/form-data" },
         }).then(r => r.json()).then((data) => {
-            console.log(data);
+            console.debug(data);
             setParticipantCategoryPossibility(data['hydra:member'].map(function(item){return {label: item.label, value: item.id}}));
         });
     };
@@ -93,7 +93,7 @@ export default function CompetitionCreate() {
         apiFetch("/organizations", {
             method: "GET",
         }).then(r => r.json()).then((data) => {
-            console.log(data);
+            console.debug(data);
             setOrganizationNamePossibility(data['hydra:member'].map(function(item){return {organizer_name: item.organizer_name, value: item.id}}));
         });
     }
@@ -150,8 +150,8 @@ export default function CompetitionCreate() {
             <h1>Ajout d'un concours</h1>
             <BOCreate
                 handleSubmit={function () {
-                    console.log("handleSubmit");
-                    console.log("fetch")
+                    console.debug("handleSubmit");
+                    console.debug("fetch")
                     const data = {
                         state,
                         competitionName,
@@ -180,7 +180,7 @@ export default function CompetitionCreate() {
                         departmentCriteria: [departmentCriteria.value],
                         regionCriteria: [regionCriteria.value],
                     }
-                    console.log("data", data)
+                    console.debug("data", data)
                     apiFetch("/competitions", {
                         method: "POST",
                         body: JSON.stringify(data),
@@ -188,7 +188,7 @@ export default function CompetitionCreate() {
                             "Content-Type": "application/json",
                         },
                     }).then(r => r.json()).then((data) => {
-                        console.log(data);
+                        console.debug(data);
                     });
                 }}
             >

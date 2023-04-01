@@ -18,11 +18,11 @@ export default function OrganizationList() {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log(data);
+                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                console.log(data["hydra:member"]);
+                console.debug(data["hydra:member"]);
                 setOrganizations(data["hydra:member"]);
             })
             .catch((error) => {
@@ -78,7 +78,7 @@ export default function OrganizationList() {
                 ]}
                 customAction={({ entity, property }) => {
                     if (property === "organization_type") {
-                        console.log(entity);
+                        console.debug(entity);
                         return entity.organization_type.label;
                     }
                     if (property === "competitions") {
