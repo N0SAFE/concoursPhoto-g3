@@ -8,7 +8,7 @@ if(!import.meta.env.VITE_API_URL) {
 
 console.debug = () => {}
 
-if(import.meta.env.mode === 'development') {
+if(import.meta.env.MODE === 'development') {
   console.warn('You are running the app in development mode')
   console.debug = console.log
 }
