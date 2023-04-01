@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
 import React from "react";
 import style from "./style.module.scss";
 
-export default function BOCreate({handleSubmit, children}) {
+export default function BOForm({handleSubmit, children}) {
     const refs = {};
 
     return (
