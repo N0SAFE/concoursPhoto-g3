@@ -4,6 +4,7 @@ import Logout from "@/views/auth/Logout";
 import UserList from "@/views/BO/user/List";
 import UserEdit from "@/views/BO/user/Edit";
 import UserCreate from "@/views/BO/user/Create";
+import UserSee from "@/views/BO/user/See"
 import BO from "@/views/BO";
 import Home from "@/views/Home";
 import NotFound from "@/views/error/NotFound";
@@ -27,7 +28,8 @@ function Router() {
                     <Route element={<BO />} />
                     <Route path="user">
                         <Route path="" element={<UserList />} />
-                        <Route path=":id" element={<UserEdit />} />
+                        <Route path=":id" element={<UserSee />} />
+                        <Route path="edit/:id" element={<UserEdit />} />
                         <Route path="create" element={<UserCreate />} />
                     </Route>
                     <Route path="organization">

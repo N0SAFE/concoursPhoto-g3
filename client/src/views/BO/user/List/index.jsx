@@ -176,7 +176,7 @@ export default function UserList() {
                     {
                         label: "Edit",
                         action: ({ entity }) => {
-                            navigate("/BO/user/" + entity.id);
+                            navigate("/BO/user/edit/" + entity.id);
                         },
                     },
                     {
@@ -187,6 +187,12 @@ export default function UserList() {
                             }
                         },
                     },
+                    {
+                        label: "Voir",
+                        action: ({ entity }) => {
+                            navigate("/BO/user/" + entity.id);
+                        }
+                    }
                 ]}
             />
         </div>
