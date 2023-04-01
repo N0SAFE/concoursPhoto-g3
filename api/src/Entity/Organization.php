@@ -42,7 +42,7 @@ class Organization
 
     #[ORM\Column]
     #[Groups('organization')]
-    private ?int $postcode = null;
+    private ?string $postcode = null;
 
     #[ORM\Column(length: 255)]
     #[Groups('organization')]
@@ -154,12 +154,12 @@ class Organization
         return $this;
     }
 
-    public function getPostcode(): ?int
+    public function getPostcode(): ?string
     {
         return $this->postcode;
     }
 
-    public function setPostcode(int $postcode): self
+    public function setPostcode(string $postcode): self
     {
         $this->postcode = $postcode;
 

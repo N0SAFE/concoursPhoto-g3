@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, splitVendorChunkPlugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import sassDts from "vite-plugin-sass-dts";
 import path from "path";
@@ -10,6 +10,7 @@ export default defineConfig({
         sassDts({
             enabledMode: ["development", "production"],
         }),
+        splitVendorChunkPlugin()
     ],
     resolve: {
         alias: {
@@ -29,5 +30,5 @@ export default defineConfig({
     },
     server: {
         port: 8001,
-    },
+    }
 });

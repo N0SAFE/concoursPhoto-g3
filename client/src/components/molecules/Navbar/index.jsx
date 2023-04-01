@@ -5,8 +5,6 @@ import Dropdown from "@/components/atoms/Dropdown";
 
 export default function Navbar() {
     const { me, isLogged } = useAuthContext();
-    console.log(isLogged)
-    console.log(me)
     return (
         <nav className={style.nav}>
             <ul>
