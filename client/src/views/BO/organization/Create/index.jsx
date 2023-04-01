@@ -30,7 +30,7 @@ export default function OrganizationCreate() {
         })
             .then((r) => r.json())
             .then((data) => {
-                console.log(data);
+                console.debug(data);
                 setTypePossibility(
                     data["hydra:member"].map(function (item) {
                         return { label: item.label, value: item.id };
@@ -40,12 +40,12 @@ export default function OrganizationCreate() {
     };
 
     const getCitiesPossibility = () => {
-        console.log("postalCode", postcode);
-        console.log("city", city);
+        console.debug("postalCode", postcode);
+        console.debug("city", city);
 
         const filter = [postcode ? `codePostal=${postcode}` : "", city ? `nom=${city}` : ""];
 
-        console.log(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`);
+        console.debug(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`);
 
         fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`)
             .then((response) => {
@@ -63,7 +63,7 @@ export default function OrganizationCreate() {
                 );
                 setCitiesPossibility(cityPossibility);
                 setPostalCodesPossibility(postalCodesPossibility.map((c) => ({ label: c, value: c })));
-                console.log("data", postcode);
+                console.debug("data", postcode);
             });
     };
     useEffect(() => {
@@ -73,15 +73,15 @@ export default function OrganizationCreate() {
         getCitiesPossibility();
     }, [postcode, city]);
 
-    console.log("postalCodesPossibility", postalCodesPossibility);
+    console.debug("postalCodesPossibility", postalCodesPossibility);
 
     return (
         <div>
             <h1>Ajout d'une organisation</h1>
             <BOCreate
                 handleSubmit={function () {
-                    console.log("handleSubmit");
-                    console.log("fetch");
+                    console.debug("handleSubmit");
+                    console.debug("fetch");
                     const data = {
                         organizerName: organizerName,
                         description: description,
@@ -97,7 +97,7 @@ export default function OrganizationCreate() {
                         websiteUrl,
                         organizationType: "/api/organization_types/" + type.value,
                     };
-                    console.log("data", data);
+                    console.debug("data", data);
                     apiFetch("/organizations", {
                         method: "POST",
                         body: JSON.stringify(data),
@@ -107,7 +107,7 @@ export default function OrganizationCreate() {
                     })
                         .then((r) => r.json())
                         .then((data) => {
-                            console.log(data);
+                            console.debug(data);
                         });
                 }}
             >

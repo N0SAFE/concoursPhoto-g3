@@ -23,7 +23,7 @@ export default function UserCreate() {
         })
             .then((r) => r.json())
             .then((data) => {
-                console.log(data);
+                console.debug(data);
                 return data["hydra:member"].map(function (item) {
                     return { label: item.label, value: item.id };
                 });
@@ -36,7 +36,7 @@ export default function UserCreate() {
         })
             .then((r) => r.json())
             .then((data) => {
-                console.log(data);
+                console.debug(data);
                 setGender({ label: data.gender.label, value: data.gender.id });
                 setState(data.state);
                 setEmail(data.email);
@@ -80,8 +80,8 @@ export default function UserCreate() {
             <h1>Ajout d'un utilisateur</h1>
             <BOCreate
                 handleSubmit={function () {
-                    console.log("handleSubmit");
-                    console.log("fetch");
+                    console.debug("handleSubmit");
+                    console.debug("fetch");
                     const data = {
                         state,
                         email,
@@ -97,7 +97,7 @@ export default function UserCreate() {
                         // country: "France",
                         // isVerified: true,
                     };
-                    console.log("data", data);
+                    console.debug("data", data);
                     if (password !== passwordConfirm) {
                         setErrors({ password: "Les mots de passe ne correspondent pas" });
                         return;
@@ -109,7 +109,7 @@ export default function UserCreate() {
                             "Content-Type": "application/merge-patch+json",
                         },
                     }).then(r => r.json()).then((data) => {
-                        console.log(data)
+                        console.debug(data)
                     });
                 }}
             >
