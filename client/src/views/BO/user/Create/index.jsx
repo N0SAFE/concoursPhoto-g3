@@ -1,5 +1,5 @@
 import Input from "@/components/atoms/Input/index.jsx";
-import BOForm from "@/components/organisms/BO/Create";
+import BOForm from "@/components/organisms/BO/Form";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import { useState, useEffect } from "react";
