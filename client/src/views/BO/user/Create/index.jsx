@@ -7,11 +7,10 @@ import { useState, useEffect } from "react";
 export default function UserCreate() {
     const apiFetch = useApiFetch();
 
-    const [possibility, updatePossibility] = useLocationPosibility(["cities"], {}, {updateOnStart: false});
+    const [entityPossibility, setEntityPossibility] = useState({ genders: [] });
+    const [possibility, updatePossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = possibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
     const postalCodesPossibility = [...new Set(possibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
-
-    const [entity, setEntity] = useState({entity: [], roles: []});
 
     const getGendersPossibility = () => {
         return apiFetch("/genders", {
@@ -22,20 +21,7 @@ export default function UserCreate() {
                 console.log(data);
                 return data["hydra:member"].map(function (item) {
                     return { label: item.label, value: item.id };
-                })
-            });
-    };
-
-    const getRolesPossibility = () => {
-        return apiFetch("/roles", {
-            method: "GET",
-        })
-            .then((r) => r.json())
-            .then((data) => {
-                console.log(data);
-                return data["hydra:member"].map(function (item) {
-                    return { label: item.label, value: item.id };
-                })
+                });
             });
     };
 
@@ -49,13 +35,14 @@ export default function UserCreate() {
     const [city, setCity] = useState();
     const [postcode, setPostcode] = useState();
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [role, setRole] = useState([]);
     const [errors, setErrors] = useState({});
     const [gender, setGender] = useState();
     const [dateOfBirth, setDateOfBirth] = useState();
 
     useEffect(() => {
-        Promise.all([getGendersPossibility(), getRolesPossibility()]).then(([genders, roles]) => {setEntity({genders, roles})})
+        Promise.all([getGendersPossibility()]).then(([genders]) => {
+            setEntityPossibility({ genders });
+        });
     }, []);
 
     useEffect(() => {
@@ -78,9 +65,9 @@ export default function UserCreate() {
                         lastname,
                         address,
                         city: city.value,
-                        postcode: parseInt(postcode.value),
+                        postcode: postcode.value,
                         phoneNumber,
-                        role,
+                        role: [],
                         gender: "/api/genders/" + gender.value,
                         creationDate: new Date().toISOString(),
                         dateOfBirth: new Date().toISOString(),
@@ -88,6 +75,10 @@ export default function UserCreate() {
                         isVerified: true,
                     };
                     console.log("data", data);
+                    if (password !== passwordConfirm) {
+                        setErrors({ password: "Les mots de passe ne correspondent pas" });
+                        return;
+                    }
                     apiFetch("/users", {
                         method: "POST",
                         body: JSON.stringify(data),
@@ -148,7 +139,6 @@ export default function UserCreate() {
                                 onInputChange: (text, { action }) => {
                                     if (action === "menu-close") {
                                         updatePossibility({ id: "city" });
-                                        setCity(null);
                                     }
                                     if (action === "input-change") {
                                         updatePossibility({ id: "city", args: { name: text } });
@@ -174,7 +164,6 @@ export default function UserCreate() {
                                 onInputChange: (postcode, { action }) => {
                                     if (action === "menu-close") {
                                         updatePossibility({ id: "city" });
-                                        setPostcode(null);
                                     }
                                     if (action === "input-change" && postcode.length === 5) {
                                         updatePossibility({ id: "city", args: { postcode } });
@@ -193,13 +182,8 @@ export default function UserCreate() {
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
                     <div>
-                        <label htmlFor="role">role</label>
-                        <Input type="select" name="role" label="Rôle" extra={{ value: role, required: true, options: entity.roles, isMulti: true, closeMenuOnSelect: false }} setState={setRole} />
-                        <div>{errors.role}</div>
-                    </div>
-                    <div>
                         <label htmlFor="gender">genre</label>
-                        <Input type="select" name="gender" label="Genre" extra={{ value: gender, required: true, options: entity.genders }} setState={setGender} />
+                        <Input type="select" name="gender" label="Genre" extra={{ value: gender, required: true, options: entityPossibility.genders }} setState={setGender} />
                         <div>{errors.gender}</div>
                     </div>
                 </div>

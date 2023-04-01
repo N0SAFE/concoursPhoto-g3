@@ -53,7 +53,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups('user')]
     #[ORM\Column(length: 255)]
-    private ?int $postcode = null;
+    private ?string $postcode = null;
 
     #[Groups('user')]
     #[ORM\Column(length: 255)]
@@ -223,12 +223,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getPostcode(): ?int
+    public function getPostcode(): ?string
     {
         return $this->postcode;
     }
 
-    public function setPostcode(int $postcode): self
+    public function setPostcode(string $postcode): self
     {
         $this->postcode = $postcode;
 

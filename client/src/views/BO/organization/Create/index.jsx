@@ -153,7 +153,7 @@ export default function OrganizationCreate() {
                 </div>
                 <div>
                     <label htmlFor="type">Type</label>
-                    <Input type="select" name="type" label="Type" defaultValue={type} extra={{ required: true, options: typePossibility, required: true }} setState={setType} />
+                    <Input type="select" name="type" label="Type" defaultValue={type} extra={{ options: typePossibility, required: true }} setState={setType} />
                     <div>{errors.type}</div>
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
