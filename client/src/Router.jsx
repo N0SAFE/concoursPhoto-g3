@@ -14,6 +14,7 @@ import OrganizationCreate from "@/views/BO/organization/Create";
 import CompetitionCreate from "@/views/BO/competition/Create";
 import GuardedRoute from "./layout/GuardedRoute.jsx";
 import { Navigate } from "react-router-dom";
+import Test from "./views/Test.jsx";
 
 function Router() {
     return (
@@ -43,6 +44,7 @@ function Router() {
             <Route path="/" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/login" replace={true} />}/>}>
                 <Route path="" element={<Home />} />
             </Route>
+            <Route path="/test" element={<Test />}/>
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

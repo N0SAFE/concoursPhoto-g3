@@ -3,6 +3,7 @@ import BOCreate from "@/components/organisms/BO/Create";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import Select from "react-select";
 
 export default function UserCreate() {
     const apiFetch = useApiFetch()
@@ -23,46 +24,43 @@ export default function UserCreate() {
         });
     };
     
-    const getRolesPossibility = () => {
-        apiFetch("/roles", {
-            method: "GET",
-        }).then(r => r.json()).then((data) => {
-            console.log(data)
-            setRolesPossibility(data['hydra:member'].map(function(item){return {label: item.label, value: item.id}}));
-        });
-    };
-    
-    const getCitiesPossibility = () => {
-        console.log("postalCode", postcode)
-        console.log("city", city)
-        
+    const getCitiesPossibility = ({ _cityname, _postcode } = {}) => {
+        console.log("postalCode", postcode);
+        console.log("city", city);
+
         const filter = [
-            postcode ? `codePostal=${postcode}` : "",
-            city ? `nom=${city}` : "",
-        ]
-        
-        console.log(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`)
-        
-        fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`).then((response) => {
-            return response.json();
-        }).then((data) => {
-            data.length = 30
-            const [cityPossibility, postalCodesPossibility] = data.reduce(([cityResponse, postalCodeResponse], c) => {
-                cityResponse.push({label: c.nom, value: c.code});
-                postalCodeResponse.push(...c.codesPostaux);
-                return [cityResponse, postalCodeResponse];
-            }, [[], []]);
-            setCitiesPossibility(cityPossibility);
-            setPostalCodesPossibility(postalCodesPossibility.map(c => ({label: c, value: c})));
-            console.log("data", postcode)
-        });
-    }
+            postcode && postcode.value ? `codePostal=${postcode.value}` : "" || _postcode ? `codePostal=${_postcode}` : "",
+            city && city.value ? `code=${city.value}` : "" || _cityname ? `nom=${_cityname}` : "",
+        ].filter((f) => f !== "");
+
+        console.log(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`);
+
+        fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                data.length = 30;
+                const [cityPossibility, postalCodesPossibility] = data.reduce(
+                    ([cityResponse, postalCodeResponse], c) => {
+                        cityResponse.push({ label: c.nom, value: c.code });
+                        postalCodeResponse.push(...c.codesPostaux);
+                        return [cityResponse, postalCodeResponse];
+                    },
+                    [[], []]
+                );
+                setCitiesPossibility(cityPossibility);
+                setPostalCodesPossibility(postalCodesPossibility.map((c) => ({ label: c, value: c })));
+                console.log("data", data);
+            });
+    };
     
     function getUser(){
         apiFetch("/users/" + id, {
             method: "GET",
         }).then(r => r.json()).then((data) => {
             console.log(data)
+            setGender({label: data.gender.label, value: data.gender.id})
             setState(data.state);
             setEmail(data.email);
             setPassword(data.password);
@@ -73,7 +71,7 @@ export default function UserCreate() {
             setCity(data.city);
             setPostcode(data.postcode);
             setPhoneNumber(data.phone_number);
-            setRole(data.role);
+            setRoles(data.roles.map(function(role, id){return {label: role, value: id}}));
         });
     }
     
@@ -87,7 +85,7 @@ export default function UserCreate() {
     const [city, setCity] = useState("");
     const [postcode, setPostcode] = useState();
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [role, setRole] = useState([]);
+    const [roles, setRoles] = useState([]);
     const [errors, setErrors] = useState({});
     const [gender, setGender] = useState();
     
@@ -100,6 +98,7 @@ export default function UserCreate() {
     useEffect(() => {
         getCitiesPossibility();
     }, [postcode, city]);
+    
 
     return (
         <div>
@@ -119,7 +118,7 @@ export default function UserCreate() {
                             city,
                             postcode,
                             phoneNumber,
-                            role,
+                            roles,
                             gender: "/api/genders/" + gender.value,
                             creationDate: new Date().toISOString(),
                             dateOfBirth: new Date().toISOString(),
@@ -163,14 +162,50 @@ export default function UserCreate() {
                     <div>{errors.address}</div>
                 </div>
                 <div style={{display: "flex", gap: "30px"}}>
-                    <div>
+                <div>
                         <label htmlFor="city">city</label>
-                        <Input type="select" name="city" label="Ville" extra={{ clearable: true, required: true, options: citiesPossibility, multiple: false, onInputChange: (item, {action}) => {if(action === "input-change"){setCity(item)}}}} setState={(item) => setCity(item.label)} defaultValue={city} />
+                        <Input
+                            type="select"
+                            name="city"
+                            label="Ville"
+                            extra={{
+                                value: city,
+                                isClearable: true,
+                                required: true,
+                                options: citiesPossibility,
+                                multiple: false,
+                                onInputChange: (text, { action }) => {
+                                    if (action === "input-change") {
+                                        getCitiesPossibility({ _cityname: text });
+                                    }
+                                },
+                            }}
+                            setState={setCity}
+                        />
                         <div>{errors.city}</div>
                     </div>
                     <div>
                         <label htmlFor="postalCode">postalCode</label>
-                        <Input type="select" name="postalCode" label="Code postal" extra={{ clearable: true, required: true, options: postalCodesPossibility, multiple: false, onInputChange: (item, {action}) => {if(action === "input-change") {setPostcode(item)}} }} setState={(item) => setPostcode(item.label)} defaultValue={postcode} />
+                        <Input
+                            type="select"
+                            name="postalCode"
+                            label="Code postal"
+                            extra={{
+                                value: postcode,
+                                isClearable: true,
+                                required: true,
+                                options: postalCodesPossibility,
+                                multiple: false,
+                                onInputChange: (postcode, { action }) => {
+                                    if (postcode.length === 5) {
+                                        if (action === "input-change") {
+                                            getCitiesPossibility({ _postcode: postcode });
+                                        }
+                                    }
+                                },
+                            }}
+                            setState={setPostcode}
+                        />
                         <div>{errors.postalCode}</div>
                     </div>
                 </div>
@@ -181,13 +216,13 @@ export default function UserCreate() {
                 </div>
                 <div style={{display: "flex", gap: "30px"}}>
                     <div>
-                        <label htmlFor="role">role</label>
-                        <Input type="select" name="role" label="Rôle" defaultValue={role} extra={{ required: true, options: rolesPossibility, required: true, isMulti: true, closeMenuOnSelect: false }} setState={setRole} />
-                        <div>{errors.role}</div>
+                        <label htmlFor="roles">roles</label>
+                        <Input type="select" name="roles" label="Rôle" extra={{ value: roles, required: true, options: rolesPossibility, required: true, isMulti: true, closeMenuOnSelect: false }} setState={setRoles} />
+                        <div>{errors.roles}</div>
                     </div>
                     <div>
                         <label htmlFor="gender">genre</label>
-                        <Input type="select" name="gender" label="Genre" defaultValue={gender} extra={{ required: true, options: gendersPossibility, required: true }} setState={setGender} />
+                        <Input type="select" name="gender" label="Genre" extra={{ value: gender, required: true, options: gendersPossibility, required: true }} setState={setGender} />
                         <div>{errors.gender}</div>
                     </div>
                 </div>
@@ -198,7 +233,6 @@ export default function UserCreate() {
                     <div>{errors.password}</div>
                 </div>
             </BOCreate>
-            <Input type="select" defaultValue={{ label: "test", value: "test"}} extra={{ onMenuOpen: function(){console.log(arguments)}, options: [{label: "test", value: "test", code:1}, {label: "other", value : "other", code: 2}]}} />
         </div>
     );
 }
