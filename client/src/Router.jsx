@@ -14,7 +14,6 @@ import OrganizationCreate from "@/views/BO/organization/Create";
 import CompetitionCreate from "@/views/BO/competition/Create";
 import GuardedRoute from "./layout/GuardedRoute.jsx";
 import { Navigate } from "react-router-dom";
-import Test from "./views/Test.jsx";
 
 function Router() {
     return (
