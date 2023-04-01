@@ -1,5 +1,5 @@
 import Input from "@/components/atoms/Input/index.jsx";
-import BOCreate from "@/components/organisms/BO/Create";
+import BOForm from "@/components/organisms/BO/Create";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import { useState, useEffect } from "react";
@@ -52,7 +52,7 @@ export default function UserCreate() {
     return (
         <div>
             <h1>Ajout d'un utilisateur</h1>
-            <BOCreate
+            <BOForm
                 handleSubmit={function () {
                     console.debug("handleSubmit");
                     console.debug("fetch");
@@ -193,7 +193,7 @@ export default function UserCreate() {
                     <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" extra={{ required: true }} setState={setPasswordConfirm} defaultValue={passwordConfirm} />
                     <div>{errors.password}</div>
                 </div>
-            </BOCreate>
+            </BOForm>
         </div>
     );
 }
