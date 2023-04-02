@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly componemtInput: "componemtInput";
+  readonly componentInput: "componentInput";
 };
 export = classNames;

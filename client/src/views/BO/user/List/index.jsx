@@ -37,7 +37,6 @@ export default function UserList() {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
@@ -181,13 +180,17 @@ export default function UserList() {
                 }}
                 actions={[
                     {
-                        label: "Edit",
+                        label: "Modifier",
+                        color: "blue",
+                        textColor: "white",
                         action: ({ entity }) => {
                             navigate("/BO/user/edit/" + entity.id);
                         },
                     },
                     {
-                        label: "Delete",
+                        label: "Supprimer",
+                        color: "red",
+                        textColor: "white",
                         action: ({ entity }) => {
                             if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
                                 return handleDelete(entity.id);
