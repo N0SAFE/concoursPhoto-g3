@@ -43,7 +43,7 @@ function Router() {
                     </Route>
                 </Route>
             </Route>
-            <Route path="/" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/login" replace={true} />}/>}>
+            <Route path="/">
                 <Route path="" element={<Home />} />
             </Route>
             <Route path="*" element={<NotFound />} />
