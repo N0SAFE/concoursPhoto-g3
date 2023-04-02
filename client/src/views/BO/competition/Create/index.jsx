@@ -12,6 +12,7 @@ export default function CompetitionCreate() {
 
     const [participantCategoryPossibility, setParticipantCategoryPossibility] = useState([]);
     const [organizationNamePossibility, setOrganizationNamePossibility] = useState([]);
+    const [themePossibility, setThemePossibility] = useState([]);
 
     const getRegionsPossibility = ({name} = {}) => {
         const filter = [
@@ -85,8 +86,8 @@ export default function CompetitionCreate() {
             headers: { "Content-Type": "multipart/form-data" },
         }).then(r => r.json()).then((data) => {
             console.debug(data);
-            setParticipantCategoryPossibility(data['hydra:member'].map(function(item){return {label: item.label, value: item.id}}));
-        });
+            setParticipantCategoryPossibility(data['hydra:member'].map(function(item){return {label: item.label, value: item['@id']}}));
+        })
     };
 
     const getOrganizationsName = () => {
@@ -94,15 +95,24 @@ export default function CompetitionCreate() {
             method: "GET",
         }).then(r => r.json()).then((data) => {
             console.debug(data);
-            setOrganizationNamePossibility(data['hydra:member'].map(function(item){return {organizer_name: item.organizer_name, value: item.id}}));
+            setOrganizationNamePossibility(data['hydra:member'].map(function(item){return {label: item.organizer_name, value: item['@id']}}));
         });
     }
 
+    const getThemes = () => {
+        apiFetch("/themes", {
+            method: "GET",
+        }).then(r => r.json()).then((data) => {
+            console.debug(data);
+            setThemePossibility(data['hydra:member'].map(function(item){return {label: item.label, value: item['@id']}}));
+        });
+    }
 
     const [errors, setErrors] = useState({});
 
     const [participantCategories, setParticipantCategories] = useState([]);
     const [organizationName, setOrganizationName] = useState();
+    const [themes, setThemes] = useState([]);
 
     const [state, setState] = useState(false);
     const [competitionName, setCompetitionName] = useState("");
@@ -143,6 +153,7 @@ export default function CompetitionCreate() {
     useEffect(() => {
         getParticipantCategories();
         getOrganizationsName();
+        getThemes();
     }, []);
 
     return (
@@ -156,9 +167,8 @@ export default function CompetitionCreate() {
                         state,
                         competitionName,
                         competitionVisual,
-                        participantCategories: participantCategories.value,
-                        organization: "/api/organizations/" + organizationName.value,
-                        participant_category: participantCategories.value,
+                        participantCategory: participantCategories.map((p) => p.value),
+                        organization: organizationName.value,
                         description,
                         rules,
                         endowments,
@@ -179,6 +189,7 @@ export default function CompetitionCreate() {
                         cityCriteria: [cityCriteria.value],
                         departmentCriteria: [departmentCriteria.value],
                         regionCriteria: [regionCriteria.value],
+                        theme: themes.map((t) => t.value),
                     }
                     console.debug("data", data)
                     apiFetch("/competitions", {
@@ -264,7 +275,7 @@ export default function CompetitionCreate() {
                 </div>
                 <div>
                     <label htmlFor="weightingOfJuryVotes">Pondération des votes du jury</label>
-                    <Input type="number" step="0.01" name="weightingOfJuryVotes" label="Pondération des votes du jury" defaultValue={weightingOfJuryVotes} setState={setWeightingOfJuryVotes} />
+                    <Input type="number" extra={{ step: 0.01 }} name="weightingOfJuryVotes" label="Pondération des votes du jury" defaultValue={weightingOfJuryVotes} setState={setWeightingOfJuryVotes} />
                     <div>{errors.weightingOfJuryVotes}</div>
                 </div>
                 <div>
@@ -361,13 +372,18 @@ export default function CompetitionCreate() {
                     <div style={{display: "flex", gap: "30px"}}>
                         <div>
                             <label htmlFor="participantCategory">Catégorie de participant</label>
-                            <Input type="select" name="participantCategory" label="Catégorie de participant" defaultValue={participantCategories} extra={{ required: true, options: participantCategoryPossibility }} setState={setParticipantCategories} />
+                            <Input type="select" name="participantCategory" label="Catégorie de participant" defaultValue={participantCategories} extra={{ isMulti: true, required: true, options: participantCategoryPossibility, closeMenuOnSelect: false }} setState={setParticipantCategories} />
                             <div>{errors.participantCategories}</div>
                         </div>
                         <div>
                             <label htmlFor="organizationName">Nom de l'organisation</label>
                             <Input type="select" name="organizationName" label="Nom de l'organisation" defaultValue={organizationName} extra={{ required: true, options: organizationNamePossibility }} setState={setOrganizationName} />
                             <div>{errors.organizationName}</div>
+                        </div>
+                        <div>
+                            <label htmlFor="themes">Thème(s)</label>
+                            <Input type="select" name="themes" label="Thèmes" defaultValue={themes} extra={{ required: true, isMulti: true, options: themePossibility, closeMenuOnSelect: false }} setState={setThemes} />
+                            <div>{errors.themes}</div>
                         </div>
                     </div>
                 </div>
