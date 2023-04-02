@@ -41,7 +41,7 @@ export default function Login() {
                     Password
                     <Input name="password" type="password" placeholder="Password" />
                 </label>
-                <Button type="submit" name="Login" />
+                <Button type="submit" name="Login" color={"grey"} textColor={"white"} padding={"5px"} border={false} borderRadius={"10px"}/>
             </form>
         </div>
     );

@@ -1,4 +1,5 @@
 import style from "./style.module.scss";
+import Button from "@/components/atoms/Button";
 
 export default function BOList({ fields, entityList, customAction = () => true, useId = true, actions = [] }) {
     return (
@@ -39,11 +40,9 @@ export default function BOList({ fields, entityList, customAction = () => true, 
                             );
                         })}
                         <td>
-                            {actions.map(({ action, label }, index) => {
+                            {actions.map(({ action, label, color, textColor }, index) => {
                                 return (
-                                    <button key={index} onClick={() => action({ entity })}>
-                                        {label}
-                                    </button>
+                                    <Button color={color} textColor={textColor} name={label} key={index} onClick={() => action({ entity })} />
                                 );
                             })}
                         </td>

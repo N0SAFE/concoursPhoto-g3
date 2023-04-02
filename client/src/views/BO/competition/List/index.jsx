@@ -107,13 +107,17 @@ export default function CompetitionsList() {
                 }}
                 actions={[
                     {
-                        label: "Edit",
+                        label: "Modifier",
+                        color: "blue",
+                        textColor: "white",
                         action: ({ entity }) => {
                             navigate("/BO/user/" + entity.id);
                         },
                     },
                     {
-                        label: "Delete",
+                        label: "Supprimer",
+                        color: "red",
+                        textColor: "white",
                         action: ({ entity }) => {
                             if (confirm("Êtes-vous sûr de vouloir supprimer cet organisation ?")) {
                                 return handleDelete(entity.id);
