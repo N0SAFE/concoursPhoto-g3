@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import style from "./style.module.scss";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
+import { toast } from "react-toastify";
 
 export default function Login() {
     const { login } = useAuth();
@@ -20,9 +21,10 @@ export default function Login() {
                 } else {
                     navigate("/");
                 }
-                console.log("Logged in");
+                toast.success("Vous êtes connecté");
             })
             .catch(function (error) {
+                toast.error(error.message);
                 console.error(error);
             });
     };

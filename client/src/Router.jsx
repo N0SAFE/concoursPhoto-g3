@@ -16,6 +16,7 @@ import CompetitionCreate from "@/views/BO/competition/Create";
 import GuardedRoute from "./layout/GuardedRoute.jsx";
 import { Navigate } from "react-router-dom";
 
+
 function Router() {
     return (
         <Routes>

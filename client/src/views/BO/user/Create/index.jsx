@@ -3,6 +3,7 @@ import BOForm from "@/components/organisms/BO/Form";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function UserCreate() {
     const apiFetch = useApiFetch();
@@ -40,8 +41,14 @@ export default function UserCreate() {
     const [dateOfBirth, setDateOfBirth] = useState();
 
     useEffect(() => {
-        Promise.all([getGendersPossibility()]).then(([genders]) => {
+        const promise = Promise.all([getGendersPossibility()]).then(([genders]) => {
             setEntityPossibility({ genders });
+        });
+        console.log(promise);
+        toast.promise(promise, {
+            pending: "Chargement des possibilités",
+            success: "Possibilités chargées",
+            error: "Erreur lors du chargement des possibilités",
         });
     }, []);
 
@@ -79,7 +86,7 @@ export default function UserCreate() {
                         setErrors({ password: "Les mots de passe ne correspondent pas" });
                         return;
                     }
-                    apiFetch("/users", {
+                    const promise = apiFetch("/users", {
                         method: "POST",
                         body: JSON.stringify(data),
                         headers: {
@@ -88,8 +95,20 @@ export default function UserCreate() {
                     })
                         .then((r) => r.json())
                         .then((data) => {
-                            console.debug(data);
+                            if (data["@type"] === "hydra:Error") {
+                                throw data;
+                            }
                         });
+                    toast.promise(promise, {
+                        pending: "Ajout de l'utilisateur",
+                        success: "Utilisateur ajouté",
+                        error: {
+                            render: ({ data }) => {
+                                console.debug(data);
+                                return data["hydra:description"];
+                            },
+                        },
+                    });
                 }}
             >
                 <div>

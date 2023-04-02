@@ -4,14 +4,16 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch";
 import useLocation from "@/hooks/useLocation.js";
+import { toast } from "react-toastify";
 
 export default function () {
     const apiFetch = useApiFetch();
-    const {getCityByCode} = useLocation()
+    const { getCityByCode } = useLocation();
     const [entity, setEntity] = useState({});
     const { id: userId } = useParams();
-    useEffect(() => {
-        apiFetch("/users/" + userId, {
+
+    const getUser = () => {
+        return apiFetch("/users/" + userId, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -36,7 +38,17 @@ export default function () {
             .catch((error) => {
                 console.error(error);
             });
+    };
+    
+    useEffect(() => {
+        const promise = getUser();
+        toast.promise(promise, {
+            pending: "Chargement de l'utilisateur",
+            success: "Utilisateur chargé",
+            error: "Erreur lors du chargement de l'utilisateur",
+        });
     }, []);
+
     return (
         <BOSee
             entity={entity}

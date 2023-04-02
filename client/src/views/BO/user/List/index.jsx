@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch";
+import { toast } from "react-toastify";
 
 export default function UserList() {
     const apiFetch = useApiFetch();
@@ -28,7 +29,7 @@ export default function UserList() {
                 is_verified: filterVerified,
             };
         }
-        apiFetch("/users", {
+        return apiFetch("/users", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -48,7 +49,13 @@ export default function UserList() {
     }
 
     useEffect(() => {
-        getUsers();
+        const promise = getUsers();
+        toast.promise(promise, {
+            pending: "Chargement des utilisateurs",
+            success: "Utilisateurs chargés",
+            error: "Erreur lors du chargement des utilisateurs",
+        });
+
     }, [filterState, filterVerified]);
 
     const handleDelete = (id) => {
