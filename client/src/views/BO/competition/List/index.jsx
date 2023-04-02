@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
 
@@ -55,7 +55,6 @@ export default function CompetitionsList() {
 
     return (
         <div>
-            <Link to={"/BO/competitions/create"}>Créer un concours</Link>
             <h1>Liste des concours</h1>
             <BOList
                 entityList={competitions}
