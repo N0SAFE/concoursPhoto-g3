@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import useLocation from "@/hooks/useLocation.js";
+import { toast } from "react-toastify";
 
 export default function UserCreate() {
     const apiFetch = useApiFetch();
@@ -67,8 +68,12 @@ export default function UserCreate() {
     const [gender, setGender] = useState();
 
     useEffect(() => {
-        Promise.all([getGendersPossibility()]).then(([genders]) => setEntityPossibility({ genders }));
-        getUser();
+        const promise = Promise.all([getGendersPossibility(), getUser()]).then(([genders]) => setEntityPossibility({ genders }));
+        toast.promise(promise, {
+            pending: "Chargement des données",
+            success: "Données chargées",
+            error: "Erreur lors du chargement des données",
+        });
     }, []);
 
     useEffect(() => {
@@ -102,7 +107,7 @@ export default function UserCreate() {
                         setErrors({ password: "Les mots de passe ne correspondent pas" });
                         return;
                     }
-                    apiFetch("/users/" + userId , {
+                    const promise = apiFetch("/users/" + userId , {
                         method: "PATCH",
                         body: JSON.stringify(data),
                         headers: {
@@ -110,6 +115,12 @@ export default function UserCreate() {
                         },
                     }).then(r => r.json()).then((data) => {
                         console.debug(data)
+                    });
+                    
+                    toast.promise(promise, {
+                        pending: "Modification en cours",
+                        success: "Utilisateur modifié",
+                        error: "Erreur lors de la modification de l'utilisateur",
                     });
                 }}
             >
