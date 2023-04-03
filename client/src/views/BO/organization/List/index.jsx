@@ -95,7 +95,7 @@ export default function OrganizationList() {
                         color: "blue",
                         textColor: "white",
                         action: ({ entity }) => {
-                            navigate("/BO/user/" + entity.id);
+                            navigate("/BO/organization/edit/" + entity.id);
                         },
                     },
                     {

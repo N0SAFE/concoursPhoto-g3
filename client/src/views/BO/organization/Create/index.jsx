@@ -87,7 +87,7 @@ export default function OrganizationCreate() {
                         description: description,
                         address: address,
                         city: city,
-                        postcode: parseInt(postcode),
+                        postcode: postcode,
                         numberPhone: phoneNumber,
                         email: email,
                         state,
