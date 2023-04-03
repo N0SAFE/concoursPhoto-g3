@@ -30,19 +30,33 @@ export default function Login() {
     };
 
     return (
-        <div>
-            <h1 className={style.title}>Connexion au BackOffice</h1>
-            <form onSubmit={handleSubmit} className={style.input}>
-                <label>
-                    Email
-                    <Input name="email" type="email" placeholder="Email" />
-                </label>
-                <label>
-                    Password
-                    <Input name="password" type="password" placeholder="Password" />
-                </label>
-                <Button type="submit" name="Login" color={"grey"} textColor={"white"} padding={"5px"} border={false} borderRadius={"10px"}/>
-            </form>
+        <div className={style.container}>
+            <div>
+                <h1 className={style.title}>Connexion au BackOffice</h1>
+            </div>
+            <div>
+                <form onSubmit={handleSubmit} className={style.input}>
+                    <div>
+                        <div>
+                            <label>Adresse mail</label>
+                        </div>
+                        <div>
+                            <Input name="email" type="email" placeholder="Email" />
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <label>Mot de passe</label>
+                        </div>
+                        <div>
+                            <Input name="password" type="password" placeholder="Password" />
+                        </div>
+                    </div>
+                    <div className={style.containerButton}>
+                        <Button type="submit" name="Login" color={"green"} textColor={"white"} padding={"5px"} border={false} borderRadius={"10px"}/>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

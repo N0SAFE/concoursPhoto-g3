@@ -14,15 +14,22 @@ function login(checkLogged, { email, password }, autoLogoutOnFail = true) {
             credentials: "include",
         })
             .then((res) => res.json())
-            .then((data) => {
+            .then(async (data) => {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                return checkLogged().then(({ isLogged, me }) => {
+                return await checkLogged().then(({ isLogged, me }) => {
                     if (!isLogged) {
                         if (autoLogoutOnFail) {
                             return logout(checkLogged).then(() => { // this function is used to avoid fail when the refresh token is not the good one so we remove it to recreate it after
-                                return login(checkLogged, { email, password }, false)
+                                return login(checkLogged, { email, password }, false).then(function(){
+                                    checkLogged().then(function({ isLogged, me }){
+                                        if(!isLogged){
+                                            throw new Error("an error occured");
+                                        }
+                                        resolve(me);
+                                    })
+                                })
                             });
                         }else {
                             throw new Error("an error occured");

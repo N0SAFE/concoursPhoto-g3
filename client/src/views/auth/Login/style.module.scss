@@ -1,13 +1,9 @@
-@import "../../../assets/style/style.scss";
-
-.title {
-    height: 200px;
+.container {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-}
-.input {
-    margin: auto;
-    text-align: center;
-    align-items: center;
+
+    &Button {
+        margin-top: 10px;
+    }
 }

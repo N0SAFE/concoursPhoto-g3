@@ -1,8 +1,10 @@
+import style from "./style.module.scss";
+
 export default function ({ properties = [], entity }) {
-    if (!Array.isArray(properties)) {
+    if(!Array.isArray(properties)) {
         throw new Error("properties must be an array");
     }
-    if (!(entity instanceof Object)) {
+    if(!(entity instanceof Object)) {
         throw new Error("entity must be an object");
     }
     function createField(property, key) {
@@ -21,7 +23,7 @@ export default function ({ properties = [], entity }) {
             }
         }
 
-        if (type === "text") {
+        if(type === "text") {
             return (
                 <div key={key}>
                     <label>{display} : </label>
@@ -86,8 +88,7 @@ export default function ({ properties = [], entity }) {
     }
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", width: "100%", height: "100%" }}>
-            <h2>Details</h2>
+        <div className={style.containerSee}>
             {properties.map((p, i) => {
                 if (Array.isArray(p)) {
                     return <div key={i}>{p.map((property, y) => createField(property, y))}</div>;

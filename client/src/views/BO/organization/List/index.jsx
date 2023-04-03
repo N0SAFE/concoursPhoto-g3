@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import Button from "@/components/atoms/Button";
@@ -73,7 +73,7 @@ export default function OrganizationList() {
                     { property: "postcode", display: "code postal" },
                     { property: "city", display: "ville" },
                     { property: "number_phone", display: "téléphone" },
-                    { property: "email", display: "émail" },
+                    { property: "email", display: "email" },
                     { property: "website_url", display: "site web" },
                     { property: "organization_type", display: "type d'organisation" },
                     { property: "country", display: "Pays" },

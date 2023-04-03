@@ -23,7 +23,7 @@ export default function () {
                 if ((data.message === "Expired JWT Token" || data.message === "Missing token" || data.message === "Invalid credentials.") && path !== "/token/refresh") {
                     const isLogged = await checkLogged();
                     if(!isLogged){
-                        navigate("/logout");
+                        navigate("/auth/logout");
                         toast.error("une erreur est survenue, veuillez vous reconnecter");
                         return response;
                     }

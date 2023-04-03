@@ -15,6 +15,8 @@ import OrganizationCreate from "@/views/BO/organization/Create";
 import CompetitionCreate from "@/views/BO/competition/Create";
 import GuardedRoute from "./layout/GuardedRoute.jsx";
 import { Navigate } from "react-router-dom";
+import Profile from "@/views/global/Profile";
+import ProfileUser from "@/views/global/Profile/User";
 import OrganizationEdit from "@/views/BO/organization/Edit";
 import CompetitionSee from "@/views/BO/competition/See";
 import OrganizationSee from "@/views/BO/organization/See";
@@ -22,11 +24,11 @@ import OrganizationSee from "@/views/BO/organization/See";
 function Router() {
     return (
         <Routes>
-            <Route path="/" element={<Header />}>
+            <Route path="/auth" element={<Header />}>
                 <Route path="login" element={<Login />} />
                 <Route path="logout" element={<Logout />} />
             </Route>
-            <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={<Navigate to="/login" replace={true} />} />}>
+            <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
                 <Route path="" element={<Header />}>
                     <Route element={<BO />} />
                     <Route path="user">
@@ -49,6 +51,10 @@ function Router() {
                 </Route>
             </Route>
             <Route path="/">
+                <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
+                    <Route path="" element={<Profile />} />
+                    <Route path=":id" element={<ProfileUser />} />
+                </Route>
                 <Route path="" element={<Home />} />
             </Route>
             <Route path="*" element={<NotFound />} />

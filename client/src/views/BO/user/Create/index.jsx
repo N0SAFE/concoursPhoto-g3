@@ -66,8 +66,7 @@ export default function UserCreate() {
                     const data = {
                         state,
                         email,
-                        password,
-                        passwordConfirm,
+                        plainPassword: password,
                         firstname,
                         lastname,
                         address,
@@ -78,7 +77,7 @@ export default function UserCreate() {
                         gender: "/api/genders/" + gender.value,
                         creationDate: new Date().toISOString(),
                         dateOfBirth: new Date().toISOString(),
-                        country: "France",
+                        country: "FRANCE",
                         isVerified: true,
                     };
                     console.debug("data", data);
@@ -125,7 +124,7 @@ export default function UserCreate() {
                 </div>
                 <div>
                     <label htmlFor="dateOfBirth">Date de Naissance</label>
-                    <Input type="date" name="dateOfBirth" label="Date de Naissance" extra={{ required: true }} setState={setDateOfBirth} defaultValue={dateOfBirth} />
+                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} setState={setDateOfBirth} defaultValue={dateOfBirth} />
                     <div>{errors.dateOfBirth}</div>
                 </div>
 
@@ -171,7 +170,7 @@ export default function UserCreate() {
                         <div>{errors.city}</div>
                     </div>
                     <div>
-                        <label htmlFor="postalCode">Code Postal</label>
+                        <label htmlFor="postalCode">Code postal</label>
                         <Input
                             type="select"
                             name="postalCode"
@@ -197,7 +196,7 @@ export default function UserCreate() {
                     </div>
                 </div>
                 <div>
-                    <label htmlFor="phoneNumber">Numéro Télephone</label>
+                    <label htmlFor="phoneNumber">Numéro de télephone</label>
                     <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} setState={setPhoneNumber} defaultValue={phoneNumber} />
                     <div>{errors.phoneNumber}</div>
                 </div>
