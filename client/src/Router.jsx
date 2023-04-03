@@ -17,6 +17,7 @@ import GuardedRoute from "./layout/GuardedRoute.jsx";
 import { Navigate } from "react-router-dom";
 import OrganizationEdit from "@/views/BO/organization/Edit";
 import CompeitionSee from "@/views/BO/competition/See";
+import OrganizationSee from "@/views/BO/organization/See";
 
 function Router() {
     return (
@@ -36,6 +37,7 @@ function Router() {
                     </Route>
                     <Route path="organization">
                         <Route path="" element={<OrganizationList />} />
+                        <Route path=":id" element={<OrganizationSee />} />
                         <Route path="create" element={<OrganizationCreate />} />
                         <Route path="edit/:id" element={<OrganizationEdit />} />
                     </Route>

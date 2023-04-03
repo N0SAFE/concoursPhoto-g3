@@ -108,6 +108,12 @@ export default function OrganizationList() {
                             }
                         },
                     },
+                    {
+                        label: "Voir",
+                        action: ({ entity }) => {
+                            navigate("/BO/organization/" + entity.id);
+                        },
+                    },
                 ]}
             />
         </div>
