@@ -118,15 +118,20 @@ class Competition
     private Collection $pictures;
 
     #[ORM\Column(type: 'json')]
+    #[Groups('competition')]
     private array $country_criteria = [];
 
     #[ORM\Column(type: 'json')]
+    #[Groups('competition')]
     private array $region_criteria = [];
 
     #[ORM\Column(type: 'json')]
+    #[Groups('competition')]
+
     private array $department_criteria = [];
 
     #[ORM\Column(type: 'json')]
+    #[Groups('competition')]
     private array $city_criteria = [];
 
     public function __construct()

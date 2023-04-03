@@ -1,8 +1,8 @@
 export default function ({ properties = [], entity }) {
-    if(!Array.isArray(properties)) {
+    if (!Array.isArray(properties)) {
         throw new Error("properties must be an array");
     }
-    if(!(entity instanceof Object)) {
+    if (!(entity instanceof Object)) {
         throw new Error("entity must be an object");
     }
     function createField(property, key) {
@@ -20,8 +20,8 @@ export default function ({ properties = [], entity }) {
                 data = customData;
             }
         }
-        
-        if(type === "text") {
+
+        if (type === "text") {
             return (
                 <div key={key}>
                     <label>{display} : </label>
@@ -29,7 +29,7 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if(type === "img"){
+        if (type === "img") {
             return (
                 <div key={key}>
                     <label>{display}</label>
@@ -37,7 +37,7 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if(type === "custom"){
+        if (type === "custom") {
             return (
                 <div key={key}>
                     <label>{display}</label>
@@ -45,48 +45,55 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if(type === "list"){
+        if (type === "list") {
             return (
                 <div key={key}>
                     <label>{display}</label>
                     <ul>
-                        {data.map((item, index) => <li key={index}>{item}</li>)}
+                        {data.map((item, index) => (
+                            <li key={index}>{item}</li>
+                        ))}
                     </ul>
                 </div>
             );
         }
-        if(type === "list-dropdown"){
+        if (type === "list-dropdown") {
             return (
                 <div key={key}>
                     <label>{display}</label>
                     <ul>
-                        {data.map((item, index) => <li key={index}>{item}</li>)}
+                        {data.map((item, index) => (
+                            <li key={index}>{item}</li>
+                        ))}
                     </ul>
+                </div>
+            );
+        }
+        if (type === "date") {
+            return (
+                <div key={key}>
+                    <label>{display} : </label>
+                    <span>
+                        {new Date(data).toLocaleDateString("fr-FR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        })}
+                    </span>
                 </div>
             );
         }
     }
-    
+
     return (
-        <div style={{display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            height: "100%"
-        }}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", width: "100%", height: "100%" }}>
+            <h2>Details</h2>
             {properties.map((p, i) => {
-                if(Array.isArray(p)){
-                    return (
-                        <div key={i}>
-                            {p.map((property, y) => createField(property, y))}
-                        </div>
-                    )
+                if (Array.isArray(p)) {
+                    return <div key={i}>{p.map((property, y) => createField(property, y))}</div>;
                 }
-                return <div key={i}>
-                    {createField(p, i)}
-                </div>
+                return <div key={i}>{createField(p, i)}</div>;
             })}
         </div>
-    )
+    );
 }
