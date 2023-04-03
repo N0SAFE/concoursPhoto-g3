@@ -70,7 +70,7 @@ export default function OrganizationList() {
                     { property: "postcode", display: "code postal" },
                     { property: "city", display: "ville" },
                     { property: "number_phone", display: "téléphone" },
-                    { property: "email", display: "émail" },
+                    { property: "email", display: "email" },
                     { property: "website_url", display: "site web" },
                     { property: "organization_type", display: "type d'organisation" },
                     { property: "country", display: "Pays" },
