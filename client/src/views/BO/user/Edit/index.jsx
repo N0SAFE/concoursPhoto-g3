@@ -90,7 +90,7 @@ export default function UserCreate() {
                     const data = {
                         state,
                         email,
-                        password: password || undefined,
+                        plainPassword: password || undefined,
                         firstname,
                         lastname,
                         address,

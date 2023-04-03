@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
 
@@ -57,7 +57,6 @@ export default function OrganizationList() {
 
     return (
         <div>
-            <Link to={"/BO/organization/create"}>Créer une organisation</Link>
             <h1>Listes des organisations</h1>
             <BOList
                 entityList={Organizations}

@@ -7,8 +7,7 @@ table {
     }
 }
 
-thead,
-tfoot {
-    background-color: lightgrey;
-    color: black;
+thead, tfoot {
+    background-color: $lightgrey;
+    color: $black;
 }

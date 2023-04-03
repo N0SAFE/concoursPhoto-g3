@@ -3,7 +3,7 @@ import BOSee from "@/components/organisms/BO/See";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch";
-import useLocation from "@/hooks/useLocation.js";
+import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
 
 export default function () {
@@ -39,7 +39,7 @@ export default function () {
                 console.error(error);
             });
     };
-    
+
     useEffect(() => {
         const promise = getUser();
         toast.promise(promise, {

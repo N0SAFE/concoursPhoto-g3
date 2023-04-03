@@ -42,8 +42,8 @@ export default function Navbar() {
             <ul>
                 <Dropdown
                     links={[
-                        { title: "Connexion", to: "/login", requireToken: true, alternative: "Déconnexion", alternativeTo: "/logout" },
-                        { title: "Mon profil", to: "/register" },
+                        { title: "Connexion", to: "/auth/login", requireToken: true, alternative: "Déconnexion", alternativeTo: "/auth/logout" },
+                        { title: "Mon profil", to: "/profile" },
                     ]}
                     title={isLogged ? me.email : "Mon compte"}
                     requireLogin={isLogged}

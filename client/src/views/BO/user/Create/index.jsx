@@ -66,8 +66,7 @@ export default function UserCreate() {
                     const data = {
                         state,
                         email,
-                        password,
-                        passwordConfirm,
+                        plainPassword: password,
                         firstname,
                         lastname,
                         address,
@@ -78,7 +77,7 @@ export default function UserCreate() {
                         gender: "/api/genders/" + gender.value,
                         creationDate: new Date().toISOString(),
                         dateOfBirth: new Date().toISOString(),
-                        country: "France",
+                        country: "FRANCE",
                         isVerified: true,
                     };
                     console.debug("data", data);
