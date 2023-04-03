@@ -26,6 +26,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         'ROLE_ADMIN',
     ];
 
+    const CITY_ARRAY = [
+        '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
+    ];
+
     public function getRandomElements(array $array, int $count): array
     {
         shuffle($array);
@@ -61,11 +65,12 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setFirstname($faker->firstName());
             $user->setLastname($faker->lastName());
             $user->setRoles($this->getRandomElements(self::ROLE_ARRAY, 1));
-            $user->setCity($faker->city());
+            $user->setCity(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
             $user->setCountry("FRANCE");
             $user->setPostcode(str_replace(' ', '', $faker->postcode()));
             $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
             $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
+            $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
 
             $manager->persist($user);
 

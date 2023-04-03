@@ -13,6 +13,9 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
 {
     const ORGANIZATION_REFERENCE = 'organization';
     const ORGANIZATION_COUNT_REFERENCE = 20;
+    const CITY_ARRAY = [
+        '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
+    ];
 
     public function load(ObjectManager $manager): void
     {
@@ -27,7 +30,7 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setLogo($faker->imageUrl());
             $organization->setAddress($faker->address());
             $organization->setPostcode(str_replace(' ', '', $faker->postcode()));
-            $organization->setCity($faker->city());
+            $organization->setCity(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
             $organization->setWebsiteUrl($faker->url());
             $organization->setEmail($faker->email());
             $organization->setNumberPhone($faker->phoneNumber());
@@ -36,7 +39,7 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
 
             $manager->persist($organization);
 
-            $this->addReference(sprintf('%s%d', self::ORGANIZATION_REFERENCE, $i), $organization);
+            $this->addReference(sprintf('%s%d', self::ORGANIZATION_REFERENCE, $i + 1), $organization);
         }
 
         $manager->flush();

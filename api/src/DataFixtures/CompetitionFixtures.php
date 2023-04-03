@@ -15,6 +15,18 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
     const COMPETITION_COUNT_REFERENCE = 10;
     const COUNT_REFERENCE = 100;
 
+    const CITY_ARRAY = [
+        '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
+    ];
+
+    const DEPARTMENT_ARRAY = [
+        '976', '45', '14', '15', '28', '47', '04', '83', '973', '68'
+    ];
+
+    const REGION_ARRAY = [
+        '32', '11', '24', '27', '28', '44', '52', '53', '02', '04'
+    ];
+
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
@@ -42,10 +54,37 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
             $competition->setMinAgeCriteria(random_int(0, self::COUNT_REFERENCE));
             $competition->setMaxAgeCriteria(random_int(0, self::COUNT_REFERENCE));
             $competition->setCountryCriteria(["FRANCE"]);
-            $competition->setCityCriteria([$faker->city()]);
-            $competition->setRegionCriteria([$faker->region()]);
-            $competition->setDepartmentCriteria([$faker->departmentName()]);
-            $competition->setOrganization($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, self::COMPETITION_COUNT_REFERENCE)));
+
+            $cities = [];
+            $cityNumber = rand(1, 3);
+            while (count($cities) < $cityNumber) {
+                if (!in_array(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)], $cities)) {
+                    $cities[] = self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)];
+                }
+            }
+            $competition->setCityCriteria($cities);
+
+            $regions = [];
+            $regionNumber = rand(1, 3);
+            while (count($regions) < $regionNumber) {
+                if (!in_array(self::REGION_ARRAY[rand(0, count(self::REGION_ARRAY) - 1)], $regions)) {
+                    $regions[] = self::REGION_ARRAY[rand(0, count(self::REGION_ARRAY) - 1)];
+                }
+            }
+            $competition->setRegionCriteria($regions);
+
+            $departments = [];
+            $departmentNumber = rand(1, 3);
+            while (count($departments) < $departmentNumber) {
+                if (!in_array(self::DEPARTMENT_ARRAY[rand(0, count(self::DEPARTMENT_ARRAY) - 1)], $departments)) {
+                    $departments[] = self::DEPARTMENT_ARRAY[rand(0, count(self::DEPARTMENT_ARRAY) - 1)];
+                }
+            }
+            $competition->setDepartmentCriteria($departments);
+
+            $competition->setOrganization($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
+            $competition->addParticipantCategory($this->getReference(ParticipantCategoryFixtures::PARTICIPANT_CATEGORY_REFERENCE . rand(1, count(ParticipantCategoryFixtures::PARTICIPANT_CATEGORY_ARRAY))));
+            $competition->addTheme($this->getReference(ThemeFixtures::THEME_REFERENCE . rand(1, count(ThemeFixtures::THEME_ARRAY))));
 
             $manager->persist($competition);
 
@@ -59,6 +98,8 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             OrganizationFixtures::class,
+            ParticipantCategoryFixtures::class,
+            ThemeFixtures::class
         ];
     }
 }
