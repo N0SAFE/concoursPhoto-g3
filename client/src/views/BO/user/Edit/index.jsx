@@ -83,7 +83,7 @@ export default function UserCreate() {
     return (
         <div>
             <BOForm
-                title="Ajouter un utilisateur"
+                title="Modifier un utilisateur"
                 handleSubmit={function () {
                     console.debug("handleSubmit");
                     console.debug("fetch");
@@ -117,6 +117,9 @@ export default function UserCreate() {
                         .then((r) => r.json())
                         .then((data) => {
                             console.debug(data);
+                            if (data["@type"] === "hydra:Error") {
+                                throw new Error(data.description);
+                            }
                         });
 
                     toast.promise(promise, {
