@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch";
 import { toast } from "react-toastify";
+import Button from "@/components/atoms/Button";
 
 export default function UserList() {
     const apiFetch = useApiFetch();
@@ -54,7 +55,6 @@ export default function UserList() {
             success: "Utilisateurs chargés",
             error: "Erreur lors du chargement des utilisateurs",
         });
-
     }, [filterState, filterVerified]);
 
     const handleDelete = (id) => {
@@ -106,7 +106,10 @@ export default function UserList() {
 
     return (
         <div>
-            <h1>Liste des utilisateurs</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <h1>Liste des utilisateurs</h1>
+                <Button color="green" textColor="white" name="Créer un utilisateur" onClick={() => navigate("/BO/user/create")}></Button>
+            </div>
             <div>
                 <label htmlFor="state-filter">Filtrer par état :</label>
                 <select id="state-filter" value={filterState} onChange={handleFilterChange}>
@@ -200,8 +203,8 @@ export default function UserList() {
                         label: "Voir",
                         action: ({ entity }) => {
                             navigate("/BO/user/" + entity.id);
-                        }
-                    }
+                        },
+                    },
                 ]}
             />
         </div>
