@@ -85,8 +85,8 @@ export default function OrganizationEdit() {
 
     return (
         <div>
+            <h1>Modifier une organisation</h1>
             <BOForm
-                title="Modifier une organisation"
                 handleSubmit={function () {
                     console.debug("handleSubmit");
                     console.debug("fetch");
