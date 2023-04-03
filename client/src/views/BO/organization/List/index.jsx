@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
+import Button from "@/components/atoms/Button";
 
 export default function OrganizationList() {
     const [Organizations, setOrganizations] = useState([]);
@@ -57,8 +58,10 @@ export default function OrganizationList() {
 
     return (
         <div>
-            <Link to={"/BO/organization/create"}>Créer une organisation</Link>
-            <h1>Listes des organisations</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <h1>Liste des organisations</h1>
+                <Button color="green" textColor="white" name="Créer une organisation" onClick={() => navigate("/BO/organization/create")}></Button>
+            </div>
             <BOList
                 entityList={Organizations}
                 fields={[

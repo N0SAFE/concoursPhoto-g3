@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
+import Button from "@/components/atoms/Button";
 
 export default function CompetitionsList() {
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
     const [competitions, setCompetitions] = useState([]);
-
     function getCompetitions() {
         apiFetch("/competitions", {
             method: "GET",
@@ -55,8 +55,11 @@ export default function CompetitionsList() {
 
     return (
         <div>
-            <Link to={"/BO/competition/create"}>Créer un concours</Link>
-            <h1>Liste des concours</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <h1>Liste des concours</h1>
+                <Button color="green" textColor="white" name="Créer un coucours" onClick={() => navigate("/BO/competition/create")}></Button>
+            </div>
+
             <BOList
                 entityList={competitions}
                 fields={[
