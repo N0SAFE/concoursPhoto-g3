@@ -10,14 +10,12 @@ export default function({ fallback, verify = () => true }){
         return (
             <>
                 {fallback(auth)}
-                <Outlet />
             </>
         )
     }
     return (
         <>
             {fallback}
-            <Outlet />
         </>
     )
 }
