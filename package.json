@@ -16,7 +16,8 @@
     "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader",
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\"",
     "dev:api": "cd api && symfony server:start --port=8000",
-    "dev:client": "cd client && npm run dev"
+    "dev:client": "cd client && npm run dev",
+    "load:fixtures": "cd api && php bin/console doctrine:fixtures:load --no-interaction"
   },
   "repository": {
     "type": "git",
