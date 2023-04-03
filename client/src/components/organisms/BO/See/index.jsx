@@ -59,7 +59,7 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if(type === "list-dropdown"){
+        if (type === "list-dropdown") {
             return (
                 <div key={key}>
                     <label>{display}</label>
@@ -90,16 +90,10 @@ export default function ({ properties = [], entity }) {
     return (
         <div className={style.containerSee}>
             {properties.map((p, i) => {
-                if(Array.isArray(p)){
-                    return (
-                        <div key={i}>
-                            {p.map((property, y) => createField(property, y))}
-                        </div>
-                    )
+                if (Array.isArray(p)) {
+                    return <div key={i}>{p.map((property, y) => createField(property, y))}</div>;
                 }
-                return <div key={i}>
-                    {createField(p, i)}
-                </div>
+                return <div key={i}>{createField(p, i)}</div>;
             })}
         </div>
     );
