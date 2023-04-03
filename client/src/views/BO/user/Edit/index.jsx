@@ -82,8 +82,8 @@ export default function UserCreate() {
 
     return (
         <div>
-            <h1>Ajout d'un utilisateur</h1>
             <BOForm
+                title="Ajouter un utilisateur"
                 handleSubmit={function () {
                     console.debug("handleSubmit");
                     console.debug("fetch");
@@ -107,16 +107,18 @@ export default function UserCreate() {
                         setErrors({ password: "Les mots de passe ne correspondent pas" });
                         return;
                     }
-                    const promise = apiFetch("/users/" + userId , {
+                    const promise = apiFetch("/users/" + userId, {
                         method: "PATCH",
                         body: JSON.stringify(data),
                         headers: {
                             "Content-Type": "application/merge-patch+json",
                         },
-                    }).then(r => r.json()).then((data) => {
-                        console.debug(data)
-                    });
-                    
+                    })
+                        .then((r) => r.json())
+                        .then((data) => {
+                            console.debug(data);
+                        });
+
                     toast.promise(promise, {
                         pending: "Modification en cours",
                         success: "Utilisateur modifié",

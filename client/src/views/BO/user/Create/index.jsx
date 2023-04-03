@@ -58,8 +58,8 @@ export default function UserCreate() {
 
     return (
         <div>
-            <h1>Ajout d'un utilisateur</h1>
             <BOForm
+                title="Ajouter un utilisateur"
                 handleSubmit={function () {
                     console.debug("handleSubmit");
                     console.debug("fetch");
