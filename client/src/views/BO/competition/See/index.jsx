@@ -26,16 +26,18 @@ export default function () {
                     throw new Error(data.message);
                 }
                 setEntity(data);
-                Promise.all(data.city_criteria.map((cityCode) => {
-                    return getCityByCode(cityCode).then((city) => city.nom);
-                })).then((cities => {
+                Promise.all(
+                    data.city_criteria.map((cityCode) => {
+                        return getCityByCode(cityCode).then((city) => city.nom);
+                    })
+                ).then((cities) => {
                     setEntity((entity) => {
                         return {
                             ...entity,
                             city_criteria: cities,
                         };
                     });
-                }))
+                });
             })
             .catch((error) => {
                 console.error(error);
@@ -45,9 +47,9 @@ export default function () {
     useEffect(() => {
         const promise = getCompetitions();
         toast.promise(promise, {
-            pending: "Chargement de du concours",
+            pending: "Chargement du concours",
             success: "Concours chargé",
-            error: "Erreur lors du chargement ddu consours",
+            error: "Erreur lors du chargement du consours",
         });
     }, []);
 
@@ -156,13 +158,11 @@ export default function () {
                 {
                     display: "departement",
                     name: "department_criteria",
-
                 },
                 {
                     display: "rglement",
                     name: "rules",
                 },
-
             ]}
         />
     );

@@ -16,7 +16,7 @@ import CompetitionCreate from "@/views/BO/competition/Create";
 import GuardedRoute from "./layout/GuardedRoute.jsx";
 import { Navigate } from "react-router-dom";
 import OrganizationEdit from "@/views/BO/organization/Edit";
-import CompeitionSee from "@/views/BO/competition/See";
+import CompetitionSee from "@/views/BO/competition/See";
 import OrganizationSee from "@/views/BO/organization/See";
 
 function Router() {
@@ -43,7 +43,7 @@ function Router() {
                     </Route>
                     <Route path="competition">
                         <Route path="" element={<CompetitionsList />} />
-                        <Route path=":id" element={<CompeitionSee />} />
+                        <Route path=":id" element={<CompetitionSee />} />
                         <Route path="create" element={<CompetitionCreate />} />
                     </Route>
                 </Route>
