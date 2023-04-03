@@ -137,7 +137,7 @@ export default function () {
                     name: "weighting_of_jury_votes",
                 },
                 {
-                    display: "theme",
+                    display: "thème",
                     name: "theme",
                     customData({ entity, property }) {
                         return entity?.theme?.map((theme) => theme.label).join(", ");
@@ -156,11 +156,11 @@ export default function () {
                     name: "state",
                 },
                 {
-                    display: "departement",
+                    display: "département",
                     name: "department_criteria",
                 },
                 {
-                    display: "rglement",
+                    display: "réglement",
                     name: "rules",
                 },
             ]}
