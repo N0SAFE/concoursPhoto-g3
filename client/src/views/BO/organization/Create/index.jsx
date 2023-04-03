@@ -77,8 +77,8 @@ export default function OrganizationCreate() {
 
     return (
         <div>
-            <h1>Ajout d'une organisation</h1>
             <BOCreate
+                title="Création d'une organisation"
                 handleSubmit={function () {
                     console.debug("handleSubmit");
                     console.debug("fetch");
