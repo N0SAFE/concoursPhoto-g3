@@ -1,3 +1,5 @@
+import style from "./style.module.scss";
+
 export default function ({ properties = [], entity }) {
     if(!Array.isArray(properties)) {
         throw new Error("properties must be an array");
@@ -20,7 +22,7 @@ export default function ({ properties = [], entity }) {
                 data = customData;
             }
         }
-        
+
         if(type === "text") {
             return (
                 <div key={key}>
@@ -29,7 +31,7 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if(type === "img"){
+        if (type === "img") {
             return (
                 <div key={key}>
                     <label>{display}</label>
@@ -37,7 +39,7 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if(type === "custom"){
+        if (type === "custom") {
             return (
                 <div key={key}>
                     <label>{display}</label>
@@ -45,12 +47,14 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if(type === "list"){
+        if (type === "list") {
             return (
                 <div key={key}>
                     <label>{display}</label>
                     <ul>
-                        {data.map((item, index) => <li key={index}>{item}</li>)}
+                        {data.map((item, index) => (
+                            <li key={index}>{item}</li>
+                        ))}
                     </ul>
                 </div>
             );
@@ -60,21 +64,31 @@ export default function ({ properties = [], entity }) {
                 <div key={key}>
                     <label>{display}</label>
                     <ul>
-                        {data.map((item, index) => <li key={index}>{item}</li>)}
+                        {data.map((item, index) => (
+                            <li key={index}>{item}</li>
+                        ))}
                     </ul>
                 </div>
             );
         }
+        if (type === "date") {
+            return (
+                <div key={key}>
+                    <label>{display} : </label>
+                    <span>
+                        {new Date(data).toLocaleDateString("fr-FR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        })}
+                    </span>
+                </div>
+            );
+        }
     }
-    
+
     return (
-        <div style={{display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            height: "100%"
-        }}>
+        <div className={style.containerSee}>
             {properties.map((p, i) => {
                 if(Array.isArray(p)){
                     return (
@@ -88,5 +102,5 @@ export default function ({ properties = [], entity }) {
                 </div>
             })}
         </div>
-    )
+    );
 }

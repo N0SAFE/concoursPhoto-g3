@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
 
@@ -55,6 +55,7 @@ export default function CompetitionsList() {
 
     return (
         <div>
+            <Link to={"/BO/competition/create"}>Créer un concours</Link>
             <h1>Liste des concours</h1>
             <BOList
                 entityList={competitions}
@@ -110,7 +111,7 @@ export default function CompetitionsList() {
                         color: "blue",
                         textColor: "white",
                         action: ({ entity }) => {
-                            navigate("/BO/user/" + entity.id);
+                            navigate("/BO/competition/edit/" + entity.id);
                         },
                     },
                     {
@@ -118,9 +119,15 @@ export default function CompetitionsList() {
                         color: "red",
                         textColor: "white",
                         action: ({ entity }) => {
-                            if (confirm("Êtes-vous sûr de vouloir supprimer cet organisation ?")) {
+                            if (confirm("Êtes-vous sûr de vouloir supprimer ce concours ?")) {
                                 return handleDelete(entity.id);
                             }
+                        },
+                    },
+                    {
+                        label: "Voir",
+                        action: ({ entity }) => {
+                            navigate("/BO/competition/" + entity.id);
                         },
                     },
                 ]}

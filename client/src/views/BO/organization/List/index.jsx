@@ -94,7 +94,7 @@ export default function OrganizationList() {
                         color: "blue",
                         textColor: "white",
                         action: ({ entity }) => {
-                            navigate("/BO/user/" + entity.id);
+                            navigate("/BO/organization/edit/" + entity.id);
                         },
                     },
                     {
@@ -105,6 +105,12 @@ export default function OrganizationList() {
                             if (confirm("Êtes-vous sûr de vouloir supprimer cet organisation ?")) {
                                 return handleDelete(entity.id);
                             }
+                        },
+                    },
+                    {
+                        label: "Voir",
+                        action: ({ entity }) => {
+                            navigate("/BO/organization/" + entity.id);
                         },
                     },
                 ]}

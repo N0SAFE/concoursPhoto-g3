@@ -1,31 +1,23 @@
 import Input from "@/components/atoms/Input/index.jsx";
-import BOCreate from "@/components/organisms/BO/Form";
+import BOForm from "@/components/organisms/BO/Form";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import useLocationPosibility from "@/hooks/useLocationPosibility.js";
+import useLocation from "@/hooks/useLocation.js";
+import { toast } from "react-toastify";
 
-export default function OrganizationCreate() {
+export default function OrganizationEdit() {
     const apiFetch = useApiFetch();
-    const [citiesPossibility, setCitiesPossibility] = useState([]);
-    const [postalCodesPossibility, setPostalCodesPossibility] = useState([]);
-    const [typePossibility, setTypePossibility] = useState([]);
+    const { id: organizationId } = useParams();
 
-    const [state, setState] = useState(false);
-    const [organizerName, setOrganizerName] = useState("");
-    const [description, setDescription] = useState("");
-    const [address, setAddress] = useState("");
-    const [city, setCity] = useState("");
-    const [postcode, setPostcode] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [email, setEmail] = useState("");
-    const [logo, setLogo] = useState("");
-    const [websiteUrl, setWebsiteUrl] = useState([]);
-    const [type, setType] = useState([]);
-    const [errors, setErrors] = useState({});
-    const onClear = () => {
-        setValue("");
-    };
+    const { getCityByCode } = useLocation();
+    const [entityPossibility, setEntityPossibility] = useState({ organizationTypes: [] });
+    const [possibility, updatePossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
+    const citiesPossibility = possibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
+    const postalCodesPossibility = [...new Set(possibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
     const getTypePossibility = () => {
-        apiFetch("/organization_types", {
+        return apiFetch("/organization_types", {
             method: "GET",
         })
             .then((r) => r.json())
@@ -38,56 +30,73 @@ export default function OrganizationCreate() {
                 );
             });
     };
-
-    const getCitiesPossibility = () => {
-        console.debug("postalCode", postcode);
-        console.debug("city", city);
-
-        const filter = [postcode ? `codePostal=${postcode}` : "", city ? `nom=${city}` : ""];
-
-        console.debug(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`);
-
-        fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}&fields=nom,codesPostaux&format=json&geometry=centre`)
-            .then((response) => {
-                return response.json();
-            })
+    function getOrganizations() {
+        return apiFetch("/organizations/" + organizationId, {
+            method: "GET",
+        })
+            .then((r) => r.json())
             .then((data) => {
-                data.length = 30;
-                const [cityPossibility, postalCodesPossibility] = data.reduce(
-                    ([cityResponse, postalCodeResponse], c) => {
-                        cityResponse.push({ label: c.nom, value: c.code });
-                        postalCodeResponse.push(...c.codesPostaux);
-                        return [cityResponse, postalCodeResponse];
-                    },
-                    [[], []]
-                );
-                setCitiesPossibility(cityPossibility);
-                setPostalCodesPossibility(postalCodesPossibility.map((c) => ({ label: c, value: c })));
-                console.debug("data", postcode);
+                console.debug(data);
+                setState(data.state);
+                setOrganizerName(data.organizer_name);
+                setDescription(data.description);
+                setCountry(data.country);
+                setAddress(data.address);
+                setPhoneNumber(data.number_phone);
+                setEmail(data.email);
+                setWebsiteUrl(data.website_url);
+                setType({ value: data.organization_type.id, label: data.organization_type.label });
+                setLogo(data.logo);
+                setPostcode({ value: data.postcode, label: data.postcode });
+                getCityByCode(data.city).then((city) => {
+                    setCity({ label: city.nom, value: city.code });
+                });
             });
-    };
-    useEffect(() => {
-        getTypePossibility();
-    }, []);
-    useEffect(() => {
-        getCitiesPossibility();
-    }, [postcode, city]);
+    }
 
-    console.debug("postalCodesPossibility", postalCodesPossibility);
+    const [state, setState] = useState(false);
+    const [email, setEmail] = useState("");
+    const [description, setDescription] = useState("");
+    const [address, setAddress] = useState("");
+    const [city, setCity] = useState("");
+    const [postcode, setPostcode] = useState();
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [organizerName, setOrganizerName] = useState("");
+    const [type, setType] = useState("");
+    const [country, setCountry] = useState("");
+    const [typePossibility, setTypePossibility] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [logo, setLogo] = useState("");
+    const [websiteUrl, setWebsiteUrl] = useState("");
+
+    useEffect(() => {
+        const promise = Promise.all([getTypePossibility(), getOrganizations()]).then(([organizationTypes]) => setEntityPossibility({ organizationTypes }));
+        promise.catch(console.error);
+        toast.promise(promise, {
+            pending: "Chargement des données",
+            success: "Données chargées",
+            error: "Erreur lors du chargement des données",
+        });
+    }, []);
+
+    useEffect(() => {
+        updatePossibility({ args: { codeCity: city?.value, postcode: postcode?.value } });
+    }, [postcode, city]);
 
     return (
         <div>
-            <BOCreate
-                title="Création d'une organisation"
+            <BOForm
+                title="Modifier une organisation"
                 handleSubmit={function () {
                     console.debug("handleSubmit");
                     console.debug("fetch");
+                    console.debug("type", type);
                     const data = {
                         organizerName: organizerName,
                         description: description,
                         address: address,
-                        city: city,
-                        postcode: postcode,
+                        city: city.value,
+                        postcode: postcode.value,
                         numberPhone: phoneNumber,
                         email: email,
                         state,
@@ -98,11 +107,11 @@ export default function OrganizationCreate() {
                         organizationType: "/api/organization_types/" + type.value,
                     };
                     console.debug("data", data);
-                    apiFetch("/organizations", {
-                        method: "POST",
+                    const promise = apiFetch("/organizations/" + organizationId, {
+                        method: "PATCH",
                         body: JSON.stringify(data),
                         headers: {
-                            "Content-Type": "application/json",
+                            "Content-Type": "application/merge-patch+json",
                         },
                     })
                         .then((r) => r.json())
@@ -112,21 +121,27 @@ export default function OrganizationCreate() {
                                 throw new Error(data.description);
                             }
                         });
+
+                    toast.promise(promise, {
+                        pending: "Modification en cours",
+                        success: "Organisation modifiée",
+                        error: "Erreur lors de la modification de l'organisation",
+                    });
                 }}
             >
                 <div>
                     <label htmlFor="organizerName">organizerName</label>
-                    <Input type="text" name="organizerName" label="Nom de l'organisation" extra={{ required: true }} setState={setOrganizerName} />
+                    <Input type="text" name="organizerName" label="Nom de l'organisation" extra={{ required: true }} setState={setOrganizerName} defaultValue={organizerName} />
                     <div>{errors.organizerName}</div>
                 </div>
                 <div>
                     <label htmlFor="description">description</label>
-                    <Input type="text" name="description" label="Description" extra={{ required: true }} setState={setDescription} />
+                    <Input type="text" name="description" label="Description" extra={{ required: true }} setState={setDescription} defaultValue={description} />
                     <div>{errors.description}</div>
                 </div>
                 <div>
                     <label htmlFor="phoneNumber">phoneNumber</label>
-                    <Input type="text" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} setState={setPhoneNumber} />
+                    <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} setState={setPhoneNumber} defaultValue={phoneNumber} />
                     <div>{errors.phoneNumber}</div>
                 </div>
                 <div>
@@ -156,7 +171,7 @@ export default function OrganizationCreate() {
                 </div>
                 <div>
                     <label htmlFor="type">Type</label>
-                    <Input type="select" name="type" label="Type" defaultValue={type} extra={{ options: typePossibility, required: true }} setState={setType} />
+                    <Input type="select" name="type" label="Type" extra={{ options: typePossibility, required: true, value: type }} setState={setType} />
                     <div>{errors.type}</div>
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
@@ -167,17 +182,21 @@ export default function OrganizationCreate() {
                             name="city"
                             label="Ville"
                             extra={{
-                                clearable: true,
+                                value: city,
+                                isClearable: true,
                                 required: true,
                                 options: citiesPossibility,
                                 multiple: false,
-                                onInputChange: (item, { action }) => {
+                                onInputChange: (text, { action }) => {
+                                    if (action === "menu-close") {
+                                        updatePossibility({ id: "city" });
+                                    }
                                     if (action === "input-change") {
-                                        setCity(item);
+                                        updatePossibility({ id: "city", args: { name: text } });
                                     }
                                 },
                             }}
-                            setState={(item) => setCity(item.label)}
+                            setState={setCity}
                         />
                         <div>{errors.city}</div>
                     </div>
@@ -188,23 +207,26 @@ export default function OrganizationCreate() {
                             name="postalCode"
                             label="Code postal"
                             extra={{
-                                clearable: true,
+                                value: postcode,
+                                isClearable: true,
                                 required: true,
                                 options: postalCodesPossibility,
                                 multiple: false,
-                                onInputChange: (item, { action }) => {
-                                    if (action === "input-change") {
-                                        setPostcode(item);
+                                onInputChange: (postcode, { action }) => {
+                                    if (action === "menu-close") {
+                                        updatePossibility({ id: "city" });
+                                    }
+                                    if (action === "input-change" && postcode.length === 5) {
+                                        updatePossibility({ id: "city", args: { postcode } });
                                     }
                                 },
                             }}
-                            setState={(item) => setPostcode(item.label)}
-                            defaultValue={postcode}
+                            setState={setPostcode}
                         />
                         <div>{errors.postalCode}</div>
                     </div>
                 </div>
-            </BOCreate>
+            </BOForm>
         </div>
     );
 }

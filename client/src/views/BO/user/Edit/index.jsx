@@ -82,15 +82,15 @@ export default function UserCreate() {
 
     return (
         <div>
-            <h1>Ajout d'un utilisateur</h1>
             <BOForm
+                title="Modifier un utilisateur"
                 handleSubmit={function () {
                     console.debug("handleSubmit");
                     console.debug("fetch");
                     const data = {
                         state,
                         email,
-                        password: password || undefined,
+                        plainPassword: password || undefined,
                         firstname,
                         lastname,
                         address,
@@ -107,16 +107,21 @@ export default function UserCreate() {
                         setErrors({ password: "Les mots de passe ne correspondent pas" });
                         return;
                     }
-                    const promise = apiFetch("/users/" + userId , {
+                    const promise = apiFetch("/users/" + userId, {
                         method: "PATCH",
                         body: JSON.stringify(data),
                         headers: {
                             "Content-Type": "application/merge-patch+json",
                         },
-                    }).then(r => r.json()).then((data) => {
-                        console.debug(data)
-                    });
-                    
+                    })
+                        .then((r) => r.json())
+                        .then((data) => {
+                            console.debug(data);
+                            if (data["@type"] === "hydra:Error") {
+                                throw new Error(data.description);
+                            }
+                        });
+
                     toast.promise(promise, {
                         pending: "Modification en cours",
                         success: "Utilisateur modifié",

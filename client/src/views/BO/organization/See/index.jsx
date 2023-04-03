@@ -3,17 +3,17 @@ import BOSee from "@/components/organisms/BO/See";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch";
-import useLocation from "@/hooks/useLocation";
+import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
 
 export default function () {
     const apiFetch = useApiFetch();
     const { getCityByCode } = useLocation();
     const [entity, setEntity] = useState({});
-    const { id: userId } = useParams();
+    const { id: organizationId } = useParams();
 
-    const getUser = () => {
-        return apiFetch("/users/" + userId, {
+    const getOrganizations = () => {
+        return apiFetch("/organizations/" + organizationId, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -41,11 +41,11 @@ export default function () {
     };
 
     useEffect(() => {
-        const promise = getUser();
+        const promise = getOrganizations();
         toast.promise(promise, {
-            pending: "Chargement de l'utilisateur",
-            success: "Utilisateur chargé",
-            error: "Erreur lors du chargement de l'utilisateur",
+            pending: "Chargement de l'oranisation",
+            success: "l'Organization a bien chargé",
+            error: "Erreur lors du chargement de l'organisation",
         });
     }, []);
 
@@ -55,19 +55,11 @@ export default function () {
             properties={[
                 {
                     display: "Nom",
-                    name: "lastname",
+                    name: "organizer_name",
                 },
                 {
-                    display: "Prénom",
-                    name: "firstname",
-                },
-                {
-                    display: "Email",
-                    name: "email",
-                },
-                {
-                    display: "Téléphone",
-                    name: "phone_number",
+                    display: "Ville",
+                    name: "city",
                 },
                 {
                     display: "Adresse",
@@ -78,36 +70,39 @@ export default function () {
                     name: "postcode",
                 },
                 {
-                    display: "Ville",
-                    name: "city",
-                },
-                {
-                    display: "Pays",
+                    display: "pays",
                     name: "country",
                 },
                 {
-                    display: "Date de naissance",
-                    name: "date_of_birth",
-                    customData({ entity, property }) {
-                        return new Date(entity?.date_of_birth).toLocaleDateString("fr-FR", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                        });
+                    display: "Téléphone",
+                    name: "number_phone",
+                },
+                {
+                    display: "Email",
+                    name: "email",
+                },
+                {
+                    display: "Site web",
+                    name: "website_url",
+                },
+                {
+                    display: "Description",
+                    name: "description",
+                },
+                { display: "Logo", name: "logo" },
+                {
+                    display: "Type d'organisation",
+                    name: "type_organization",
+                    customData: ({ entity }) => {
+                        return entity?.organization_type?.label;
                     },
                 },
                 {
-                    display: "Genre",
-                    name: "gender",
-                    customData({ entity, property }) {
-                        return entity?.gender?.label;
-                    },
-                },
-                {
-                    display: "Roles",
-                    name: "roles",
-                    customData({ entity, property }) {
-                        return "[" + (entity?.roles?.join(", ") || "") + "]";
+                    display: "Competitions",
+                    name: "competitions",
+                    customData: ({ entity }) => {
+                        console.log(entity);
+                        return entity?.competitions?.map((competition) => competition.competition_name).join(", ");
                     },
                 },
             ]}

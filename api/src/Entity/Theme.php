@@ -7,6 +7,7 @@ use App\Repository\ThemeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
@@ -18,6 +19,7 @@ class Theme
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('competition')]
     private ?string $label = null;
 
     #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'theme')]

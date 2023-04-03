@@ -58,16 +58,15 @@ export default function UserCreate() {
 
     return (
         <div>
-            <h1>Ajout d'un utilisateur</h1>
             <BOForm
+                title="Ajouter un utilisateur"
                 handleSubmit={function () {
                     console.debug("handleSubmit");
                     console.debug("fetch");
                     const data = {
                         state,
                         email,
-                        password,
-                        passwordConfirm,
+                        plainPassword: password,
                         firstname,
                         lastname,
                         address,
@@ -78,7 +77,7 @@ export default function UserCreate() {
                         gender: "/api/genders/" + gender.value,
                         creationDate: new Date().toISOString(),
                         dateOfBirth: new Date().toISOString(),
-                        country: "France",
+                        country: "FRANCE",
                         isVerified: true,
                     };
                     console.debug("data", data);
@@ -105,7 +104,9 @@ export default function UserCreate() {
                         error: {
                             render: ({ data }) => {
                                 console.debug(data);
-                                return data["hydra:description"];
+                                if (data["@type"] === "hydra:Error") {
+                                    throw new Error(data.description);
+                                }
                             },
                         },
                     });

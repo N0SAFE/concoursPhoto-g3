@@ -16,18 +16,25 @@ class AuthController extends AbstractController
         // remove cookie from browser [BEARER, refreshToken]
         $request->cookies->remove('BEARER');
         $request->cookies->remove('refreshToken');
-        
+
         // remove cookie from server
         $response = new Response();
         $response->headers->clearCookie('BEARER');
         $response->headers->clearCookie('refreshToken');
-        
+
         return $response;
     }
-    
+
     #[Route('/whoami', name: 'whoami', methods: ['GET'])]
     public function whoami()
     {
         return $this->json($this->getUser());
+    }
+
+    #[Route('/token/refresh', name: 'refresh', methods: ['DELETE'])]
+    public function removeRefreshToken(Response $response)
+    {
+        $response->headers->clearCookie('refreshToken');
+        return $response;
     }
 }
