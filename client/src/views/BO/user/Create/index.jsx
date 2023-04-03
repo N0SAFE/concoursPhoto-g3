@@ -113,7 +113,7 @@ export default function UserCreate() {
                 }}
             >
                 <div>
-                    <label htmlFor="firstname">Prenom</label>
+                    <label htmlFor="firstname">Prénom</label>
                     <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} setState={setFirstname} defaultValue={firstname} />
                     <div>{errors.firstname}</div>
                 </div>
@@ -123,29 +123,29 @@ export default function UserCreate() {
                     <div>{errors.lastname}</div>
                 </div>
                 <div>
-                    <label htmlFor="dateOfBirth">dateOfBirth</label>
-                    <Input type="date" name="dateOfBirth" label="Date de Naissance" extra={{ required: true }} setState={setDateOfBirth} defaultValue={dateOfBirth} />
+                    <label htmlFor="dateOfBirth">Date de Naissance</label>
+                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} setState={setDateOfBirth} defaultValue={dateOfBirth} />
                     <div>{errors.dateOfBirth}</div>
                 </div>
 
                 <div>
-                    <label htmlFor="email">email</label>
+                    <label htmlFor="email">Email</label>
                     <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} setState={setEmail} defaultValue={email} />
                     <div>{errors.email}</div>
                 </div>
                 <div>
-                    <label htmlFor="state">state</label>
+                    <label htmlFor="state">Statut</label>
                     <Input type="checkbox" name="state" label="Actif" defaultValue={state} setState={setState} />
                     <div>{errors.state}</div>
                 </div>
                 <div>
-                    <label htmlFor="address">address</label>
+                    <label htmlFor="address">Adresse</label>
                     <Input type="text" name="address" label="Adresse" defaultValue={address} extra={{ required: true }} setState={setAddress} />
                     <div>{errors.address}</div>
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
                     <div>
-                        <label htmlFor="city">city</label>
+                        <label htmlFor="city">Ville</label>
                         <Input
                             type="select"
                             name="city"
@@ -170,7 +170,7 @@ export default function UserCreate() {
                         <div>{errors.city}</div>
                     </div>
                     <div>
-                        <label htmlFor="postalCode">postalCode</label>
+                        <label htmlFor="postalCode">Code postal</label>
                         <Input
                             type="select"
                             name="postalCode"
@@ -196,19 +196,19 @@ export default function UserCreate() {
                     </div>
                 </div>
                 <div>
-                    <label htmlFor="phoneNumber">phoneNumber</label>
+                    <label htmlFor="phoneNumber">Numéro de télephone</label>
                     <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} setState={setPhoneNumber} defaultValue={phoneNumber} />
                     <div>{errors.phoneNumber}</div>
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
                     <div>
-                        <label htmlFor="gender">genre</label>
+                        <label htmlFor="gender">Genre</label>
                         <Input type="select" name="gender" label="Genre" extra={{ value: gender, required: true, options: entityPossibility.genders }} setState={setGender} />
                         <div>{errors.gender}</div>
                     </div>
                 </div>
                 <div>
-                    <label htmlFor="password">password</label>
+                    <label htmlFor="password">Mot de passe</label>
                     <Input type="password" name="password" label="Mot de passe" extra={{ required: true }} setState={setPassword} defaultValue={password} />
                     <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" extra={{ required: true }} setState={setPasswordConfirm} defaultValue={passwordConfirm} />
                     <div>{errors.password}</div>

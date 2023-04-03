@@ -65,7 +65,7 @@ export default function OrganizationList() {
                     { property: "state", display: "Statut" },
                     { property: "organizer_name", display: "Nom de l'organisation" },
                     { property: "description", display: "description" },
-                    { property: "address", display: "address" },
+                    { property: "address", display: "addresse" },
                     { property: "postcode", display: "code postal" },
                     { property: "city", display: "ville" },
                     { property: "number_phone", display: "téléphone" },
@@ -102,7 +102,7 @@ export default function OrganizationList() {
                         color: "red",
                         textColor: "white",
                         action: ({ entity }) => {
-                            if (confirm("Êtes-vous sûr de vouloir supprimer cet organisation ?")) {
+                            if (confirm("Êtes-vous sûr de vouloir supprimer cette organisation ?")) {
                                 return handleDelete(entity.id);
                             }
                         },
