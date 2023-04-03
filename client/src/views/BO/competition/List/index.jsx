@@ -57,7 +57,7 @@ export default function CompetitionsList() {
         <div>
             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <h1>Liste des concours</h1>
-                <Button color="green" textColor="white" name="Créer un coucours" onClick={() => navigate("/BO/competition/create")}></Button>
+                <Button color="green" textColor="white" name="Créer un concours" onClick={() => navigate("/BO/competition/create")}></Button>
             </div>
 
             <BOList
