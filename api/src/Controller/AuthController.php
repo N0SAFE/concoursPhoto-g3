@@ -30,11 +30,4 @@ class AuthController extends AbstractController
     {
         return $this->json($this->getUser());
     }
-
-    #[Route('/token/refresh', name: 'refresh', methods: ['DELETE'])]
-    public function removeRefreshToken(Response $response)
-    {
-        $response->headers->clearCookie('refreshToken');
-        return $response;
-    }
 }
