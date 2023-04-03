@@ -105,7 +105,9 @@ export default function UserCreate() {
                         error: {
                             render: ({ data }) => {
                                 console.debug(data);
-                                return data["hydra:description"];
+                                if (data["@type"] === "hydra:Error") {
+                                    throw new Error(data.description);
+                                }
                             },
                         },
                     });

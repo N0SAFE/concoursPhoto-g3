@@ -108,6 +108,9 @@ export default function OrganizationCreate() {
                         .then((r) => r.json())
                         .then((data) => {
                             console.debug(data);
+                            if (data["@type"] === "hydra:Error") {
+                                throw new Error(data.description);
+                            }
                         });
                 }}
             >
