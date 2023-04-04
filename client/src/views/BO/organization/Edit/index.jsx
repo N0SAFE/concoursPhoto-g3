@@ -8,28 +8,27 @@ import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
 
 export default function OrganizationEdit() {
-    const apiFetch = useApiFetch();
     const { id: organizationId } = useParams();
+    const apiFetch = useApiFetch();
 
-    const { getCityByCode } = useLocation();
     const [entityPossibility, setEntityPossibility] = useState({ organizationTypes: [] });
     const [possibility, updatePossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = possibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
     const postalCodesPossibility = [...new Set(possibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
+
+    const { getCityByCode } = useLocation();
     const getTypePossibility = () => {
         return apiFetch("/organization_types", {
             method: "GET",
         })
             .then((r) => r.json())
             .then((data) => {
-                console.debug(data);
-                setTypePossibility(
-                    data["hydra:member"].map(function (item) {
-                        return { label: item.label, value: item.id };
-                    })
-                );
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.label, value: item.id };
+                });
             });
     };
+    
     function getOrganizations() {
         return apiFetch("/organizations/" + organizationId, {
             method: "GET",
@@ -40,7 +39,6 @@ export default function OrganizationEdit() {
                 setState(data.state);
                 setOrganizerName(data.organizer_name);
                 setDescription(data.description);
-                setCountry(data.country);
                 setAddress(data.address);
                 setPhoneNumber(data.number_phone);
                 setEmail(data.email);
@@ -63,8 +61,6 @@ export default function OrganizationEdit() {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [organizerName, setOrganizerName] = useState("");
     const [type, setType] = useState("");
-    const [country, setCountry] = useState("");
-    const [typePossibility, setTypePossibility] = useState([]);
     const [errors, setErrors] = useState({});
     const [logo, setLogo] = useState("");
     const [websiteUrl, setWebsiteUrl] = useState("");
@@ -171,7 +167,7 @@ export default function OrganizationEdit() {
                 </div>
                 <div>
                     <label htmlFor="type">Type</label>
-                    <Input type="select" name="type" label="Type" extra={{ options: typePossibility, required: true, value: type }} setState={setType} />
+                    <Input type="select" name="type" label="Type" extra={{ options: entityPossibility.organizationTypes, required: true, value: type }} setState={setType} />
                     <div>{errors.type}</div>
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
