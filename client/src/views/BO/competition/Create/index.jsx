@@ -1,10 +1,10 @@
 import Input from "@/components/atoms/Input/index.jsx";
-import BOCreate from "@/components/organisms/BO/Create";
+import BOCreate from "@/components/organisms/BO/Form";
 import useApiFetch from "@/hooks/useApiFetch.js";
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 
 export default function CompetitionCreate() {
-    const apiFetch = useApiFetch()
+    const apiFetch = useApiFetch();
 
     const [regionsPossibility, setRegionsPossibility] = useState([]);
     const [departmentsPossibility, setDepartmentsPossibility] = useState([]);
@@ -12,97 +12,130 @@ export default function CompetitionCreate() {
 
     const [participantCategoryPossibility, setParticipantCategoryPossibility] = useState([]);
     const [organizationNamePossibility, setOrganizationNamePossibility] = useState([]);
+    const [themePossibility, setThemePossibility] = useState([]);
 
-    const getRegionsPossibility = ({name} = {}) => {
-        const filter = [
-            regionCriteria ? `code=${regionCriteria.value}` : "",
-            name ? `nom=${name}` : "",
-        ].filter((c) => c !== "")
-        fetch(`https://geo.api.gouv.fr/regions?${filter.join("&")}`).then(
-            (response) => {
+    const getRegionsPossibility = ({ name } = {}) => {
+        const filter = [regionCriteria ? `code=${regionCriteria.value}` : "", name ? `nom=${name}` : ""].filter((c) => c !== "");
+        fetch(`https://geo.api.gouv.fr/regions?${filter.join("&")}`)
+            .then((response) => {
                 return response.json();
-            }
-        ).then((data) => {
-            data.length = 30
-            const [regionsPossibility] = data.reduce(([regionsResponse], c) => {
-                regionsResponse.push({label: c.nom, value: c.code});
-                return [regionsResponse];
-            }, [[], []]);
-            setRegionsPossibility(regionsPossibility);
-        })
-    }
+            })
+            .then((data) => {
+                data.length = 30;
+                const [regionsPossibility] = data.reduce(
+                    ([regionsResponse], c) => {
+                        regionsResponse.push({ label: c.nom, value: c.code });
+                        return [regionsResponse];
+                    },
+                    [[], []]
+                );
+                setRegionsPossibility(regionsPossibility);
+            });
+    };
 
-    const getDepartmentsPossibility = ({codeRegion, name} = {}) => {
+    const getDepartmentsPossibility = ({ codeRegion, name } = {}) => {
         const filter = [
             regionCriteria ? `codeRegion=${regionCriteria.value}` : "" || codeRegion ? `codeRegion=${codeRegion}` : "",
             departmentCriteria ? `code=${departmentCriteria.value}` : "",
             name ? `nom=${name}` : "",
-        ].filter((c) => c !== "")
-        fetch(`https://geo.api.gouv.fr/departements?${filter.join("&")}`).then(
-            (response) => {
+        ].filter((c) => c !== "");
+        fetch(`https://geo.api.gouv.fr/departements?${filter.join("&")}`)
+            .then((response) => {
                 return response.json();
-            }
-        ).then((data) => {
-            data.length = 30
-            const [departmentPossibility] = data.reduce(([departmentResponse], c) => {
-                departmentResponse.push({label: c.nom, value: c.code, codeRegion: c.codeRegion});
-                return [departmentResponse];
-            }, [[]]);
-            setDepartmentsPossibility(departmentPossibility);
+            })
+            .then((data) => {
+                data.length = 30;
+                const [departmentPossibility] = data.reduce(
+                    ([departmentResponse], c) => {
+                        departmentResponse.push({ label: c.nom, value: c.code, codeRegion: c.codeRegion });
+                        return [departmentResponse];
+                    },
+                    [[]]
+                );
+                setDepartmentsPossibility(departmentPossibility);
+            });
+    };
 
-        })
-    }
-
-    const getCitiesPossibility = ({codeRegion, codeDepartment, name} = {}) => {
+    const getCitiesPossibility = ({ codeRegion, codeDepartment, name } = {}) => {
         const filter = [
             regionCriteria ? `codeRegion=${regionCriteria.value}` : "" || codeRegion ? `codeRegion=${codeRegion}` : "",
             departmentCriteria ? `codeDepartement=${departmentCriteria.value}` : "" || codeDepartment ? `codeDepartement=${codeDepartment}` : "",
             cityCriteria ? `code=${cityCriteria.value}` : "",
             name ? `nom=${name}` : "",
-        ].filter((c) => c !== "")
-        fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}`).then(
-            (response) => {
+        ].filter((c) => c !== "");
+        fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}`)
+            .then((response) => {
                 return response.json();
-            }
-        ).then((data) => {
-            data.length = 30
-            const [citiesPossibility] = data.reduce(([citiesResponse], c) => {
-                citiesResponse.push({
-                    label: c.nom,
-                    value: c.code,
-                    codeDepartement: c.codeDepartement,
-                    codeRegion: c.codeRegion
-                });
-                return [citiesResponse];
-            }, [[]]);
-            setCitiesPossibility(citiesPossibility);
-        })
-    }
+            })
+            .then((data) => {
+                data.length = 30;
+                const [citiesPossibility] = data.reduce(
+                    ([citiesResponse], c) => {
+                        citiesResponse.push({
+                            label: c.nom,
+                            value: c.code,
+                            codeDepartement: c.codeDepartement,
+                            codeRegion: c.codeRegion,
+                        });
+                        return [citiesResponse];
+                    },
+                    [[]]
+                );
+                setCitiesPossibility(citiesPossibility);
+            });
+    };
 
     const getParticipantCategories = () => {
         apiFetch("/participant_categories", {
             method: "GET",
             headers: { "Content-Type": "multipart/form-data" },
-        }).then(r => r.json()).then((data) => {
-            console.log(data);
-            setParticipantCategoryPossibility(data['hydra:member'].map(function(item){return {label: item.label, value: item.id}}));
-        });
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
+                setParticipantCategoryPossibility(
+                    data["hydra:member"].map(function (item) {
+                        return { label: item.label, value: item["@id"] };
+                    })
+                );
+            });
     };
 
     const getOrganizationsName = () => {
         apiFetch("/organizations", {
             method: "GET",
-        }).then(r => r.json()).then((data) => {
-            console.log(data);
-            setOrganizationNamePossibility(data['hydra:member'].map(function(item){return {organizer_name: item.organizer_name, value: item.id}}));
-        });
-    }
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
+                setOrganizationNamePossibility(
+                    data["hydra:member"].map(function (item) {
+                        return { label: item.organizer_name, value: item["@id"] };
+                    })
+                );
+            });
+    };
 
+    const getThemes = () => {
+        apiFetch("/themes", {
+            method: "GET",
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
+                setThemePossibility(
+                    data["hydra:member"].map(function (item) {
+                        return { label: item.label, value: item["@id"] };
+                    })
+                );
+            });
+    };
 
     const [errors, setErrors] = useState({});
 
     const [participantCategories, setParticipantCategories] = useState([]);
     const [organizationName, setOrganizationName] = useState();
+    const [themes, setThemes] = useState([]);
 
     const [state, setState] = useState(false);
     const [competitionName, setCompetitionName] = useState("");
@@ -143,22 +176,22 @@ export default function CompetitionCreate() {
     useEffect(() => {
         getParticipantCategories();
         getOrganizationsName();
+        getThemes();
     }, []);
 
     return (
         <div>
-            <h1>Ajout d'un concours</h1>
             <BOCreate
+                title="Création d'un concours"
                 handleSubmit={function () {
-                    console.log("handleSubmit");
-                    console.log("fetch")
+                    console.debug("handleSubmit");
+                    console.debug("fetch");
                     const data = {
                         state,
                         competitionName,
                         competitionVisual,
-                        participantCategories: participantCategories.value,
-                        organization: "/api/organizations/" + organizationName.value,
-                        participant_category: participantCategories.value,
+                        participantCategory: participantCategories.map((p) => p.value),
+                        organization: organizationName.value,
                         description,
                         rules,
                         endowments,
@@ -179,17 +212,23 @@ export default function CompetitionCreate() {
                         cityCriteria: [cityCriteria.value],
                         departmentCriteria: [departmentCriteria.value],
                         regionCriteria: [regionCriteria.value],
-                    }
-                    console.log("data", data)
+                        theme: themes.map((t) => t.value),
+                    };
+                    console.debug("data", data);
                     apiFetch("/competitions", {
                         method: "POST",
                         body: JSON.stringify(data),
                         headers: {
                             "Content-Type": "application/json",
                         },
-                    }).then(r => r.json()).then((data) => {
-                        console.log(data);
-                    });
+                    })
+                        .then((r) => r.json())
+                        .then((data) => {
+                            console.debug(data);
+                            if (data["@type"] === "hydra:Error") {
+                                throw new Error(data.description);
+                            }
+                        });
                 }}
             >
                 <div>
@@ -264,7 +303,14 @@ export default function CompetitionCreate() {
                 </div>
                 <div>
                     <label htmlFor="weightingOfJuryVotes">Pondération des votes du jury</label>
-                    <Input type="number" step="0.01" name="weightingOfJuryVotes" label="Pondération des votes du jury" defaultValue={weightingOfJuryVotes} setState={setWeightingOfJuryVotes} />
+                    <Input
+                        type="number"
+                        extra={{ step: 0.01 }}
+                        name="weightingOfJuryVotes"
+                        label="Pondération des votes du jury"
+                        defaultValue={weightingOfJuryVotes}
+                        setState={setWeightingOfJuryVotes}
+                    />
                     <div>{errors.weightingOfJuryVotes}</div>
                 </div>
                 <div>
@@ -287,87 +333,132 @@ export default function CompetitionCreate() {
                     <Input type="number" name="maxAgeCriteria" label="Âge maximum" defaultValue={maxAgeCriteria} setState={setMaxAgeCriteria} />
                     <div>{errors.maxAgeCriteria}</div>
                 </div>
-                <div style={{display: "flex", gap: "30px"}}>
+                <div style={{ display: "flex", gap: "30px" }}>
                     <div>
                         <label htmlFor="region">Région</label>
-                        <Input type="select" name="region" label="Région" extra={{
-                            clearable: true,
-                            required: true,
-                            options: regionsPossibility,
-                            multiple: false,
-                            onInputChange: (text, {action, prevInputValue}) => {
-                                if (action === "input-change") {
-                                    getRegionsPossibility({name: text})
-                                }else {
-                                    if(prevInputValue !== "") {
-                                        getRegionsPossibility()
+                        <Input
+                            type="select"
+                            name="region"
+                            label="Région"
+                            extra={{
+                                clearable: true,
+                                required: true,
+                                options: regionsPossibility,
+                                multiple: false,
+                                onInputChange: (text, { action, prevInputValue }) => {
+                                    if (action === "input-change") {
+                                        getRegionsPossibility({ name: text });
+                                    } else {
+                                        if (prevInputValue !== "") {
+                                            getRegionsPossibility();
+                                        }
                                     }
-                                }
-                            }
-                        }} setState={(item) => {
-                            setRegionCriteria(item)
-                            getDepartmentsPossibility({codeRegion: item.value})
-                            getCitiesPossibility({codeRegion: item.value})
-                        }}/>
+                                },
+                            }}
+                            setState={(item) => {
+                                setRegionCriteria(item);
+                                getDepartmentsPossibility({ codeRegion: item.value });
+                                getCitiesPossibility({ codeRegion: item.value });
+                            }}
+                        />
                         <div>{errors.regionCriteria}</div>
                     </div>
                     <div>
                         <label htmlFor="department">Département</label>
-                        <Input type="select" name="department" label="Département" extra={{
-                            clearable: true,
-                            required: true,
-                            options: departmentsPossibility,
-                            multiple: false,
-                            onInputChange: (text, {action, prevInputValue}) => {
-                                if (action === "input-change") {
-                                    getDepartmentsPossibility({name: text})
-                                }
-                                if(action === "menu-close"){
-                                    if(prevInputValue !== "") {
-                                        getDepartmentsPossibility()
+                        <Input
+                            type="select"
+                            name="department"
+                            label="Département"
+                            extra={{
+                                clearable: true,
+                                required: true,
+                                options: departmentsPossibility,
+                                multiple: false,
+                                onInputChange: (text, { action, prevInputValue }) => {
+                                    if (action === "input-change") {
+                                        getDepartmentsPossibility({ name: text });
                                     }
-                                }
-                            }
-                        }} setState={(item) => {
-                            setDepartmentCriteria(item)
-                            setRegionCriteria({value: item.codeRegion})
-                            getCitiesPossibility({codeDepartement: item.value})
-                        }}/>
+                                    if (action === "menu-close") {
+                                        if (prevInputValue !== "") {
+                                            getDepartmentsPossibility();
+                                        }
+                                    }
+                                },
+                            }}
+                            setState={(item) => {
+                                setDepartmentCriteria(item);
+                                setRegionCriteria({ value: item.codeRegion });
+                                getCitiesPossibility({ codeDepartement: item.value });
+                            }}
+                        />
                         <div>{errors.departmentCriteria}</div>
                     </div>
                     <div>
                         <label htmlFor="city">Ville</label>
-                        <Input type="select" name="city" label="Ville" extra={{
-                            clearable: true,
-                            required: true,
-                            options: citiesPossibility,
-                            multiple: false,
-                            onInputChange: (text, {action, prevInputValue}) => {
-                                if (action === "input-change") {
-                                    getCitiesPossibility({name: text})
-                                }else {
-                                    if(prevInputValue !== ""){
-                                        getCitiesPossibility()
+                        <Input
+                            type="select"
+                            name="city"
+                            label="Ville"
+                            extra={{
+                                clearable: true,
+                                required: true,
+                                options: citiesPossibility,
+                                multiple: false,
+                                onInputChange: (text, { action, prevInputValue }) => {
+                                    if (action === "input-change") {
+                                        getCitiesPossibility({ name: text });
+                                    } else {
+                                        if (prevInputValue !== "") {
+                                            getCitiesPossibility();
+                                        }
                                     }
-                                }
-                            }
-                        }} setState={(item) => {
-                            setCityCriteria(item)
-                            setDepartmentCriteria({value: item.codeDepartement})
-                            setRegionCriteria({value: item.codeRegion})
-                        }} defaultValue={cityCriteria}/>
+                                },
+                            }}
+                            setState={(item) => {
+                                setCityCriteria(item);
+                                setDepartmentCriteria({ value: item.codeDepartement });
+                                setRegionCriteria({ value: item.codeRegion });
+                            }}
+                            defaultValue={cityCriteria}
+                        />
                         <div>{errors.cityCriteria}</div>
                     </div>
-                    <div style={{display: "flex", gap: "30px"}}>
+                    <div style={{ display: "flex", gap: "30px" }}>
                         <div>
                             <label htmlFor="participantCategory">Catégorie de participant</label>
-                            <Input type="select" name="participantCategory" label="Catégorie de participant" defaultValue={participantCategories} extra={{ required: true, options: participantCategoryPossibility }} setState={setParticipantCategories} />
+                            <Input
+                                type="select"
+                                name="participantCategory"
+                                label="Catégorie de participant"
+                                defaultValue={participantCategories}
+                                extra={{ isMulti: true, required: true, options: participantCategoryPossibility, closeMenuOnSelect: false }}
+                                setState={setParticipantCategories}
+                            />
                             <div>{errors.participantCategories}</div>
                         </div>
                         <div>
                             <label htmlFor="organizationName">Nom de l'organisation</label>
-                            <Input type="select" name="organizationName" label="Nom de l'organisation" defaultValue={organizationName} extra={{ required: true, options: organizationNamePossibility }} setState={setOrganizationName} />
+                            <Input
+                                type="select"
+                                name="organizationName"
+                                label="Nom de l'organisation"
+                                defaultValue={organizationName}
+                                extra={{ required: true, options: organizationNamePossibility }}
+                                setState={setOrganizationName}
+                            />
                             <div>{errors.organizationName}</div>
+                        </div>
+                        <div>
+                            <label htmlFor="themes">Thème(s)</label>
+                            <Input
+                                type="select"
+                                name="themes"
+                                label="Thèmes"
+                                defaultValue={themes}
+                                extra={{ required: true, isMulti: true, options: themePossibility, closeMenuOnSelect: false }}
+                                setState={setThemes}
+                            />
+                            <div>{errors.themes}</div>
                         </div>
                     </div>
                 </div>

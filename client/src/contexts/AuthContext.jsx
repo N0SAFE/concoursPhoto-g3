@@ -1,59 +1,62 @@
-import {createContext, useContext, useEffect, useState} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext({
-    token: null
+    token: null,
 });
 
 function AuthProvider(props) {
     const [isLogged, setIsLogged] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [me, setMe] = useState(null);
-    
-    async function checkLogged(){
+
+    async function checkLogged() {
         const response = await fetch(new URL(import.meta.env.VITE_API_URL + "/token/refresh").href, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            credentials: 'include',
-        })
-        if(response.ok){
-            setIsLogged(true);
+            credentials: "include",
+        });
+        if (response.ok) {
             const whoami = await fetch(new URL(import.meta.env.VITE_API_URL + "/whoami").href, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                credentials: 'include',
-            })
+                credentials: "include",
+            });
             const data = await whoami.json();
             setMe(data);
-        }else {
+            setIsLogged(true);
+            console.group("AuthContext");
+            console.debug("isLogged: ", true);
+            console.debug("me: ", data);
+            console.groupEnd();
+            return { isLogged: true, me: data };
+        } else {
             setIsLogged(false);
             setMe(null);
+            console.group("AuthContext");
+            console.debug("isLogged: ", false);
+            console.debug("me: ", null);
+            console.groupEnd();
+            return { isLogged: false, me: null };
         }
-        return response.ok
     }
-    
+
     useEffect(() => {
         checkLogged().then(() => {
             setIsLoading(false);
-        })
-    }, [])
+        });
+    }, []);
 
-    return (
-        <AuthContext.Provider value={{ isLogged, checkLogged, me }}>
-            {!isLoading && props.children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={{ isLogged, checkLogged, me }}>{!isLoading && props.children}</AuthContext.Provider>;
 }
-
-
 
 function useAuthContext() {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
+        throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
 }

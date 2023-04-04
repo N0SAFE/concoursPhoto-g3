@@ -1,9 +1,10 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Login from "@/views/auth/Login";
 import Logout from "@/views/auth/Logout";
 import UserList from "@/views/BO/user/List";
 import UserEdit from "@/views/BO/user/Edit";
 import UserCreate from "@/views/BO/user/Create";
+import UserSee from "@/views/BO/user/See";
 import BO from "@/views/BO";
 import Home from "@/views/Home";
 import NotFound from "@/views/error/NotFound";
@@ -12,30 +13,49 @@ import Header from "@/layout/Header";
 import CompetitionsList from "@/views/BO/competition/List";
 import OrganizationCreate from "@/views/BO/organization/Create";
 import CompetitionCreate from "@/views/BO/competition/Create";
+import GuardedRoute from "./layout/GuardedRoute.jsx";
+import { Navigate } from "react-router-dom";
+import Profile from "@/views/global/Profile";
+import ProfileUser from "@/views/global/Profile/User";
+import OrganizationEdit from "@/views/BO/organization/Edit";
+import CompetitionSee from "@/views/BO/competition/See";
+import OrganizationSee from "@/views/BO/organization/See";
 
 function Router() {
     return (
         <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/" element={<Header />}>
+            <Route path="/auth" element={<Header />}>
                 <Route path="login" element={<Login />} />
                 <Route path="logout" element={<Logout />} />
             </Route>
-            <Route path="/BO" element={<Header />}>
-                <Route path="" element={<BO />} />
-                <Route path="user">
-                    <Route path="" element={<UserList />} />
-                    <Route path=":id" element={<UserEdit />} />
-                    <Route path="create" element={<UserCreate />} />
+            <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
+                <Route path="" element={<Header />}>
+                    <Route element={<BO />} />
+                    <Route path="user">
+                        <Route path="" element={<UserList />} />
+                        <Route path=":id" element={<UserSee />} />
+                        <Route path="edit/:id" element={<UserEdit />} />
+                        <Route path="create" element={<UserCreate />} />
+                    </Route>
+                    <Route path="organization">
+                        <Route path="" element={<OrganizationList />} />
+                        <Route path=":id" element={<OrganizationSee />} />
+                        <Route path="create" element={<OrganizationCreate />} />
+                        <Route path="edit/:id" element={<OrganizationEdit />} />
+                    </Route>
+                    <Route path="competition">
+                        <Route path="" element={<CompetitionsList />} />
+                        <Route path=":id" element={<CompetitionSee />} />
+                        <Route path="create" element={<CompetitionCreate />} />
+                    </Route>
                 </Route>
-                <Route path="organization">
-                    <Route path="" element={<OrganizationList />} />
-                    <Route path="create" element={<OrganizationCreate />} />
+            </Route>
+            <Route path="/">
+                <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
+                    <Route path="" element={<Profile />} />
+                    <Route path=":id" element={<ProfileUser />} />
                 </Route>
-                <Route path="competition">
-                    <Route path="" element={<CompetitionsList />} />
-                    <Route path="create" element={<CompetitionCreate />} />
-                </Route>
+                <Route path="" element={<Home />} />
             </Route>
             <Route path="*" element={<NotFound />} />
         </Routes>

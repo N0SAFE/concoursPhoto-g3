@@ -3,18 +3,14 @@ import { useEffect } from "react";
 import {useAuthContext} from "@/contexts/AuthContext";
 
 export default function Home() {
-    const {isLogged, me} = useAuthContext();
+    const {isLogged} = useAuthContext();
     const navigate = useNavigate();
     useEffect(() => {
-        if (isLogged) {
-            if(me.roles.includes("ROLE_ADMIN")){
-                navigate("/BO");
-            }
-        } else {
+        if (!isLogged) {
             navigate("/login");
         }
     }, []);
-    
+
     return (
         <div>
             <h1>Home</h1>

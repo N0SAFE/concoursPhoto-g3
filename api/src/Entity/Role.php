@@ -20,11 +20,6 @@ class Role
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    public function __construct()
-    {
-        $this->users = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;

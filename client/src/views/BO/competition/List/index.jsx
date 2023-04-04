@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
+import Button from "@/components/atoms/Button";
 
 export default function CompetitionsList() {
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
     const [competitions, setCompetitions] = useState([]);
-
     function getCompetitions() {
         apiFetch("/competitions", {
             method: "GET",
@@ -20,7 +20,7 @@ export default function CompetitionsList() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                console.log(data);
+                console.debug(data);
                 setCompetitions(data["hydra:member"]);
             })
             .catch((error) => {
@@ -55,8 +55,11 @@ export default function CompetitionsList() {
 
     return (
         <div>
-            <Link to={"/BO/competitions/create"}>Créer un concours</Link>
-            <h1>Liste des concours</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <h1>Liste des concours</h1>
+                <Button color="green" textColor="white" name="Créer un concours" onClick={() => navigate("/BO/competition/create")}></Button>
+            </div>
+
             <BOList
                 entityList={competitions}
                 fields={[
@@ -107,17 +110,27 @@ export default function CompetitionsList() {
                 }}
                 actions={[
                     {
-                        label: "Edit",
+                        label: "Modifier",
+                        color: "blue",
+                        textColor: "white",
                         action: ({ entity }) => {
-                            navigate("/BO/user/" + entity.id);
+                            navigate("/BO/competition/edit/" + entity.id);
                         },
                     },
                     {
-                        label: "Delete",
+                        label: "Supprimer",
+                        color: "red",
+                        textColor: "white",
                         action: ({ entity }) => {
-                            if (confirm("Êtes-vous sûr de vouloir supprimer cet organisation ?")) {
+                            if (confirm("Êtes-vous sûr de vouloir supprimer ce concours ?")) {
                                 return handleDelete(entity.id);
                             }
+                        },
+                    },
+                    {
+                        label: "Voir",
+                        action: ({ entity }) => {
+                            navigate("/BO/competition/" + entity.id);
                         },
                     },
                 ]}

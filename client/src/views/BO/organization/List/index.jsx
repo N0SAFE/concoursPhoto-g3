@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
+import Button from "@/components/atoms/Button";
 
 export default function OrganizationList() {
     const [Organizations, setOrganizations] = useState([]);
@@ -18,11 +19,11 @@ export default function OrganizationList() {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log(data);
+                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                console.log(data["hydra:member"]);
+                console.debug(data["hydra:member"]);
                 setOrganizations(data["hydra:member"]);
             })
             .catch((error) => {
@@ -57,8 +58,10 @@ export default function OrganizationList() {
 
     return (
         <div>
-            <Link to={"/BO/organization/create"}>Créer une organisation</Link>
-            <h1>Listes des organisations</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <h1>Liste des organisations</h1>
+                <Button color="green" textColor="white" name="Créer une organisation" onClick={() => navigate("/BO/organization/create")}></Button>
+            </div>
             <BOList
                 entityList={Organizations}
                 fields={[
@@ -66,7 +69,7 @@ export default function OrganizationList() {
                     { property: "state", display: "Statut" },
                     { property: "organizer_name", display: "Nom de l'organisation" },
                     { property: "description", display: "description" },
-                    { property: "address", display: "address" },
+                    { property: "address", display: "addresse" },
                     { property: "postcode", display: "code postal" },
                     { property: "city", display: "ville" },
                     { property: "number_phone", display: "téléphone" },
@@ -78,7 +81,7 @@ export default function OrganizationList() {
                 ]}
                 customAction={({ entity, property }) => {
                     if (property === "organization_type") {
-                        console.log(entity);
+                        console.debug(entity);
                         return entity.organization_type.label;
                     }
                     if (property === "competitions") {
@@ -91,17 +94,27 @@ export default function OrganizationList() {
                 }}
                 actions={[
                     {
-                        label: "Edit",
+                        label: "Modifier",
+                        color: "blue",
+                        textColor: "white",
                         action: ({ entity }) => {
-                            navigate("/BO/user/" + entity.id);
+                            navigate("/BO/organization/edit/" + entity.id);
                         },
                     },
                     {
-                        label: "Delete",
+                        label: "Supprimer",
+                        color: "red",
+                        textColor: "white",
                         action: ({ entity }) => {
-                            if (confirm("Êtes-vous sûr de vouloir supprimer cet organisation ?")) {
+                            if (confirm("Êtes-vous sûr de vouloir supprimer cette organisation ?")) {
                                 return handleDelete(entity.id);
                             }
+                        },
+                    },
+                    {
+                        label: "Voir",
+                        action: ({ entity }) => {
+                            navigate("/BO/organization/" + entity.id);
                         },
                     },
                 ]}

@@ -1,5 +1,6 @@
 import { useAuthContext } from "@/contexts/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function () {
     const navigate = useNavigate();
@@ -19,10 +20,11 @@ export default function () {
         try {
             if (response.status === 401) {
                 const data = await response.json();
-                if ((data.message === "Expired JWT Token" || data.message === "Missing token") && path !== "/token/refresh") {
+                if ((data.message === "Expired JWT Token" || data.message === "Missing token" || data.message === "Invalid credentials.") && path !== "/token/refresh") {
                     const isLogged = await checkLogged();
                     if(!isLogged){
-                        navigate("/login");
+                        navigate("/auth/logout");
+                        toast.error("une erreur est survenue, veuillez vous reconnecter");
                         return response;
                     }
                     return useApiFetch(path, options, { refreshToken: false });

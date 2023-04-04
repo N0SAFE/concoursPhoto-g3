@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch";
+import { toast } from "react-toastify";
+import Button from "@/components/atoms/Button";
 
 export default function UserList() {
     const apiFetch = useApiFetch();
@@ -28,7 +30,7 @@ export default function UserList() {
                 is_verified: filterVerified,
             };
         }
-        apiFetch("/users", {
+        return apiFetch("/users", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -36,7 +38,6 @@ export default function UserList() {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
@@ -48,7 +49,12 @@ export default function UserList() {
     }
 
     useEffect(() => {
-        getUsers();
+        const promise = getUsers();
+        toast.promise(promise, {
+            pending: "Chargement des utilisateurs",
+            success: "Utilisateurs chargés",
+            error: "Erreur lors du chargement des utilisateurs",
+        });
     }, [filterState, filterVerified]);
 
     const handleDelete = (id) => {
@@ -100,8 +106,10 @@ export default function UserList() {
 
     return (
         <div>
-            <Link to={"/BO/user/create"}>Créer un utilisateur</Link>
-            <h1>Liste des utilisateurs</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <h1>Liste des utilisateurs</h1>
+                <Button color="green" textColor="white" name="Créer un utilisateur" onClick={() => navigate("/BO/user/create")}></Button>
+            </div>
             <div>
                 <label htmlFor="state-filter">Filtrer par état :</label>
                 <select id="state-filter" value={filterState} onChange={handleFilterChange}>
@@ -174,17 +182,27 @@ export default function UserList() {
                 }}
                 actions={[
                     {
-                        label: "Edit",
+                        label: "Modifier",
+                        color: "blue",
+                        textColor: "white",
                         action: ({ entity }) => {
-                            navigate("/BO/user/" + entity.id);
+                            navigate("/BO/user/edit/" + entity.id);
                         },
                     },
                     {
-                        label: "Delete",
+                        label: "Supprimer",
+                        color: "red",
+                        textColor: "white",
                         action: ({ entity }) => {
                             if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
                                 return handleDelete(entity.id);
                             }
+                        },
+                    },
+                    {
+                        label: "Voir",
+                        action: ({ entity }) => {
+                            navigate("/BO/user/" + entity.id);
                         },
                     },
                 ]}
