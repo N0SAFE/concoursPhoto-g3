@@ -20,6 +20,7 @@ import ProfileUser from "@/views/global/Profile/User";
 import OrganizationEdit from "@/views/BO/organization/Edit";
 import CompetitionSee from "@/views/BO/competition/See";
 import OrganizationSee from "@/views/BO/organization/See";
+import CompetitionEdit from "@/views/BO/competition/Edit";
 
 function Router() {
     return (
@@ -47,6 +48,7 @@ function Router() {
                         <Route path="" element={<CompetitionList />} />
                         <Route path=":id" element={<CompetitionSee />} />
                         <Route path="create" element={<CompetitionCreate />} />
+                        <Route path="edit/:id" element={<CompetitionEdit />} />
                     </Route>
                 </Route>
             </Route>

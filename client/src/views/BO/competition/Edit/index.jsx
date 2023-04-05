@@ -4,10 +4,12 @@ import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
 import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 
-export default function CompetitionCreate() {
+export default function CompetitionEdit() {
+    const { id: competitionId } = useParams();
     const apiFetch = useApiFetch();
-    const { getCityByName, getDepartmentByName, getRegionByName } = useLocation();
+    const { getCityByName, getCityByCode, getDepartmentByName, getDepartmentByCode, getRegionByName, getRegionByCode } = useLocation();
 
     const [locationPossibility, setLocationPossibility] = useState({
         regions: { isLoading: true, data: [] },
@@ -15,7 +17,7 @@ export default function CompetitionCreate() {
         cities: { isLoading: true, data: [] },
     });
 
-    const updateLocationPossibility = (key, { data, isLoading } = {}) => {
+    const updateLocationPossibility = (key, { data, isLoading }) => {
         if (isLoading !== undefined) {
             locationPossibility[key].isLoading = isLoading;
         }
@@ -28,15 +30,15 @@ export default function CompetitionCreate() {
 
     const [entityPossibility, setEntityPossibility] = useState({ participantCategories: [], organizers: [], themes: [] });
     const [entity, setEntity] = useState({
-        state: null,
+        state: false,
         name: null,
         visual: null,
         description: null,
         rules: null,
         endowments: null,
-        participantCategories: null,
+        participantCategories: [],
         organizer: null,
-        themes: null,
+        themes: [],
         creationDate: null,
         publicationDate: null,
         submissionStartDate: null,
@@ -101,6 +103,49 @@ export default function CompetitionCreate() {
             });
     };
 
+    const getCompetitions = () => {
+        return apiFetch(`/competitions/${competitionId}`, {
+            method: "GET",
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
+                Promise.all([
+                    Promise.all(data.city_criteria.map(getCityByCode)),
+                    Promise.all(data.department_criteria.map(getDepartmentByCode)),
+                    Promise.all(data.region_criteria.map(getRegionByCode)),
+                ]).then(([cities, departments, regions]) => {
+                    const _competition = {
+                        state: data.state,
+                        name: data.competition_name,
+                        visual: data.competition_visual,
+                        description: data.description,
+                        rules: data.rules,
+                        endowments: data.endowments ? data.endowments : null,
+                        participantCategories: data.participant_category.map((pc) => ({ label: pc.label, value: pc["@id"] })),
+                        organizer: { label: data.organization.organizer_name, value: data.organization["@id"] },
+                        themes: data.theme.map((t) => ({ label: t.label, value: t["@id"] })),
+                        creationDate: new Date(data.creation_date),
+                        publicationDate: new Date(data.publication_date),
+                        submissionStartDate: new Date(data.submission_start_date),
+                        submissionEndDate: new Date(data.submission_end_date),
+                        votingStartDate: new Date(data.voting_start_date),
+                        votingEndDate: new Date(data.voting_end_date),
+                        resultsDate: new Date(data.results_date),
+                        weightingOfJuryVotes: data.weighting_of_jury_votes,
+                        numberOfMaxVotes: data.number_of_max_votes,
+                        numberOfPrices: data.number_of_prices,
+                        minAgeCriteria: data.min_age_criteria,
+                        maxAgeCriteria: data.max_age_criteria,
+                        cityCriteria: cities.map((c) => ({ label: c.nom, value: c.code })),
+                        departmentCriteria: departments.map((d) => ({ label: d.nom, value: d.code })),
+                        regionCriteria: regions.map((r) => ({ label: r.nom, value: r.code })),
+                    };
+                    setEntity(_competition);
+                });
+            });
+    };
+
     useEffect(() => {
         Promise.all([getRegionByName(), getDepartmentByName(), getCityByName()]).then(([regions, departments, cities]) => {
             return setLocationPossibility({
@@ -109,7 +154,7 @@ export default function CompetitionCreate() {
                 cities: { isLoading: false, data: cities.map((d) => ({ label: d.nom, value: d.code })) },
             });
         });
-        const promise = Promise.all([getParticipantCategories(), getOrganizationsName(), getThemes()]).then(([participantCategories, organizers, themes]) => {
+        const promise = Promise.all([getParticipantCategories(), getOrganizationsName(), getThemes(), getCompetitions()]).then(([participantCategories, organizers, themes]) => {
             setEntityPossibility({ participantCategories, organizers, themes });
         });
         promise.catch(console.error);
@@ -148,19 +193,19 @@ export default function CompetitionCreate() {
                         numberOfPrices: parseInt(entity.numberOfPrices),
                         minAgeCriteria: parseInt(entity.minAgeCriteria),
                         maxAgeCriteria: parseInt(entity.maxAgeCriteria),
-                        cityCriteria: [entity.cityCriteria.value],
-                        departmentCriteria: [entity.departmentCriteria.value],
-                        regionCriteria: [entity.regionCriteria.value],
+                        cityCriteria: entity.cityCriteria.map((c) => c.value),
+                        departmentCriteria: entity.departmentCriteria.map((d) => d.value),
+                        regionCriteria: entity.regionCriteria.map((r) => r.value),
                         countryCriteria: ["FRANCE"],
                         endowments: entity.endowments,
                     };
                     console.debug("entity", entity);
                     console.debug("data", data);
-                    const promise = apiFetch("/competitions", {
-                        method: "POST",
+                    const promise = apiFetch(`/competitions/${competitionId}`, {
+                        method: "PATCH",
                         body: JSON.stringify(data),
                         headers: {
-                            "Content-Type": "application/json",
+                            "Content-Type": "application/merge-patch+json",
                         },
                     })
                         .then((r) => r.json())
@@ -170,21 +215,22 @@ export default function CompetitionCreate() {
                                 throw new Error(data.description);
                             }
                         });
+                        
                     toast.promise(promise, {
-                        pending: "Création du concours",
-                        success: "Concours créé",
-                        error: "Erreur lors de la création du concours",
+                        pending: "Modification du concours",
+                        success: "Concours modifié",
+                        error: "Erreur lors de la modification du concours",
                     });
                 }}
             >
                 <div>
                     <label htmlFor="state">Etat</label>
-                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntity("state", d)} defaultValue={entity.state} />
+                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntity("state", d)} defaultValue={entity.state} extra={{require: true}} />
                     <div>{errors.state}</div>
                 </div>
                 <div>
                     <label htmlFor="name">Intitulé du concours</label>
-                    <Input type="text" name="name" label="Intitulé du concours" onChange={(d) => updateEntity("name", d)} defaultValue={entity.name} />
+                    <Input type="text" name="name" label="Intitulé du concours" onChange={(d) => updateEntity("name", d)} defaultValue={entity.name} extra={{require: true}} />
                     <div>{errors.name}</div>
                 </div>
                 <div>
@@ -194,17 +240,17 @@ export default function CompetitionCreate() {
                 </div>
                 <div>
                     <label htmlFor="description">Visuel du concours</label>
-                    <Input type="text" name="description" label="Description" onChange={(d) => updateEntity("description", d)} defaultValue={entity.description} />
+                    <Input type="text" name="description" label="Description" onChange={(d) => updateEntity("description", d)} defaultValue={entity.description} extra={{require: true}} />
                     <div>{errors.description}</div>
                 </div>
                 <div>
                     <label htmlFor="rules">Règlement</label>
-                    <Input type="text" name="rules" label="Règlement" onChange={(d) => updateEntity("rules", d)} defaultValue={entity.rules} />
+                    <Input type="text" name="rules" label="Règlement" onChange={(d) => updateEntity("rules", d)} defaultValue={entity.rules} extra={{require: true}} />
                     <div>{errors.rules}</div>
                 </div>
                 <div>
                     <label htmlFor="endowments">Dotation</label>
-                    <Input type="text" name="endowments" label="Dotation" onChange={(d) => updateEntity("endowments", d)} defaultValue={entity.endowments} />
+                    <Input type="text" name="endowments" label="Dotation" onChange={(d) => updateEntity("endowments", d)} defaultValue={entity.endowments} extra={{require: true}} />
                     <div>{errors.endowments}</div>
                 </div>
                 <div>
@@ -294,6 +340,7 @@ export default function CompetitionCreate() {
                                 options: locationPossibility.regions.data,
                                 isMulti: true,
                                 menuPlacement: "top",
+                                value: entity.regionCriteria,
                                 onInputChange: (name, { action }) => {
                                     if (action === "input-change") {
                                         getRegionByName(name).then(function (p) {
@@ -327,6 +374,7 @@ export default function CompetitionCreate() {
                                 options: locationPossibility.departments.data,
                                 isMulti: true,
                                 menuPlacement: "top",
+                                value: entity.departmentCriteria,
                                 onInputChange: (name, { action }) => {
                                     if (action === "input-change") {
                                         getDepartmentByName(name).then(function (p) {
@@ -360,6 +408,7 @@ export default function CompetitionCreate() {
                                 options: locationPossibility.cities.data,
                                 isMulti: true,
                                 menuPlacement: "top",
+                                value: entity.cityCriteria,
                                 onInputChange: (name, { action }) => {
                                     if (action === "input-change") {
                                         getCityByName(name).then(function (p) {
@@ -387,8 +436,14 @@ export default function CompetitionCreate() {
                                 type="select"
                                 name="participantCategory"
                                 label="Catégorie de participant"
-                                defaultValue={entity.participantCategories}
-                                extra={{ isMulti: true, required: true, options: entityPossibility.participantCategories, closeMenuOnSelect: false, menuPlacement: "top" }}
+                                extra={{
+                                    isMulti: true,
+                                    required: true,
+                                    options: entityPossibility.participantCategories,
+                                    closeMenuOnSelect: false,
+                                    menuPlacement: "top",
+                                    value: entity.participantCategories,
+                                }}
                                 onChange={(d) => updateEntity("participantCategories", d)}
                             />
                             <div>{errors.participantCategories}</div>
@@ -399,8 +454,7 @@ export default function CompetitionCreate() {
                                 type="select"
                                 name="organizer"
                                 label="Nom de l'organisation"
-                                defaultValue={entity.organizer}
-                                extra={{ required: true, options: entityPossibility.organizers, menuPlacement: "top" }}
+                                extra={{ required: true, options: entityPossibility.organizers, menuPlacement: "top", value: entity.organizer }}
                                 onChange={(d) => updateEntity("organizer", d)}
                             />
                             <div>{errors.organizer}</div>
@@ -411,8 +465,7 @@ export default function CompetitionCreate() {
                                 type="select"
                                 name="themes"
                                 label="Thèmes"
-                                defaultValue={entity.themes}
-                                extra={{ required: true, isMulti: true, options: entityPossibility.themes, closeMenuOnSelect: false, menuPlacement: "top" }}
+                                extra={{ required: true, isMulti: true, options: entityPossibility.themes, closeMenuOnSelect: false, menuPlacement: "top", value: entity.themes }}
                                 onChange={(d) => updateEntity("themes", d)}
                             />
                             <div>{errors.themes}</div>
