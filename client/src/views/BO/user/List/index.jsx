@@ -4,12 +4,14 @@ import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch";
 import { toast } from "react-toastify";
 import Button from "@/components/atoms/Button";
+import useLocation from "@/hooks/useLocation";
 
 export default function UserList() {
     const apiFetch = useApiFetch();
     const [users, setUsers] = useState([]);
     const [filterState, setFilterState] = useState("all");
     const [filterVerified, setFilterVerified] = useState("all");
+    const { getCityByCode } = useLocation();
 
     const navigate = useNavigate();
 
@@ -37,11 +39,14 @@ export default function UserList() {
             },
         })
             .then((res) => res.json())
-            .then((data) => {
+            .then(async (data) => {
+                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                setUsers(data["hydra:member"]);
+                const users = await Promise.all(data["hydra:member"].map((user) => getCityByCode(user.city).then((city) => ({ ...user, city: city.nom }))));
+                setUsers(users);
+                return users;
             })
             .catch((error) => {
                 console.error(error);
@@ -66,6 +71,7 @@ export default function UserList() {
         })
             .then((res) => res.json())
             .then((data) => {
+                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }

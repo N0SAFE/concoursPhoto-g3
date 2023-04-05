@@ -54,10 +54,6 @@ class Competition
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups('competition')]
-    private ?\DateTimeInterface $publication_start_date = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
     private ?\DateTimeInterface $submission_start_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -240,18 +236,6 @@ class Competition
     public function setPublicationDate(\DateTimeInterface $publication_date): self
     {
         $this->publication_date = $publication_date;
-
-        return $this;
-    }
-
-    public function getPublicationStartDate(): ?\DateTimeInterface
-    {
-        return $this->publication_start_date;
-    }
-
-    public function setPublicationStartDate(\DateTimeInterface $publication_start_date): self
-    {
-        $this->publication_start_date = $publication_start_date;
 
         return $this;
     }

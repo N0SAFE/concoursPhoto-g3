@@ -21,18 +21,11 @@ export default function () {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                setEntity(data);
-                getCityByCode(data.city).then((city) => {
-                    setEntity((entity) => {
-                        return {
-                            ...entity,
-                            city: city.nom,
-                        };
-                    });
+                return getCityByCode(data.city).then((city) => {
+                    return setEntity({ ...data, city: city.nom });
                 });
             })
             .catch((error) => {
