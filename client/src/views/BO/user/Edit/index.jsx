@@ -88,7 +88,7 @@ export default function UserCreate() {
     }, []);
 
     useEffect(() => {
-        updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then(() => {
+        updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then((d) => {
             if(d.length === 1 && d[0].id === "cities" && d[0].data.length === 1){
                 if(d[0].data[0].codesPostaux.length === 1 && !entity.postcode){
                     setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] }});
