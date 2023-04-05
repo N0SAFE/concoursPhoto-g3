@@ -3,25 +3,47 @@ import { Link, useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import Button from "@/components/atoms/Button";
+import useLocation from "@/hooks/useLocation";
+import { toast } from "react-toastify";
 
 export default function CompetitionsList() {
+    const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
     const [competitions, setCompetitions] = useState([]);
+
     function getCompetitions() {
-        apiFetch("/competitions", {
+        return apiFetch("/competitions", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
         })
             .then((res) => res.json())
-            .then((data) => {
+            .then(async (data) => {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
                 console.debug(data);
-                setCompetitions(data["hydra:member"]);
+                const hydraMember = data["hydra:member"];
+                const _competitions =  await Promise.all(
+                    hydraMember.map((competition) => {
+                        return Promise.all([
+                            Promise.all(competition.city_criteria.map(getCityByCode)),
+                            Promise.all(competition.department_criteria.map(getDepartmentByCode)),
+                            Promise.all(competition.region_criteria.map(getRegionByCode)),
+                        ]).then(([city, department, region]) => {
+                            return {
+                                ...competition,
+                                city_criteria: city,
+                                department_criteria: department,
+                                region_criteria: region,
+                            };
+                        });
+                    })
+                )
+                setCompetitions(_competitions);
+                return _competitions;
             })
             .catch((error) => {
                 console.error(error);
@@ -29,7 +51,12 @@ export default function CompetitionsList() {
     }
 
     useEffect(() => {
-        getCompetitions();
+        const promise = getCompetitions()
+        toast.promise(promise, {
+            pending: "Chargement des concours",
+            success: "Concours chargés",
+            error: "Erreur lors du chargement des concours",
+        });
     }, []);
 
     const handleDelete = (id) => {
@@ -44,9 +71,11 @@ export default function CompetitionsList() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
+                toast.success("Concours supprimé");
             })
             .catch((error) => {
                 console.error(error);
+                toast.error("Erreur lors de la suppression du concours");
             })
             .finally(() => {
                 getCompetitions();

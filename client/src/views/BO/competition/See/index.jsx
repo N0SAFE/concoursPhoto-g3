@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 export default function () {
     const apiFetch = useApiFetch();
-    const { getCityByCode } = useLocation();
+    const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
     const [entity, setEntity] = useState({});
     const { id: competitionId } = useParams();
 
@@ -25,18 +25,19 @@ export default function () {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                setEntity(data);
-                Promise.all(
-                    data.city_criteria.map((cityCode) => {
-                        return getCityByCode(cityCode).then((city) => city.nom);
-                    })
-                ).then((cities) => {
-                    setEntity((entity) => {
-                        return {
-                            ...entity,
-                            city_criteria: cities,
-                        };
-                    });
+                Promise.all([
+                    Promise.all(data.city_criteria.map(getCityByCode)),
+                    Promise.all(data.department_criteria.map(getDepartmentByCode)),
+                    Promise.all(data.region_criteria.map(getRegionByCode)),
+                ]).then(([cities, departments, regions]) => {
+                    const _competition = {
+                        ...data,
+                        city_criteria: cities,
+                        department_criteria: departments,
+                        region_criteria: regions,
+                    }
+                    setEntity(_competition);
+                    return _competition;
                 });
             })
             .catch((error) => {
@@ -143,10 +144,7 @@ export default function () {
                         return entity?.theme?.map((theme) => theme.label).join(", ");
                     },
                 },
-                {
-                    display: "Ville",
-                    name: "city_criteria",
-                },
+                
                 {
                     display: "Pays",
                     name: "country_criteria",
@@ -156,8 +154,25 @@ export default function () {
                     name: "state",
                 },
                 {
+                    display: "Ville",
+                    name: "city_criteria",
+                    customData({ entity, property }) {
+                        return entity?.city_criteria?.map((city) => city.nom).join(", ");
+                    }
+                },
+                {
                     display: "département",
                     name: "department_criteria",
+                    customData({ entity, property }) {
+                        return entity?.department_criteria?.map((department) => department.nom).join(", ");
+                    }
+                },
+                {
+                    display: "région",
+                    name: "region_criteria",
+                    customData({ entity, property }) {
+                        return entity?.region_criteria?.map((region) => region.nom).join(", ");
+                    }
                 },
                 {
                     display: "réglement",

@@ -42,7 +42,6 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
             $competition->setEndowments($faker->text());
             $competition->setCreationDate($faker->dateTime());
             $competition->setPublicationDate($faker->dateTime());
-            $competition->setPublicationStartDate($faker->dateTime());
             $competition->setSubmissionStartDate($faker->dateTime());
             $competition->setSubmissionEndDate($faker->dateTime());
             $competition->setVotingStartDate($faker->dateTime());

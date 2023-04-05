@@ -121,7 +121,7 @@ export default function useLocationPosibility(actives, defaultArgs, {updateOnSta
         actives,
     };
     if (actives.length === 0) return [possibilities, () => {}];
-    const update = function ({ id, args, overwrite = false }) {
+    const update = function ({ id, args, overwrite = false } = {}) {
         args = args || {};
         if (id && args.name) {
             args[id] = args.name;
@@ -130,12 +130,14 @@ export default function useLocationPosibility(actives, defaultArgs, {updateOnSta
         if (overwrite) {
             setActualArgs(args);
             state.actual.value = args;
-            dataFetch(id, state).then(p => setPossibilities(p.reduce((acc, { id, data }) => ({ ...acc, [id + "Possibility"]: data }), {})));
+            const data = dataFetch(id, state);
+            return data.then(p => setPossibilities(p.reduce((acc, { id, data }) => ({ ...acc, [id + "Possibility"]: data }), {}))).then(() => data);
         } else {
-            const newArgs = { ...actualArgs, ...args };
+            const newArgs = { ...state.actual.value, ...args };
             setActualArgs(newArgs);
             state.actual.value = newArgs;
-            dataFetch(id, state).then(p => setPossibilities(p.reduce((acc, { id, data }) => ({ ...acc, [id + "Possibility"]: data }), {})));
+            const data = dataFetch(id, state);
+            return data.then(p => setPossibilities(p.reduce((acc, { id, data }) => ({ ...acc, [id + "Possibility"]: data }), {}))).then(() => data);
         }
     };
     if(updateOnStart){

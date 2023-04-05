@@ -25,14 +25,8 @@ export default function () {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                setEntity(data);
-                getCityByCode(data.city).then((city) => {
-                    setEntity((entity) => {
-                        return {
-                            ...entity,
-                            city: city.nom,
-                        };
-                    });
+                return getCityByCode(data.city).then((city) => {
+                    return setEntity({ ...data, city: city.nom });
                 });
             })
             .catch((error) => {
@@ -101,7 +95,6 @@ export default function () {
                     display: "Competitions",
                     name: "competitions",
                     customData: ({ entity }) => {
-                        console.log(entity);
                         return entity?.competitions?.map((competition) => competition.competition_name).join(", ");
                     },
                 },

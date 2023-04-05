@@ -10,7 +10,7 @@ import Home from "@/views/Home";
 import NotFound from "@/views/error/NotFound";
 import OrganizationList from "@/views/BO/organization/List";
 import Header from "@/layout/Header";
-import CompetitionsList from "@/views/BO/competition/List";
+import CompetitionList from "@/views/BO/competition/List";
 import OrganizationCreate from "@/views/BO/organization/Create";
 import CompetitionCreate from "@/views/BO/competition/Create";
 import GuardedRoute from "./layout/GuardedRoute.jsx";
@@ -44,7 +44,7 @@ function Router() {
                         <Route path="edit/:id" element={<OrganizationEdit />} />
                     </Route>
                     <Route path="competition">
-                        <Route path="" element={<CompetitionsList />} />
+                        <Route path="" element={<CompetitionList />} />
                         <Route path=":id" element={<CompetitionSee />} />
                         <Route path="create" element={<CompetitionCreate />} />
                     </Route>
