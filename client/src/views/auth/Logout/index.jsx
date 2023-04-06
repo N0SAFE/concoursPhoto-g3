@@ -9,9 +9,17 @@ export default function(){
     const navigate = useNavigate()
 
     useEffect(()=> {
-        logout().then(()=>{
+        const promise = logout().then(()=>{
             navigate("/auth/login")
-            toast.success("Vous êtes déconnecté")
         })
-    })
+        toast.promise(promise, {
+            pending: "Déconnexion en cours",
+            success: "Déconnexion réussie",
+            error: {
+                render({ data }) {
+                    return data.message;
+                },
+            }
+        }); 
+    }, [])
 }
