@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\File;
 use App\Entity\Picture;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -10,13 +11,28 @@ use Faker\Factory;
 
 class PictureFixtures extends Fixture implements DependentFixtureInterface
 {
+    public function __construct(){
+        $this->faker = Factory::create('fr_FR');
+    }
+
     const PICTURE_REFERENCE = 'picture';
-    const PICTURE_COUNT_REFERENCE = 10;
-    const COUNT_REFERENCE = 100;
+    const PICTURE_COUNT_REFERENCE = 500;
+
+    public function createFile() {
+        $file = new File();
+
+        $file->setExtension($this->faker->fileExtension());
+        $file->setPath($this->faker->filePath());
+        $file->setSize($this->faker->randomNumber());
+        $file->setType($this->faker->mimeType());
+        $file->setDefaultName($this->faker->name());
+
+        return $file;
+    }
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create('fr_FR');
+        $faker = $this->faker;
 
         for ($i = 0; $i < self::PICTURE_COUNT_REFERENCE; $i++) {
             $picture = new Picture();
@@ -24,12 +40,12 @@ class PictureFixtures extends Fixture implements DependentFixtureInterface
             $picture->setState($faker->boolean());
             $picture->setPictureName($faker->text());
             $picture->setSubmissionDate($faker->dateTime());
-            $picture->setFile($faker->imageUrl());
-            $picture->setNumberOfVotes(random_int(0, self::COUNT_REFERENCE));
-            $picture->setPriceWon($faker->randomFloat(3, 0, self::COUNT_REFERENCE));
-            $picture->setPriceRank(random_int(0, self::COUNT_REFERENCE));
-            $picture->setCompetition($this->getReference(CompetitionFixtures::COMPETITION_REFERENCE . rand(1, self::PICTURE_COUNT_REFERENCE)));
-            $picture->setUser($this->getReference(UserFixtures::USER_REFERENCE . rand(1, self::PICTURE_COUNT_REFERENCE)));
+            $picture->setFile($this->createFile());
+            $picture->setNumberOfVotes(random_int(0, 100));
+            $picture->setPriceWon($faker->randomFloat(3, 0, 100));
+            $picture->setPriceRank(random_int(0, 100));
+            $picture->setCompetition($this->getReference(CompetitionFixtures::COMPETITION_REFERENCE . rand(1, CompetitionFixtures::COMPETITION_COUNT_REFERENCE)));
+            $picture->setUser($this->getReference(UserFixtures::USER_REFERENCE . rand(1, UserFixtures::USER_COUNT_REFERENCE)));
 
             $manager->persist($picture);
 

@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\File;
 use App\Entity\Organization;
 use App\Entity\OrganizationType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -11,15 +12,32 @@ use Faker\Factory;
 
 class OrganizationFixtures extends Fixture implements DependentFixtureInterface
 {
+
+    public function __construct(){
+        $this->faker = Factory::create('fr_FR');
+    }
+
     const ORGANIZATION_REFERENCE = 'organization';
-    const ORGANIZATION_COUNT_REFERENCE = 20;
+    const ORGANIZATION_COUNT_REFERENCE = 10;
     const CITY_ARRAY = [
         '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
     ];
 
+    public function createFile() {
+        $file = new File();
+
+        $file->setExtension($this->faker->fileExtension());
+        $file->setPath($this->faker->filePath());
+        $file->setSize($this->faker->randomNumber());
+        $file->setType($this->faker->mimeType());
+        $file->setDefaultName($this->faker->name());
+
+        return $file;
+    }
+
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create('fr_FR');
+        $faker = $this->faker;
 
         for ($i = 0; $i < self::ORGANIZATION_COUNT_REFERENCE; $i++) {
             $organization = new Organization();
@@ -27,7 +45,7 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setState($faker->boolean());
             $organization->setOrganizerName($faker->text());
             $organization->setDescription($faker->text());
-            $organization->setLogo($faker->imageUrl());
+            $organization->setLogo($this->createFile());
             $organization->setAddress($faker->address());
             $organization->setPostcode(str_replace(' ', '', $faker->postcode()));
             $organization->setCity(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
@@ -35,6 +53,8 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setEmail($faker->email());
             $organization->setNumberPhone($faker->phoneNumber());
             $organization->setCountry("FRANCE");
+            $organization->setIntraCommunityVat($faker->creditCardNumber());
+            $organization->setNumberSiret($faker->creditCardNumber());
             $organization->setOrganizationType($this->getReference(OrganizationTypeFixtures::ORGANIZATION_TYPE_REFERENCE . rand(1, count(OrganizationTypeFixtures::ORGANIZATION_TYPE_ARRAY))));
 
             $manager->persist($organization);

@@ -29,9 +29,6 @@ class Competition
     #[Groups(['competition', 'organization'])]
     private ?string $competition_name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $competition_visual = null;
-
     #[ORM\Column(type: Types::TEXT)]
     #[Groups('competition')]
     private ?string $description = null;
@@ -104,12 +101,15 @@ class Competition
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     private ?Organization $organization = null;
 
+    #[Groups('competition')]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
+    #[Groups('competition')]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
+    #[Groups('competition')]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Picture::class)]
     private Collection $pictures;
 
@@ -129,6 +129,9 @@ class Competition
     #[ORM\Column(type: 'json')]
     #[Groups('competition')]
     private array $city_criteria = [];
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?File $competition_visual = null;
 
     public function __construct()
     {
@@ -164,18 +167,6 @@ class Competition
     public function setCompetitionName(string $competition_name): self
     {
         $this->competition_name = $competition_name;
-
-        return $this;
-    }
-
-    public function getCompetitionVisual(): ?string
-    {
-        return $this->competition_visual;
-    }
-
-    public function setCompetitionVisual(string $competition_visual): self
-    {
-        $this->competition_visual = $competition_visual;
 
         return $this;
     }
@@ -554,6 +545,18 @@ class Competition
     public function setCityCriteria(array $city_criteria): self
     {
         $this->city_criteria = $city_criteria;
+
+        return $this;
+    }
+
+    public function getCompetitionVisual(): ?File
+    {
+        return $this->competition_visual;
+    }
+
+    public function setCompetitionVisual(?File $competition_visual): self
+    {
+        $this->competition_visual = $competition_visual;
 
         return $this;
     }
