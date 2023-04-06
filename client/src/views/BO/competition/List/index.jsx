@@ -95,13 +95,13 @@ export default function CompetitionsList() {
                     { property: "id", display: "ID" },
                     { property: "state", display: "Statut" },
                     { property: "competition_name", display: "Nom" },
-                    { property: "description", display: "description" },
+                    { property: "description", display: "Description" },
                     { property: "rules", display: "Règlement" },
                     { property: "endowments", display: "Dotation" },
                     { property: "creation_date", display: "Date de création" },
                     { property: "publication_date", display: "Date de publication" },
                     { property: "publication_start_date", display: "Date de commencement" },
-                    { property: "voting_start_date", display: "Date début vote" },
+                    { property: "voting_start_date", display: "Date de début de vote" },
                 ]}
                 customAction={({ entity, property }) => {
                     if (property === "creation_date") {

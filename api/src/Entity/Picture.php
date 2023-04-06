@@ -27,9 +27,6 @@ class Picture
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $submission_date = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $file = null;
-
     #[ORM\Column]
     private ?int $number_of_votes = null;
 
@@ -47,6 +44,9 @@ class Picture
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
     private ?User $user = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?File $file = null;
 
     public function __construct()
     {
@@ -90,18 +90,6 @@ class Picture
     public function setSubmissionDate(\DateTimeInterface $submission_date): self
     {
         $this->submission_date = $submission_date;
-
-        return $this;
-    }
-
-    public function getFile(): ?string
-    {
-        return $this->file;
-    }
-
-    public function setFile(string $file): self
-    {
-        $this->file = $file;
 
         return $this;
     }
@@ -192,6 +180,18 @@ class Picture
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(?File $file): self
+    {
+        $this->file = $file;
 
         return $this;
     }

@@ -122,9 +122,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?\DateTimeInterface $last_connection_date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $picture_profil = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $photographer_description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -143,6 +140,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Groups('user')]
     #[ORM\Column]
     private ?bool $is_verified = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?PersonalStatut $personal_statut = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?File $picture_profil = null;
 
     public function __construct()
     {
@@ -522,18 +525,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getPictureProfil(): ?string
-    {
-        return $this->picture_profil;
-    }
-
-    public function setPictureProfil(string $picture_profil): self
-    {
-        $this->picture_profil = $picture_profil;
-
-        return $this;
-    }
-
     public function getPhotographerDescription(): ?string
     {
         return $this->photographer_description;
@@ -609,6 +600,30 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function setIsVerified(bool $is_verified): self
     {
         $this->is_verified = $is_verified;
+
+        return $this;
+    }
+
+    public function getPersonalStatut(): ?PersonalStatut
+    {
+        return $this->personal_statut;
+    }
+
+    public function setPersonalStatut(?PersonalStatut $personal_statut): self
+    {
+        $this->personal_statut = $personal_statut;
+
+        return $this;
+    }
+
+    public function getPictureProfil(): ?File
+    {
+        return $this->picture_profil;
+    }
+
+    public function setPictureProfil(?File $picture_profil): self
+    {
+        $this->picture_profil = $picture_profil;
 
         return $this;
     }

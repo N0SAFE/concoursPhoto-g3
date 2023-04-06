@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\File;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -15,6 +16,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher
     ){
+        $this->faker = Factory::create('fr_FR');
     }
 
     const USER_REFERENCE = 'user';
@@ -30,6 +32,18 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
     ];
 
+    public function createFile() {
+        $file = new File();
+
+        $file->setExtension($this->faker->fileExtension());
+        $file->setPath($this->faker->filePath());
+        $file->setSize($this->faker->randomNumber());
+        $file->setType($this->faker->mimeType());
+        $file->setDefaultName($this->faker->name());
+
+        return $file;
+    }
+
     public function getRandomElements(array $array, int $count): array
     {
         shuffle($array);
@@ -39,10 +53,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create('fr_FR');
-        
+        $faker = $this->faker;
+
         $user = new User();
-        
+
         $user->setPseudonym("admin");
         $user->setIsVerified(true);
         $user->setLastConnectionDate($faker->dateTime());
@@ -51,7 +65,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setDeleteDate($faker->dateTime());
         $user->setUpdateDate($faker->dateTime());
         $user->setWebsiteUrl($faker->url());
-        $user->setPictureProfil($faker->imageUrl());
         $user->setPhotographerDescription($faker->text());
         $user->setSocialsNetworks($faker->text());
         $user->setEmail("admin@admin.com");
@@ -67,10 +80,12 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setPostcode(str_replace(' ', '', $faker->postcode()));
         $user->setCountry($faker->countryCode());
         $user->setPostcode(str_replace(' ', '', $faker->postcode()));
+        $user->setPictureProfil($this->createFile());
         $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
         $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
+        $user->setPersonalStatut($this->getReference(PersonalStatutFixtures::PERSONAL_STATUT_REFERENCE . rand(1, count(PersonalStatutFixtures::PERSONAL_STATUT_ARRAY))));
         $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
-        
+
         $manager->persist($user);
 
         $this->addReference(sprintf('%s%d', self::USER_REFERENCE, 1), $user);
@@ -85,7 +100,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setDeleteDate($faker->dateTime());
             $user->setUpdateDate($faker->dateTime());
             $user->setWebsiteUrl($faker->url());
-            $user->setPictureProfil($faker->imageUrl());
             $user->setPhotographerDescription($faker->text());
             $user->setSocialsNetworks($faker->text());
             $user->setEmail($faker->email());
@@ -101,8 +115,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setCity(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
             $user->setCountry("FRANCE");
             $user->setPostcode(str_replace(' ', '', $faker->postcode()));
+            $user->setPictureProfil($this->createFile());
             $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
             $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
+            $user->setPersonalStatut($this->getReference(PersonalStatutFixtures::PERSONAL_STATUT_REFERENCE . rand(1, count(PersonalStatutFixtures::PERSONAL_STATUT_ARRAY))));
             $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
 
             $manager->persist($user);
@@ -118,6 +134,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         return [
             GenderFixtures::class,
             PhotographerCategoryFixtures::class,
+            PersonalStatutFixtures::class,
         ];
     }
 }
