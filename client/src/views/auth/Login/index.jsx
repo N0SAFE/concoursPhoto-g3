@@ -13,7 +13,7 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { email, password } = e.target.elements;
-        login({ email: email.value, password: password.value })
+        const promise = login({ email: email.value, password: password.value })
             .then(function (me) {
                 console.log(me)
                 if (me.roles.includes("ROLE_ADMIN")) {
@@ -21,12 +21,19 @@ export default function Login() {
                 } else {
                     navigate("/");
                 }
-                toast.success("Vous êtes connecté");
             })
             .catch(function (error) {
-                toast.error(error.message);
                 console.error(error);
             });
+        toast.promise(promise, {
+            pending: "Connexion en cours",
+            success: "Connexion réussie",
+            error: {
+                render({ data }) {
+                    return data.message;
+                },
+            }
+        });
     };
 
     return (
