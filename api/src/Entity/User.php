@@ -7,13 +7,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\State\UserPasswordHasher;
+use App\State\UserStateProcessor;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -23,9 +22,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(processor: UserPasswordHasher::class),
+        new Post(processor: UserStateProcessor::class),
         new Get(),
-        new Patch(processor: UserPasswordHasher::class),
+        new Patch(processor: UserStateProcessor::class),
         new Delete()
     ],
     normalizationContext: ['groups' => ['user']]
@@ -587,7 +586,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $roles = (array)$this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
@@ -612,5 +611,4 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
         return $this;
     }
-
 }
