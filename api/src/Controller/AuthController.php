@@ -19,8 +19,8 @@ class AuthController extends AbstractController
 
         // remove cookie from server
         $response = new Response();
-        $response->headers->clearCookie('BEARER');
-        $response->headers->clearCookie('refreshToken');
+        $response->headers->clearCookie('BEARER', '/', null, true, true, "None");
+        $response->headers->clearCookie('refreshToken', '/', null, true, true, "None");
 
         return $response;
     }
