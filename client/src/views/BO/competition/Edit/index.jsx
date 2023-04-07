@@ -339,6 +339,7 @@ export default function CompetitionEdit() {
                                 required: true,
                                 options: locationPossibility.regions.data,
                                 isMulti: true,
+                                closeMenuOnSelect: false,
                                 menuPlacement: "top",
                                 value: entity.regionCriteria,
                                 onInputChange: (name, { action }) => {
@@ -373,6 +374,7 @@ export default function CompetitionEdit() {
                                 required: true,
                                 options: locationPossibility.departments.data,
                                 isMulti: true,
+                                closeMenuOnSelect: false,
                                 menuPlacement: "top",
                                 value: entity.departmentCriteria,
                                 onInputChange: (name, { action }) => {
@@ -407,6 +409,7 @@ export default function CompetitionEdit() {
                                 required: true,
                                 options: locationPossibility.cities.data,
                                 isMulti: true,
+                                closeMenuOnSelect: false,
                                 menuPlacement: "top",
                                 value: entity.cityCriteria,
                                 onInputChange: (name, { action }) => {

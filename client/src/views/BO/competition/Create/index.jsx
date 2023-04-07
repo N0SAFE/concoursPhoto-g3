@@ -293,6 +293,7 @@ export default function CompetitionCreate() {
                                 required: true,
                                 options: locationPossibility.regions.data,
                                 isMulti: true,
+                                closeMenuOnSelect: false,
                                 menuPlacement: "top",
                                 onInputChange: (name, { action }) => {
                                     if (action === "input-change") {
@@ -326,6 +327,7 @@ export default function CompetitionCreate() {
                                 required: true,
                                 options: locationPossibility.departments.data,
                                 isMulti: true,
+                                closeMenuOnSelect: false,
                                 menuPlacement: "top",
                                 onInputChange: (name, { action }) => {
                                     if (action === "input-change") {
@@ -359,6 +361,7 @@ export default function CompetitionCreate() {
                                 required: true,
                                 options: locationPossibility.cities.data,
                                 isMulti: true,
+                                closeMenuOnSelect: false,
                                 menuPlacement: "top",
                                 onInputChange: (name, { action }) => {
                                     if (action === "input-change") {
