@@ -12,6 +12,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
+    
+    private $faker;
 
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher
@@ -27,9 +29,58 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         'ROLE_JURY',
         'ROLE_ADMIN',
     ];
-
+    
     const CITY_ARRAY = [
-        '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
+        [
+            "code" => '60341',
+            "codeDepartment" => '60',
+            "codeRegion" => '32',
+        ],
+        [
+            "code" => '01032',
+            "codeDepartment" => '01',
+            "codeRegion" => '84',
+        ],
+        [
+            "code" => '46201',
+            "codeDepartment" => '46',
+            "codeRegion" => '76',
+        ],
+        [
+            "code" => '24008',
+            "codeDepartment" => '24',
+            "codeRegion" => '75',
+        ],
+        [
+            "code" => '02347',
+            "codeDepartment" => '02',
+            "codeRegion" => '32',
+        ],
+        [
+            "code" => '06055',
+            "codeDepartment" => '06',
+            "codeRegion" => '93',
+        ],
+        [
+            "code" => '34343',
+            "codeDepartment" => '34',
+            "codeRegion" => '76',
+        ],
+        [
+            "code" => '66025',
+            "codeDepartment" => '66',
+            "codeRegion" => '76',
+        ],
+        [
+            "code" => '80829',
+            "codeDepartment" => '80',
+            "codeRegion" => '32',
+        ],
+        [
+            "code" => '51578',
+            "codeDepartment" => '51',
+            "codeRegion" => '44',
+        ],
     ];
 
     public function createFile() {
@@ -54,6 +105,8 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = $this->faker;
+        
+        $city = self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)];
 
         $user = new User();
 
@@ -76,7 +129,9 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setFirstname($faker->firstName());
         $user->setLastname($faker->lastName());
         $user->setRoles(['ROLE_ADMIN']);
-        $user->setCity(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
+        $user->setCity($city['code']);
+        $user->setDepartment($city['codeDepartment']);
+        $user->setRegion($city['codeRegion']);
         $user->setPostcode(str_replace(' ', '', $faker->postcode()));
         $user->setCountry($faker->countryCode());
         $user->setPostcode(str_replace(' ', '', $faker->postcode()));
@@ -91,6 +146,8 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $this->addReference(sprintf('%s%d', self::USER_REFERENCE, 1), $user);
 
         for ($i = 1; $i < self::USER_COUNT_REFERENCE; $i++) {
+            $city = self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)];
+            
             $user = new User();
 
             $user->setPseudonym($faker->userName());
@@ -112,7 +169,9 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setFirstname($faker->firstName());
             $user->setLastname($faker->lastName());
             $user->setRoles($this->getRandomElements(self::ROLE_ARRAY, 1));
-            $user->setCity(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
+            $user->setCity($city['code']);
+            $user->setDepartment($city['codeDepartment']);
+            $user->setRegion($city['codeRegion']);
             $user->setCountry("FRANCE");
             $user->setPostcode(str_replace(' ', '', $faker->postcode()));
             $user->setPictureProfil($this->createFile());

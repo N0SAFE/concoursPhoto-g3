@@ -50,7 +50,6 @@ export default function UserCreate() {
 
     useEffect(() => {
         const promise = Promise.all([getGendersPossibility()]).then(([genders]) => setEntityPossibility({ genders }));
-        console.log(promise);
         toast.promise(promise, {
             pending: "Chargement des possibilités",
             success: "Possibilités chargées",
@@ -75,7 +74,8 @@ export default function UserCreate() {
         <div>
             <BOForm
                 title="Ajouter un utilisateur"
-                handleSubmit={function () {
+                handleSubmit={async function () {
+                    const {codeRegion, codeDepartement} = await fetch(`https://geo.api.gouv.fr/communes/${entity.city.value}?fields=codeRegion,codeDepartement&format=json&geometry=centre`).then(r => r.json()).catch(e =>{ console.error(e); throw new Error("500: the city code is not valid on the gouv api")});
                     const data = {
                         state: entity.state,
                         email: entity.email,
@@ -84,6 +84,8 @@ export default function UserCreate() {
                         lastname: entity.lastname,
                         address: entity.address,
                         city: entity.city.value,
+                        department: codeDepartement,
+                        region: codeRegion,
                         postcode: entity.postcode.value,
                         phoneNumber: entity.phoneNumber,
                         role: [],
@@ -118,8 +120,9 @@ export default function UserCreate() {
                             render: ({ data }) => {
                                 console.debug(data);
                                 if (data["@type"] === "hydra:Error") {
-                                    throw new Error(data.description);
+                                    return data['hydra:description']
                                 }
+                                return data.message;
                             },
                         },
                     });
@@ -127,7 +130,7 @@ export default function UserCreate() {
             >
                 <div>
                     <label htmlFor="firstname">Prénom</label>
-                    <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} setStonChangeate={d => updateEntity("firstname", d)} defaultValue={entity.firstname} />
+                    <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} onChange={d => updateEntity("firstname", d)} defaultValue={entity.firstname} />
                     <div>{errors.firstname}</div>
                 </div>
                 <div>

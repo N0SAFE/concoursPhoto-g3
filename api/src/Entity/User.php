@@ -147,6 +147,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?File $picture_profil = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $region = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $department = null;
+
     public function __construct()
     {
         $this->Manage = new ArrayCollection();
@@ -624,6 +630,30 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function setPictureProfil(?File $picture_profil): self
     {
         $this->picture_profil = $picture_profil;
+
+        return $this;
+    }
+
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(string $region): self
+    {
+        $this->region = $region;
+
+        return $this;
+    }
+
+    public function getDepartment(): ?string
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(string $department): self
+    {
+        $this->department = $department;
 
         return $this;
     }
