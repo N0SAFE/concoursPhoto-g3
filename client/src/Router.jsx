@@ -52,7 +52,7 @@ function Router() {
                     </Route>
                 </Route>
             </Route>
-            <Route path="/">
+            <Route path="/" element={<Header />}>
                 <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
                     <Route path="" element={<Profile />} />
                     <Route path=":id" element={<ProfileUser />} />

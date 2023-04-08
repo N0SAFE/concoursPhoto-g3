@@ -5,7 +5,7 @@
         z-index: 100;
         overflow: hidden;
         position: absolute;
-        background-color: $lightgrey;
+        background-color: $background-color-lightgrey;
         width: 100%;
         transition: 0.25s ease-in-out;
         max-height: 0;
@@ -16,7 +16,7 @@
             margin-top: 10px;
 
             & > a {
-                color: $white;
+                color: $background-color-primary;
                 text-decoration: none;
                 font-size: 25px;
             }

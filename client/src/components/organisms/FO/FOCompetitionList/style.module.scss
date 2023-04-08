@@ -1,0 +1,10 @@
+.lastCompetition {
+    padding: 0 100px;
+
+    & > div {
+        display: flex;
+        justify-content: center;
+        gap: $gapBetweenContainer;
+        flex-wrap: wrap;
+    }
+}
