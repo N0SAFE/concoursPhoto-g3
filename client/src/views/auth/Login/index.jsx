@@ -13,18 +13,14 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { email, password } = e.target.elements;
-        const promise = login({ email: email.value, password: password.value })
-            .then(function (me) {
-                console.log(me)
-                if (me.roles.includes("ROLE_ADMIN")) {
-                    navigate("/BO");
-                } else {
-                    navigate("/");
-                }
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
+        const promise = login({ email: email.value, password: password.value }).then(function (me) {
+            console.debug(me);
+            if (me.roles.includes("ROLE_ADMIN")) {
+                navigate("/BO");
+            } else {
+                navigate("/");
+            }
+        });
         toast.promise(promise, {
             pending: "Connexion en cours",
             success: "Connexion réussie",
@@ -32,7 +28,7 @@ export default function Login() {
                 render({ data }) {
                     return data.message;
                 },
-            }
+            },
         });
     };
 
@@ -60,7 +56,7 @@ export default function Login() {
                         </div>
                     </div>
                     <div className={style.containerButton}>
-                        <Button type="submit" name="Login" color={"green"} textColor={"white"} padding={"5px"} border={false} borderRadius={"10px"}/>
+                        <Button type="submit" name="Login" color={"green"} textColor={"white"} padding={"5px"} border={false} borderRadius={"10px"} />
                     </div>
                 </form>
             </div>
