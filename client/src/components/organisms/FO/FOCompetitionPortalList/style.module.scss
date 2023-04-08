@@ -1,0 +1,28 @@
+.container {
+    display: flex;
+    gap: $gapBetweenContainer;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.boxSingle {
+    flex-direction: column;
+    display: flex;
+    width: 850px + $gapBetweenContainer;
+    height: 550px;
+    background-color: blue;
+}
+
+.boxDuo {
+    display: flex;
+    gap: $gapBetweenContainer;
+    flex-direction: column;
+
+    & > div {
+        width: 425px;
+        height: 260px;
+        background-color: red;
+        display: flex;
+    }
+}
