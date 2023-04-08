@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
     return (
         <AuthProvider>
-            <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={2000}  />
+            <ToastContainer position={toast.POSITION.BOTTOM_LEFT} autoClose={1000}  />
             <BrowserRouter>
                 <Routes />
             </BrowserRouter>
