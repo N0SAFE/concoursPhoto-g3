@@ -6,27 +6,22 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\VoteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: VoteRepository::class)]
 class Vote
 {
-    #[Groups('competition')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups('competition')]
     #[ORM\ManyToOne(inversedBy: 'votes')]
     private ?Picture $picture = null;
 
-    #[Groups('competition')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $vote_date = null;
 
-    #[Groups('competition')]
     #[ORM\ManyToOne(inversedBy: 'votes')]
     private ?User $user = null;
 

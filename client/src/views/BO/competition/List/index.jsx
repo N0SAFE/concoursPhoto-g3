@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
-import useApiFetch from "@/hooks/useApiFetch";
+import useApiFetch from "@/hooks/useApiFetch.js";
 import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";

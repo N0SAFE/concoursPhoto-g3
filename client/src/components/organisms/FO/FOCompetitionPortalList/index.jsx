@@ -1,11 +1,22 @@
 import style from "./style.module.scss";
+import Slider from "@/components/atoms/Slider";
 
 export default function FOCompetitionPortalList() {
    return (
        <div className={style.container}>
            <div className={style.boxSingle}>
                <div>
-                   box solo
+                   <Slider
+                       slides={
+                           [
+                               { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                               { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                               { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                               { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                               { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                           ]
+                       }
+                   />
                </div>
            </div>
            <div className={style.boxDuo}>
