@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 export default function () {
     const navigate = useNavigate();
     const { checkLogged } = useAuthContext()
-    return async function (path, options, refreshToken = true) {
+    return async function apiFetch(path, options, {refreshToken = true} = {}) {
         if(!options){
             options = {};
         }
@@ -20,18 +20,19 @@ export default function () {
         try {
             if (response.status === 401) {
                 const data = await response.json();
+                response.json = async () => data;
                 if ((data.message === "Expired JWT Token" || data.message === "Missing token" || data.message === "Invalid credentials.") && path !== "/token/refresh") {
-                    const isLogged = await checkLogged();
+                    const {isLogged} = await checkLogged();
                     if(!isLogged){
                         navigate("/auth/logout");
                         toast.error("une erreur est survenue, veuillez vous reconnecter");
                         return response;
                     }
-                    return useApiFetch(path, options, { refreshToken: false });
+                    return apiFetch(path, options, { refreshToken: false });
                 }
             }
             return response;
-        } catch {
+        } catch(e) {
             return response;
         }
     };
