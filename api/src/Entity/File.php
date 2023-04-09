@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\FileRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: FileRepository::class)]
 class File
 {
