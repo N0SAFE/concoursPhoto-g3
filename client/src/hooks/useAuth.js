@@ -35,7 +35,6 @@ function login(checkLogged, { email, password }, autoLogoutOnFail = true) {
                             throw new Error("an error occured");
                         }
                     }
-                    console.log(me);
                     resolve(me);
                 });
             })
@@ -72,7 +71,7 @@ function register(checkLogged, { email, password, passwordverify, firstname, las
             return login(checkLogged, { email, password });
         })
         .catch((error) => {
-            console.log(error);
+            console.error(error);
         });
 }
 
