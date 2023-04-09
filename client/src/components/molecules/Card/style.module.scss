@@ -1,0 +1,76 @@
+$paddingBorder: 15px;
+$containerWidth: calc((100% - ($gapBetweenContainer) * 2) / 3);
+$borderRadius: 10px;
+
+.card {
+    &Container {
+        width: $containerWidth;
+        height: auto;
+        border-radius: $borderRadius;
+        position: relative;
+        box-shadow: 3px 5px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    &Body {
+        border-radius: 10px 10px 0 0;
+        background-color: $background-color-primary;
+        padding: 5px $paddingBorder;
+
+        h3 {
+            margin: 0 5px;
+        }
+    }
+
+    &Header {
+        width: 100%;
+        aspect-ratio: 16/9;
+
+        & > img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    &Filter {
+        display: flex;
+        gap: 10px;
+        margin: 15px 0;
+
+        & > div, span {
+            cursor: pointer;
+            background-color: $background-color-lightgrey;
+            border-radius: 20px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+
+            & > span {
+                font-size: .7rem;
+            }
+        }
+    }
+
+    &Footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px $paddingBorder;
+
+        span {
+            background: $background-color-lightgrey;
+            border-radius: 50px;
+        }
+
+        & > div > .date {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            p {
+                font-size: .9rem;
+            }
+        }
+    }
+}

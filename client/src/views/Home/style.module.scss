@@ -1,0 +1,16 @@
+.homeContainer {
+    @extend .limited-content;
+}
+
+.homeBanner {
+    display: flex;
+    align-items: center;
+
+    & > div {
+        width: 50%;
+
+        &:last-child {
+            justify-content: end;
+        }
+    }
+}
