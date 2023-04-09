@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuthContext } from "@/contexts/AuthContext";
 import Dropdown from "@/components/atoms/Dropdown";
 
-export default function Navbar() {
+export default function Navbar(list = []) {
     const { me, isLogged } = useAuthContext();
     return (
         <nav className={style.nav}>

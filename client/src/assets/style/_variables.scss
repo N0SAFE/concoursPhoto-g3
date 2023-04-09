@@ -1,13 +1,20 @@
 // Colors
-$lightgrey: lightgrey;
-$white: white;
-$black: black;
+$lightgrey: #F5F5F5;
+$darkgrey: #A8A8A8;
 
 // Main colors
+$primary-color: #fff;
+$secondary-color: #000;
 
 // Text colors
 
+$text-color-secondary: $secondary-color;
+
 // Background colors
+$background-color-lightgrey: $lightgrey;
+$background-color-primary: $primary-color;
+$background-color-secondary: $secondary-color;
+$background-color-darkgrey: $darkgrey;
 
 // Media Queries
 $breakpoints: (
@@ -23,3 +30,5 @@ $breakpoints: (
 // Logo size
 
 // Content
+
+$gapBetweenContainer: 30px;

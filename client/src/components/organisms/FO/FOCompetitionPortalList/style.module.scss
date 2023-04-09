@@ -11,7 +11,6 @@
     display: flex;
     width: 850px + $gapBetweenContainer;
     height: 550px;
-    background-color: blue;
 }
 
 .boxDuo {
@@ -22,6 +21,7 @@
     & > div {
         width: 425px;
         height: 260px;
+        // temporary color for next steps
         background-color: red;
         display: flex;
     }
