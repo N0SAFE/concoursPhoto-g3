@@ -17,7 +17,7 @@ import { Navigation, Pagination, Keyboard } from "swiper";
 export default function Slider(
     {
         navigation = true,
-        slides = []
+        slides = [],
     }) {
     return (
         <>
@@ -27,11 +27,12 @@ export default function Slider(
                     clickable: true,
                 }}
                 modules={[Navigation, Pagination, Keyboard]}
+                className={style.swiper}
             >
                 {slides.map((slide) => {
                     return (
                         <SwiperSlide>
-                            <img className={style.imgFormat} src={slide.imagePath} alt={slide.imageAlt} />
+                            <img src={slide.imagePath} alt={slide.imageAlt} />
                         </SwiperSlide>
                     )
                 })}
