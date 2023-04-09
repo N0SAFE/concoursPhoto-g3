@@ -9,9 +9,7 @@ export default function useFilesUploader() {
         formData.append("files[]", files[i]);
     }
 
-    console.log(files);
     formData.append("code", code);
-    console.log([...formData.entries()]);
     return apiFetch("/uploads", {
       method: "POST",
       body: formData,
