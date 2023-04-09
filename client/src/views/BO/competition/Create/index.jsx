@@ -20,7 +20,6 @@ export default function CompetitionCreate() {
             locationPossibility[key].isLoading = isLoading;
         }
         if (data !== undefined) {
-            console.log(data);
             locationPossibility[key].data = data.map((item) => ({ label: item.nom, value: item.code }));
         }
         setLocationPossibility({ ...locationPossibility });
@@ -55,7 +54,6 @@ export default function CompetitionCreate() {
     });
 
     const updateEntity = (key, value) => {
-        console.log(key, value);
         setEntity({ ...entity, [key]: value });
     };
 

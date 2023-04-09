@@ -1,5 +1,4 @@
 export default function NotFound() {
-    console.log("ui")
     return (
         <div>
             <h1>404 Not Found</h1>

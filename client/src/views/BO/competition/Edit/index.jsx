@@ -22,7 +22,6 @@ export default function CompetitionEdit() {
             locationPossibility[key].isLoading = isLoading;
         }
         if (data !== undefined) {
-            console.log(data);
             locationPossibility[key].data = data.map((item) => ({ label: item.nom, value: item.code }));
         }
         setLocationPossibility({ ...locationPossibility });
@@ -57,7 +56,6 @@ export default function CompetitionEdit() {
     });
 
     const updateEntity = (key, value) => {
-        console.log(key, value);
         setEntity({ ...entity, [key]: value });
     };
 

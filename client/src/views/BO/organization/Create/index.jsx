@@ -177,7 +177,6 @@ export default function OrganizationCreate() {
                             }}
                             onChange={(d) => {
                                 updateEntity("city", d)
-                                console.log(postalCodesPossibility)
                             }}
                         />
                         <div>{errors.city}</div>
