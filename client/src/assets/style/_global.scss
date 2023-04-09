@@ -10,3 +10,9 @@ body {
 .limited-content {
     padding: 0 100px;
 }
+
+.unselectable {
+    -webkit-user-select: none; /* Safari /
+    -ms-user-select: none; / IE 10 and IE 11 /
+    user-select: none; / Standard syntax */
+}

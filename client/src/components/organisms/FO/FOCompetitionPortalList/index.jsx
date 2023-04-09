@@ -19,12 +19,30 @@ export default function FOCompetitionPortalList() {
                />
            </div>
            <div className={style.boxDuo}>
-               <div>
-                   box 1/2
-               </div>
-               <div>
-                   box 2/2
-               </div>
+               <Slider
+                   slides={
+                       [
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                       ]
+                   }
+                   height="300px"
+               />
+               <Slider
+                   slides={
+                       [
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                           { imagePath: "https://florianbompan.com/wp-content/uploads/2021/08/P1088718-2-scaled.jpg", imageAlt: "Une image" },
+                       ]
+                   }
+                   height="300px"
+               />
            </div>
        </div>
     );

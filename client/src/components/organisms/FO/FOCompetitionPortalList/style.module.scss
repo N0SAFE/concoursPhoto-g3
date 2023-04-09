@@ -2,27 +2,42 @@
     display: flex;
     gap: $gapBetweenContainer;
     justify-content: center;
-    align-items: center;
     flex-wrap: wrap;
 }
 
 .boxSingle {
+    @extend .unselectable;
     flex-direction: column;
     display: flex;
-    width: 850px + $gapBetweenContainer;
-    height: 550px;
+    width: calc((100% - $gapBetweenContainer)/1.5);
+    aspect-ratio: 16/9;
 }
 
 .boxDuo {
     display: flex;
     gap: $gapBetweenContainer;
     flex-direction: column;
+    width: calc((100% - $gapBetweenContainer)/3);
 
     & > div {
-        width: 425px;
-        height: 260px;
+        height: 100%;
         // temporary color for next steps
         background-color: red;
         display: flex;
+    }
+}
+
+@include below(sm) {
+    .boxSingle {
+        width: 100%;
+    }
+
+    .boxDuo {
+        flex-direction: row;
+        width: 100%;
+        gap: 10px;
+        & > div {
+            width: 100%;
+        }
     }
 }
