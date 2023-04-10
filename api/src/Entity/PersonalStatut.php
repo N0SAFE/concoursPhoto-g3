@@ -6,16 +6,21 @@ use App\Repository\PersonalStatutRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: PersonalStatutRepository::class)]
 class PersonalStatut
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('user')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('user')]
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'personal_statut', targetEntity: User::class)]

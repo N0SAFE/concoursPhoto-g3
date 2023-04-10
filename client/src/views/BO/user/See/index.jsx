@@ -71,6 +71,13 @@ export default function () {
                     name: "postcode",
                 },
                 {
+                    display: "Statut",
+                    name: "personal_statut",
+                    customData({ entity, property }) {
+                        return entity?.personal_statut?.label;
+                    },
+                },
+                {
                     display: "Ville",
                     name: "city",
                 },

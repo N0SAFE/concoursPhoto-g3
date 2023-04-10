@@ -141,8 +141,11 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column]
     private ?bool $is_verified = null;
 
+    #[Groups('user')]
     #[ORM\ManyToOne(inversedBy: 'users')]
+    
     private ?PersonalStatut $personal_statut = null;
+    
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?File $picture_profil = null;
