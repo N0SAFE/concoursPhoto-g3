@@ -2,52 +2,56 @@ import style from "./style.module.scss";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "@/contexts/AuthContext";
 import Dropdown from "@/components/atoms/Dropdown";
+import {useEffect, useRef} from "react";
+import Icon from "@/components/atoms/Icon";
 
-export default function Navbar(list = []) {
-    const { me, isLogged } = useAuthContext();
+export default function Navbar({listLeft = [], listRight = []}) {
+    const { isLogged } = useAuthContext();
+    const navbarRef = useRef('');
+
+    const handleNavbar = (e) => {
+        e.preventDefault();
+        navbarRef.current.classList.toggle(style.show);
+    }
+
+    function list(disposition) {
+        return disposition.map((item, index) => {
+            if (item.type === "classic") {
+                return (
+                    <li key={index}>
+                        <Link className={style.navbarStyle} to={item.to}>{item.title}</Link>
+                    </li>
+                )
+            } else if (item.type === "dropdown") {
+                return (
+                    <Dropdown
+                        className={style.navbarStyle}
+                        links={item.links}
+                        title={item.title}
+                        requireLogin={isLogged}
+                        requireToken={true}
+                    />
+                )
+            }
+        })
+    }
+
     return (
-        <nav className={style.nav}>
+        <nav className={style.navbarContainer}>
             <ul>
-                <li>
-                    <Link to={"/BO"}>Page d'accueil</Link>
-                </li>
-                <Dropdown
-                    links={[
-                        { title: "Liste des utilisateurs", to: "/BO/user" },
-                        { title: "Ajout d'un utilisateur", to: "/BO/user/create" },
-                    ]}
-                    title={"Utilisateur"}
-                    requireLogin={isLogged}
-                    requireToken={true}
-                />
-                <Dropdown
-                    links={[
-                        { title: "Liste des organisations", to: "/BO/organization" },
-                        { title: "Ajout d'une organisation", to: "/BO/organization/create" },
-                    ]}
-                    title={"Organisations"}
-                    requireLogin={isLogged}
-                    requireToken={true}
-                />
-                <Dropdown
-                    links={[
-                        { title: "Liste des concours", to: "/BO/competition" },
-                        { title: "Ajout d'un concours", to: "/BO/competition/create" },
-                    ]}
-                    title={"Concours"}
-                    requireLogin={isLogged}
-                    requireToken={true}
-                />
+                {list(listLeft)}
             </ul>
             <ul>
-                <Dropdown
-                    links={[
-                        { title: "Connexion", to: "/auth/login", requireToken: true, alternative: "Déconnexion", alternativeTo: "/auth/logout" },
-                        { title: "Mon profil", to: "/profile" },
-                    ]}
-                    title={isLogged ? me.email : "Mon compte"}
-                    requireLogin={isLogged}
-                />
+                {list(listRight)}
+            </ul>
+            <ul className={style.navbarResponsive} style={{ display: "none" }}>
+                <div ref={navbarRef}>
+                    {list(listLeft)}
+                    {list(listRight)}
+                </div>
+            </ul>
+            <ul className={style.navbarResponsive} style={{ display: "none" }} onClick={(e) => handleNavbar(e)}>
+                <Icon className={style.icon} icon={"menu"} size={30} color={"white"} />
             </ul>
         </nav>
     );

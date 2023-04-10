@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Icon from "@/components/atoms/Icon";
 import React, { useRef, useState } from "react";
 
-export default function Dropdown({title, links, requireLogin, requireToken }) {
+export default function Dropdown({title, links, requireLogin, requireToken, className }) {
     const dropdownRef = useRef('');
     const [isIconRotated, setIsIconRotated] = useState(false);
 
@@ -19,7 +19,7 @@ export default function Dropdown({title, links, requireLogin, requireToken }) {
             <div className={style.alignDropdown}>
                 {requireToken === true && requireLogin === true || !requireToken ? (
                     <div>
-                        <Link onClick={(e) => handleDropdown(e)}>{title}</Link>
+                        <Link className={className} onClick={(e) => handleDropdown(e)}>{title}</Link>
                         <Icon className={`${style.icon} ${isIconRotated ? style.rotate : ''}`} icon="cheveron-up" size={20} color="white" />
                     </div>
                     ) : null
@@ -30,19 +30,19 @@ export default function Dropdown({title, links, requireLogin, requireToken }) {
                     if (link.requireToken === true && requireLogin === false) {
                         return (
                             <li key={index}>
-                                <Link to={link.to}>{link.title}</Link>
+                                <Link className={className} to={link.to}>{link.title}</Link>
                             </li>
                         )
                     } else if (link.requireToken === true) {
                         return (
                             <li key={index}>
-                                <Link to={link.alternativeTo}>{link.alternative}</Link>
+                                <Link className={className} to={link.alternativeTo}>{link.alternative}</Link>
                             </li>
                         )
                     } else {
                         return (
                             <li key={index}>
-                                <Link to={link.to}>{link.title}</Link>
+                                <Link className={className} to={link.to}>{link.title}</Link>
                             </li>
                         )
                     }
