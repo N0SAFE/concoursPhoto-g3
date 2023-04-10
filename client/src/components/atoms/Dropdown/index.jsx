@@ -1,5 +1,5 @@
 import style from "@/components/atoms/Dropdown/style.module.scss";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Icon from "@/components/atoms/Icon";
 import React, { useRef, useState } from "react";
 

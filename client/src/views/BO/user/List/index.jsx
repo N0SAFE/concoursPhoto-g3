@@ -5,6 +5,7 @@ import useApiFetch from "@/hooks/useApiFetch";
 import { toast } from "react-toastify";
 import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation";
+import style from "./style.module.scss";
 
 export default function UserList() {
     const apiFetch = useApiFetch();
@@ -111,7 +112,7 @@ export default function UserList() {
     };
 
     return (
-        <div>
+        <div className={style.containerList}>
             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <h1>Liste des utilisateurs</h1>
                 <Button color="green" textColor="white" name="Créer un utilisateur" onClick={() => navigate("/BO/user/create")}></Button>

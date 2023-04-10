@@ -1,0 +1,54 @@
+.swiper {
+    width: 100%;
+    height: 100%;
+
+    & > div > div > img {
+        width: 100%;
+        height: 100%;
+    }
+
+    &Button {
+        @extend .unselectable;
+        position: absolute;
+        top: 50%;
+        z-index: 10;
+        cursor: pointer;
+
+        border-radius: 50%;
+        background-color: $background-color-lightgrey;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.swiperButtonPrev {
+            left: 20px;
+            transform: translateY(-50%);
+        }
+
+        &.swiperButtonNext {
+            right: 20px;
+            transform: translateY(-50%);
+        }
+
+        &.swiperButtonDisabled {
+            & > svg {
+                color: $text-color-third;
+            }
+        }
+
+        @include mobile() {
+            width: 25px;
+            height: 25px;
+
+            &.swiperButtonPrev {
+                left: 10px;
+            }
+
+            &.swiperButtonNext {
+                right: 10px;
+            }
+        }
+    }
+}
