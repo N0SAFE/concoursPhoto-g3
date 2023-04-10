@@ -1,21 +1,29 @@
 $paddingBorder: 15px;
-$containerWidth: calc((100% - ($gapBetweenContainer) * 2) / 3);
+$containerWidth: calc((100% - ($gapBetweenContainer) * 2));
 $borderRadius: 10px;
 
 .card {
     &Container {
-        width: $containerWidth;
+        width: calc($containerWidth / 3);
         height: auto;
         border-radius: $borderRadius;
         position: relative;
         box-shadow: 3px 5px 30px rgba(0, 0, 0, 0.1);
         overflow: hidden;
+
+        @include mobile() {
+            width: calc($containerWidth / 2);
+        }
+
+        @include small-mobile() {
+            width: 100%;
+        }
     }
 
     &Body {
         border-radius: 10px 10px 0 0;
         background-color: $background-color-primary;
-        padding: 5px $paddingBorder;
+        padding: 10px $paddingBorder;
 
         h3 {
             margin: 0 5px;
@@ -57,6 +65,7 @@ $borderRadius: 10px;
         justify-content: space-between;
         align-items: center;
         padding: 5px $paddingBorder;
+        flex-wrap: wrap;
 
         span {
             background: $background-color-lightgrey;

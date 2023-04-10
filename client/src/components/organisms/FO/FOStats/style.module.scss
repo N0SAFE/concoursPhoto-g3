@@ -1,4 +1,9 @@
 .containerStats {
     display: flex;
     gap: 10px;
+
+    span:nth-child(2n) {
+        @extend .unselectable;
+        color: $text-color-third;
+    }
 }

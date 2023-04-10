@@ -1,5 +1,5 @@
 import style from "./style.module.scss";
-import Slider from "@/components/atoms/Slider";
+import Slider from "@/components/molecules/Slider";
 
 export default function FOCompetitionPortalList() {
    return (

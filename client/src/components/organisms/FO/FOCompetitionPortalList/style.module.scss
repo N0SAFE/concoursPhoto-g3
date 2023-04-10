@@ -21,9 +21,6 @@
 
     & > div {
         height: 100%;
-        // temporary color for next steps
-        background-color: red;
-        display: flex;
     }
 }
 
@@ -35,9 +32,10 @@
     .boxDuo {
         flex-direction: row;
         width: 100%;
-        gap: 10px;
+        gap: $gapBetweenContainer;
+
         & > div {
-            width: 100%;
+            width: calc((100% - $gapBetweenContainer) /2);
         }
     }
 }

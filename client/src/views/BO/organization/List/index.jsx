@@ -5,6 +5,7 @@ import useApiFetch from "@/hooks/useApiFetch.js";
 import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
+import style from "./style.module.scss";
 
 export default function OrganizationList() {
     const [Organizations, setOrganizations] = useState([]);
@@ -66,7 +67,7 @@ export default function OrganizationList() {
     };
 
     return (
-        <div>
+        <div className={style.containerList}>
             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <h1>Liste des organisations</h1>
                 <Button color="green" textColor="white" name="Créer une organisation" onClick={() => navigate("/BO/organization/create")}></Button>

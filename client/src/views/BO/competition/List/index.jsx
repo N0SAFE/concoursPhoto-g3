@@ -5,6 +5,7 @@ import useApiFetch from "@/hooks/useApiFetch";
 import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
+import style from "./style.module.scss";
 
 export default function CompetitionsList() {
     const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
@@ -83,7 +84,7 @@ export default function CompetitionsList() {
     };
 
     return (
-        <div>
+        <div className={style.containerList}>
             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <h1>Liste des concours</h1>
                 <Button color="green" textColor="white" name="Créer un concours" onClick={() => navigate("/BO/competition/create")}></Button>
@@ -100,7 +101,7 @@ export default function CompetitionsList() {
                     { property: "endowments", display: "Dotation" },
                     { property: "creation_date", display: "Date de création" },
                     { property: "publication_date", display: "Date de publication" },
-                    { property: "publication_start_date", display: "Date de commencement" },
+                    { property: "submission_start_date", display: "Date de commencement" },
                     { property: "voting_start_date", display: "Date de début de vote" },
                 ]}
                 customAction={({ entity, property }) => {
@@ -125,8 +126,8 @@ export default function CompetitionsList() {
                             day: "numeric",
                         });
                     }
-                    if (property === "publication_start_date") {
-                        return new Date(entity.publication_start_date).toLocaleDateString("fr-FR", {
+                    if (property === "submission_start_date") {
+                        return new Date(entity.submission_start_date).toLocaleDateString("fr-FR", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
