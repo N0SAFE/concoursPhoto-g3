@@ -17,7 +17,7 @@ export default function UserCreate() {
     const postalCodesPossibility = [...new Set(locationPossibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] = useState(false);
 
-    const [entityPossibility, setEntityPossibility] = useState({ genders: [] });
+    const [entityPossibility, setEntityPossibility] = useState({ genders: [], statut: [] });
     const [entity, setEntity] = useState({
         state: false,
         email: "",
@@ -31,6 +31,7 @@ export default function UserCreate() {
         phoneNumber: "",
         roles: [],
         gender: "",
+        statut: "",
         dateOfBirth: null,
     });
 
@@ -46,6 +47,18 @@ export default function UserCreate() {
         })
             .then((r) => r.json())
             .then((data) => {
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.label, value: item["@id"] };
+                });
+            });
+    };
+    const getPersonalstatus = () => {
+        return apiFetch("/personal_statuts", {
+            method: "GET",
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
                 return data["hydra:member"].map(function (item) {
                     return { label: item.label, value: item["@id"] };
                 });
@@ -71,15 +84,17 @@ export default function UserCreate() {
                         postcode: { value: data.postcode, label: data.postcode },
                         city: { label: city.nom, value: city.code },
                         gender: { label: data.gender.label, value: data.gender["@id"] },
+                        statut: { label: data.personal_statut.label, value: data.personal_statut["@id"] },
                         dateOfBirth: new Date(data.date_of_birth),
                     };
+                    console.debug(_user);
                     setEntity(_user);
                 });
             });
     }
 
     useEffect(() => {
-        const promise = Promise.all([getGendersPossibility(), getUser()]).then(([genders]) => setEntityPossibility({ genders }));
+        const promise = Promise.all([getGendersPossibility(), getPersonalstatus(), getUser()]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
@@ -89,11 +104,11 @@ export default function UserCreate() {
 
     useEffect(() => {
         updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then((d) => {
-            if(d.length === 1 && d[0].id === "cities" && d[0].data.length === 1){
-                if(d[0].data[0].codesPostaux.length === 1 && !entity.postcode){
-                    setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] }});
-                }else if(!entity.city){
-                    setEntity({ ...entity, city: { label: d[0].data[0].nom, value: d[0].data[0].code }});
+            if (d.length === 1 && d[0].id === "cities" && d[0].data.length === 1) {
+                if (d[0].data[0].codesPostaux.length === 1 && !entity.postcode) {
+                    setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
+                } else if (!entity.city) {
+                    setEntity({ ...entity, city: { label: d[0].data[0].nom, value: d[0].data[0].code } });
                 }
             } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the entity)
             setLocationPossibilityIsLoading(false);
@@ -116,6 +131,7 @@ export default function UserCreate() {
                         postcode: entity.postcode.value,
                         phoneNumber: entity.phoneNumber,
                         gender: entity.gender.value,
+                        personalStatut: entity.statut.value,
                         dateOfBirth: entity.dateOfBirth.toISOString(),
                     };
                     console.debug("data", data);
@@ -160,6 +176,15 @@ export default function UserCreate() {
                     <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
                     <div>{errors.dateOfBirth}</div>
                 </div>
+                <label htmlFor="statut">Statut</label>
+                <Input
+                    type="select"
+                    name="personalStatut"
+                    label="Statut"
+                    extra={{ value: entity.statut, options: entityPossibility.statut, required: true }}
+                    onChange={(d) => updateEntity("statut", d)}
+                />
+                <div>{errors.statut}</div>
                 <div>
                     <label htmlFor="email">email</label>
                     <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
