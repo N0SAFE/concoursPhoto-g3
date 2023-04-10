@@ -87,7 +87,6 @@ export default function UserCreate() {
                         statut: { label: data.personal_statut.label, value: data.personal_statut["@id"] },
                         dateOfBirth: new Date(data.date_of_birth),
                     };
-                    console.debug(_user);
                     setEntity(_user);
                 });
             });
