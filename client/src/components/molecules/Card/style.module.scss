@@ -45,19 +45,6 @@ $borderRadius: 10px;
         display: flex;
         gap: 10px;
         margin: 15px 0;
-
-        & > div, span {
-            cursor: pointer;
-            background-color: $background-color-lightgrey;
-            border-radius: 20px;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-
-            & > span {
-                font-size: .7rem;
-            }
-        }
     }
 
     &Footer {
