@@ -25,12 +25,12 @@ import CompetitionEdit from "@/views/BO/competition/Edit";
 function Router() {
     return (
         <Routes>
-            <Route path="/auth" element={<Header />}>
+            <Route path="/auth" element={<Header environment={"backoffice"} />}>
                 <Route path="login" element={<Login />} />
                 <Route path="logout" element={<Logout />} />
             </Route>
             <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
-                <Route path="" element={<Header />}>
+                <Route path="" element={<Header environment={"backoffice"} />}>
                     <Route element={<BO />} />
                     <Route path="user">
                         <Route path="" element={<UserList />} />
