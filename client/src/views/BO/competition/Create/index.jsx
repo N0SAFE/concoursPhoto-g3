@@ -176,47 +176,22 @@ export default function CompetitionCreate() {
                 }}
             >
                 <div>
-                    <label htmlFor="state">Etat</label>
                     <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntity("state", d)} defaultValue={entity.state} />
-                    <div>{errors.state}</div>
-                </div>
-                <div>
-                    <label htmlFor="name">Intitulé du concours</label>
+
                     <Input type="text" name="name" label="Intitulé du concours" onChange={(d) => updateEntity("name", d)} defaultValue={entity.name} />
-                    <div>{errors.name}</div>
-                </div>
-                <div>
-                    <label htmlFor="visual">Visuel du concours</label>
+
                     <Input type="file" name="visual" label="Visuel du concours" onChange={(d) => updateEntity("visual", d)} defaultValue={entity.visual} />
-                    <div>{errors.visual}</div>
-                </div>
-                <div>
-                    <label htmlFor="description">Visuel du concours</label>
+
                     <Input type="text" name="description" label="Description" onChange={(d) => updateEntity("description", d)} defaultValue={entity.description} />
-                    <div>{errors.description}</div>
-                </div>
-                <div>
-                    <label htmlFor="rules">Règlement</label>
+
                     <Input type="text" name="rules" label="Règlement" onChange={(d) => updateEntity("rules", d)} defaultValue={entity.rules} />
-                    <div>{errors.rules}</div>
-                </div>
-                <div>
-                    <label htmlFor="endowments">Dotation</label>
+
                     <Input type="text" name="endowments" label="Dotation" onChange={(d) => updateEntity("endowments", d)} defaultValue={entity.endowments} />
-                    <div>{errors.endowments}</div>
-                </div>
-                <div>
-                    <label htmlFor="creationDate">Date de création</label>
+
                     <Input type="date" name="creationDate" label="Date de création" onChange={(d) => updateEntity("creationDate", d)} defaultValue={entity.creationDate} />
-                    <div>{errors.creationDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="publicationDate">Date de publication</label>
+
                     <Input type="date" name="publicationDate" label="Date de publication" onChange={(d) => updateEntity("publicationDate", d)} defaultValue={entity.publicationDate} />
-                    <div>{errors.publicationDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="submissionStartDate">Date de début de soumission</label>
+
                     <Input
                         type="date"
                         name="submissionStartDate"
@@ -224,30 +199,15 @@ export default function CompetitionCreate() {
                         onChange={(d) => updateEntity("submissionStartDate", d)}
                         defaultValue={entity.submissionStartDate}
                     />
-                    <div>{errors.submissionStartDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="submissionEndDate">Date de fin de soumission</label>
+
                     <Input type="date" name="submissionEndDate" label="Date de fin de soumission" onChange={(d) => updateEntity("submissionEndDate", d)} defaultValue={entity.submissionEndDate} />
-                    <div>{errors.submissionEndDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="votingStartDate">Date de début de vote</label>
+
                     <Input type="date" name="votingStartDate" label="Date de début de vote" onChange={(d) => updateEntity("votingStartDate", d)} defaultValue={entity.votingStartDate} />
-                    <div>{errors.votingStartDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="votingEndDate">Date de fin de vote</label>
+
                     <Input type="date" name="votingEndDate" label="Date de fin de vote" onChange={(d) => updateEntity("votingEndDate", d)} defaultValue={entity.votingEndDate} />
-                    <div>{errors.votingEndDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="resultsDate">Date des résultats</label>
+
                     <Input type="date" name="resultsDate" label="Date de fin de vote" onChange={(d) => updateEntity("resultsDate", d)} defaultValue={entity.resultsDate} />
-                    <div>{errors.resultsDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="weightingOfJuryVotes">Pondération des votes du jury</label>
+
                     <Input
                         type="number"
                         extra={{ step: 0.01 }}
@@ -256,31 +216,16 @@ export default function CompetitionCreate() {
                         defaultValue={entity.weightingOfJuryVotes}
                         onChange={(d) => updateEntity("weightingOfJuryVotes", d)}
                     />
-                    <div>{errors.weightingOfJuryVotes}</div>
-                </div>
-                <div>
-                    <label htmlFor="numberOfMaxVotes">Nombre maximum de votes</label>
+
                     <Input type="number" name="numberOfMaxVotes" label="Nombre maximum de votes" onChange={(d) => updateEntity("numberOfMaxVotes", d)} defaultValue={entity.numberOfMaxVotes} />
-                    <div>{errors.numberOfMaxVotes}</div>
-                </div>
-                <div>
-                    <label htmlFor="numberOfPrices">Nombres de prix</label>
+
                     <Input type="number" name="numberOfPrices" label="Nombres de prix" onChange={(d) => updateEntity("numberOfPrices", d)} defaultValue={entity.numberOfPrices} />
-                    <div>{errors.numberOfPrices}</div>
-                </div>
-                <div>
-                    <label htmlFor="minAgeCriteria">Âge minimum</label>
+
                     <Input type="number" name="minAgeCriteria" label="Âge minimum" onChange={(d) => updateEntity("minAgeCriteria", d)} defaultValue={entity.minAgeCriteria} />
-                    <div>{errors.minAgeCriteria}</div>
-                </div>
-                <div>
-                    <label htmlFor="maxAgeCriteria">Âge maximum</label>
+
                     <Input type="number" name="maxAgeCriteria" label="Âge maximum" onChange={(d) => updateEntity("maxAgeCriteria", d)} defaultValue={entity.maxAgeCriteria} />
-                    <div>{errors.maxAgeCriteria}</div>
-                </div>
-                <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="region">Région</label>
+
+                    <div style={{ display: "flex", gap: "30px" }}>
                         <Input
                             type="select"
                             name="region"
@@ -311,10 +256,7 @@ export default function CompetitionCreate() {
                                 updateEntity("regionCriteria", d);
                             }}
                         />
-                        <div>{errors.regionCriteria}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="department">Département</label>
+
                         <Input
                             type="select"
                             name="department"
@@ -345,10 +287,7 @@ export default function CompetitionCreate() {
                                 updateEntity("departmentCriteria", d);
                             }}
                         />
-                        <div>{errors.departmentCriteria}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="city">Ville</label>
+
                         <Input
                             type="select"
                             name="city"
@@ -379,45 +318,34 @@ export default function CompetitionCreate() {
                                 updateEntity("cityCriteria", d);
                             }}
                         />
-                        <div>{errors.cityCriteria}</div>
                     </div>
                     <div style={{ display: "flex", gap: "30px" }}>
-                        <div>
-                            <label htmlFor="participantCategory">Catégorie de participant</label>
-                            <Input
-                                type="select"
-                                name="participantCategory"
-                                label="Catégorie de participant"
-                                defaultValue={entity.participantCategories}
-                                extra={{ isMulti: true, required: true, options: entityPossibility.participantCategories, closeMenuOnSelect: false, menuPlacement: "top" }}
-                                onChange={(d) => updateEntity("participantCategories", d)}
-                            />
-                            <div>{errors.participantCategories}</div>
-                        </div>
-                        <div>
-                            <label htmlFor="organizer">Nom de l'organisation</label>
-                            <Input
-                                type="select"
-                                name="organizer"
-                                label="Nom de l'organisation"
-                                defaultValue={entity.organizer}
-                                extra={{ required: true, options: entityPossibility.organizers, menuPlacement: "top" }}
-                                onChange={(d) => updateEntity("organizer", d)}
-                            />
-                            <div>{errors.organizer}</div>
-                        </div>
-                        <div>
-                            <label htmlFor="themes">Thème(s)</label>
-                            <Input
-                                type="select"
-                                name="themes"
-                                label="Thèmes"
-                                defaultValue={entity.themes}
-                                extra={{ required: true, isMulti: true, options: entityPossibility.themes, closeMenuOnSelect: false, menuPlacement: "top" }}
-                                onChange={(d) => updateEntity("themes", d)}
-                            />
-                            <div>{errors.themes}</div>
-                        </div>
+                        <Input
+                            type="select"
+                            name="participantCategory"
+                            label="Catégorie de participant"
+                            defaultValue={entity.participantCategories}
+                            extra={{ isMulti: true, required: true, options: entityPossibility.participantCategories, closeMenuOnSelect: false, menuPlacement: "top" }}
+                            onChange={(d) => updateEntity("participantCategories", d)}
+                        />
+
+                        <Input
+                            type="select"
+                            name="organizer"
+                            label="Nom de l'organisation"
+                            defaultValue={entity.organizer}
+                            extra={{ required: true, options: entityPossibility.organizers, menuPlacement: "top" }}
+                            onChange={(d) => updateEntity("organizer", d)}
+                        />
+
+                        <Input
+                            type="select"
+                            name="themes"
+                            label="Thèmes"
+                            defaultValue={entity.themes}
+                            extra={{ required: true, isMulti: true, options: entityPossibility.themes, closeMenuOnSelect: false, menuPlacement: "top" }}
+                            onChange={(d) => updateEntity("themes", d)}
+                        />
                     </div>
                 </div>
             </BOCreate>
