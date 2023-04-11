@@ -52,6 +52,7 @@ export default function UserCreate() {
                 });
             });
     };
+
     const getPersonalstatus = () => {
         return apiFetch("/personal_statuts", {
             method: "GET",
