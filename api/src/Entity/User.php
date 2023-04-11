@@ -130,7 +130,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $socials_networks = null;
 
+    
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('user')]
     private ?string $pseudonym = null;
 
     #[Groups('user')]

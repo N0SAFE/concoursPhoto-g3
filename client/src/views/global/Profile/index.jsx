@@ -1,55 +1,172 @@
 import BOForm from "@/components/organisms/BO/Form/index.jsx";
 import Input from "@/components/atoms/Input/index.jsx";
-import {toast} from "react-toastify";
-import {useState} from "react";
+import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch.js";
-import {useNavigate, useParams} from "react-router-dom";
-import {useAuthContext} from "@/contexts/AuthContext.jsx";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuthContext } from "@/contexts/AuthContext.jsx";
+import Button from "@/components/atoms/Button";
+import useLocation from "@/hooks/useLocation.js";
+import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 
 export default function Profile() {
-
+    const [entityPossibility, setEntityPossibility] = useState({ statut: [], gender: [] });
     const { me } = useAuthContext();
-
     const [email, setEmail] = useState(me?.email);
     const [password, setPassword] = useState("");
-    const [passwordConfirm, setPasswordConfirm] = useState("");
+    const [firstname, setFirstname] = useState(me?.firstname);
+    const [lastname, setLastname] = useState(me?.lastname);
+    const [dateOfBirth, setDateOfBirth] = useState(me?.dateOfBirth);
+    const [statut, setstatut] = useState(me?.personal_statut || "");
+    const [address, setAddress] = useState(me?.address);
+    const [city, setCity] = useState(me?.city);
+    const [postcode, setPostcode] = useState(me?.postcode);
+    const [pseudonym, setPseudonym] = useState(me?.pseudonym);
+    const [gender, setGender] = useState(me?.gender || "");
+    const { getCityByCode } = useLocation();
+
+    const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
+    const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
+    const postalCodesPossibility = [...new Set(locationPossibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
+    const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] = useState(false);
+    const [entity, setEntity] = useState({
+        state: false,
+        email: "",
+        password: "",
+        passwordConfirm: "",
+        firstname: "",
+        lastname: "",
+        address: "",
+        city: "",
+        postcode: "",
+        phoneNumber: "",
+        roles: [],
+        gender: "",
+        statut: "",
+        dateOfBirth: null,
+    });
+    const updateEntity = (key, value) => {
+        setEntity({ ...entity, [key]: value });
+    };
 
     const [errors, setErrors] = useState({});
-    const apiFetch = useApiFetch()
-
+    const apiFetch = useApiFetch();
     const navigate = useNavigate();
+
+    const getGendersPossibility = () => {
+        return apiFetch("/genders", {
+            method: "GET",
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.label, value: item["@id"] };
+                });
+            });
+    };
+
+    const getPersonalstatus = () => {
+        return apiFetch("/personal_statuts", {
+            method: "GET",
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.label, value: item["@id"] };
+                });
+            });
+    };
+
+    function getUser() {
+        apiFetch("/users/" + me.id, {
+            method: "GET",
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
+                return Promise.all([getCityByCode(data.city)]).then(([city]) => {
+                    const _user = {
+                        email: data.email,
+                        firstname: data.firstname,
+                        lastname: data.lastname,
+                        address: data.address,
+                        postcode: { value: data.postcode, label: data.postcode },
+                        city: { label: city.nom, value: city.code },
+                        gender: { label: data.gender.label, value: data.gender["@id"] },
+                        statut: { label: data.personal_statut.label, value: data.personal_statut["@id"] },
+                        dateOfBirth: new Date(data.date_of_birth),
+                    };
+                    console.debug(_user);
+                    setEntity(_user);
+                });
+            });
+    }
+
+    useEffect(() => {
+        const promise = Promise.all([getGendersPossibility(), getPersonalstatus(), getUser()]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
+        toast.promise(promise, {
+            pending: "Chargement des données",
+            success: "Données chargées",
+            error: "Erreur lors du chargement des données",
+        });
+    }, []);
+
+    useEffect(() => {
+        updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then((d) => {
+            if (d.length === 1 && d[0].id === "cities" && d[0].data.length === 1) {
+                if (d[0].data[0].codesPostaux.length === 1 && !entity.postcode) {
+                    setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
+                } else if (!entity.city) {
+                    setEntity({ ...entity, city: { label: d[0].data[0].nom, value: d[0].data[0].code } });
+                }
+            } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the entity)
+            setLocationPossibilityIsLoading(false);
+        });
+    }, [entity.postcode, entity.city]);
+    console.debug(entityPossibility);
+    console.debug(entity);
+    console.debug(new Date(entity.dateOfBirth));
 
     return (
         <div>
-            <h1>Profil</h1>
+            <h1>Mon compte</h1>
             <BOForm
                 handleSubmit={function () {
-                    console.debug("handleSubmit");
-                    console.debug("fetch");
                     const data = {
-                        email: email,
-                        plainPassword: password || undefined,
+                        email: entity.email,
+                        plainPassword: entity.password || undefined,
+                        firstname: entity.firstname,
+                        lastname: entity.lastname,
+                        address: entity.address,
+                        city: entity.city.value,
+                        postcode: entity.postcode.value,
+                        gender: entity.gender.value,
+                        personalStatut: entity.statut.value,
+                        dateOfBirth: entity.dateOfBirth.toISOString(),
                     };
                     console.debug("data", data);
-                    if (password !== passwordConfirm) {
-                        setErrors({ password: "Les mots de passe ne correspondent pas" });
-                        return;
-                    }
-                    const promise = apiFetch("/users/" + me.id , {
+                    // if (password !== passwordConfirm) {
+                    //     setErrors({ password: "Les mots de passe ne correspondent pas" });
+                    //     return;
+                    // }
+                    const promise = apiFetch("/users/" + me.id, {
                         method: "PATCH",
                         body: JSON.stringify(data),
                         headers: {
                             "Content-Type": "application/merge-patch+json",
                         },
-                    }).then(r => r.json()).then((data) => {
-                        console.debug(data)
-                        if (data['@type'] === "hydra:Error") {
-                            console.error(data);
-                            throw new Error(data.description);
-                        }
-                        navigate('/auth/logout')
-                    });
+                    })
+                        .then((r) => r.json())
+                        .then((data) => {
+                            console.debug(data);
+                            if (data["@type"] === "hydra:Error") {
+                                console.error(data);
+                                throw new Error(data.description);
+                            }
+                            navigate("/auth/logout");
+                            toast.success("Votre profil a bien été modifié, veuillez vous reconnecter");
+                        });
 
                     toast.promise(promise, {
                         pending: "Modification en cours",
@@ -58,18 +175,70 @@ export default function Profile() {
                     });
                 }}
             >
-                <div>
-                    <label htmlFor="firstname">Adresse mail</label>
-                    <Input type="email" name="email" label="Adresse email" extra={{ required: true }} setState={setEmail} defaultValue={me.email} />
-                    <div>{errors.email}</div>
-                </div>
-                <div>
-                    <label htmlFor="password">password</label>
-                    <Input type="password" name="password" label="Mot de passe" setState={setPassword} defaultValue={password} />
-                    <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" setState={setPasswordConfirm} defaultValue={passwordConfirm} />
-                    <div>{errors.password}</div>
+                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                        <Input type="select" name="genre" label="genre" onChange={(d) => updateEntity("gender", d)} extra={{ value: entity.gender, options: entityPossibility.genders }} />
+                        <Input type="text" name="Prénom*" label="Prénom" onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
+                        <Input type="text" name="Nom*" label="Nom" onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
+                        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                            <Input type="date" name="Date de naissance$" label="Date de naissance" onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
+                            <Input type="select" name="vous êtes*" label="Statut" onChange={(d) => updateEntity("statut", d)} extra={{ value: entity.statut, options: entityPossibility.statut }} />
+                        </div>
+                        <Input type="email" name="Email*" label="Adresse email" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
+                        <Input type="password" name="Mot de passe*" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                        <Input type="text" name="Adresse" label="Adresse" onChange={(d) => updateEntity("adress", d)} defaultValue={entity.address} />
+                        <Input
+                            type="select"
+                            name="Ville"
+                            label="Ville"
+                            extra={{
+                                isLoading: locationPossibilityIsLoading,
+                                value: entity.city,
+                                isClearable: true,
+                                required: true,
+                                options: citiesPossibility,
+                                multiple: false,
+                                onInputChange: (cityName, { action }) => {
+                                    if (action === "menu-close") {
+                                        updateLocationPossibility({ id: "city", args: { codeCity: entity.city?.value, city: "" } });
+                                    }
+                                    if (action === "input-change") {
+                                        updateLocationPossibility({ id: "city", args: { city: cityName } });
+                                    }
+                                },
+                            }}
+                            onChange={(d) => updateEntity("city", d)}
+                        />
+                        <Input
+                            type="select"
+                            name="Code Postal"
+                            label="Code postal"
+                            extra={{
+                                isLoading: locationPossibilityIsLoading,
+                                value: entity.postcode,
+                                isClearable: true,
+                                required: true,
+                                options: postalCodesPossibility,
+                                multiple: false,
+                                onInputChange: (_postcode, { action }) => {
+                                    if (action === "menu-close") {
+                                        updateLocationPossibility({ id: "city", args: { postcode: entity.postcode?.value } });
+                                    }
+                                    if (action === "input-change" && _postcode.length === 5) {
+                                        updateLocationPossibility({ id: "city", args: { postcode: _postcode } });
+                                    }
+                                },
+                            }}
+                            onChange={(d) => updateEntity("postcode", d)}
+                        />
+                        <div>
+                            <Input type="text" name="Pseudo" label="Pseudonyme" onChange={(d) => updateEntity("pseudonym", d)} defaultValue={me.pseudonym} />
+                        </div>
+                    </div>
                 </div>
             </BOForm>
         </div>
-    )
+    );
 }
