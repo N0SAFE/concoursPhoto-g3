@@ -59,11 +59,11 @@ export default function OrganizationCreate() {
 
     useEffect(() => {
         updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then(function (d) {
-            if(d.length === 1 && d[0].id === "cities" && d[0].data.length === 1){
-                if(d[0].data[0].codesPostaux.length === 1 && !entity.postcode){
-                    setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] }});
-                }else if(!entity.city){
-                    setEntity({ ...entity, city: { label: d[0].data[0].nom, value: d[0].data[0].code }});
+            if (d.length === 1 && d[0].id === "cities" && d[0].data.length === 1) {
+                if (d[0].data[0].codesPostaux.length === 1 && !entity.postcode) {
+                    setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
+                } else if (!entity.city) {
+                    setEntity({ ...entity, city: { label: d[0].data[0].nom, value: d[0].data[0].code } });
                 }
             } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the entity)
             setLocationPossibilityIsLoading(false);
@@ -108,53 +108,37 @@ export default function OrganizationCreate() {
                 }}
             >
                 <div>
-                    <label htmlFor="organizerName">Nom de l'organisation</label>
-                    <Input type="text" name="organizerName" label="Nom de l'organisation" extra={{ required: true }} onChange={(d) => updateEntity("organizerName", d)} defaultValue={entity.organizerName} />
-                    <div>{errors.organizerName}</div>
-                </div>
-                <div>
-                    <label htmlFor="description">Description</label>
+                    <Input
+                        type="text"
+                        name="organizerName"
+                        label="Nom de l'organisation"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntity("organizerName", d)}
+                        defaultValue={entity.organizerName}
+                    />
+
                     <Input type="text" name="description" label="Description" extra={{ required: true }} onChange={(d) => updateEntity("description", d)} defaultValue={entity.description} />
-                    <div>{errors.description}</div>
-                </div>
-                <div>
-                    <label htmlFor="phoneNumber">Numéro de télephone</label>
+
                     <Input type="text" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntity("phoneNumber", d)} defaultValue={entity.phoneNumber} />
-                    <div>{errors.phoneNumber}</div>
-                </div>
-                <div>
-                    <label htmlFor="logo">Logo</label>
+
                     <Input type="file" name="logo" label="Logo" onChange={(d) => updateEntity("logo", d)} defaultValue={entity.logo} />
-                    <div>{errors.logo}</div>
-                </div>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
-                    <div>{errors.email}</div>
-                </div>
-                <div>
-                    <label htmlFor="state">Statut</label>
+
                     <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntity("state", d)} defaultValue={entity.state} />
-                    <div>{errors.state}</div>
-                </div>
-                <div>
-                    <label htmlFor="address">Adresse</label>
+
                     <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntity("address", d)} defaultValue={entity.address} />
-                    <div>{errors.address}</div>
-                </div>
-                <div>
-                    <label htmlFor="websiteUrl">Adresse site internet</label>
-                    <Input type="text" name="websiteUrl" label="WebsiteUrl" extra={{ required: true }} setState={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
-                    <div>{errors.websiteUrl}</div>
-                </div>
-                <div>
-                    <label htmlFor="type">Type</label>
-                    <Input type="select" name="type" label="Type" defaultValue={entity.type} extra={{ options: entityPossibility.types, required: true }} onChange={(d) => updateEntity("organizationType", d)} />
-                    <div>{errors.type}</div>
-                </div>
-                <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="city">Ville</label>
+
+                    <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} setState={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
+
+                    <Input
+                        type="select"
+                        name="type"
+                        label="Type"
+                        defaultValue={entity.type}
+                        extra={{ options: entityPossibility.types, required: true }}
+                        onChange={(d) => updateEntity("organizationType", d)}
+                    />
+
+                    <div style={{ display: "flex", gap: "30px" }}>
                         <Input
                             type="select"
                             name="city"
@@ -176,13 +160,10 @@ export default function OrganizationCreate() {
                                 },
                             }}
                             onChange={(d) => {
-                                updateEntity("city", d)
+                                updateEntity("city", d);
                             }}
                         />
-                        <div>{errors.city}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="postalCode">Code Postal</label>
+
                         <Input
                             type="select"
                             name="postalCode"
@@ -205,7 +186,6 @@ export default function OrganizationCreate() {
                             }}
                             onChange={(d) => updateEntity("postcode", d)}
                         />
-                        <div>{errors.postalCode}</div>
                     </div>
                 </div>
             </BOCreate>
