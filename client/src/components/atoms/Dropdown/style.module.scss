@@ -35,6 +35,10 @@
 
                 &:hover {
                     color: $text-color-primary;
+
+                    &:after {
+                        border-bottom: none;
+                    }
                 }
             }
         }

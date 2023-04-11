@@ -1,5 +1,6 @@
 .homeContainer {
     @extend .limited-content;
+    @extend .margin-title;
 }
 
 .homeBanner {
