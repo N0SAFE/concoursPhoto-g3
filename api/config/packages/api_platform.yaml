@@ -7,3 +7,10 @@ api_platform:
       JWT:
         name: Authorization
         type: header
+  formats:
+    jsonld: ['application/ld+json']
+    jsonhal: ['application/hal+json']
+    jsonapi: ['application/vnd.api+json']
+    json: ['application/json', 'application/ld+json']
+    html: ['text/html']
+    multipart: ['multipart/form-data']

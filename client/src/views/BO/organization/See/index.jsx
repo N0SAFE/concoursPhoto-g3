@@ -12,12 +12,13 @@ export default function () {
     const [entity, setEntity] = useState({});
     const { id: organizationId } = useParams();
 
-    const getOrganizations = () => {
+    const getOrganizations = (controller) => {
         return apiFetch("/organizations/" + organizationId, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller.signal,
         })
             .then((res) => res.json())
             .then((data) => {
@@ -28,19 +29,18 @@ export default function () {
                 return getCityByCode(data.city).then((city) => {
                     return setEntity({ ...data, city: city.nom });
                 });
-            })
-            .catch((error) => {
-                console.error(error);
             });
     };
 
     useEffect(() => {
-        const promise = getOrganizations();
+        const controller = new AbortController();
+        const promise = getOrganizations(controller);
         toast.promise(promise, {
             pending: "Chargement de l'oranisation",
             success: "l'Organization a bien chargé",
             error: "Erreur lors du chargement de l'organisation",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (

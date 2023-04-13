@@ -61,10 +61,11 @@ export default function CompetitionEdit() {
 
     const [errors, setErrors] = useState({});
 
-    const getParticipantCategories = () => {
+    const getParticipantCategories = (controller) => {
         return apiFetch("/participant_categories", {
             method: "GET",
             headers: { "Content-Type": "multipart/form-data" },
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -75,9 +76,10 @@ export default function CompetitionEdit() {
             });
     };
 
-    const getOrganizationsName = () => {
+    const getOrganizationsName = (controller) => {
         return apiFetch("/organizations", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -88,9 +90,10 @@ export default function CompetitionEdit() {
             });
     };
 
-    const getThemes = () => {
+    const getThemes = (controller) => {
         return apiFetch("/themes", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -101,9 +104,10 @@ export default function CompetitionEdit() {
             });
     };
 
-    const getCompetitions = () => {
+    const getCompetitions = (controller) => {
         return apiFetch(`/competitions/${competitionId}`, {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -145,22 +149,25 @@ export default function CompetitionEdit() {
     };
 
     useEffect(() => {
-        Promise.all([getRegionByName(), getDepartmentByName(), getCityByName()]).then(([regions, departments, cities]) => {
+        const controller = new AbortController();
+        Promise.all([getRegionByName(null, { controller }), getDepartmentByName(null, { controller }), getCityByName(null, { controller })]).then(([regions, departments, cities]) => {
             return setLocationPossibility({
                 regions: { isLoading: false, data: regions.map((d) => ({ label: d.nom, value: d.code })) },
                 departments: { isLoading: false, data: departments.map((d) => ({ label: d.nom, value: d.code })) },
                 cities: { isLoading: false, data: cities.map((d) => ({ label: d.nom, value: d.code })) },
             });
         });
-        const promise = Promise.all([getParticipantCategories(), getOrganizationsName(), getThemes(), getCompetitions()]).then(([participantCategories, organizers, themes]) => {
-            setEntityPossibility({ participantCategories, organizers, themes });
-        });
-        promise.catch(console.error);
+        const promise = Promise.all([getParticipantCategories(controller), getOrganizationsName(controller), getThemes(controller), getCompetitions(controller)]).then(
+            ([participantCategories, organizers, themes]) => {
+                setEntityPossibility({ participantCategories, organizers, themes });
+            }
+        );
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
             error: "Erreur lors du chargement des données",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (

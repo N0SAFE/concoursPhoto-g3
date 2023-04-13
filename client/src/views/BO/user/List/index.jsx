@@ -16,7 +16,7 @@ export default function UserList() {
 
     const navigate = useNavigate();
 
-    function getUsers() {
+    function getUsers(controller) {
         const params = {
             method: "GET",
             headers: {
@@ -33,11 +33,13 @@ export default function UserList() {
                 is_verified: filterVerified,
             };
         }
+
         return apiFetch("/users", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
             .then(async (data) => {
@@ -45,22 +47,20 @@ export default function UserList() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                const users = await Promise.all(data["hydra:member"].map((user) => getCityByCode(user.city).then((city) => ({ ...user, city: city.nom }))));
-                setUsers(users);
-                return users;
-            })
-            .catch((error) => {
-                console.error(error);
+                setUsers(data['hydra:member']);
+                return data['hydra:member'];
             });
     }
 
     useEffect(() => {
-        const promise = getUsers();
+        const controller = new AbortController();
+        const promise = getUsers(controller);
         toast.promise(promise, {
             pending: "Chargement des utilisateurs",
             success: "Utilisateurs chargés",
             error: "Erreur lors du chargement des utilisateurs",
         });
+        return () => setTimeout(() => controller.abort());
     }, [filterState, filterVerified]);
 
     const handleDelete = (id) => {

@@ -12,12 +12,13 @@ export default function () {
     const [entity, setEntity] = useState({});
     const { id: competitionId } = useParams();
 
-    const getCompetitions = () => {
+    const getCompetitions = (controller) => {
         return apiFetch("/competitions/" + competitionId, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
             .then((data) => {
@@ -46,12 +47,14 @@ export default function () {
     };
 
     useEffect(() => {
-        const promise = getCompetitions();
+        const controller = new AbortController();
+        const promise = getCompetitions(controller);
         toast.promise(promise, {
             pending: "Chargement du concours",
             success: "Concours chargé",
             error: "Erreur lors du chargement du consours",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (

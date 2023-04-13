@@ -38,9 +38,10 @@ export default function UserCreate() {
 
     const [errors, setErrors] = useState({});
 
-    const getGendersPossibility = () => {
+    const getGendersPossibility = (controller) => {
         return apiFetch("/genders", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -49,9 +50,10 @@ export default function UserCreate() {
                 });
             });
     };
-    const getPersonalstatus = () => {
+    const getPersonalstatus = (controller) => {
         return apiFetch("/personal_statuts", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -63,12 +65,13 @@ export default function UserCreate() {
     };
 
     useEffect(() => {
-        const promise = Promise.all([getGendersPossibility(), getPersonalstatus()]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
+        const promise = Promise.all([getGendersPossibility(controller), getPersonalstatus(controller)]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
         toast.promise(promise, {
             pending: "Chargement des possibilités",
             success: "Possibilités chargées",
             error: "Erreur lors du chargement des possibilités",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     useEffect(() => {

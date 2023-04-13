@@ -2,7 +2,6 @@ import style from "@/components/atoms/Input/style.module.scss";
 import Select from "react-select";
 
 export default function Input({ type, name, defaultValue, extra, label, onChange = function () {}, error = "" }) {
-    console.log(extra);
     const InputElement = (() => {
         switch (type) {
             case "email":

@@ -40,9 +40,10 @@ export default function OrganizationEdit() {
 
     const [errors, setErrors] = useState({});
 
-    const getOrganizationTypePossibility = () => {
+    const getOrganizationTypePossibility = (controller) => {
         return apiFetch("/organization_types", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -52,9 +53,10 @@ export default function OrganizationEdit() {
             });
     };
 
-    function getOrganizations() {
+    function getOrganizations(controller) {
         return apiFetch("/organizations/" + organizationId, {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -81,12 +83,14 @@ export default function OrganizationEdit() {
     }
 
     useEffect(() => {
-        const promise = Promise.all([getOrganizationTypePossibility(), getOrganizations()]).then(([types]) => setEntityPossibility({ types }));
+        const controller = new AbortController();
+        const promise = Promise.all([getOrganizationTypePossibility(controller), getOrganizations(controller)]).then(([types]) => setEntityPossibility({ types }));
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
             error: "Erreur lors du chargement des données",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     useEffect(() => {

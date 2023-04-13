@@ -15,7 +15,6 @@ use App\Entity\User;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Entity\Gender;
 
-#[Route('/api', name: 'api_')]
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'register', methods: ['POST'])]
