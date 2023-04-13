@@ -9,7 +9,7 @@ function AuthProvider(props) {
     const [isLoading, setIsLoading] = useState(true);
     const [me, setMe] = useState(null);
 
-    function checkLogged({controller}) {
+    function checkLogged(controller) {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await fetch(new URL(import.meta.env.VITE_API_URL + "/token/refresh").href, {
@@ -27,7 +27,7 @@ function AuthProvider(props) {
                             "Content-Type": "application/json",
                         },
                         credentials: "include",
-                        signal: controller.signal,
+                        signal: controller?.signal,
                     });
                     const data = await whoami.json();
                     setMe(data);
@@ -56,7 +56,7 @@ function AuthProvider(props) {
 
     useEffect(() => {
         const controller = new AbortController();
-        checkLogged({controller}).then(() => {
+        checkLogged(controller).then(() => {
             setIsLoading(false);
         });
         return () => controller.abort();
