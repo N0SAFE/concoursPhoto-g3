@@ -13,12 +13,13 @@ export default function CompetitionsList() {
     const navigate = useNavigate();
     const [competitions, setCompetitions] = useState([]);
 
-    function getCompetitions() {
+    function getCompetitions(controller) {
         return apiFetch("/competitions", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
             .then(async (data) => {
@@ -26,38 +27,20 @@ export default function CompetitionsList() {
                     throw new Error(data.message);
                 }
                 console.debug(data);
-                const hydraMember = data["hydra:member"];
-                const _competitions =  await Promise.all(
-                    hydraMember.map((competition) => {
-                        return Promise.all([
-                            Promise.all(competition.city_criteria.map(getCityByCode)),
-                            Promise.all(competition.department_criteria.map(getDepartmentByCode)),
-                            Promise.all(competition.region_criteria.map(getRegionByCode)),
-                        ]).then(([city, department, region]) => {
-                            return {
-                                ...competition,
-                                city_criteria: city,
-                                department_criteria: department,
-                                region_criteria: region,
-                            };
-                        });
-                    })
-                )
-                setCompetitions(_competitions);
-                return _competitions;
+                setCompetitions(data['hydra:member']);
+                return data['hydra:member'];
             })
-            .catch((error) => {
-                console.error(error);
-            });
     }
 
     useEffect(() => {
-        const promise = getCompetitions()
+        const controller = new AbortController();
+        const promise = getCompetitions(controller)
         toast.promise(promise, {
             pending: "Chargement des concours",
             success: "Concours chargés",
             error: "Erreur lors du chargement des concours",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     const handleDelete = (id) => {

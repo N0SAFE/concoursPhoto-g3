@@ -46,7 +46,7 @@ function login(checkLogged, { email, password }, autoLogoutOnFail = true) {
 }
 
 function register(checkLogged, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username }) {
-    return fetch("/api/register", {
+    return fetch("/register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

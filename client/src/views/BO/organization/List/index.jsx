@@ -13,12 +13,13 @@ export default function OrganizationList() {
     const navigate = useNavigate();
     const { getCityByCode } = useLocation();
 
-    function getOrganizations() {
+    function getOrganizations(controller) {
         return apiFetch("/organizations", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
             .then(async (data) => {
@@ -26,22 +27,20 @@ export default function OrganizationList() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                const organizations = await Promise.all(data["hydra:member"].map((organization) => getCityByCode(organization.city).then((city) => ({...organization, city: city.nom}))));
-                setOrganizations(organizations);
-                return organizations;
+                setOrganizations(data['hydra:member']);
+                return data['hydra:member'];
             })
-            .catch((error) => {
-                console.error(error);
-            });
     }
 
     useEffect(() => {
-        const promise = getOrganizations();
+        const controller = new AbortController();
+        const promise = getOrganizations(controller);
         toast.promise(promise, {
             pending: "Chargement des organisations",
             success: "Organisations chargées",
             error: "Erreur lors du chargement des organisations",
         });
+        return () => setTimeout(() => controller.abort())
     }, []);
 
     const handleDelete = (id) => {

@@ -12,7 +12,7 @@
     "build:client": "cd client && npm run build",
     "install": "concurrently \"npm run install:api\" \"npm run install:client\"",
     "install:new": "concurrently \"npm run install:api:new\" \"npm run install:client\"",
-    "install:api": "cd api && composer install && php bin/console doctrine:database:create --if-not-exists && npm run load:fixtures",
+    "install:api": "cd api && composer install && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:fixtures",
     "install:api:new": "npm run install:api && cd api && php bin/console lexik:jwt:generate-keypair --no-interaction --overwrite",
     "install:client": "cd client && npm install",
     "install:prod": "npm install --ignore-scripts && concurrently \"npm run install:api:prod\" \"npm run install:client\"",

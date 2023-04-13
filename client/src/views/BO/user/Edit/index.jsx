@@ -35,15 +35,16 @@ export default function UserCreate() {
         dateOfBirth: null,
     });
 
-    const updateEntity = (key, value) => {
+    const updateEntityState = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
 
     const [errors, setErrors] = useState({});
 
-    const getGendersPossibility = () => {
+    const getGendersPossibility = (controller) => {
         return apiFetch("/genders", {
             method: "GET",
+            signal: controller?.signal
         })
             .then((r) => r.json())
             .then((data) => {
@@ -53,9 +54,10 @@ export default function UserCreate() {
             });
     };
 
-    const getPersonalstatus = () => {
+    const getPersonalstatus = (controller) => {
         return apiFetch("/personal_statuts", {
             method: "GET",
+            signal: controller?.signal
         })
             .then((r) => r.json())
             .then((data) => {
@@ -66,9 +68,10 @@ export default function UserCreate() {
             });
     };
 
-    function getUser() {
-        apiFetch("/users/" + userId, {
+    function getUser(controller) {
+        return apiFetch("/users/" + userId, {
             method: "GET",
+            signal: controller?.signal
         })
             .then((r) => r.json())
             .then((data) => {
@@ -94,12 +97,14 @@ export default function UserCreate() {
     }
 
     useEffect(() => {
-        const promise = Promise.all([getGendersPossibility(), getPersonalstatus(), getUser()]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
+        const controller = new AbortController();
+        const promise = Promise.all([getGendersPossibility(controller), getPersonalstatus(controller), getUser(controller)]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
             error: "Erreur lors du chargement des données",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     useEffect(() => {
@@ -162,25 +167,25 @@ export default function UserCreate() {
                 }}
             >
                 <div>
-                    <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
+                    <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} onChange={(d) => updateEntityState("firstname", d)} defaultValue={entity.firstname} />
 
-                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
+                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} onChange={(d) => updateEntityState("lastname", d)} defaultValue={entity.lastname} />
 
-                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
+                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} onChange={(d) => updateEntityState("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
 
                     <Input
                         type="select"
                         name="personalStatut"
                         label="Statut"
                         extra={{ value: entity.statut, options: entityPossibility.statut, required: true }}
-                        onChange={(d) => updateEntity("statut", d)}
+                        onChange={(d) => updateEntityState("statut", d)}
                     />
 
-                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
+                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntityState("email", d)} defaultValue={entity.email} />
 
-                    <Input type="checkbox" name="state" label="Actif" defaultValue={entity.state} onChange={(d) => updateEntity("state", d)} />
+                    <Input type="checkbox" name="state" label="Actif" defaultValue={entity.state} onChange={(d) => updateEntityState("state", d)} />
 
-                    <Input type="text" name="address" label="Adresse" defaultValue={entity.address} extra={{ required: true }} onChange={(d) => updateEntity("address", d)} />
+                    <Input type="text" name="address" label="Adresse" defaultValue={entity.address} extra={{ required: true }} onChange={(d) => updateEntityState("address", d)} />
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
                     <Input
@@ -203,7 +208,7 @@ export default function UserCreate() {
                                 }
                             },
                         }}
-                        onChange={(d) => updateEntity("city", d)}
+                        onChange={(d) => updateEntityState("city", d)}
                     />
 
                     <Input
@@ -226,13 +231,13 @@ export default function UserCreate() {
                                 }
                             },
                         }}
-                        onChange={(d) => updateEntity("postcode", d)}
+                        onChange={(d) => updateEntityState("postcode", d)}
                     />
                 </div>
-                <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntity("phoneNumber", d)} defaultValue={entity.phoneNumber} />
-                <Input type="select" name="gender" label="Genre" extra={{ value: entity.gender, options: entityPossibility.genders, required: true }} onChange={(d) => updateEntity("gender", d)} />
-                <Input type="password" name="password" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
-                <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" onChange={(d) => updateEntity("passwordConfirm", d)} defaultValue={entity.passwordConfirm} />
+                <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntityState("phoneNumber", d)} defaultValue={entity.phoneNumber} />
+                <Input type="select" name="gender" label="Genre" extra={{ value: entity.gender, options: entityPossibility.genders, required: true }} onChange={(d) => updateEntityState("gender", d)} />
+                <Input type="password" name="password" label="Mot de passe" onChange={(d) => updateEntityState("password", d)} defaultValue={entity.password} />
+                <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" onChange={(d) => updateEntityState("passwordConfirm", d)} defaultValue={entity.passwordConfirm} />
             </BOForm>
         </div>
     );
