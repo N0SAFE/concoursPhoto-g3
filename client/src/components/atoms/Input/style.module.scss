@@ -1,5 +1,6 @@
 .component {
     &Input {
+        background-color: $lightgrey;
         padding: 10px;
         border-radius: 5px;
         border: .2px solid $lightgrey;
@@ -15,6 +16,19 @@
             border-radius: 20px;
         }
     }
+    &Image {
+        width: 100%;
+        object-fit: cover;
+        border-radius: 50px;
+        background-color: $lightgrey;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        padding: 0 20px;
+        overflow: hidden;
+    }
     display: flex;
     flex-direction: column;
+    height: 100%;
 }

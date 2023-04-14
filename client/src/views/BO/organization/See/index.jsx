@@ -83,7 +83,14 @@ export default function () {
                     display: "Description",
                     name: "description",
                 },
-                { display: "Logo", name: "logo" },
+                {
+                    display: "Logo",
+                    name: "logo",
+                    type: "img",
+                    customData: ({ entity }) => {
+                        return entity?.logo?.path ? {to: toApiPath(entity?.logo?.path), name: entity?.logo?.default_name} : null;
+                    },
+                },
                 {
                     display: "Type d'organisation",
                     name: "type_organization",

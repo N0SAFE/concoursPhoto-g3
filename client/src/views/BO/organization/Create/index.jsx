@@ -4,9 +4,11 @@ import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import { toast } from "react-toastify";
+import useFilesUploader from "@/hooks/useFilesUploader.js";
 
 export default function OrganizationCreate() {
     const apiFetch = useApiFetch();
+    const { uploadFile } = useFilesUploader();
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -22,15 +24,17 @@ export default function OrganizationCreate() {
         postcode: null,
         phoneNumber: null,
         email: null,
-        state: null,
+        state: false,
         logo: null,
         country: null,
         creationDate: null,
         websiteUrl: null,
         organizationType: null,
+        numberSiret: null,
+        intraCommunityVat: null,
     });
 
-    const updateEntity = (key, value) => {
+    const updateEntityState = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
 
@@ -78,36 +82,64 @@ export default function OrganizationCreate() {
             <BOCreate
                 title="Création d'une organisation"
                 handleSubmit={function () {
-                    const data = {
-                        organizerName: entity.organizerName,
-                        description: entity.description,
-                        address: entity.address,
-                        city: entity.city.value,
-                        postcode: entity.postcode.value,
-                        numberPhone: entity.phoneNumber,
-                        email: entity.email,
-                        state: entity.state,
-                        logo: entity.logo,
-                        country: "France",
-                        creationDate: new Date().toISOString(),
-                        websiteUrl: entity.websiteUrl,
-                        organizationType: entity.organizationType.value,
-                    };
-                    console.debug("data", data);
-                    apiFetch("/organizations", {
-                        method: "POST",
-                        body: JSON.stringify(data),
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    })
-                        .then((r) => r.json())
-                        .then((data) => {
-                            console.debug(data);
-                            if (data["@type"] === "hydra:Error") {
-                                throw new Error(data.description);
-                            }
-                        });
+                    const promise = new Promise(async (resolve, reject) => {
+                        try {
+                            const logoId = await (async () => {
+                                if (entity.logo === null) {
+                                    return null;
+                                } else {
+                                    const logo = await uploadFile({ file: entity.logo.file });
+                                    return logo["@id"];
+                                }
+                            })()
+                            const data = {
+                                organizerName: entity.organizerName,
+                                description: entity.description,
+                                address: entity.address,
+                                city: entity.city.value,
+                                postcode: entity.postcode.value,
+                                numberPhone: entity.phoneNumber,
+                                email: entity.email,
+                                state: entity.state,
+                                country: "France",
+                                creationDate: new Date().toISOString(),
+                                websiteUrl: entity.websiteUrl,
+                                organizationType: entity.organizationType.value,
+                                logo: logoId,
+                                numberSiret: entity.numberSiret,
+                                intraCommunityVat: entity.intraCommunityVat,
+                            };
+                            console.debug("data", data);
+                            const res = await apiFetch("/organizations", {
+                                method: "POST",
+                                body: JSON.stringify(data),
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                            })
+                                .then((r) => r.json())
+                                .then((data) => {
+                                    if (data["@type"] === "hydra:Error") {
+                                        throw new Error(data.description);
+                                    }
+                                    return data;
+                                });
+                            console.debug("res", res);
+                            resolve(res);
+                        } catch (e) {
+                            console.error(e);
+                            reject(e);
+                        }
+                    });
+
+                    promise.then(function () {
+                        navigate("/BO/organization");
+                    });
+                    toast.promise(promise, {
+                        pending: "Création de l'organisation",
+                        success: "Organisation créée",
+                        error: "Erreur lors de la création de l'organisation",
+                    });
                 }}
             >
                 <div>
@@ -116,21 +148,28 @@ export default function OrganizationCreate() {
                         name="organizerName"
                         label="Nom de l'organisation"
                         extra={{ required: true }}
-                        onChange={(d) => updateEntity("organizerName", d)}
+                        onChange={(d) => updateEntityState("organizerName", d)}
                         defaultValue={entity.organizerName}
                     />
 
-                    <Input type="text" name="description" label="Description" extra={{ required: true }} onChange={(d) => updateEntity("description", d)} defaultValue={entity.description} />
+                    <Input type="text" name="description" label="Description" extra={{ required: true }} onChange={(d) => updateEntityState("description", d)} defaultValue={entity.description} />
 
-                    <Input type="text" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntity("phoneNumber", d)} defaultValue={entity.phoneNumber} />
+                    <Input
+                        type="text"
+                        name="phoneNumber"
+                        label="Numéro de téléphone"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntityState("phoneNumber", d)}
+                        defaultValue={entity.phoneNumber}
+                    />
 
-                    <Input type="file" name="logo" label="Logo" onChange={(d) => updateEntity("logo", d)} defaultValue={entity.logo} />
+                    <Input type="file" name="logo" label="Logo" onChange={(d) => updateEntityState("logo", d)} extra={{ value: entity.logo, type: "image" }} />
 
-                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntity("state", d)} defaultValue={entity.state} />
+                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntityState("state", d)} defaultValue={entity.state} />
 
-                    <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntity("address", d)} defaultValue={entity.address} />
+                    <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntityState("address", d)} defaultValue={entity.address} />
 
-                    <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} setState={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
+                    <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} setState={(d) => updateEntityState("websiteUrl", d)} defaultValue={entity.websiteUrl} />
 
                     <Input
                         type="select"
@@ -138,7 +177,7 @@ export default function OrganizationCreate() {
                         label="Type"
                         defaultValue={entity.type}
                         extra={{ options: entityPossibility.types, required: true }}
-                        onChange={(d) => updateEntity("organizationType", d)}
+                        onChange={(d) => updateEntityState("organizationType", d)}
                     />
 
                     <div style={{ display: "flex", gap: "30px" }}>
@@ -163,7 +202,7 @@ export default function OrganizationCreate() {
                                 },
                             }}
                             onChange={(d) => {
-                                updateEntity("city", d);
+                                updateEntityState("city", d);
                             }}
                         />
 
@@ -187,7 +226,7 @@ export default function OrganizationCreate() {
                                     }
                                 },
                             }}
-                            onChange={(d) => updateEntity("postcode", d)}
+                            onChange={(d) => updateEntityState("postcode", d)}
                         />
                     </div>
                 </div>
