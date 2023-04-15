@@ -1,20 +1,22 @@
 import useApiFetch from "@/hooks/useApiFetch";
 
-export default function useFilesUploader() {
-  const apiFetch = useApiFetch();
-
-  return function uploadFiles(files, code) {
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-        formData.append("files[]", files[i]);
+export default function useFilesUpdater() {
+    const apiFetch = useApiFetch();
+    
+    function deleteFile({path}){
+        return apiFetch(path, {
+            method: "DELETE"
+        }, {rawPath: true});
+    }
+    
+    function uploadFile({file}){
+        const formData = new FormData();
+        formData.append("file", file);
+        return apiFetch("/files", {
+            method: "POST",
+            body: formData,
+        }).then((r) => r.json())
     }
 
-    formData.append("code", code);
-    return apiFetch("/uploads", {
-      method: "POST",
-      body: formData,
-    }).then(
-        response => response.json(),
-    );
-  }
+    return {deleteFile, uploadFile};
 }

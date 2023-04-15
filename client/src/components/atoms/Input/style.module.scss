@@ -1,6 +1,7 @@
 .component {
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     &Input:not([type="checkbox"]) {
         padding: 10px;
@@ -16,5 +17,17 @@
         &[type="date"], &[type="file"] {
             border-radius: 20px;
         }
+    }
+    &Image {
+        width: 100%;
+        object-fit: cover;
+        border-radius: 50px;
+        background-color: $lightgrey;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        padding: 0 20px;
+        overflow: hidden;
     }
 }

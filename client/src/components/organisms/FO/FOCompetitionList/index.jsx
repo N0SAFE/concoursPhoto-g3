@@ -40,7 +40,6 @@ export default function FOCompetitionList() {
         })
             .then((r) => r.json())
             .then((data) => {
-                console.log(data);
                 console.debug(data);
                 return data["hydra:member"].map(function (item) {
                     return { label: item.vote_date, value: item["@id"] };

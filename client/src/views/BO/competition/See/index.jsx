@@ -5,8 +5,10 @@ import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
+import useApiPath from "@/hooks/useApiPath.js";
 
 export default function () {
+    const toApiPath = useApiPath()
     const apiFetch = useApiFetch();
     const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
     const [entity, setEntity] = useState({});
@@ -147,7 +149,14 @@ export default function () {
                         return entity?.theme?.map((theme) => theme.label).join(", ");
                     },
                 },
-                
+                {
+                    display: "Visuel",
+                    name: "competition_visual",
+                    type: "img",
+                    customData: ({ entity }) => {
+                        return entity?.competition_visual?.path ? {to: toApiPath(entity?.competition_visual?.path), name: entity?.competition_visual?.default_name} : null;
+                    },
+                },
                 {
                     display: "Pays",
                     name: "country_criteria",
