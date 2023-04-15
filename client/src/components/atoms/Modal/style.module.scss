@@ -1,0 +1,48 @@
+.modal {
+    background-color: $background-color-primary;
+    width: 0;
+    height: auto;
+    overflow: hidden;
+    position: absolute;
+    border-radius: 10px;
+    z-index: 100;
+    transition: width 0.5s ease-in-out;
+
+    @include below(xl) {
+        height: 600px !important;
+        overflow: scroll;
+    }
+
+    &Close {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 15px;
+        border-radius: 10px;
+        transform-origin: center center;
+        transition: ease-in-out 0.5s;
+
+        &:hover {
+            background-color: red;
+            color: white;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+    }
+}
+
+.modalBackground {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    display: flex;
+
+}
+
+.modalBackgroundHidden {
+    display: none;
+}

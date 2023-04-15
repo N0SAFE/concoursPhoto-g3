@@ -35,7 +35,7 @@ export default function Login() {
     return (
         <div className={style.container}>
             <div>
-                <h1 className={style.title}>Connexion au BackOffice</h1>
+                <h1>Se connecter</h1>
             </div>
             <div>
                 <form onSubmit={handleSubmit} className={style.input}>
