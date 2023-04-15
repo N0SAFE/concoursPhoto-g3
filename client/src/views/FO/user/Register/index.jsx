@@ -1,11 +1,11 @@
 import Input from "@/components/atoms/Input";
 import BOForm from "@/components/organisms/BO/Form";
 import useApiFetch from "@/hooks/useApiFetch";
-import useLocationPosibility from "@/hooks/useLocationPosibility";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import style from "./style.module.scss";
 import Button from "@/components/atoms/Button/index.jsx";
+import Modal from "@/components/atoms/Modal/index.jsx";
 
 export default function UserRegister() {
     const apiFetch = useApiFetch();
@@ -158,6 +158,7 @@ export default function UserRegister() {
                     <div className={style.registerSubmit}>
                         <Button type="submit" name="Créer mon compte" color={"black"} textColor={"white"} padding={"14px 30px"} border={false} borderRadius={"44px"} width={"245px"} />
                     </div>
+                    <p className={style.registerProposition}>Vous avez déjà un compte ? <a>Connectez-vous</a></p>
                 </div>
             </BOForm>
         </div>

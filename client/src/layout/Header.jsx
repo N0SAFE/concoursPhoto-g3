@@ -1,8 +1,8 @@
 import Navbar from "@/components/molecules/Navbar";
 import {Outlet, useLocation} from "react-router-dom";
 import {useAuthContext} from "@/contexts/AuthContext";
-import Login from "@/views/auth/Login";
 import UserRegister from "@/views/FO/user/Register";
+import LoginFO from "@/views/auth/LoginFO";
 
 export default function Header(environment) {
     const location = useLocation();
@@ -51,14 +51,14 @@ export default function Header(environment) {
                 ]
             })
         } else {
-            listRight.push({type: "modal", title: "Connexion", component: <Login />})
+            listRight.push({type: "modal", title: "Connexion", component: <LoginFO />})
         }
     } else {
         listRight.push({type: "modal", component: <UserRegister />, title: "S'inscrire", icon: "user-plus"})
         if (isLogged) {
             listRight.push({type: "button", to: "/auth/logout", title: "Se déconnecter", icon: "sign-out"})
         } else {
-            listRight.push({type: "modal", component: <Login />, title: "Se connecter", icon: "sign-in"})
+            listRight.push({type: "modal", component: <LoginFO />, title: "Se connecter", icon: "sign-in"})
         }
 
     }

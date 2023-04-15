@@ -1,0 +1,23 @@
+.loginTrailer {
+    @extend .margin-title;
+    display: flex;
+    flex-direction: column;
+
+    & > span {
+        line-height: 1.5;
+
+        &:nth-child(2) {
+            font-weight: bold;
+        }
+    }
+}
+
+.loginSubmit {
+    display: flex;
+    align-self: center;
+
+    & > button > div {
+        display: inherit;
+        align-items: inherit;
+    }
+}

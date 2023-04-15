@@ -1,15 +1,31 @@
 .modal {
     background-color: $background-color-primary;
-    width: 0;
-    height: auto;
+    width: 40%;
+    max-height: 0;
     overflow: hidden;
-    position: absolute;
+    position: fixed;
     border-radius: 10px;
     z-index: 100;
-    transition: width 0.5s ease-in-out;
+    transition: max-height .5s ease-in-out;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
     @include below(xl) {
-        height: 600px !important;
+        width: 50%;
+    }
+
+    @include below(md) {
+        width: 100%;
+    }
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &Show {
+        max-height: 85%;
+        height: auto;
         overflow: scroll;
     }
 
@@ -32,14 +48,13 @@
 }
 
 .modalBackground {
-    background-color: rgba(0, 0, 0, 0.5);
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 100;
-    display: flex;
+    background-color: rgba(0, 0, 0, 0.5);
 
 }
 

@@ -85,5 +85,11 @@
                 text-decoration: underline;
             }
         }
+
+        .registerProposition {
+            & > a {
+                text-decoration: underline;
+            }
+        }
     }
 }

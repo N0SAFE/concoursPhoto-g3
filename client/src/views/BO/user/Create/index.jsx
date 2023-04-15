@@ -67,6 +67,7 @@ export default function UserCreate() {
     };
 
     useEffect(() => {
+        const controller = new AbortController();
         const promise = Promise.all([getGendersPossibility(controller), getPersonalstatus(controller)]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
         toast.promise(promise, {
             pending: "Chargement des possibilités",
