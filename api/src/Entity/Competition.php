@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
-#[ApiResource (normalizationContext: ['groups' => ['competition']])]
+#[ApiResource (normalizationContext: ['groups' => ['competition', 'file']])]
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
 {
@@ -131,6 +131,7 @@ class Competition
     private array $city_criteria = [];
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups('competition')]
     private ?File $competition_visual = null;
 
     public function __construct()

@@ -4,8 +4,12 @@ import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
 import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
+import useFilesUpdater from "@/hooks/useFilesUploader.js";
+import { useNavigate } from "react-router-dom";
 
 export default function CompetitionCreate() {
+    const {uploadFile} = useFilesUpdater()
+    const navigate = useNavigate();
     const apiFetch = useApiFetch();
     const { getCityByName, getDepartmentByName, getRegionByName } = useLocation();
 
@@ -53,7 +57,7 @@ export default function CompetitionCreate() {
         regionCriteria: [],
     });
 
-    const updateEntity = (key, value) => {
+    const updateEntityState = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
 
@@ -127,51 +131,68 @@ export default function CompetitionCreate() {
             <BOCreate
                 title="Création d'un concours"
                 handleSubmit={function () {
-                    console.debug("handleSubmit");
-                    console.debug("fetch");
-                    const data = {
-                        state: entity.state,
-                        competitionName: entity.name,
-                        competitionVisual: entity.visual,
-                        participantCategory: entity.participantCategories.map((p) => p.value),
-                        organization: entity.organizer.value,
-                        theme: entity.themes.map((t) => t.value),
-                        description: entity.description,
-                        rules: entity.rules,
-                        creationDate: new Date(entity.creationDate).toISOString(),
-                        publicationDate: new Date(entity.publicationDate).toISOString(),
-                        submissionStartDate: new Date(entity.submissionStartDate).toISOString(),
-                        submissionEndDate: new Date(entity.submissionEndDate).toISOString(),
-                        votingStartDate: new Date(entity.votingStartDate).toISOString(),
-                        votingEndDate: new Date(entity.votingEndDate).toISOString(),
-                        resultsDate: new Date(entity.resultsDate).toISOString(),
-                        weightingOfJuryVotes: parseFloat(entity.weightingOfJuryVotes),
-                        numberOfMaxVotes: parseInt(entity.numberOfMaxVotes),
-                        numberOfPrices: parseInt(entity.numberOfPrices),
-                        minAgeCriteria: parseInt(entity.minAgeCriteria),
-                        maxAgeCriteria: parseInt(entity.maxAgeCriteria),
-                        cityCriteria: [entity.cityCriteria.value],
-                        departmentCriteria: [entity.departmentCriteria.value],
-                        regionCriteria: [entity.regionCriteria.value],
-                        countryCriteria: ["FRANCE"],
-                        endowments: entity.endowments,
-                    };
-                    console.debug("entity", entity);
-                    console.debug("data", data);
-                    const promise = apiFetch("/competitions", {
-                        method: "POST",
-                        body: JSON.stringify(data),
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    })
-                        .then((r) => r.json())
-                        .then((data) => {
-                            console.debug(data);
-                            if (data["@type"] === "hydra:Error") {
-                                throw new Error(data.description);
+                    const promise = new Promise(async (resolve, reject) => {
+                        try{
+                            const visualId =await (async() => {
+                            if(entity.visual === null){
+                                return null
+                            }else {
+                                const visual = await uploadFile({file: entity.visual.file});
+                                return visual["@id"]
                             }
-                        });
+                        })()
+                        const data = {
+                            state: entity.state,
+                            competitionName: entity.name,
+                            competitionVisual: visualId,
+                            participantCategory: entity.participantCategories.map((p) => p.value),
+                            organization: entity.organizer.value,
+                            theme: entity.themes.map((t) => t.value),
+                            description: entity.description,
+                            rules: entity.rules,
+                            creationDate: new Date(entity.creationDate).toISOString(),
+                            publicationDate: new Date(entity.publicationDate).toISOString(),
+                            submissionStartDate: new Date(entity.submissionStartDate).toISOString(),
+                            submissionEndDate: new Date(entity.submissionEndDate).toISOString(),
+                            votingStartDate: new Date(entity.votingStartDate).toISOString(),
+                            votingEndDate: new Date(entity.votingEndDate).toISOString(),
+                            resultsDate: new Date(entity.resultsDate).toISOString(),
+                            weightingOfJuryVotes: parseFloat(entity.weightingOfJuryVotes),
+                            numberOfMaxVotes: parseInt(entity.numberOfMaxVotes),
+                            numberOfPrices: parseInt(entity.numberOfPrices),
+                            minAgeCriteria: parseInt(entity.minAgeCriteria),
+                            maxAgeCriteria: parseInt(entity.maxAgeCriteria),
+                            cityCriteria: [entity.cityCriteria.value],
+                            departmentCriteria: [entity.departmentCriteria.value],
+                            regionCriteria: [entity.regionCriteria.value],
+                            countryCriteria: ["FRANCE"],
+                            endowments: entity.endowments,
+                        };
+                        console.debug("data", data);
+                        const res = await apiFetch("/competitions", {
+                            method: "POST",
+                            body: JSON.stringify(data),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        })
+                            .then((r) => r.json())
+                            .then((data) => {
+                                console.debug(data);
+                                if (data["@type"] === "hydra:Error") {
+                                    throw new Error(data.description);
+                                }
+                            })
+                        resolve(res)
+                        }catch(e){
+                            console.error(e)
+                            reject(e)
+                        }
+                    });
+                    
+                    promise.then(function () {
+                        navigate("/BO/organization");
+                    });
                     toast.promise(promise, {
                         pending: "Création du concours",
                         success: "Concours créé",
@@ -180,37 +201,37 @@ export default function CompetitionCreate() {
                 }}
             >
                 <div>
-                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntity("state", d)} defaultValue={entity.state} />
+                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntityState("state", d)} defaultValue={entity.state} />
 
-                    <Input type="text" name="name" label="Intitulé du concours" onChange={(d) => updateEntity("name", d)} defaultValue={entity.name} />
+                    <Input type="text" name="name" label="Intitulé du concours" onChange={(d) => updateEntityState("name", d)} defaultValue={entity.name} />
 
-                    <Input type="file" name="visual" label="Visuel du concours" onChange={(d) => updateEntity("visual", d)} defaultValue={entity.visual} />
+                    <Input type="file" name="visual" label="Visuel" onChange={(d) => updateEntityState("visual", d)} extra={{ value: entity.visual, type: "image" }} />
 
-                    <Input type="text" name="description" label="Description" onChange={(d) => updateEntity("description", d)} defaultValue={entity.description} />
+                    <Input type="text" name="description" label="Description" onChange={(d) => updateEntityState("description", d)} defaultValue={entity.description} />
 
-                    <Input type="text" name="rules" label="Règlement" onChange={(d) => updateEntity("rules", d)} defaultValue={entity.rules} />
+                    <Input type="text" name="rules" label="Règlement" onChange={(d) => updateEntityState("rules", d)} defaultValue={entity.rules} />
 
-                    <Input type="text" name="endowments" label="Dotation" onChange={(d) => updateEntity("endowments", d)} defaultValue={entity.endowments} />
+                    <Input type="text" name="endowments" label="Dotation" onChange={(d) => updateEntityState("endowments", d)} defaultValue={entity.endowments} />
 
-                    <Input type="date" name="creationDate" label="Date de création" onChange={(d) => updateEntity("creationDate", d)} defaultValue={entity.creationDate} />
+                    <Input type="date" name="creationDate" label="Date de création" onChange={(d) => updateEntityState("creationDate", d)} defaultValue={entity.creationDate} />
 
-                    <Input type="date" name="publicationDate" label="Date de publication" onChange={(d) => updateEntity("publicationDate", d)} defaultValue={entity.publicationDate} />
+                    <Input type="date" name="publicationDate" label="Date de publication" onChange={(d) => updateEntityState("publicationDate", d)} defaultValue={entity.publicationDate} />
 
                     <Input
                         type="date"
                         name="submissionStartDate"
                         label="Date de début de soumission"
-                        onChange={(d) => updateEntity("submissionStartDate", d)}
+                        onChange={(d) => updateEntityState("submissionStartDate", d)}
                         defaultValue={entity.submissionStartDate}
                     />
 
-                    <Input type="date" name="submissionEndDate" label="Date de fin de soumission" onChange={(d) => updateEntity("submissionEndDate", d)} defaultValue={entity.submissionEndDate} />
+                    <Input type="date" name="submissionEndDate" label="Date de fin de soumission" onChange={(d) => updateEntityState("submissionEndDate", d)} defaultValue={entity.submissionEndDate} />
 
-                    <Input type="date" name="votingStartDate" label="Date de début de vote" onChange={(d) => updateEntity("votingStartDate", d)} defaultValue={entity.votingStartDate} />
+                    <Input type="date" name="votingStartDate" label="Date de début de vote" onChange={(d) => updateEntityState("votingStartDate", d)} defaultValue={entity.votingStartDate} />
 
-                    <Input type="date" name="votingEndDate" label="Date de fin de vote" onChange={(d) => updateEntity("votingEndDate", d)} defaultValue={entity.votingEndDate} />
+                    <Input type="date" name="votingEndDate" label="Date de fin de vote" onChange={(d) => updateEntityState("votingEndDate", d)} defaultValue={entity.votingEndDate} />
 
-                    <Input type="date" name="resultsDate" label="Date de fin de vote" onChange={(d) => updateEntity("resultsDate", d)} defaultValue={entity.resultsDate} />
+                    <Input type="date" name="resultsDate" label="Date de fin de vote" onChange={(d) => updateEntityState("resultsDate", d)} defaultValue={entity.resultsDate} />
 
                     <Input
                         type="number"
@@ -218,16 +239,16 @@ export default function CompetitionCreate() {
                         name="weightingOfJuryVotes"
                         label="Pondération des votes du jury"
                         defaultValue={entity.weightingOfJuryVotes}
-                        onChange={(d) => updateEntity("weightingOfJuryVotes", d)}
+                        onChange={(d) => updateEntityState("weightingOfJuryVotes", d)}
                     />
 
-                    <Input type="number" name="numberOfMaxVotes" label="Nombre maximum de votes" onChange={(d) => updateEntity("numberOfMaxVotes", d)} defaultValue={entity.numberOfMaxVotes} />
+                    <Input type="number" name="numberOfMaxVotes" label="Nombre maximum de votes" onChange={(d) => updateEntityState("numberOfMaxVotes", d)} defaultValue={entity.numberOfMaxVotes} />
 
-                    <Input type="number" name="numberOfPrices" label="Nombres de prix" onChange={(d) => updateEntity("numberOfPrices", d)} defaultValue={entity.numberOfPrices} />
+                    <Input type="number" name="numberOfPrices" label="Nombres de prix" onChange={(d) => updateEntityState("numberOfPrices", d)} defaultValue={entity.numberOfPrices} />
 
-                    <Input type="number" name="minAgeCriteria" label="Âge minimum" onChange={(d) => updateEntity("minAgeCriteria", d)} defaultValue={entity.minAgeCriteria} />
+                    <Input type="number" name="minAgeCriteria" label="Âge minimum" onChange={(d) => updateEntityState("minAgeCriteria", d)} defaultValue={entity.minAgeCriteria} />
 
-                    <Input type="number" name="maxAgeCriteria" label="Âge maximum" onChange={(d) => updateEntity("maxAgeCriteria", d)} defaultValue={entity.maxAgeCriteria} />
+                    <Input type="number" name="maxAgeCriteria" label="Âge maximum" onChange={(d) => updateEntityState("maxAgeCriteria", d)} defaultValue={entity.maxAgeCriteria} />
 
                     <div style={{ display: "flex", gap: "30px" }}>
                         <Input
@@ -257,7 +278,7 @@ export default function CompetitionCreate() {
                                 },
                             }}
                             onChange={(d) => {
-                                updateEntity("regionCriteria", d);
+                                updateEntityState("regionCriteria", d);
                             }}
                         />
 
@@ -288,7 +309,7 @@ export default function CompetitionCreate() {
                                 },
                             }}
                             onChange={(d) => {
-                                updateEntity("departmentCriteria", d);
+                                updateEntityState("departmentCriteria", d);
                             }}
                         />
 
@@ -319,7 +340,7 @@ export default function CompetitionCreate() {
                                 },
                             }}
                             onChange={(d) => {
-                                updateEntity("cityCriteria", d);
+                                updateEntityState("cityCriteria", d);
                             }}
                         />
                     </div>
@@ -330,7 +351,7 @@ export default function CompetitionCreate() {
                             label="Catégorie de participant"
                             defaultValue={entity.participantCategories}
                             extra={{ isMulti: true, required: true, options: entityPossibility.participantCategories, closeMenuOnSelect: false, menuPlacement: "top" }}
-                            onChange={(d) => updateEntity("participantCategories", d)}
+                            onChange={(d) => updateEntityState("participantCategories", d)}
                         />
 
                         <Input
@@ -339,7 +360,7 @@ export default function CompetitionCreate() {
                             label="Nom de l'organisation"
                             defaultValue={entity.organizer}
                             extra={{ required: true, options: entityPossibility.organizers, menuPlacement: "top" }}
-                            onChange={(d) => updateEntity("organizer", d)}
+                            onChange={(d) => updateEntityState("organizer", d)}
                         />
 
                         <Input
@@ -348,7 +369,7 @@ export default function CompetitionCreate() {
                             label="Thèmes"
                             defaultValue={entity.themes}
                             extra={{ required: true, isMulti: true, options: entityPossibility.themes, closeMenuOnSelect: false, menuPlacement: "top" }}
-                            onChange={(d) => updateEntity("themes", d)}
+                            onChange={(d) => updateEntityState("themes", d)}
                         />
                     </div>
                 </div>

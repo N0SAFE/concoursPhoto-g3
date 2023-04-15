@@ -2,15 +2,20 @@ import Input from "@/components/atoms/Input/index.jsx";
 import BOForm from "@/components/organisms/BO/Form";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
+import useApiPath from "@/hooks/useApiPath.js";
+import useFilesUploader from "@/hooks/useFilesUploader.js";
 
 export default function OrganizationEdit() {
+    const apiPathComplete = useApiPath();
     const { id: organizationId } = useParams();
     const apiFetch = useApiFetch();
     const { getCityByCode } = useLocation();
+    const { deleteFile, uploadFile } = useFilesUploader();
+    const navigate = useNavigate();
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -18,6 +23,9 @@ export default function OrganizationEdit() {
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] = useState(true);
 
     const [entityPossibility, setEntityPossibility] = useState({ types: [] });
+    const [updatedFile, setUpdatedFile] = useState({
+        logo: null,
+    });
     const [entity, setEntity] = useState({
         organizerName: null,
         description: null,
@@ -26,16 +34,21 @@ export default function OrganizationEdit() {
         postcode: null,
         phoneNumber: null,
         email: null,
-        state: null,
+        state: false,
         logo: null,
         country: null,
         creationDate: null,
         websiteUrl: null,
         organizationType: null,
+        numberSiret: null,
+        intraCommunityVat: null,
     });
 
-    const updateEntity = (key, value) => {
+    const updateEntityState = (key, value) => {
         setEntity({ ...entity, [key]: value });
+    };
+    const updateFileState = (key, value) => {
+        setUpdatedFile({ ...updatedFile, [key]: value });
     };
 
     const [errors, setErrors] = useState({});
@@ -69,15 +82,21 @@ export default function OrganizationEdit() {
                         phoneNumber: data.number_phone,
                         email: data.email,
                         state: data.state,
-                        logo: data.logo,
+                        logo: data.logo || null,
                         country: data.country,
                         creationDate: data.creation_date,
                         websiteUrl: data.website_url,
                         city: { label: city.nom, value: city.code },
                         postcode: { value: data.postcode, label: data.postcode },
                         organizationType: { value: data.organization_type["@id"], label: data.organization_type.label },
+                        numberSiret: data.number_siret,
+                        intraCommunityVat: data.intra_community_vat,
+                    };
+                    const _organizationFile = {
+                        logo: data.logo ? { to: apiPathComplete(data.logo.path), name: data.logo.default_name } : null,
                     };
                     setEntity(_organization);
+                    setUpdatedFile(_organizationFile);
                 });
             });
     }
@@ -111,36 +130,58 @@ export default function OrganizationEdit() {
             <BOForm
                 title="Modifier une organisation"
                 handleSubmit={function () {
-                    const data = {
-                        organizerName: entity.organizerName,
-                        description: entity.description,
-                        address: entity.address,
-                        city: entity.city.value,
-                        postcode: entity.postcode.value,
-                        numberPhone: entity.phoneNumber,
-                        email: entity.email,
-                        state: entity.state,
-                        logo: entity.logo,
-                        country: "France",
-                        websiteUrl: entity.websiteUrl,
-                        organizationType: entity.organizationType.value,
-                    };
-                    console.debug("data", data);
-                    const promise = apiFetch("/organizations/" + organizationId, {
-                        method: "PATCH",
-                        body: JSON.stringify(data),
-                        headers: {
-                            "Content-Type": "application/merge-patch+json",
-                        },
-                    })
-                        .then((r) => r.json())
-                        .then((data) => {
-                            console.debug(data);
-                            if (data["@type"] === "hydra:Error") {
-                                throw new Error(data.description);
-                            }
-                        });
+                    const promise = new Promise(async (resolve, reject) => {
+                        try {
+                            const newLogoId = await (async () => {
+                                if (updatedFile.logo === null) {
+                                    return null;
+                                } else if (updatedFile.logo.file) {
+                                    return await uploadFile({ file: updatedFile.logo.file }).then((r) => r["@id"]);
+                                }
+                            })()
 
+                            const data = {
+                                organizerName: entity.organizerName,
+                                description: entity.description,
+                                address: entity.address,
+                                city: entity.city.value,
+                                postcode: entity.postcode.value,
+                                numberPhone: entity.phoneNumber,
+                                email: entity.email,
+                                state: entity.state,
+                                logo: newLogoId,
+                                country: "France",
+                                websiteUrl: entity.websiteUrl,
+                                organizationType: entity.organizationType.value,
+                            };
+                            console.debug("data", data);
+                            const res = await apiFetch("/organizations/" + organizationId, {
+                                method: "PATCH",
+                                body: JSON.stringify(data),
+                                headers: {
+                                    "Content-Type": "application/merge-patch+json",
+                                },
+                            })
+                                .then((r) => r.json())
+                                .then(async (data) => {
+                                    console.debug(data);
+                                    if (data["@type"] === "hydra:Error") {
+                                        throw new Error(data.description);
+                                    }
+                                    if (updatedFile.logo === null && entity.logo) {
+                                        await deleteFile({ path: entity.logo["@id"] });
+                                    }
+                                })
+                            resolve(res);
+                        } catch (e) {
+                            console.error(e);
+                            reject(e);
+                        }
+                    });
+
+                    promise.then(function () {
+                        navigate("/BO/organization");
+                    });
                     toast.promise(promise, {
                         pending: "Modification en cours",
                         success: "Organisation modifiée",
@@ -154,30 +195,37 @@ export default function OrganizationEdit() {
                         name="organizerName"
                         label="Nom de l'organisation"
                         extra={{ required: true }}
-                        onChange={(d) => updateEntity("organizerName", d)}
+                        onChange={(d) => updateEntityState("organizerName", d)}
                         defaultValue={entity.organizerName}
                     />
 
-                    <Input type="text" name="description" label="Description" extra={{ required: true }} onChange={(d) => updateEntity("description", d)} defaultValue={entity.description} />
+                    <Input type="text" name="description" label="Description" extra={{ required: true }} onChange={(d) => updateEntityState("description", d)} defaultValue={entity.description} />
 
-                    <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntity("phoneNumber", d)} defaultValue={entity.phoneNumber} />
+                    <Input
+                        type="tel"
+                        name="phoneNumber"
+                        label="Numéro de téléphone"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntityState("phoneNumber", d)}
+                        defaultValue={entity.phoneNumber}
+                    />
 
-                    <Input type="file" name="logo" label="Logo" onChange={(d) => updateEntity("logo", d)} defaultValue={entity.logo} />
+                    <Input type="file" name="logo" label="Logo" onChange={(d) => updateFileState("logo", d)} extra={{ value: updatedFile.logo, type: "image" }} />
 
-                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
+                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntityState("email", d)} defaultValue={entity.email} />
 
-                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntity("state", d)} defaultValue={entity.state} />
+                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntityState("state", d)} defaultValue={entity.state} />
 
-                    <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntity("address", d)} defaultValue={entity.address} />
+                    <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntityState("address", d)} defaultValue={entity.address} />
 
-                    <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} onChange={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
+                    <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} onChange={(d) => updateEntityState("websiteUrl", d)} defaultValue={entity.websiteUrl} />
 
                     <Input
                         type="select"
                         name="type"
                         label="Type"
                         extra={{ options: entityPossibility.types, required: true, value: entity.organizationType }}
-                        onChange={(d) => updateEntity("organizationType", d)}
+                        onChange={(d) => updateEntityState("organizationType", d)}
                     />
 
                     <div style={{ display: "flex", gap: "30px" }}>
@@ -201,7 +249,7 @@ export default function OrganizationEdit() {
                                     }
                                 },
                             }}
-                            onChange={(d) => updateEntity("city", d)}
+                            onChange={(d) => updateEntityState("city", d)}
                         />
 
                         <Input
@@ -224,7 +272,7 @@ export default function OrganizationEdit() {
                                     }
                                 },
                             }}
-                            onChange={(d) => updateEntity("postcode", d)}
+                            onChange={(d) => updateEntityState("postcode", d)}
                         />
                     </div>
                 </div>

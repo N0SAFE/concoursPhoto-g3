@@ -4,9 +4,11 @@ import useApiFetch from "@/hooks/useApiFetch.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function UserCreate() {
     const apiFetch = useApiFetch();
+    const navigate = useNavigate();
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -32,7 +34,7 @@ export default function UserCreate() {
         dateOfBirth: null,
     });
 
-    const updateEntity = (key, value) => {
+    const updateEntityState = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
 
@@ -136,6 +138,9 @@ export default function UserCreate() {
                                 throw data;
                             }
                         });
+                    promise.then(() => {
+                        navigate("/BO/user");
+                    });
                     toast.promise(promise, {
                         pending: "Ajout de l'utilisateur",
                         success: "Utilisateur ajouté",
@@ -152,9 +157,9 @@ export default function UserCreate() {
                 }}
             >
                 <div>
-                    <Input type="text" name="Prénom" label="Prénom" extra={{ required: true }} onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
+                    <Input type="text" name="Prénom" label="Prénom" extra={{ required: true }} onChange={(d) => updateEntityState("firstname", d)} defaultValue={entity.firstname} />
 
-                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
+                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} onChange={(d) => updateEntityState("lastname", d)} defaultValue={entity.lastname} />
 
                     <Input
                         type="select"
@@ -162,16 +167,16 @@ export default function UserCreate() {
                         label="Statut"
                         defaultValue={entity.statut}
                         extra={{ options: entityPossibility.statut, required: true }}
-                        onChange={(d) => updateEntity("statut", d)}
+                        onChange={(d) => updateEntityState("statut", d)}
                     />
 
-                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
+                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} onChange={(d) => updateEntityState("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
 
-                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
+                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntityState("email", d)} defaultValue={entity.email} />
 
-                    <Input type="checkbox" name="state" label="Actif" defaultValue={entity.state} onChange={(d) => updateEntity("state", d)} />
-                    <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntity("phoneNumber", d)} defaultValue={entity.phoneNumber} />
-                    <Input type="text" name="address" label="Adresse" defaultValue={entity.address} extra={{ required: true }} onChange={(d) => updateEntity("address", d)} />
+                    <Input type="checkbox" name="state" label="Actif" defaultValue={entity.state} onChange={(d) => updateEntityState("state", d)} />
+                    <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntityState("phoneNumber", d)} defaultValue={entity.phoneNumber} />
+                    <Input type="text" name="address" label="Adresse" defaultValue={entity.address} extra={{ required: true }} onChange={(d) => updateEntityState("address", d)} />
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
                     <Input
@@ -197,7 +202,7 @@ export default function UserCreate() {
                                 }
                             },
                         }}
-                        onChange={(d) => updateEntity("city", d)}
+                        onChange={(d) => updateEntityState("city", d)}
                     />
                     <Input
                         type="select"
@@ -222,19 +227,19 @@ export default function UserCreate() {
                                 }
                             },
                         }}
-                        onChange={(d) => updateEntity("postcode", d)}
+                        onChange={(d) => updateEntityState("postcode", d)}
                     />
                 </div>
                 <div>
-                    <Input type="select" name="gender" label="Genre" extra={{ value: entity.gender, options: entityPossibility.genders, required: true }} onChange={(d) => updateEntity("gender", d)} />
+                    <Input type="select" name="gender" label="Genre" extra={{ value: entity.gender, options: entityPossibility.genders, required: true }} onChange={(d) => updateEntityState("gender", d)} />
                 </div>
-                <Input type="password" name="password" label="Mot de passe" extra={{ required: true }} onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
+                <Input type="password" name="password" label="Mot de passe" extra={{ required: true }} onChange={(d) => updateEntityState("password", d)} defaultValue={entity.password} />
                 <Input
                     type="password"
                     name="passwordConfirm"
                     label="Confirmation du mot de passe"
                     extra={{ required: true }}
-                    onChange={(d) => updateEntity("passwordConfirm", d)}
+                    onChange={(d) => updateEntityState("passwordConfirm", d)}
                     defaultValue={entity.passwordConfirm}
                 />
             </BOForm>
