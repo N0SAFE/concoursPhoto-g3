@@ -14,7 +14,7 @@ export default function Navbar({listLeft = [], listRight = []}) {
 
     const handleNavbar = (e) => {
         e.preventDefault();
-        navbarRef.current.classList.toggle(style.show);
+        navbarRef.current.classList.toggle(style.navbarShow);
     }
 
     function list(disposition) {
@@ -28,7 +28,6 @@ export default function Navbar({listLeft = [], listRight = []}) {
             } else if (item.type === "dropdown") {
                 return (
                     <Dropdown
-                        className={style.navbarStyle}
                         links={item.links}
                         title={item.title}
                         requireLogin={isLogged}

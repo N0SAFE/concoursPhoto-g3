@@ -93,7 +93,7 @@ function FileInput({ name, extra, label, onChange, error }) {
     }
 }
 
-export default function Input({ type, name, defaultValue, extra, label, onChange = function () {}, error = "" }) {
+export default function Input({ type, name, defaultValue, extra, label, className, onChange = function () {}, error = "" }) {
     const InputElement = (() => {
         switch (type) {
             case "email":
@@ -101,7 +101,7 @@ export default function Input({ type, name, defaultValue, extra, label, onChange
             case "checkbox":
                 return <input className={style.componentInput} label={label} type="checkbox" {...extra} name={name} onChange={(e) => onChange(e.target.checked)} checked={defaultValue} />;
             case "select":
-                return <Select {...extra} name={name} label={label} onChange={(e) => onChange(e)} defaultValue={defaultValue} />;
+                return <Select {...extra} name={name} label={label} onChange={(e) => onChange(e)} defaultValue={defaultValue} className={className} />;
             case "password":
                 return <input className={style.componentInput} label={label} type="password" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
             case "tel":

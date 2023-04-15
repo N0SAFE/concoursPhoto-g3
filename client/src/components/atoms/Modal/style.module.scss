@@ -39,25 +39,24 @@
         transition: ease-in-out 0.5s;
 
         &:hover {
-            background-color: red;
+            background-color: $background-color-red;
             color: white;
             transform: scale(1.2);
             cursor: pointer;
         }
     }
-}
 
-.modalBackground {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 100;
-    background-color: rgba(0, 0, 0, 0.5);
+    &Background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 100;
+        background-color: rgba(0, 0, 0, 0.5);
 
-}
-
-.modalBackgroundHidden {
-    display: none;
+        &Hidden {
+            display: none;
+        }
+    }
 }

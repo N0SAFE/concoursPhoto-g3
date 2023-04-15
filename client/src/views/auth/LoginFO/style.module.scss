@@ -1,23 +1,58 @@
-.loginTrailer {
-    @extend .margin-title;
-    display: flex;
-    flex-direction: column;
+.login {
+    &Container {
+        @extend .limited-content;
 
-    & > span {
-        line-height: 1.5;
-
-        &:nth-child(2) {
-            font-weight: bold;
+        form {
+            margin-top: 15px;
+            align-items: inherit;
+            padding: 0;
         }
     }
-}
 
-.loginSubmit {
-    display: flex;
-    align-self: center;
+    &Trailer {
+        @extend .margin-title;
+        display: flex;
+        flex-direction: column;
 
-    & > button > div {
-        display: inherit;
-        align-items: inherit;
+        & > span {
+            line-height: 1.5;
+
+            & > a {
+                text-decoration: underline;
+            }
+
+            &:nth-child(2) {
+                font-weight: bold;
+            }
+        }
+    }
+
+    &Fields {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+
+        & > p > a {
+            text-decoration: underline;
+        }
+    }
+
+    &Submit {
+        display: flex;
+        align-self: center;
+
+        & > button > div {
+            display: inherit;
+            align-items: inherit;
+        }
+    }
+
+    &Proposition {
+        text-align: center;
+        padding-bottom: 15px;
+
+        & > a {
+            text-decoration: underline;
+        }
     }
 }
