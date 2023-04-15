@@ -5,13 +5,12 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import style from "./style.module.scss";
 import Button from "@/components/atoms/Button/index.jsx";
-import Modal from "@/components/atoms/Modal/index.jsx";
 
 export default function UserRegister() {
     const apiFetch = useApiFetch();
 
     const [entityPossibility, setEntityPossibility] = useState({ genders: [], statut: [] });
-
+    const [gtc, setGtc] = useState(false);
     const [entity, setEntity] = useState({
         state: false,
         email: "",
@@ -73,6 +72,10 @@ export default function UserRegister() {
             <BOForm
                 className={style.registerForm}
                 handleSubmit={async function () {
+                    if (!gtc) {
+                        toast.error("Vous devez accepter les conditions générales d'utilisation");
+                        return;
+                    }
                     const data = {
                         state: true,
                         email: entity.email,
@@ -94,11 +97,9 @@ export default function UserRegister() {
                             return;
                         } else if (data.plainPassword.length < 8) {
                             console.debug("Le mot de passe doit faire minimum 8 caractères !");
-                            // setErrors({plainPassword: "Le mot de passe doit faire minimum 8 caractères !"});
                             return;
                         } else if (!data.plainPassword.match(/^(?=.*[A-Z])(?=.*\d).+$/)) {
                             console.debug("Le mot de passe doit contenir au moins une lettre majuscule et un chiffre !");
-                            // setErrors({plainPassword: "Le mot de passe doit contenir au moins une lettre majuscule et un chiffre !"});
                             return;
                         }
                         const promise = apiFetch("/users", {
@@ -152,7 +153,7 @@ export default function UserRegister() {
                     <Input type="email" name="email" label="Adresse mail*" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
                     <Input type="password" name="password" label="Mot de passe*" extra={{ required: true, placeholder: "8 caractères min dont 1 chiffre et 1 lettre majuscule" }} onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
                     <div className={style.registerRule}>
-                        <Input type="checkbox" />
+                        <Input type="checkbox" onChange={setGtc} defaultValue={gtc} />
                         <p>En cochant cette case, j'accepte les <span>conditions générales d'utilisation</span> ainsi que la <span>politique d'utilisation</span> de mes données personnelles.</p>
                     </div>
                     <div className={style.registerSubmit}>
