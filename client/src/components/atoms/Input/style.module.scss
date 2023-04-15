@@ -1,15 +1,17 @@
 .component {
-    &Input {
-        background-color: $lightgrey;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &Input:not([type="checkbox"]) {
         padding: 10px;
         border-radius: 5px;
         border: .2px solid $lightgrey;
-        box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
+        box-shadow: rgba(17, 17, 26, 0.1) 0 1px 0;
+        background-color: $text-color-lightgrey-2;
 
         &:focus {
-            background-color: #f5f5f5;
-            outline-color: #c9c9c9;
-            outline-width: 0.2px;
+            outline: none;
         }
 
         &[type="date"], &[type="file"] {
@@ -28,7 +30,4 @@
         padding: 0 20px;
         overflow: hidden;
     }
-    display: flex;
-    flex-direction: column;
-    height: 100%;
 }

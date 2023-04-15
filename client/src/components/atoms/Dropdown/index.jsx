@@ -18,10 +18,10 @@ export default function Dropdown({title, links, requireLogin, requireToken, clas
         <div className={style.containerDropdown}>
             <div className={style.alignDropdown}>
                 {requireToken === true && requireLogin === true || !requireToken ? (
-                    <div>
+                    <li>
                         <Link className={className} onClick={(e) => handleDropdown(e)}>{title}</Link>
                         <Icon className={`${style.icon} ${isIconRotated ? style.rotate : ''}`} icon="cheveron-up" size={20} color="white" />
-                    </div>
+                    </li>
                     ) : null
                 }
             </div>

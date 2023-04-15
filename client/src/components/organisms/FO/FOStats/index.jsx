@@ -56,7 +56,7 @@ export default function FOStats() {
                 const organizers = [];
                 data["hydra:member"].map((item) => {
                     if (item.roles.includes("ROLE_ORGANIZER")) {
-                        organizations.push(item);
+                        organizers.push(item);
                     }
                 });
                 setOrganizers(organizers.length);

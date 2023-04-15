@@ -14,4 +14,23 @@
             justify-content: end;
         }
     }
+
+    @include below(xl) {
+        flex-direction: column;
+
+        h1 {
+            font-size: 25px;
+        }
+
+        & > div {
+            display: flex;
+            justify-content: center;
+
+            &:last-child {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+    }
 }

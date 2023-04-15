@@ -1,6 +1,6 @@
 import { useAuthContext } from "@/contexts/AuthContext.jsx";
 
-function login(checkLogged, { email, password }, autoLogoutOnFail = true) {
+function login(checkLogged, { identifier, password }, autoLogoutOnFail = true) {
     return new Promise((resolve, reject) => {
         fetch(new URL(import.meta.env.VITE_API_URL + "/login_check"), {
             method: "POST",
@@ -8,7 +8,7 @@ function login(checkLogged, { email, password }, autoLogoutOnFail = true) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                email,
+                email: identifier,
                 password,
             }),
             credentials: "include",
@@ -22,7 +22,7 @@ function login(checkLogged, { email, password }, autoLogoutOnFail = true) {
                     if (!isLogged) {
                         if (autoLogoutOnFail) {
                             return logout(checkLogged).then(() => { // this function is used to avoid fail when the refresh token is not the good one so we remove it to recreate it after
-                                return login(checkLogged, { email, password }, false).then(function(){
+                                return login(checkLogged, { identifier, password }, false).then(function(){
                                     checkLogged().then(function({ isLogged, me }){
                                         if(!isLogged){
                                             throw new Error("an error occured");
@@ -93,8 +93,8 @@ function logout(checkLogged) {
 function useAuth() {
     const { checkLogged } = useAuthContext();
     return {
-        login: function ({ email, password }) {
-            return login(checkLogged, { email, password });
+        login: function ({ identifier, password }) {
+            return login(checkLogged, { identifier, password });
         },
         register: function ({ email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username }) {
             return register(checkLogged, { email, password, passwordverify, firstname, lastname, gender, address, postcode, city, country, birthofdate, username });
