@@ -63,7 +63,7 @@ export default function UserRegister() {
     }, []);
 
     return (
-        <div className={style.registerContainer}>
+        <div className={style.register}>
             <div className={style.registerTrailer}>
                 <h2>Inscription</h2>
                 <span>Créez votre compte membre, c’est gratuit !</span>
@@ -145,8 +145,9 @@ export default function UserRegister() {
                                 name="personalStatut"
                                 label="Vous êtes*"
                                 defaultValue={entity.statut}
-                                extra={{ options: entityPossibility.statut, required: true }}
+                                extra={{ options: entityPossibility.statut, required: true, placeholder: "Cliquez-ici" }}
                                 onChange={(d) => updateEntity("statut", d)}
+                                className={style.registerSelect}
                             />
                         </div>
                     </div>

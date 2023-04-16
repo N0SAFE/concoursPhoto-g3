@@ -1,13 +1,8 @@
-.registerContainer {
+.register {
     @extend .limited-content;
     padding-top: 15px;
 
-    form {
-        margin-top: 15px;
-        align-items: inherit;
-    }
-
-    .registerTrailer {
+    &Trailer {
         @extend .margin-title;
         display: flex;
         flex-direction: column;
@@ -21,7 +16,9 @@
         }
     }
 
-    .registerForm {
+    &Form {
+        margin-top: 15px;
+
         & > div {
             display: flex;
             flex-direction: column;
@@ -53,6 +50,10 @@
             display: flex;
             gap: 15px;
 
+            & > p > span {
+                text-decoration: underline;
+            }
+
             [type="checkbox"] {
                 // disable default checkbox style
                 -webkit-appearance: none;
@@ -80,18 +81,24 @@
             }
         }
 
-        .registerLabelCase {
-            & > span {
-                text-decoration: underline;
-            }
-        }
-
         .registerProposition {
             text-align: center;
             padding-bottom: 15px;
 
             & > a {
                 text-decoration: underline;
+            }
+        }
+
+        // override component react-select to modify style
+        .registerSelect {
+            & > div {
+                background-color: $background-color-lightgrey-2;
+                border: none;
+
+                & > div:last-child > span {
+                   display: none;
+                }
             }
         }
     }

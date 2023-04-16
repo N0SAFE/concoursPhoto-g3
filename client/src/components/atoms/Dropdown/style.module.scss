@@ -1,4 +1,4 @@
-.containerDropdown {
+.dropdownContainer {
     position: relative;
 
     @include below(md) {
@@ -42,23 +42,18 @@
                 }
             }
         }
-    }
 
-    .show {
-        max-height: 200px;
-    }
+        &Show {
+            max-height: 200px;
+        }
 
-    .icon {
-        transform: rotate(180deg);
-        transition-duration: 0.5s;
-    }
+        &Icon {
+            transform: rotate(180deg);
+            transition-duration: 0.5s;
+        }
 
-    .rotate {
-        transform: none;
-    }
-
-    .alignDropdown {
-        display: flex !important;
-        align-items: center;
+        &Rotate {
+            transform: none;
+        }
     }
 }

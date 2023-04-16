@@ -1,9 +1,8 @@
 declare const classNames: {
-  readonly containerDropdown: "containerDropdown";
+  readonly dropdownContainer: "dropdownContainer";
   readonly dropdown: "dropdown";
-  readonly show: "show";
-  readonly icon: "icon";
-  readonly rotate: "rotate";
-  readonly alignDropdown: "alignDropdown";
+  readonly dropdownShow: "dropdownShow";
+  readonly dropdownIcon: "dropdownIcon";
+  readonly dropdownRotate: "dropdownRotate";
 };
 export = classNames;
