@@ -5,19 +5,22 @@ import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
+import useApiPath from "@/hooks/useApiPath.js";
 
 export default function () {
+    const toApiPath = useApiPath()
     const apiFetch = useApiFetch();
     const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
     const [entity, setEntity] = useState({});
     const { id: competitionId } = useParams();
 
-    const getCompetitions = () => {
+    const getCompetitions = (controller) => {
         return apiFetch("/competitions/" + competitionId, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
             .then((data) => {
@@ -46,12 +49,14 @@ export default function () {
     };
 
     useEffect(() => {
-        const promise = getCompetitions();
+        const controller = new AbortController();
+        const promise = getCompetitions(controller);
         toast.promise(promise, {
             pending: "Chargement du concours",
             success: "Concours chargé",
             error: "Erreur lors du chargement du consours",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
@@ -144,7 +149,14 @@ export default function () {
                         return entity?.theme?.map((theme) => theme.label).join(", ");
                     },
                 },
-                
+                {
+                    display: "Visuel",
+                    name: "competition_visual",
+                    type: "img",
+                    customData: ({ entity }) => {
+                        return entity?.competition_visual?.path ? {to: toApiPath(entity?.competition_visual?.path), name: entity?.competition_visual?.default_name} : null;
+                    },
+                },
                 {
                     display: "Pays",
                     name: "country_criteria",

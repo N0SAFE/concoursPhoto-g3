@@ -2,7 +2,7 @@ import style from "./style.module.scss";
 import Card from "@/components/molecules/Card";
 import { useEffect, useState } from "react";
 import useApiFetch from "@/hooks/useApiFetch";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import useLocation from "@/hooks/useLocation";
 
 export default function FOCompetitionList() {
@@ -11,12 +11,13 @@ export default function FOCompetitionList() {
 
     const [competitions, setCompetitions] = useState([]);
 
-    function getListCompetitions() {
+    function getListCompetitions(controller) {
         return apiFetch("/competitions", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
             .then(async (data) => {
@@ -24,39 +25,21 @@ export default function FOCompetitionList() {
                     throw new Error(data.message);
                 }
                 console.debug(data);
-                const hydraMember = data["hydra:member"];
-                const _competitions = await Promise.all(
-                    hydraMember.map((competition) => {
-                        return Promise.all([
-                            Promise.all(competition.city_criteria.map(getCityByCode)),
-                            Promise.all(competition.department_criteria.map(getDepartmentByCode)),
-                            Promise.all(competition.region_criteria.map(getRegionByCode)),
-                        ]).then(([city, department, region]) => {
-                            return {
-                                ...competition,
-                                city_criteria: city,
-                                department_criteria: department,
-                                region_criteria: region,
-                            };
-                        });
-                    })
-                )
-                console.log(_competitions);
-                setCompetitions(_competitions);
-                return _competitions;
+                setCompetitions(data["hydra:member"]);
+                return data["hydra:member"];
             })
             .catch((error) => {
                 console.error(error);
             });
     }
 
-    const getVotes = () => {
+    const getVotes = (controller) => {
         return apiFetch("/votes", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
-                console.log(data);
                 console.debug(data);
                 return data["hydra:member"].map(function (item) {
                     return { label: item.vote_date, value: item["@id"] };
@@ -65,13 +48,14 @@ export default function FOCompetitionList() {
     };
 
     useEffect(() => {
-        const promise = getListCompetitions()
+        const controller = new AbortController();
+        const promise = Promise.all([getListCompetitions(controller), getVotes(controller)]);
         toast.promise(promise, {
             pending: "Chargement des concours",
             success: "Concours chargés",
             error: "Erreur lors du chargement des concours",
         });
-        getVotes()
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
@@ -85,15 +69,14 @@ export default function FOCompetitionList() {
                             filters={[
                                 "Organisateur",
                                 competition.theme.map((item) => {
-                                        item.label
-                                    }
-                                ),
+                                    item.label;
+                                }),
                                 competition.state ? "En cours" : "Terminé",
                             ]}
                             stats={[
-                                {name: competition.pictures.length, icon: "user-plus"},
-                                {name: competition.pictures.length, icon: "camera"},
-                                {name: competition.number_of_max_votes, icon: "like"}
+                                { name: competition.pictures.length, icon: "user-plus" },
+                                { name: competition.pictures.length, icon: "camera" },
+                                { name: competition.number_of_max_votes, icon: "like" },
                             ]}
                             finalDate={new Date(competition.submission_end_date).toLocaleDateString("fr-FR", {
                                 year: "numeric",
@@ -101,7 +84,7 @@ export default function FOCompetitionList() {
                                 day: "numeric",
                             })}
                         />
-                    )
+                    );
                 })}
             </div>
         </div>

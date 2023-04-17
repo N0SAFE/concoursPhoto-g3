@@ -12,7 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
-    
+
     private $faker;
 
     public function __construct(
@@ -28,8 +28,9 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         'ROLE_PHOTOGRAPHER',
         'ROLE_JURY',
         'ROLE_ADMIN',
+        'ROLE_ORGANIZER',
     ];
-    
+
     const CITY_ARRAY = [
         [
             "code" => '60341',
@@ -105,7 +106,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = $this->faker;
-        
+
         $city = self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)];
 
         $user = new User();
@@ -147,7 +148,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
         for ($i = 1; $i < self::USER_COUNT_REFERENCE; $i++) {
             $city = self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)];
-            
+
             $user = new User();
 
             $user->setPseudonym($faker->userName());

@@ -1,16 +1,28 @@
-.containerDropdown {
+.dropdownContainer {
     position: relative;
 
+    @include below(md) {
+        flex-direction: column;
+    }
+
     .dropdown {
+        display: flex;
+        align-items: start;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
         z-index: 100;
         overflow: hidden;
-        position: absolute;
         background-color: $background-color-darkgrey;
         width: 100%;
         transition: 0.25s ease-in-out;
         max-height: 0;
         border-radius: 5px;
-        padding-left: 5px;
+
+        @include below(md) {
+            position: inherit;
+            top: 0;
+        }
 
         & > li {
             margin-top: 10px;
@@ -18,26 +30,30 @@
             & > a {
                 color: $background-color-secondary;
                 text-decoration: none;
-                font-size: 25px;
+                font-size: 14px;
+                font-weight: 700;
+
+                &:hover {
+                    color: $text-color-primary;
+
+                    &:after {
+                        border-bottom: none;
+                    }
+                }
             }
         }
-    }
 
-    .show {
-        max-height: 200px;
-    }
+        &Show {
+            max-height: 200px;
+        }
 
-    .icon {
-        transform: rotate(180deg);
-        transition-duration: 0.5s;
-    }
+        &Icon {
+            transform: rotate(180deg);
+            transition-duration: 0.5s;
+        }
 
-    .rotate {
-        transform: none;
-    }
-
-    .alignDropdown {
-        display: flex;
-        align-items: center;
+        &Rotate {
+            transform: none;
+        }
     }
 }

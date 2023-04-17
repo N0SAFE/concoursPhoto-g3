@@ -5,6 +5,7 @@ import useApiFetch from "@/hooks/useApiFetch";
 import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
+import style from "./style.module.scss";
 
 export default function CompetitionsList() {
     const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
@@ -12,12 +13,13 @@ export default function CompetitionsList() {
     const navigate = useNavigate();
     const [competitions, setCompetitions] = useState([]);
 
-    function getCompetitions() {
+    function getCompetitions(controller) {
         return apiFetch("/competitions", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
             .then(async (data) => {
@@ -25,38 +27,20 @@ export default function CompetitionsList() {
                     throw new Error(data.message);
                 }
                 console.debug(data);
-                const hydraMember = data["hydra:member"];
-                const _competitions =  await Promise.all(
-                    hydraMember.map((competition) => {
-                        return Promise.all([
-                            Promise.all(competition.city_criteria.map(getCityByCode)),
-                            Promise.all(competition.department_criteria.map(getDepartmentByCode)),
-                            Promise.all(competition.region_criteria.map(getRegionByCode)),
-                        ]).then(([city, department, region]) => {
-                            return {
-                                ...competition,
-                                city_criteria: city,
-                                department_criteria: department,
-                                region_criteria: region,
-                            };
-                        });
-                    })
-                )
-                setCompetitions(_competitions);
-                return _competitions;
+                setCompetitions(data['hydra:member']);
+                return data['hydra:member'];
             })
-            .catch((error) => {
-                console.error(error);
-            });
     }
 
     useEffect(() => {
-        const promise = getCompetitions()
+        const controller = new AbortController();
+        const promise = getCompetitions(controller)
         toast.promise(promise, {
             pending: "Chargement des concours",
             success: "Concours chargés",
             error: "Erreur lors du chargement des concours",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     const handleDelete = (id) => {
@@ -83,7 +67,7 @@ export default function CompetitionsList() {
     };
 
     return (
-        <div>
+        <div className={style.containerList}>
             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <h1>Liste des concours</h1>
                 <Button color="green" textColor="white" name="Créer un concours" onClick={() => navigate("/BO/competition/create")}></Button>
@@ -100,7 +84,7 @@ export default function CompetitionsList() {
                     { property: "endowments", display: "Dotation" },
                     { property: "creation_date", display: "Date de création" },
                     { property: "publication_date", display: "Date de publication" },
-                    { property: "publication_start_date", display: "Date de commencement" },
+                    { property: "submission_start_date", display: "Date de commencement" },
                     { property: "voting_start_date", display: "Date de début de vote" },
                 ]}
                 customAction={({ entity, property }) => {
@@ -125,8 +109,8 @@ export default function CompetitionsList() {
                             day: "numeric",
                         });
                     }
-                    if (property === "publication_start_date") {
-                        return new Date(entity.publication_start_date).toLocaleDateString("fr-FR", {
+                    if (property === "submission_start_date") {
+                        return new Date(entity.submission_start_date).toLocaleDateString("fr-FR", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",

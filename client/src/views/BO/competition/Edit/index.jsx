@@ -5,8 +5,14 @@ import { useState, useEffect } from "react";
 import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import useFilesUpdater from "@/hooks/useFilesUploader.js";
+import useApiPath from "@/hooks/useApiPath.js";
 
 export default function CompetitionEdit() {
+    const apiPathComplete = useApiPath();
+    const {uploadFile, deleteFile} = useFilesUpdater()
+    const navigate = useNavigate();
     const { id: competitionId } = useParams();
     const apiFetch = useApiFetch();
     const { getCityByName, getCityByCode, getDepartmentByName, getDepartmentByCode, getRegionByName, getRegionByCode } = useLocation();
@@ -28,6 +34,9 @@ export default function CompetitionEdit() {
     };
 
     const [entityPossibility, setEntityPossibility] = useState({ participantCategories: [], organizers: [], themes: [] });
+    const [updatedFile, setUpdatedFile] = useState({
+        visual: null,
+    });
     const [entity, setEntity] = useState({
         state: false,
         name: null,
@@ -55,16 +64,20 @@ export default function CompetitionEdit() {
         regionCriteria: [],
     });
 
-    const updateEntity = (key, value) => {
+    const updateEntityState = (key, value) => {
         setEntity({ ...entity, [key]: value });
+    };
+    const updateFileState = (key, value) => {
+        setUpdatedFile({ ...updatedFile, [key]: value });
     };
 
     const [errors, setErrors] = useState({});
 
-    const getParticipantCategories = () => {
+    const getParticipantCategories = (controller) => {
         return apiFetch("/participant_categories", {
             method: "GET",
             headers: { "Content-Type": "multipart/form-data" },
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -75,9 +88,10 @@ export default function CompetitionEdit() {
             });
     };
 
-    const getOrganizationsName = () => {
+    const getOrganizationsName = (controller) => {
         return apiFetch("/organizations", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -88,9 +102,10 @@ export default function CompetitionEdit() {
             });
     };
 
-    const getThemes = () => {
+    const getThemes = (controller) => {
         return apiFetch("/themes", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -101,22 +116,23 @@ export default function CompetitionEdit() {
             });
     };
 
-    const getCompetitions = () => {
+    const getCompetitions = (controller) => {
         return apiFetch(`/competitions/${competitionId}`, {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
                 console.debug(data);
                 Promise.all([
-                    Promise.all(data.city_criteria.map(getCityByCode)),
-                    Promise.all(data.department_criteria.map(getDepartmentByCode)),
-                    Promise.all(data.region_criteria.map(getRegionByCode)),
+                    Promise.all(data.city_criteria.map((c) => c && getCityByCode(c))),
+                    Promise.all(data.department_criteria.map((d) => d && getDepartmentByCode(d))),
+                    Promise.all(data.region_criteria.map((r) => r && getRegionByCode(r))),
                 ]).then(([cities, departments, regions]) => {
                     const _competition = {
                         state: data.state,
                         name: data.competition_name,
-                        visual: data.competition_visual,
+                        visual: data.competition_visual || null,
                         description: data.description,
                         rules: data.rules,
                         endowments: data.endowments ? data.endowments : null,
@@ -135,32 +151,39 @@ export default function CompetitionEdit() {
                         numberOfPrices: data.number_of_prices,
                         minAgeCriteria: data.min_age_criteria,
                         maxAgeCriteria: data.max_age_criteria,
-                        cityCriteria: cities.map((c) => ({ label: c.nom, value: c.code })),
-                        departmentCriteria: departments.map((d) => ({ label: d.nom, value: d.code })),
-                        regionCriteria: regions.map((r) => ({ label: r.nom, value: r.code })),
+                        cityCriteria: cities.map((c) => c && ({ label: c.nom, value: c.code })).filter((c) => c),
+                        departmentCriteria: departments.map((d) => d && ({ label: d.nom, value: d.code })).filter((d) => d),
+                        regionCriteria: regions.map((r) => r && ({ label: r.nom, value: r.code })).filter((r) => r),
                     };
+                    const _updatedFile = {
+                        visual: data.competition_visual ? { to: apiPathComplete(data.competition_visual.path), name: data.competition_visual.default_name } : null,
+                    };
+                    setUpdatedFile(_updatedFile);
                     setEntity(_competition);
                 });
             });
     };
 
     useEffect(() => {
-        Promise.all([getRegionByName(), getDepartmentByName(), getCityByName()]).then(([regions, departments, cities]) => {
+        const controller = new AbortController();
+        Promise.all([getRegionByName(null, { controller }), getDepartmentByName(null, { controller }), getCityByName(null, { controller })]).then(([regions, departments, cities]) => {
             return setLocationPossibility({
                 regions: { isLoading: false, data: regions.map((d) => ({ label: d.nom, value: d.code })) },
                 departments: { isLoading: false, data: departments.map((d) => ({ label: d.nom, value: d.code })) },
                 cities: { isLoading: false, data: cities.map((d) => ({ label: d.nom, value: d.code })) },
             });
         });
-        const promise = Promise.all([getParticipantCategories(), getOrganizationsName(), getThemes(), getCompetitions()]).then(([participantCategories, organizers, themes]) => {
-            setEntityPossibility({ participantCategories, organizers, themes });
-        });
-        promise.catch(console.error);
+        const promise = Promise.all([getParticipantCategories(controller), getOrganizationsName(controller), getThemes(controller), getCompetitions(controller)]).then(
+            ([participantCategories, organizers, themes]) => {
+                setEntityPossibility({ participantCategories, organizers, themes });
+            }
+        );
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
             error: "Erreur lors du chargement des données",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
@@ -168,52 +191,75 @@ export default function CompetitionEdit() {
             <BOCreate
                 title="Création d'un concours"
                 handleSubmit={function () {
-                    console.debug("handleSubmit");
-                    console.debug("fetch");
-                    const data = {
-                        state: entity.state,
-                        competitionName: entity.name,
-                        competitionVisual: entity.visual,
-                        participantCategory: entity.participantCategories.map((p) => p.value),
-                        organization: entity.organizer.value,
-                        theme: entity.themes.map((t) => t.value),
-                        description: entity.description,
-                        rules: entity.rules,
-                        creationDate: new Date(entity.creationDate).toISOString(),
-                        publicationDate: new Date(entity.publicationDate).toISOString(),
-                        submissionStartDate: new Date(entity.submissionStartDate).toISOString(),
-                        submissionEndDate: new Date(entity.submissionEndDate).toISOString(),
-                        votingStartDate: new Date(entity.votingStartDate).toISOString(),
-                        votingEndDate: new Date(entity.votingEndDate).toISOString(),
-                        resultsDate: new Date(entity.resultsDate).toISOString(),
-                        weightingOfJuryVotes: parseFloat(entity.weightingOfJuryVotes),
-                        numberOfMaxVotes: parseInt(entity.numberOfMaxVotes),
-                        numberOfPrices: parseInt(entity.numberOfPrices),
-                        minAgeCriteria: parseInt(entity.minAgeCriteria),
-                        maxAgeCriteria: parseInt(entity.maxAgeCriteria),
-                        cityCriteria: entity.cityCriteria.map((c) => c.value),
-                        departmentCriteria: entity.departmentCriteria.map((d) => d.value),
-                        regionCriteria: entity.regionCriteria.map((r) => r.value),
-                        countryCriteria: ["FRANCE"],
-                        endowments: entity.endowments,
-                    };
-                    console.debug("entity", entity);
-                    console.debug("data", data);
-                    const promise = apiFetch(`/competitions/${competitionId}`, {
-                        method: "PATCH",
-                        body: JSON.stringify(data),
-                        headers: {
-                            "Content-Type": "application/merge-patch+json",
-                        },
-                    })
-                        .then((r) => r.json())
-                        .then((data) => {
-                            console.debug(data);
-                            if (data["@type"] === "hydra:Error") {
-                                throw new Error(data.description);
+                    const promise = new Promise(async (resolve, reject) => {
+                        try {
+                        const newVisualId = await (async () => {
+                            if (updatedFile.visual === null) {
+                                return null;
+                            } else if (updatedFile.visual.file) {
+                                return await uploadFile({ file: updatedFile.visual.file }).then((r) => r["@id"]);
                             }
+                        })().catch((e) => {
+                            reject(e);
+                            throw e;
                         });
-                        
+                        const data = {
+                            state: entity.state,
+                            competitionName: entity.name,
+                            competitionVisual: newVisualId,
+                            participantCategory: entity.participantCategories.map((p) => p.value),
+                            organization: entity.organizer.value,
+                            theme: entity.themes.map((t) => t.value),
+                            description: entity.description,
+                            rules: entity.rules,
+                            creationDate: new Date(entity.creationDate).toISOString(),
+                            publicationDate: new Date(entity.publicationDate).toISOString(),
+                            submissionStartDate: new Date(entity.submissionStartDate).toISOString(),
+                            submissionEndDate: new Date(entity.submissionEndDate).toISOString(),
+                            votingStartDate: new Date(entity.votingStartDate).toISOString(),
+                            votingEndDate: new Date(entity.votingEndDate).toISOString(),
+                            resultsDate: new Date(entity.resultsDate).toISOString(),
+                            weightingOfJuryVotes: parseFloat(entity.weightingOfJuryVotes),
+                            numberOfMaxVotes: parseInt(entity.numberOfMaxVotes),
+                            numberOfPrices: parseInt(entity.numberOfPrices),
+                            minAgeCriteria: parseInt(entity.minAgeCriteria),
+                            maxAgeCriteria: parseInt(entity.maxAgeCriteria),
+                            cityCriteria: entity.cityCriteria.map((c) => c.value),
+                            departmentCriteria: entity.departmentCriteria.map((d) => d.value),
+                            regionCriteria: entity.regionCriteria.map((r) => r.value),
+                            countryCriteria: ["FRANCE"],
+                            endowments: entity.endowments,
+                        };
+                        const res = await apiFetch(`/competitions/${competitionId}`, {
+                            method: "PATCH",
+                            body: JSON.stringify(data),
+                            headers: {
+                                "Content-Type": "application/merge-patch+json",
+                            },
+                        })
+                            .then((r) => r.json())
+                            .then(async (data) => {
+                                console.debug(data);
+                                if (data["@type"] === "hydra:Error") {
+                                    throw new Error(data.description);
+                                }
+                                if (updatedFile.visual === null && entity.visual) {
+                                    await deleteFile({ path: entity.visual["@id"] });
+                                }
+                            })
+                            .catch((e) => {
+                                reject(e);
+                                throw e;
+                            });
+                        resolve(res);
+                        } catch (e) {
+                            console.error(e);
+                            reject(e);
+                        }
+                    });
+                    promise.then(() => {
+                        navigate("/BO/competition");
+                    });
                     toast.promise(promise, {
                         pending: "Modification du concours",
                         success: "Concours modifié",
@@ -222,111 +268,54 @@ export default function CompetitionEdit() {
                 }}
             >
                 <div>
-                    <label htmlFor="state">Etat</label>
-                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntity("state", d)} defaultValue={entity.state} extra={{require: true}} />
-                    <div>{errors.state}</div>
-                </div>
-                <div>
-                    <label htmlFor="name">Intitulé du concours</label>
-                    <Input type="text" name="name" label="Intitulé du concours" onChange={(d) => updateEntity("name", d)} defaultValue={entity.name} extra={{require: true}} />
-                    <div>{errors.name}</div>
-                </div>
-                <div>
-                    <label htmlFor="visual">Visuel du concours</label>
-                    <Input type="file" name="visual" label="Visuel du concours" onChange={(d) => updateEntity("visual", d)} defaultValue={entity.visual} />
-                    <div>{errors.visual}</div>
-                </div>
-                <div>
-                    <label htmlFor="description">Visuel du concours</label>
-                    <Input type="text" name="description" label="Description" onChange={(d) => updateEntity("description", d)} defaultValue={entity.description} extra={{require: true}} />
-                    <div>{errors.description}</div>
-                </div>
-                <div>
-                    <label htmlFor="rules">Règlement</label>
-                    <Input type="text" name="rules" label="Règlement" onChange={(d) => updateEntity("rules", d)} defaultValue={entity.rules} extra={{require: true}} />
-                    <div>{errors.rules}</div>
-                </div>
-                <div>
-                    <label htmlFor="endowments">Dotation</label>
-                    <Input type="text" name="endowments" label="Dotation" onChange={(d) => updateEntity("endowments", d)} defaultValue={entity.endowments} extra={{require: true}} />
-                    <div>{errors.endowments}</div>
-                </div>
-                <div>
-                    <label htmlFor="creationDate">Date de création</label>
-                    <Input type="date" name="creationDate" label="Date de création" onChange={(d) => updateEntity("creationDate", d)} defaultValue={entity.creationDate} />
-                    <div>{errors.creationDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="publicationDate">Date de publication</label>
-                    <Input type="date" name="publicationDate" label="Date de publication" onChange={(d) => updateEntity("publicationDate", d)} defaultValue={entity.publicationDate} />
-                    <div>{errors.publicationDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="submissionStartDate">Date de début de soumission</label>
+                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntityState("state", d)} defaultValue={entity.state} extra={{ require: true }} />
+
+                    <Input type="text" name="name" label="Intitulé du concours" onChange={(d) => updateEntityState("name", d)} defaultValue={entity.name} extra={{ require: true }} />
+
+                    <Input type="file" name="visual" label="Visuel" onChange={(d) => updateFileState("visual", d)} extra={{ value: updatedFile.visual, type: "image" }} />
+
+                    <Input type="text" name="description" label="Description" onChange={(d) => updateEntityState("description", d)} defaultValue={entity.description} extra={{ require: true }} />
+
+                    <Input type="text" name="rules" label="Règlement" onChange={(d) => updateEntityState("rules", d)} defaultValue={entity.rules} extra={{ require: true }} />
+
+                    <Input type="text" name="endowments" label="Dotation" onChange={(d) => updateEntityState("endowments", d)} defaultValue={entity.endowments} extra={{ require: true }} />
+
+                    <Input type="date" name="creationDate" label="Date de création" onChange={(d) => updateEntityState("creationDate", d)} defaultValue={entity.creationDate} />
+
+                    <Input type="date" name="publicationDate" label="Date de publication" onChange={(d) => updateEntityState("publicationDate", d)} defaultValue={entity.publicationDate} />
+
                     <Input
                         type="date"
                         name="submissionStartDate"
                         label="Date de début de soumission"
-                        onChange={(d) => updateEntity("submissionStartDate", d)}
+                        onChange={(d) => updateEntityState("submissionStartDate", d)}
                         defaultValue={entity.submissionStartDate}
                     />
-                    <div>{errors.submissionStartDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="submissionEndDate">Date de fin de soumission</label>
-                    <Input type="date" name="submissionEndDate" label="Date de fin de soumission" onChange={(d) => updateEntity("submissionEndDate", d)} defaultValue={entity.submissionEndDate} />
-                    <div>{errors.submissionEndDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="votingStartDate">Date de début de vote</label>
-                    <Input type="date" name="votingStartDate" label="Date de début de vote" onChange={(d) => updateEntity("votingStartDate", d)} defaultValue={entity.votingStartDate} />
-                    <div>{errors.votingStartDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="votingEndDate">Date de fin de vote</label>
-                    <Input type="date" name="votingEndDate" label="Date de fin de vote" onChange={(d) => updateEntity("votingEndDate", d)} defaultValue={entity.votingEndDate} />
-                    <div>{errors.votingEndDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="resultsDate">Date des résultats</label>
-                    <Input type="date" name="resultsDate" label="Date de fin de vote" onChange={(d) => updateEntity("resultsDate", d)} defaultValue={entity.resultsDate} />
-                    <div>{errors.resultsDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="weightingOfJuryVotes">Pondération des votes du jury</label>
+
+                    <Input type="date" name="submissionEndDate" label="Date de fin de soumission" onChange={(d) => updateEntityState("submissionEndDate", d)} defaultValue={entity.submissionEndDate} />
+
+                    <Input type="date" name="votingStartDate" label="Date de début de vote" onChange={(d) => updateEntityState("votingStartDate", d)} defaultValue={entity.votingStartDate} />
+
+                    <Input type="date" name="resultsDate" label="Date de fin de vote" onChange={(d) => updateEntityState("resultsDate", d)} defaultValue={entity.resultsDate} />
+
                     <Input
                         type="number"
                         extra={{ step: 0.01 }}
                         name="weightingOfJuryVotes"
                         label="Pondération des votes du jury"
                         defaultValue={entity.weightingOfJuryVotes}
-                        onChange={(d) => updateEntity("weightingOfJuryVotes", d)}
+                        onChange={(d) => updateEntityState("weightingOfJuryVotes", d)}
                     />
-                    <div>{errors.weightingOfJuryVotes}</div>
-                </div>
-                <div>
-                    <label htmlFor="numberOfMaxVotes">Nombre maximum de votes</label>
-                    <Input type="number" name="numberOfMaxVotes" label="Nombre maximum de votes" onChange={(d) => updateEntity("numberOfMaxVotes", d)} defaultValue={entity.numberOfMaxVotes} />
-                    <div>{errors.numberOfMaxVotes}</div>
-                </div>
-                <div>
-                    <label htmlFor="numberOfPrices">Nombres de prix</label>
-                    <Input type="number" name="numberOfPrices" label="Nombres de prix" onChange={(d) => updateEntity("numberOfPrices", d)} defaultValue={entity.numberOfPrices} />
-                    <div>{errors.numberOfPrices}</div>
-                </div>
-                <div>
-                    <label htmlFor="minAgeCriteria">Âge minimum</label>
-                    <Input type="number" name="minAgeCriteria" label="Âge minimum" onChange={(d) => updateEntity("minAgeCriteria", d)} defaultValue={entity.minAgeCriteria} />
-                    <div>{errors.minAgeCriteria}</div>
-                </div>
-                <div>
-                    <label htmlFor="maxAgeCriteria">Âge maximum</label>
-                    <Input type="number" name="maxAgeCriteria" label="Âge maximum" onChange={(d) => updateEntity("maxAgeCriteria", d)} defaultValue={entity.maxAgeCriteria} />
-                    <div>{errors.maxAgeCriteria}</div>
-                </div>
-                <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="region">Région</label>
+
+                    <Input type="number" name="numberOfMaxVotes" label="Nombre maximum de votes" onChange={(d) => updateEntityState("numberOfMaxVotes", d)} defaultValue={entity.numberOfMaxVotes} />
+
+                    <Input type="number" name="numberOfPrices" label="Nombres de prix" onChange={(d) => updateEntityState("numberOfPrices", d)} defaultValue={entity.numberOfPrices} />
+
+                    <Input type="number" name="minAgeCriteria" label="Âge minimum" onChange={(d) => updateEntityState("minAgeCriteria", d)} defaultValue={entity.minAgeCriteria} />
+
+                    <Input type="number" name="maxAgeCriteria" label="Âge maximum" onChange={(d) => updateEntityState("maxAgeCriteria", d)} defaultValue={entity.maxAgeCriteria} />
+
+                    <div style={{ display: "flex", gap: "30px" }}>
                         <Input
                             type="select"
                             name="region"
@@ -355,13 +344,10 @@ export default function CompetitionEdit() {
                                 },
                             }}
                             onChange={(d) => {
-                                updateEntity("regionCriteria", d);
+                                updateEntityState("regionCriteria", d);
                             }}
                         />
-                        <div>{errors.regionCriteria}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="department">Département</label>
+
                         <Input
                             type="select"
                             name="department"
@@ -390,13 +376,10 @@ export default function CompetitionEdit() {
                                 },
                             }}
                             onChange={(d) => {
-                                updateEntity("departmentCriteria", d);
+                                updateEntityState("departmentCriteria", d);
                             }}
                         />
-                        <div>{errors.departmentCriteria}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="city">Ville</label>
+
                         <Input
                             type="select"
                             name="city"
@@ -425,52 +408,41 @@ export default function CompetitionEdit() {
                                 },
                             }}
                             onChange={(d) => {
-                                updateEntity("cityCriteria", d);
+                                updateEntityState("cityCriteria", d);
                             }}
                         />
-                        <div>{errors.cityCriteria}</div>
                     </div>
                     <div style={{ display: "flex", gap: "30px" }}>
-                        <div>
-                            <label htmlFor="participantCategory">Catégorie de participant</label>
-                            <Input
-                                type="select"
-                                name="participantCategory"
-                                label="Catégorie de participant"
-                                extra={{
-                                    isMulti: true,
-                                    required: true,
-                                    options: entityPossibility.participantCategories,
-                                    closeMenuOnSelect: false,
-                                    menuPlacement: "top",
-                                    value: entity.participantCategories,
-                                }}
-                                onChange={(d) => updateEntity("participantCategories", d)}
-                            />
-                            <div>{errors.participantCategories}</div>
-                        </div>
-                        <div>
-                            <label htmlFor="organizer">Nom de l'organisation</label>
-                            <Input
-                                type="select"
-                                name="organizer"
-                                label="Nom de l'organisation"
-                                extra={{ required: true, options: entityPossibility.organizers, menuPlacement: "top", value: entity.organizer }}
-                                onChange={(d) => updateEntity("organizer", d)}
-                            />
-                            <div>{errors.organizer}</div>
-                        </div>
-                        <div>
-                            <label htmlFor="themes">Thème(s)</label>
-                            <Input
-                                type="select"
-                                name="themes"
-                                label="Thèmes"
-                                extra={{ required: true, isMulti: true, options: entityPossibility.themes, closeMenuOnSelect: false, menuPlacement: "top", value: entity.themes }}
-                                onChange={(d) => updateEntity("themes", d)}
-                            />
-                            <div>{errors.themes}</div>
-                        </div>
+                        <Input
+                            type="select"
+                            name="participantCategory"
+                            label="Catégorie de participant"
+                            extra={{
+                                isMulti: true,
+                                required: true,
+                                options: entityPossibility.participantCategories,
+                                closeMenuOnSelect: false,
+                                menuPlacement: "top",
+                                value: entity.participantCategories,
+                            }}
+                            onChange={(d) => updateEntityState("participantCategories", d)}
+                        />
+
+                        <Input
+                            type="select"
+                            name="organizer"
+                            label="Nom de l'organisation"
+                            extra={{ required: true, options: entityPossibility.organizers, menuPlacement: "top", value: entity.organizer }}
+                            onChange={(d) => updateEntityState("organizer", d)}
+                        />
+
+                        <Input
+                            type="select"
+                            name="themes"
+                            label="Thèmes"
+                            extra={{ required: true, isMulti: true, options: entityPossibility.themes, closeMenuOnSelect: false, menuPlacement: "top", value: entity.themes }}
+                            onChange={(d) => updateEntityState("themes", d)}
+                        />
                     </div>
                 </div>
             </BOCreate>

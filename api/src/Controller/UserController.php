@@ -10,7 +10,6 @@ use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordHasherInterface;
 
-#[Route('/api', name: 'user_')]
 class UserController extends AbstractController
 {
     // #[Route('/users', name: 'users', methods: ['GET'])]

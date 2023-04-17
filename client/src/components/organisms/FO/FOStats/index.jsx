@@ -1,6 +1,7 @@
 import useApiFetch from "@/hooks/useApiFetch";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import style from "./style.module.scss";
+import { toast } from "react-toastify";
 
 export default function FOStats() {
     const apiFetch = useApiFetch();
@@ -10,9 +11,10 @@ export default function FOStats() {
     const [members, setMembers] = useState([]);
     const [photographers, setPhotographers] = useState([]);
 
-    const getCompetitions = () => {
+    const getCompetitions = (controller) => {
         return apiFetch("/competitions", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -21,9 +23,10 @@ export default function FOStats() {
             });
     };
 
-    const getPictures = () => {
+    const getPictures = (controller) => {
         return apiFetch("/pictures", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -32,9 +35,10 @@ export default function FOStats() {
             });
     };
 
-    const getMembers = () => {
+    const getMembers = (controller) => {
         return apiFetch("/users", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -42,28 +46,32 @@ export default function FOStats() {
                 setMembers(data["hydra:member"].length);
 
                 const photographers = [];
-                data['hydra:member'].map((item) => {
+                data["hydra:member"].map((item) => {
                     if (item.roles.includes("ROLE_PHOTOGRAPHER")) {
                         photographers.push(item);
                     }
-                })
+                });
                 setPhotographers(photographers.length);
 
                 const organizers = [];
-                data['hydra:member'].map((item) => {
+                data["hydra:member"].map((item) => {
                     if (item.roles.includes("ROLE_ORGANIZER")) {
-                        organizations.push(item);
+                        organizers.push(item);
                     }
-                })
+                });
                 setOrganizers(organizers.length);
-
             });
-    }
+    };
 
     useEffect(() => {
-        getCompetitions()
-        getPictures()
-        getMembers()
+        const controller = new AbortController();
+        const promise = Promise.all([getCompetitions(controller), getPictures(controller), getMembers(controller)]);
+        toast.promise(promise, {
+            pending: "Chargement des statistiques",
+            success: "Statistiques chargées",
+            error: "Erreur lors du chargement des statistiques",
+        });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
@@ -78,5 +86,5 @@ export default function FOStats() {
             <span>|</span>
             <span>{members} membres</span>
         </div>
-    )
+    );
 }

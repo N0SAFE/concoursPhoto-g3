@@ -4,9 +4,11 @@ import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import { toast } from "react-toastify";
+import useFilesUploader from "@/hooks/useFilesUploader.js";
 
 export default function OrganizationCreate() {
     const apiFetch = useApiFetch();
+    const { uploadFile } = useFilesUploader();
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -22,23 +24,26 @@ export default function OrganizationCreate() {
         postcode: null,
         phoneNumber: null,
         email: null,
-        state: null,
+        state: false,
         logo: null,
         country: null,
         creationDate: null,
         websiteUrl: null,
         organizationType: null,
+        numberSiret: null,
+        intraCommunityVat: null,
     });
 
-    const updateEntity = (key, value) => {
+    const updateEntityState = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
 
     const [errors, setErrors] = useState({});
 
-    const getOrganizationTypePossibility = () => {
+    const getOrganizationTypePossibility = (controller) => {
         return apiFetch("/organization_types", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -49,21 +54,23 @@ export default function OrganizationCreate() {
     };
 
     useEffect(() => {
-        const promise = Promise.all([getOrganizationTypePossibility()]).then(([types]) => setEntityPossibility({ types }));
+        const controller = new AbortController();
+        const promise = Promise.all([getOrganizationTypePossibility(controller)]).then(([types]) => setEntityPossibility({ types }));
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
             error: "Erreur lors du chargement des données",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     useEffect(() => {
         updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then(function (d) {
-            if(d.length === 1 && d[0].id === "cities" && d[0].data.length === 1){
-                if(d[0].data[0].codesPostaux.length === 1 && !entity.postcode){
-                    setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] }});
-                }else if(!entity.city){
-                    setEntity({ ...entity, city: { label: d[0].data[0].nom, value: d[0].data[0].code }});
+            if (d.length === 1 && d[0].id === "cities" && d[0].data.length === 1) {
+                if (d[0].data[0].codesPostaux.length === 1 && !entity.postcode) {
+                    setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
+                } else if (!entity.city) {
+                    setEntity({ ...entity, city: { label: d[0].data[0].nom, value: d[0].data[0].code } });
                 }
             } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the entity)
             setLocationPossibilityIsLoading(false);
@@ -75,86 +82,105 @@ export default function OrganizationCreate() {
             <BOCreate
                 title="Création d'une organisation"
                 handleSubmit={function () {
-                    const data = {
-                        organizerName: entity.organizerName,
-                        description: entity.description,
-                        address: entity.address,
-                        city: entity.city.value,
-                        postcode: entity.postcode.value,
-                        numberPhone: entity.phoneNumber,
-                        email: entity.email,
-                        state: entity.state,
-                        logo: entity.logo,
-                        country: "France",
-                        creationDate: new Date().toISOString(),
-                        websiteUrl: entity.websiteUrl,
-                        organizationType: entity.organizationType.value,
-                    };
-                    console.debug("data", data);
-                    apiFetch("/organizations", {
-                        method: "POST",
-                        body: JSON.stringify(data),
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    })
-                        .then((r) => r.json())
-                        .then((data) => {
-                            console.debug(data);
-                            if (data["@type"] === "hydra:Error") {
-                                throw new Error(data.description);
-                            }
-                        });
+                    const promise = new Promise(async (resolve, reject) => {
+                        try {
+                            const logoId = await (async () => {
+                                if (entity.logo === null) {
+                                    return null;
+                                } else {
+                                    const logo = await uploadFile({ file: entity.logo.file });
+                                    return logo["@id"];
+                                }
+                            })()
+                            const data = {
+                                organizerName: entity.organizerName,
+                                description: entity.description,
+                                address: entity.address,
+                                city: entity.city.value,
+                                postcode: entity.postcode.value,
+                                numberPhone: entity.phoneNumber,
+                                email: entity.email,
+                                state: entity.state,
+                                country: "France",
+                                creationDate: new Date().toISOString(),
+                                websiteUrl: entity.websiteUrl,
+                                organizationType: entity.organizationType.value,
+                                logo: logoId,
+                                numberSiret: entity.numberSiret,
+                                intraCommunityVat: entity.intraCommunityVat,
+                            };
+                            console.debug("data", data);
+                            const res = await apiFetch("/organizations", {
+                                method: "POST",
+                                body: JSON.stringify(data),
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                            })
+                                .then((r) => r.json())
+                                .then((data) => {
+                                    if (data["@type"] === "hydra:Error") {
+                                        throw new Error(data.description);
+                                    }
+                                    return data;
+                                });
+                            console.debug("res", res);
+                            resolve(res);
+                        } catch (e) {
+                            console.error(e);
+                            reject(e);
+                        }
+                    });
+
+                    promise.then(function () {
+                        navigate("/BO/organization");
+                    });
+                    toast.promise(promise, {
+                        pending: "Création de l'organisation",
+                        success: "Organisation créée",
+                        error: "Erreur lors de la création de l'organisation",
+                    });
                 }}
             >
                 <div>
-                    <label htmlFor="organizerName">Nom de l'organisation</label>
-                    <Input type="text" name="organizerName" label="Nom de l'organisation" extra={{ required: true }} onChange={(d) => updateEntity("organizerName", d)} defaultValue={entity.organizerName} />
-                    <div>{errors.organizerName}</div>
-                </div>
-                <div>
-                    <label htmlFor="description">Description</label>
-                    <Input type="text" name="description" label="Description" extra={{ required: true }} onChange={(d) => updateEntity("description", d)} defaultValue={entity.description} />
-                    <div>{errors.description}</div>
-                </div>
-                <div>
-                    <label htmlFor="phoneNumber">Numéro de télephone</label>
-                    <Input type="text" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntity("phoneNumber", d)} defaultValue={entity.phoneNumber} />
-                    <div>{errors.phoneNumber}</div>
-                </div>
-                <div>
-                    <label htmlFor="logo">Logo</label>
-                    <Input type="file" name="logo" label="Logo" onChange={(d) => updateEntity("logo", d)} defaultValue={entity.logo} />
-                    <div>{errors.logo}</div>
-                </div>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
-                    <div>{errors.email}</div>
-                </div>
-                <div>
-                    <label htmlFor="state">Statut</label>
-                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntity("state", d)} defaultValue={entity.state} />
-                    <div>{errors.state}</div>
-                </div>
-                <div>
-                    <label htmlFor="address">Adresse</label>
-                    <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntity("address", d)} defaultValue={entity.address} />
-                    <div>{errors.address}</div>
-                </div>
-                <div>
-                    <label htmlFor="websiteUrl">Adresse site internet</label>
-                    <Input type="text" name="websiteUrl" label="WebsiteUrl" extra={{ required: true }} setState={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
-                    <div>{errors.websiteUrl}</div>
-                </div>
-                <div>
-                    <label htmlFor="type">Type</label>
-                    <Input type="select" name="type" label="Type" defaultValue={entity.type} extra={{ options: entityPossibility.types, required: true }} onChange={(d) => updateEntity("organizationType", d)} />
-                    <div>{errors.type}</div>
-                </div>
-                <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="city">Ville</label>
+                    <Input
+                        type="text"
+                        name="organizerName"
+                        label="Nom de l'organisation"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntityState("organizerName", d)}
+                        defaultValue={entity.organizerName}
+                    />
+
+                    <Input type="text" name="description" label="Description" extra={{ required: true }} onChange={(d) => updateEntityState("description", d)} defaultValue={entity.description} />
+
+                    <Input
+                        type="text"
+                        name="phoneNumber"
+                        label="Numéro de téléphone"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntityState("phoneNumber", d)}
+                        defaultValue={entity.phoneNumber}
+                    />
+
+                    <Input type="file" name="logo" label="Logo" onChange={(d) => updateEntityState("logo", d)} extra={{ value: entity.logo, type: "image" }} />
+
+                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntityState("state", d)} defaultValue={entity.state} />
+
+                    <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntityState("address", d)} defaultValue={entity.address} />
+
+                    <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} setState={(d) => updateEntityState("websiteUrl", d)} defaultValue={entity.websiteUrl} />
+
+                    <Input
+                        type="select"
+                        name="type"
+                        label="Type"
+                        defaultValue={entity.type}
+                        extra={{ options: entityPossibility.types, required: true }}
+                        onChange={(d) => updateEntityState("organizationType", d)}
+                    />
+
+                    <div style={{ display: "flex", gap: "30px" }}>
                         <Input
                             type="select"
                             name="city"
@@ -176,13 +202,10 @@ export default function OrganizationCreate() {
                                 },
                             }}
                             onChange={(d) => {
-                                updateEntity("city", d)
+                                updateEntityState("city", d);
                             }}
                         />
-                        <div>{errors.city}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="postalCode">Code Postal</label>
+
                         <Input
                             type="select"
                             name="postalCode"
@@ -203,9 +226,8 @@ export default function OrganizationCreate() {
                                     }
                                 },
                             }}
-                            onChange={(d) => updateEntity("postcode", d)}
+                            onChange={(d) => updateEntityState("postcode", d)}
                         />
-                        <div>{errors.postalCode}</div>
                     </div>
                 </div>
             </BOCreate>

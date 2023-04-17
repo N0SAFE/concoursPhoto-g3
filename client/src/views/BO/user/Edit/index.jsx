@@ -6,8 +6,10 @@ import { useParams } from "react-router-dom";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function UserCreate() {
+    const navigate = useNavigate();
     const apiFetch = useApiFetch();
     const { getCityByCode } = useLocation();
     const { id: userId } = useParams();
@@ -35,15 +37,16 @@ export default function UserCreate() {
         dateOfBirth: null,
     });
 
-    const updateEntity = (key, value) => {
+    const updateEntityStateState = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
 
     const [errors, setErrors] = useState({});
 
-    const getGendersPossibility = () => {
+    const getGendersPossibility = (controller) => {
         return apiFetch("/genders", {
             method: "GET",
+            signal: controller?.signal
         })
             .then((r) => r.json())
             .then((data) => {
@@ -53,9 +56,10 @@ export default function UserCreate() {
             });
     };
 
-    const getPersonalstatus = () => {
+    const getPersonalstatus = (controller) => {
         return apiFetch("/personal_statuts", {
             method: "GET",
+            signal: controller?.signal
         })
             .then((r) => r.json())
             .then((data) => {
@@ -66,9 +70,10 @@ export default function UserCreate() {
             });
     };
 
-    function getUser() {
-        apiFetch("/users/" + userId, {
+    function getUser(controller) {
+        return apiFetch("/users/" + userId, {
             method: "GET",
+            signal: controller?.signal
         })
             .then((r) => r.json())
             .then((data) => {
@@ -94,12 +99,14 @@ export default function UserCreate() {
     }
 
     useEffect(() => {
-        const promise = Promise.all([getGendersPossibility(), getPersonalstatus(), getUser()]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
+        const controller = new AbortController();
+        const promise = Promise.all([getGendersPossibility(controller), getPersonalstatus(controller), getUser(controller)]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
             error: "Erreur lors du chargement des données",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     useEffect(() => {
@@ -153,7 +160,9 @@ export default function UserCreate() {
                                 throw new Error(data.description);
                             }
                         });
-
+                        promise.then(() => {
+                            navigate("/BO/user");
+                        })
                     toast.promise(promise, {
                         pending: "Modification en cours",
                         success: "Utilisateur modifié",
@@ -162,122 +171,77 @@ export default function UserCreate() {
                 }}
             >
                 <div>
-                    <label htmlFor="firstname">Prenom</label>
-                    <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
-                    <div>{errors.firstname}</div>
-                </div>
-                <div>
-                    <label htmlFor="lastname">Nom</label>
-                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
-                    <div>{errors.lastname}</div>
-                </div>
-                <div>
-                    <label htmlFor="dateOfBirth">Date de Naissance</label>
-                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
-                    <div>{errors.dateOfBirth}</div>
-                </div>
-                <label htmlFor="statut">Statut</label>
-                <Input
-                    type="select"
-                    name="personalStatut"
-                    label="Statut"
-                    extra={{ value: entity.statut, options: entityPossibility.statut, required: true }}
-                    onChange={(d) => updateEntity("statut", d)}
-                />
-                <div>{errors.statut}</div>
-                <div>
-                    <label htmlFor="email">email</label>
-                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
-                    <div>{errors.email}</div>
-                </div>
-                <div>
-                    <label htmlFor="state">state</label>
-                    <Input type="checkbox" name="state" label="Actif" defaultValue={entity.state} onChange={(d) => updateEntity("state", d)} />
-                    <div>{errors.state}</div>
-                </div>
-                <div>
-                    <label htmlFor="address">address</label>
-                    <Input type="text" name="address" label="Adresse" defaultValue={entity.address} extra={{ required: true }} onChange={(d) => updateEntity("address", d)} />
-                    <div>{errors.address}</div>
+                    <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} onChange={(d) => updateEntityStateState("firstname", d)} defaultValue={entity.firstname} />
+
+                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} onChange={(d) => updateEntityStateState("lastname", d)} defaultValue={entity.lastname} />
+
+                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} onChange={(d) => updateEntityStateState("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
+
+                    <Input
+                        type="select"
+                        name="personalStatut"
+                        label="Statut"
+                        extra={{ value: entity.statut, options: entityPossibility.statut, required: true }}
+                        onChange={(d) => updateEntityStateState("statut", d)}
+                    />
+
+                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntityStateState("email", d)} defaultValue={entity.email} />
+
+                    <Input type="checkbox" name="state" label="Actif" defaultValue={entity.state} onChange={(d) => updateEntityStateState("state", d)} />
+
+                    <Input type="text" name="address" label="Adresse" defaultValue={entity.address} extra={{ required: true }} onChange={(d) => updateEntityStateState("address", d)} />
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="city">city</label>
-                        <Input
-                            type="select"
-                            name="city"
-                            label="Ville"
-                            extra={{
-                                isLoading: locationPossibilityIsLoading,
-                                value: entity.city,
-                                isClearable: true,
-                                required: true,
-                                options: citiesPossibility,
-                                multiple: false,
-                                onInputChange: (cityName, { action }) => {
-                                    if (action === "menu-close") {
-                                        updateLocationPossibility({ id: "city", args: { codeCity: entity.city?.value, city: "" } });
-                                    }
-                                    if (action === "input-change") {
-                                        updateLocationPossibility({ id: "city", args: { city: cityName } });
-                                    }
-                                },
-                            }}
-                            onChange={(d) => updateEntity("city", d)}
-                        />
-                        <div>{errors.city}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="postalCode">postalCode</label>
-                        <Input
-                            type="select"
-                            name="postalCode"
-                            label="Code postal"
-                            extra={{
-                                isLoading: locationPossibilityIsLoading,
-                                value: entity.postcode,
-                                isClearable: true,
-                                required: true,
-                                options: postalCodesPossibility,
-                                multiple: false,
-                                onInputChange: (_postcode, { action }) => {
-                                    if (action === "menu-close") {
-                                        updateLocationPossibility({ id: "city", args: { postcode: entity.postcode?.value } });
-                                    }
-                                    if (action === "input-change" && _postcode.length === 5) {
-                                        updateLocationPossibility({ id: "city", args: { postcode: _postcode } });
-                                    }
-                                },
-                            }}
-                            onChange={(d) => updateEntity("postcode", d)}
-                        />
-                        <div>{errors.postalCode}</div>
-                    </div>
+                    <Input
+                        type="select"
+                        name="city"
+                        label="Ville"
+                        extra={{
+                            isLoading: locationPossibilityIsLoading,
+                            value: entity.city,
+                            isClearable: true,
+                            required: true,
+                            options: citiesPossibility,
+                            multiple: false,
+                            onInputChange: (cityName, { action }) => {
+                                if (action === "menu-close") {
+                                    updateLocationPossibility({ id: "city", args: { codeCity: entity.city?.value, city: "" } });
+                                }
+                                if (action === "input-change") {
+                                    updateLocationPossibility({ id: "city", args: { city: cityName } });
+                                }
+                            },
+                        }}
+                        onChange={(d) => updateEntityStateState("city", d)}
+                    />
+
+                    <Input
+                        type="select"
+                        name="postalCode"
+                        label="Code postal"
+                        extra={{
+                            isLoading: locationPossibilityIsLoading,
+                            value: entity.postcode,
+                            isClearable: true,
+                            required: true,
+                            options: postalCodesPossibility,
+                            multiple: false,
+                            onInputChange: (_postcode, { action }) => {
+                                if (action === "menu-close") {
+                                    updateLocationPossibility({ id: "city", args: { postcode: entity.postcode?.value } });
+                                }
+                                if (action === "input-change" && _postcode.length === 5) {
+                                    updateLocationPossibility({ id: "city", args: { postcode: _postcode } });
+                                }
+                            },
+                        }}
+                        onChange={(d) => updateEntityStateState("postcode", d)}
+                    />
                 </div>
-                <div>
-                    <label htmlFor="phoneNumber">phoneNumber</label>
-                    <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntity("phoneNumber", d)} defaultValue={entity.phoneNumber} />
-                    <div>{errors.phoneNumber}</div>
-                </div>
-                <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="gender">genre</label>
-                        <Input
-                            type="select"
-                            name="gender"
-                            label="Genre"
-                            extra={{ value: entity.gender, options: entityPossibility.genders, required: true }}
-                            onChange={(d) => updateEntity("gender", d)}
-                        />
-                        <div>{errors.gender}</div>
-                    </div>
-                </div>
-                <div>
-                    <label htmlFor="password">password</label>
-                    <Input type="password" name="password" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
-                    <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" onChange={(d) => updateEntity("passwordConfirm", d)} defaultValue={entity.passwordConfirm} />
-                    <div>{errors.password}</div>
-                </div>
+                <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntityStateState("phoneNumber", d)} defaultValue={entity.phoneNumber} />
+                <Input type="select" name="gender" label="Genre" extra={{ value: entity.gender, options: entityPossibility.genders, required: true }} onChange={(d) => updateEntityStateState("gender", d)} />
+                <Input type="password" name="password" label="Mot de passe" onChange={(d) => updateEntityStateState("password", d)} defaultValue={entity.password} />
+                <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" onChange={(d) => updateEntityStateState("passwordConfirm", d)} defaultValue={entity.passwordConfirm} />
             </BOForm>
         </div>
     );

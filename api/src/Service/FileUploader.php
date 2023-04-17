@@ -21,21 +21,25 @@ class FileUploader
     ){
     }
 
-    public function upload(UploadedFile $file, string $code): array
+    public function upload(UploadedFile $file): array
     {
-        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $safeFilename = $this->slugger->slug($originalFilename);
-        $fileName = $safeFilename . '-' . sha1(uniqid(mt_rand(), true)).'.'.$file->guessExtension();
+        $originalFilename = $file->getClientOriginalName();
+        $fileName = sha1(uniqid(mt_rand(), true)).'.'.$file->getClientOriginalName();
 
         $mimeType = $file->getMimeType();
         $size = $file->getSize();
         $extension = $file->guessExtension();
+        if (!$extension) {
+            $extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);;
+        }
+        if (!$extension) {
+            $extension = '';
+        }
 
-        $file->move($this->getTargetDirectory($code), $fileName);
+        $file->move($this->getTargetDirectory(), $fileName);
 
         return [
-            'code' => $code,
-            'path' => sprintf('uploads/%s/%s', $code, $fileName),
+            'path' => sprintf('uploads/%s', $fileName),
             'size' => $size,
             'extension' => $extension,
             'type' => $mimeType,
@@ -43,9 +47,9 @@ class FileUploader
         ];
     }
 
-    public function getTargetDirectory(string $code): string
+    public function getTargetDirectory(): string
     {
-        return sprintf('%s/public/uploads/%s', $this->params->get('kernel.project_dir'), $code);
+        return sprintf('%s/public/uploads', $this->params->get('kernel.project_dir'));
     }
 
     public function getAlloweds(): array
@@ -58,8 +62,8 @@ class FileUploader
         ];
     }
 
-    public function unupload(string $code, string $path): void
+    public function unupload(string $path): void
     {
-        unlink($this->getTargetDirectory($code) . '/' . $path);
+        unlink($this->getTargetDirectory() . '/' . $path);
     }
 }

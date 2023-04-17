@@ -7,25 +7,25 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\State\UserPasswordHasher;
+use App\State\UserStateProcessor;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(processor: UserPasswordHasher::class),
+        new Post(processor: UserStateProcessor::class),
         new Get(),
-        new Patch(processor: UserPasswordHasher::class),
+        new Patch(processor: UserStateProcessor::class),
         new Delete()
     ],
     normalizationContext: ['groups' => ['user']]
@@ -53,38 +53,45 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups('user')]
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $firstname = null;
 
     #[Groups('user')]
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $lastname = null;
 
     #[Groups('user')]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $date_of_birth = null;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $postcode = null;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $city = null;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
 
     #[Groups('user')]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
     private $email;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(10, minMessage: 'Le numéro de téléphone doit avoir au moins 10 caractères')]
+    #[Assert\Regex(pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/', message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00')]
     private ?string $phone_number = null;
 
     #[Groups('user')]
@@ -92,6 +99,8 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private $password;
 
     #[Groups('user')]
+    #[Assert\Length(min: 8, minMessage: 'Le mot de passe doit avoir au moins 8 caractères')]
+    #[Assert\Regex(pattern: '/^(?=.*[A-Z])(?=.*\d).+$/', message: 'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre')]
     private ?string $plainPassword = null;
 
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
@@ -135,7 +144,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     
     private ?string $socials_networks = null;
 
-    
+
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups('user')]
     private ?string $pseudonym = null;
@@ -150,17 +159,18 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups('user')]
     #[ORM\ManyToOne(inversedBy: 'users')]
-    
+    #[Assert\NotBlank]
     private ?PersonalStatut $personal_statut = null;
-    
 
+
+    #[Groups('user')]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?File $picture_profil = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $region = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $department = null;
 
     public function __construct()
@@ -363,8 +373,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
      */
     public function eraseCredentials()
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     /**

@@ -1,14 +1,24 @@
 /* NORMALIZE FOR GLOBAL PROJECT*/
+* {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+}
+
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: $bo-font-family;
-    margin: 0;
-    padding: 0;
 }
 
 .limited-content {
     padding: 0 100px;
+}
+
+.margin-title {
+    h1, h2 {
+        padding: 20px 0;
+    }
 }
 
 .unselectable {
