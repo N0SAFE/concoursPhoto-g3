@@ -2,7 +2,7 @@
     &Input {
         padding: 10px;
         border-radius: 5px;
-        border: .2px solid $lightgrey;
+        border: 0.2px solid $lightgrey;
         box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
 
         &:focus {
@@ -11,10 +11,25 @@
             outline-width: 0.2px;
         }
 
-        &[type="date"], &[type="file"] {
+        &[type="date"],
+        &[type="file"] {
             border-radius: 20px;
         }
     }
     display: flex;
     flex-direction: column;
+}
+
+.radioList {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+.ckeckboxList {
+    &Input {
+        padding: 10px;
+        border-radius: 5px;
+        border: 0.2px solid $lightgrey;
+        box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
+    }
 }

@@ -10,7 +10,7 @@ import useLocation from "@/hooks/useLocation.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 
 export default function Profile() {
-    const [entityPossibility, setEntityPossibility] = useState({ statut: [], gender: [] });
+    const [entityPossibility, setEntityPossibility] = useState({ statut: [], gender: [], category: [] });
     const { me } = useAuthContext();
     const [email, setEmail] = useState(me?.email);
     const [password, setPassword] = useState("");
@@ -43,7 +43,11 @@ export default function Profile() {
         roles: [],
         gender: "",
         statut: "",
+        category: "",
         dateOfBirth: null,
+        pseudonym: "",
+        photographerDescription: "",
+        websiteUrl: "",
     });
     const updateEntity = (key, value) => {
         setEntity({ ...entity, [key]: value });
@@ -55,6 +59,18 @@ export default function Profile() {
 
     const getGendersPossibility = () => {
         return apiFetch("/genders", {
+            method: "GET",
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.label, value: item["@id"] };
+                });
+            });
+    };
+
+    const getCategoryPossibility = () => {
+        return apiFetch("/photographer_categories", {
             method: "GET",
         })
             .then((r) => r.json())
@@ -96,6 +112,10 @@ export default function Profile() {
                         gender: { label: data.gender.label, value: data.gender["@id"] },
                         statut: { label: data.personal_statut.label, value: data.personal_statut["@id"] },
                         dateOfBirth: new Date(data.date_of_birth),
+                        pseudonym: data.pseudonym,
+                        photographerDescription: data.photographer_description,
+                        category: { label: data.photographer_category.label, value: data.photographer_category["@id"] },
+                        websiteUrl: data.website_url,
                     };
                     console.debug(_user);
                     setEntity(_user);
@@ -104,7 +124,9 @@ export default function Profile() {
     }
 
     useEffect(() => {
-        const promise = Promise.all([getGendersPossibility(), getPersonalstatus(), getUser()]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
+        const promise = Promise.all([getGendersPossibility(), getPersonalstatus(), getCategoryPossibility(), getUser()]).then(([genders, statut, category]) =>
+            setEntityPossibility({ genders, statut, category })
+        );
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
@@ -124,9 +146,6 @@ export default function Profile() {
             setLocationPossibilityIsLoading(false);
         });
     }, [entity.postcode, entity.city]);
-    console.debug(entityPossibility);
-    console.debug(entity);
-    console.debug(new Date(entity.dateOfBirth));
 
     return (
         <div>
@@ -144,6 +163,10 @@ export default function Profile() {
                         gender: entity.gender.value,
                         personalStatut: entity.statut.value,
                         dateOfBirth: entity.dateOfBirth.toISOString(),
+                        pseudonym: entity.pseudonym,
+                        photographerDescription: entity.photographerDescription,
+                        photographerCategory: entity.category.value,
+                        websiteUrl: entity.websiteUrl,
                     };
                     console.debug("data", data);
                     // if (password !== passwordConfirm) {
@@ -177,7 +200,7 @@ export default function Profile() {
             >
                 <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
                     <div style={{ display: "flex", flexDirection: "column" }}>
-                        <Input type="select" name="genre" label="genre" onChange={(d) => updateEntity("gender", d)} extra={{ value: entity.gender, options: entityPossibility.genders }} />
+                        <Input type="radioList" name="genre" label="genre" onChange={(d) => updateEntity("gender", d)} extra={{ value: entity.gender, options: entityPossibility.genders }} />
                         <Input type="text" name="Prénom*" label="Prénom" onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
                         <Input type="text" name="Nom*" label="Nom" onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
                         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
@@ -186,6 +209,22 @@ export default function Profile() {
                         </div>
                         <Input type="email" name="Email*" label="Adresse email" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
                         <Input type="password" name="Mot de passe*" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
+                        <h3 style={{ marginTop: "20%", marginBottom: "3%" }}>Si vous êtes photographe</h3>
+                        <Input
+                            type="textarea"
+                            name="photographerDescription"
+                            label="Description Photographe"
+                            onChange={(d) => updateEntity("photographerDescription", d)}
+                            defaultValue={entity.photographerDescription}
+                        />
+                        <Input
+                            type="select"
+                            name="PhotographeCategory"
+                            label="Votre catégorie en tant que photographe ?"
+                            onChange={(d) => updateEntity("category", d)}
+                            extra={{ value: entity.category, options: entityPossibility.category }}
+                        />
+                        <Input type="text" name="websiteUrl" label="Réseaux sociaux" onChange={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
                     </div>
                     <div style={{ display: "flex", flexDirection: "column" }}>
                         <Input type="text" name="Adresse" label="Adresse" onChange={(d) => updateEntity("adress", d)} defaultValue={entity.address} />
@@ -234,7 +273,7 @@ export default function Profile() {
                             onChange={(d) => updateEntity("postcode", d)}
                         />
                         <div>
-                            <Input type="text" name="Pseudo" label="Pseudonyme" onChange={(d) => updateEntity("pseudonym", d)} defaultValue={me.pseudonym} />
+                            <Input type="text" name="pseudonym" label="Pseudonyme" onChange={(d) => updateEntity("pseudonym", d)} defaultValue={entity.pseudonym} />
                         </div>
                     </div>
                 </div>
