@@ -2,7 +2,7 @@ import React from "react";
 import style from "./style.module.scss";
 import Button from "@/components/atoms/Button";
 
-export default function BOForm({ handleSubmit, children, title }) {
+export default function BOForm({ handleSubmit, children, title, className, hasSubmit = false }) {
     const refs = {};
 
     return (
@@ -11,11 +11,11 @@ export default function BOForm({ handleSubmit, children, title }) {
                 e.preventDefault();
                 handleSubmit(refs);
             }}
-            className={style.form}
+            className={className ?? style.form}
         >
             <h2>{title}</h2>
             {children}
-            <Button type="submit" name="Soumettre" color={"grey"} textColor={"white"} padding={"5px"} border={false} borderRadius={"10px"} />
+            {!hasSubmit && <Button type="submit" name="Soumettre" color={"grey"} textColor={"white"} padding={"5px"} border={false} borderRadius={"10px"} />}
         </form>
     );
 }

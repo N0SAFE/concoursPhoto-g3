@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Competition;
+use App\Entity\File;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -10,6 +11,9 @@ use Faker\Factory;
 
 class CompetitionFixtures extends Fixture implements DependentFixtureInterface
 {
+    public function __construct(){
+        $this->faker = Factory::create('fr_FR');
+    }
 
     const COMPETITION_REFERENCE = 'competition';
     const COMPETITION_COUNT_REFERENCE = 10;
@@ -27,22 +31,34 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
         '32', '11', '24', '27', '28', '44', '52', '53', '02', '04'
     ];
 
+    public function createFile() {
+        $file = new File();
+
+        $file->setExtension($this->faker->fileExtension());
+        $file->setPath($this->faker->filePath());
+        $file->setSize($this->faker->randomNumber());
+        $file->setType($this->faker->mimeType());
+        $file->setDefaultName($this->faker->name());
+
+        return $file;
+    }
+
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create('fr_FR');
+
+        $faker = $this->faker;
 
         for ($i = 0; $i < self::COMPETITION_COUNT_REFERENCE; $i++) {
             $competition = new Competition();
 
             $competition->setState($faker->boolean());
             $competition->setCompetitionName($faker->text());
-            $competition->setCompetitionVisual($faker->imageUrl());
+            $competition->setCompetitionVisual($this->createFile());
             $competition->setDescription($faker->text());
             $competition->setRules($faker->text());
             $competition->setEndowments($faker->text());
             $competition->setCreationDate($faker->dateTime());
             $competition->setPublicationDate($faker->dateTime());
-            $competition->setPublicationStartDate($faker->dateTime());
             $competition->setSubmissionStartDate($faker->dateTime());
             $competition->setSubmissionEndDate($faker->dateTime());
             $competition->setVotingStartDate($faker->dateTime());

@@ -1,13 +1,29 @@
 // Colors
-$lightgrey: lightgrey;
-$white: white;
-$black: black;
+$lightgrey: #F5F5F5;
+$lightgrey-2: #F1F1F1;
+$darkgrey: #A8A8A8;
+$red: #FF0000;
 
 // Main colors
+$primary-color: #fff;
+$secondary-color: #000;
+$third-color: #D9D9D9;
 
 // Text colors
 
+$text-color-primary: $primary-color;
+$text-color-secondary: $secondary-color;
+$text-color-third: $third-color;
+$text-color-lightgrey-2: $lightgrey-2;
+$text-color-darkgrey: $darkgrey;
+
 // Background colors
+$background-color-lightgrey: $lightgrey;
+$background-color-lightgrey-2: $lightgrey-2;
+$background-color-primary: $primary-color;
+$background-color-secondary: $secondary-color;
+$background-color-darkgrey: $darkgrey;
+$background-color-red: $red;
 
 // Media Queries
 $breakpoints: (
@@ -23,3 +39,5 @@ $breakpoints: (
 // Logo size
 
 // Content
+
+$gapBetweenContainer: 15px;

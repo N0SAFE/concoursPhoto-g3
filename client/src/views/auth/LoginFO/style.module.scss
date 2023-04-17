@@ -1,0 +1,58 @@
+.login {
+    &Container {
+        @extend .limited-content;
+
+        form {
+            margin-top: 15px;
+            align-items: inherit;
+            padding: 0;
+        }
+    }
+
+    &Trailer {
+        @extend .margin-title;
+        display: flex;
+        flex-direction: column;
+
+        & > span {
+            line-height: 1.5;
+
+            & > a {
+                text-decoration: underline;
+            }
+
+            &:nth-child(2) {
+                font-weight: bold;
+            }
+        }
+    }
+
+    &Fields {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+
+        & > p > a {
+            text-decoration: underline;
+        }
+    }
+
+    &Submit {
+        display: flex;
+        align-self: center;
+
+        & > button > div {
+            display: inherit;
+            align-items: inherit;
+        }
+    }
+
+    &Proposition {
+        text-align: center;
+        padding-bottom: 15px;
+
+        & > a {
+            text-decoration: underline;
+        }
+    }
+}

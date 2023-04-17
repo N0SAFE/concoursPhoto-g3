@@ -1,0 +1,8 @@
+.lastCompetition {
+    & > div {
+        display: flex;
+        justify-content: center;
+        gap: $gapBetweenContainer;
+        flex-wrap: wrap;
+    }
+}

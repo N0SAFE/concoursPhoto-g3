@@ -1,35 +1,46 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
-import useApiFetch from "@/hooks/useApiFetch.js";
+import useApiFetch from "@/hooks/useApiFetch";
 import Button from "@/components/atoms/Button";
+import useLocation from "@/hooks/useLocation";
+import { toast } from "react-toastify";
+import style from "./style.module.scss";
 
 export default function CompetitionsList() {
+    const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
     const [competitions, setCompetitions] = useState([]);
-    function getCompetitions() {
-        apiFetch("/competitions", {
+
+    function getCompetitions(controller) {
+        return apiFetch("/competitions", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
-            .then((data) => {
+            .then(async (data) => {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
                 console.debug(data);
-                setCompetitions(data["hydra:member"]);
+                setCompetitions(data['hydra:member']);
+                return data['hydra:member'];
             })
-            .catch((error) => {
-                console.error(error);
-            });
     }
 
     useEffect(() => {
-        getCompetitions();
+        const controller = new AbortController();
+        const promise = getCompetitions(controller)
+        toast.promise(promise, {
+            pending: "Chargement des concours",
+            success: "Concours chargés",
+            error: "Erreur lors du chargement des concours",
+        });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     const handleDelete = (id) => {
@@ -44,9 +55,11 @@ export default function CompetitionsList() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
+                toast.success("Concours supprimé");
             })
             .catch((error) => {
                 console.error(error);
+                toast.error("Erreur lors de la suppression du concours");
             })
             .finally(() => {
                 getCompetitions();
@@ -54,7 +67,7 @@ export default function CompetitionsList() {
     };
 
     return (
-        <div>
+        <div className={style.containerList}>
             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <h1>Liste des concours</h1>
                 <Button color="green" textColor="white" name="Créer un concours" onClick={() => navigate("/BO/competition/create")}></Button>
@@ -66,13 +79,13 @@ export default function CompetitionsList() {
                     { property: "id", display: "ID" },
                     { property: "state", display: "Statut" },
                     { property: "competition_name", display: "Nom" },
-                    { property: "description", display: "description" },
+                    { property: "description", display: "Description" },
                     { property: "rules", display: "Règlement" },
                     { property: "endowments", display: "Dotation" },
                     { property: "creation_date", display: "Date de création" },
                     { property: "publication_date", display: "Date de publication" },
-                    { property: "publication_start_date", display: "Date de commencement" },
-                    { property: "voting_start_date", display: "Date début vote" },
+                    { property: "submission_start_date", display: "Date de commencement" },
+                    { property: "voting_start_date", display: "Date de début de vote" },
                 ]}
                 customAction={({ entity, property }) => {
                     if (property === "creation_date") {
@@ -96,8 +109,8 @@ export default function CompetitionsList() {
                             day: "numeric",
                         });
                     }
-                    if (property === "publication_start_date") {
-                        return new Date(entity.publication_start_date).toLocaleDateString("fr-FR", {
+                    if (property === "submission_start_date") {
+                        return new Date(entity.submission_start_date).toLocaleDateString("fr-FR", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",

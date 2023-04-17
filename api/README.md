@@ -14,6 +14,12 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; iwr https://community.chocolat
 
 Source : [Chocolatey](https://community.chocolatey.org/courses/installation/installing?method=installing-chocolatey)
 
+On installe OpenSSL avec la commande suivante :
+
+```
+choco install openssl
+```
+
 Ouvrez le projet et exécuter cette commande pour générer votre clé publique et secrète via Lexik :
 
 ```

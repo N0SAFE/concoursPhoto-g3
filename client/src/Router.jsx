@@ -10,7 +10,7 @@ import Home from "@/views/Home";
 import NotFound from "@/views/error/NotFound";
 import OrganizationList from "@/views/BO/organization/List";
 import Header from "@/layout/Header";
-import CompetitionsList from "@/views/BO/competition/List";
+import CompetitionList from "@/views/BO/competition/List";
 import OrganizationCreate from "@/views/BO/organization/Create";
 import CompetitionCreate from "@/views/BO/competition/Create";
 import GuardedRoute from "./layout/GuardedRoute.jsx";
@@ -20,16 +20,17 @@ import ProfileUser from "@/views/global/Profile/User";
 import OrganizationEdit from "@/views/BO/organization/Edit";
 import CompetitionSee from "@/views/BO/competition/See";
 import OrganizationSee from "@/views/BO/organization/See";
+import CompetitionEdit from "@/views/BO/competition/Edit";
 
 function Router() {
     return (
         <Routes>
-            <Route path="/auth" element={<Header />}>
+            <Route path="/auth" element={<Header environment={"backoffice"} />}>
                 <Route path="login" element={<Login />} />
                 <Route path="logout" element={<Logout />} />
             </Route>
             <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
-                <Route path="" element={<Header />}>
+                <Route path="" element={<Header environment={"backoffice"} />}>
                     <Route element={<BO />} />
                     <Route path="user">
                         <Route path="" element={<UserList />} />
@@ -44,13 +45,14 @@ function Router() {
                         <Route path="edit/:id" element={<OrganizationEdit />} />
                     </Route>
                     <Route path="competition">
-                        <Route path="" element={<CompetitionsList />} />
+                        <Route path="" element={<CompetitionList />} />
                         <Route path=":id" element={<CompetitionSee />} />
                         <Route path="create" element={<CompetitionCreate />} />
+                        <Route path="edit/:id" element={<CompetitionEdit />} />
                     </Route>
                 </Route>
             </Route>
-            <Route path="/">
+            <Route path="/" element={<Header />}>
                 <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
                     <Route path="" element={<Profile />} />
                     <Route path=":id" element={<ProfileUser />} />

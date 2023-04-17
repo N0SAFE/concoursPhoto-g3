@@ -1,10 +1,11 @@
+import { Link } from "react-router-dom";
 import style from "./style.module.scss";
 
 export default function ({ properties = [], entity }) {
-    if(!Array.isArray(properties)) {
+    if (!Array.isArray(properties)) {
         throw new Error("properties must be an array");
     }
-    if(!(entity instanceof Object)) {
+    if (!(entity instanceof Object)) {
         throw new Error("entity must be an object");
     }
     function createField(property, key) {
@@ -23,7 +24,7 @@ export default function ({ properties = [], entity }) {
             }
         }
 
-        if(type === "text") {
+        if (type === "text") {
             return (
                 <div key={key}>
                     <label>{display} : </label>
@@ -34,8 +35,12 @@ export default function ({ properties = [], entity }) {
         if (type === "img") {
             return (
                 <div key={key}>
-                    <label>{display}</label>
-                    <img src={data} />
+                    <label>{display} : </label>
+                    {data && (
+                        <Link to={data?.to} target="_blank">
+                            {data?.name}
+                        </Link>
+                    )}
                 </div>
             );
         }

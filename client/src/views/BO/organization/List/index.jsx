@@ -3,36 +3,44 @@ import { useNavigate } from "react-router-dom";
 import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import Button from "@/components/atoms/Button";
+import useLocation from "@/hooks/useLocation";
+import { toast } from "react-toastify";
+import style from "./style.module.scss";
 
 export default function OrganizationList() {
     const [Organizations, setOrganizations] = useState([]);
     const apiFetch = useApiFetch();
-
     const navigate = useNavigate();
+    const { getCityByCode } = useLocation();
 
-    function getOrganizations() {
-        apiFetch("/organizations", {
+    function getOrganizations(controller) {
+        return apiFetch("/organizations", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
-            .then((data) => {
+            .then(async (data) => {
                 console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                console.debug(data["hydra:member"]);
-                setOrganizations(data["hydra:member"]);
+                setOrganizations(data['hydra:member']);
+                return data['hydra:member'];
             })
-            .catch((error) => {
-                console.error(error);
-            });
     }
 
     useEffect(() => {
-        getOrganizations();
+        const controller = new AbortController();
+        const promise = getOrganizations(controller);
+        toast.promise(promise, {
+            pending: "Chargement des organisations",
+            success: "Organisations chargées",
+            error: "Erreur lors du chargement des organisations",
+        });
+        return () => setTimeout(() => controller.abort())
     }, []);
 
     const handleDelete = (id) => {
@@ -44,6 +52,7 @@ export default function OrganizationList() {
         })
             .then((res) => res.json())
             .then((data) => {
+                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
@@ -57,7 +66,7 @@ export default function OrganizationList() {
     };
 
     return (
-        <div>
+        <div className={style.containerList}>
             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <h1>Liste des organisations</h1>
                 <Button color="green" textColor="white" name="Créer une organisation" onClick={() => navigate("/BO/organization/create")}></Button>
@@ -68,20 +77,19 @@ export default function OrganizationList() {
                     { property: "id", display: "ID" },
                     { property: "state", display: "Statut" },
                     { property: "organizer_name", display: "Nom de l'organisation" },
-                    { property: "description", display: "description" },
-                    { property: "address", display: "addresse" },
-                    { property: "postcode", display: "code postal" },
-                    { property: "city", display: "ville" },
-                    { property: "number_phone", display: "téléphone" },
-                    { property: "email", display: "email" },
-                    { property: "website_url", display: "site web" },
-                    { property: "organization_type", display: "type d'organisation" },
+                    { property: "description", display: "Description" },
+                    { property: "address", display: "Addresse" },
+                    { property: "postcode", display: "Code postal" },
+                    { property: "city", display: "Ville" },
+                    { property: "number_phone", display: "Téléphone" },
+                    { property: "email", display: "Adresse mail" },
+                    { property: "website_url", display: "Site web" },
+                    { property: "organization_type", display: "Type d'organisation" },
                     { property: "country", display: "Pays" },
-                    { property: "competitions", display: "Nom du Concour" },
+                    { property: "competitions", display: "Nom du concours" },
                 ]}
                 customAction={({ entity, property }) => {
                     if (property === "organization_type") {
-                        console.debug(entity);
                         return entity.organization_type.label;
                     }
                     if (property === "competitions") {

@@ -1,4 +1,8 @@
 // Global Fonts
 
-$bo-font-family: Inter,system-ui,Avenir,Helvetica,Arial,sans-serif;
+$bo-font-family: Inter, Helvetica Neue, Helvetica, Arial, sans-serif;
 
+@font-face {
+    font-family: 'Inter';
+    src: url("/fonts/Inter-Regular.woff");
+}

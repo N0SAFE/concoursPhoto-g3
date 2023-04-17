@@ -2,126 +2,186 @@ import Input from "@/components/atoms/Input/index.jsx";
 import BOForm from "@/components/organisms/BO/Form";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
+import useApiPath from "@/hooks/useApiPath.js";
+import useFilesUploader from "@/hooks/useFilesUploader.js";
 
 export default function OrganizationEdit() {
-    const apiFetch = useApiFetch();
+    const apiPathComplete = useApiPath();
     const { id: organizationId } = useParams();
-
+    const apiFetch = useApiFetch();
     const { getCityByCode } = useLocation();
-    const [entityPossibility, setEntityPossibility] = useState({ organizationTypes: [] });
-    const [possibility, updatePossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
-    const citiesPossibility = possibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
-    const postalCodesPossibility = [...new Set(possibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
-    const getTypePossibility = () => {
+    const { deleteFile, uploadFile } = useFilesUploader();
+    const navigate = useNavigate();
+
+    const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
+    const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
+    const postalCodesPossibility = [...new Set(locationPossibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
+    const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] = useState(true);
+
+    const [entityPossibility, setEntityPossibility] = useState({ types: [] });
+    const [updatedFile, setUpdatedFile] = useState({
+        logo: null,
+    });
+    const [entity, setEntity] = useState({
+        organizerName: null,
+        description: null,
+        address: null,
+        city: null,
+        postcode: null,
+        phoneNumber: null,
+        email: null,
+        state: false,
+        logo: null,
+        country: null,
+        creationDate: null,
+        websiteUrl: null,
+        organizationType: null,
+        numberSiret: null,
+        intraCommunityVat: null,
+    });
+
+    const updateEntityState = (key, value) => {
+        setEntity({ ...entity, [key]: value });
+    };
+    const updateFileState = (key, value) => {
+        setUpdatedFile({ ...updatedFile, [key]: value });
+    };
+
+    const [errors, setErrors] = useState({});
+
+    const getOrganizationTypePossibility = (controller) => {
         return apiFetch("/organization_types", {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
-                console.debug(data);
-                setTypePossibility(
-                    data["hydra:member"].map(function (item) {
-                        return { label: item.label, value: item.id };
-                    })
-                );
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.label, value: item["@id"] };
+                });
             });
     };
-    function getOrganizations() {
+
+    function getOrganizations(controller) {
         return apiFetch("/organizations/" + organizationId, {
             method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
                 console.debug(data);
-                setState(data.state);
-                setOrganizerName(data.organizer_name);
-                setDescription(data.description);
-                setCountry(data.country);
-                setAddress(data.address);
-                setPhoneNumber(data.number_phone);
-                setEmail(data.email);
-                setWebsiteUrl(data.website_url);
-                setType({ value: data.organization_type.id, label: data.organization_type.label });
-                setLogo(data.logo);
-                setPostcode({ value: data.postcode, label: data.postcode });
-                getCityByCode(data.city).then((city) => {
-                    setCity({ label: city.nom, value: city.code });
+                return Promise.all([getCityByCode(data.city)]).then(([city]) => {
+                    const _organization = {
+                        organizerName: data.organizer_name,
+                        description: data.description,
+                        address: data.address,
+                        phoneNumber: data.number_phone,
+                        email: data.email,
+                        state: data.state,
+                        logo: data.logo || null,
+                        country: data.country,
+                        creationDate: data.creation_date,
+                        websiteUrl: data.website_url,
+                        city: { label: city.nom, value: city.code },
+                        postcode: { value: data.postcode, label: data.postcode },
+                        organizationType: { value: data.organization_type["@id"], label: data.organization_type.label },
+                        numberSiret: data.number_siret,
+                        intraCommunityVat: data.intra_community_vat,
+                    };
+                    const _organizationFile = {
+                        logo: data.logo ? { to: apiPathComplete(data.logo.path), name: data.logo.default_name } : null,
+                    };
+                    setEntity(_organization);
+                    setUpdatedFile(_organizationFile);
                 });
             });
     }
 
-    const [state, setState] = useState(false);
-    const [email, setEmail] = useState("");
-    const [description, setDescription] = useState("");
-    const [address, setAddress] = useState("");
-    const [city, setCity] = useState("");
-    const [postcode, setPostcode] = useState();
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [organizerName, setOrganizerName] = useState("");
-    const [type, setType] = useState("");
-    const [country, setCountry] = useState("");
-    const [typePossibility, setTypePossibility] = useState([]);
-    const [errors, setErrors] = useState({});
-    const [logo, setLogo] = useState("");
-    const [websiteUrl, setWebsiteUrl] = useState("");
-
     useEffect(() => {
-        const promise = Promise.all([getTypePossibility(), getOrganizations()]).then(([organizationTypes]) => setEntityPossibility({ organizationTypes }));
-        promise.catch(console.error);
+        const controller = new AbortController();
+        const promise = Promise.all([getOrganizationTypePossibility(controller), getOrganizations(controller)]).then(([types]) => setEntityPossibility({ types }));
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
             error: "Erreur lors du chargement des données",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     useEffect(() => {
-        updatePossibility({ args: { codeCity: city?.value, postcode: postcode?.value } });
-    }, [postcode, city]);
+        updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then(function (d) {
+            if (d.length === 1 && d[0].id === "cities" && d[0].data.length === 1) {
+                if (d[0].data[0].codesPostaux.length === 1 && !entity.postcode) {
+                    setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
+                } else if (!entity.city) {
+                    setEntity({ ...entity, city: { label: d[0].data[0].nom, value: d[0].data[0].code } });
+                }
+            } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the entity)
+            setLocationPossibilityIsLoading(false);
+        });
+    }, [entity.postcode, entity.city]);
 
     return (
         <div>
             <BOForm
                 title="Modifier une organisation"
                 handleSubmit={function () {
-                    console.debug("handleSubmit");
-                    console.debug("fetch");
-                    console.debug("type", type);
-                    const data = {
-                        organizerName: organizerName,
-                        description: description,
-                        address: address,
-                        city: city.value,
-                        postcode: postcode.value,
-                        numberPhone: phoneNumber,
-                        email: email,
-                        state,
-                        logo: logo,
-                        country: "France",
-                        creationDate: new Date().toISOString(),
-                        websiteUrl,
-                        organizationType: "/api/organization_types/" + type.value,
-                    };
-                    console.debug("data", data);
-                    const promise = apiFetch("/organizations/" + organizationId, {
-                        method: "PATCH",
-                        body: JSON.stringify(data),
-                        headers: {
-                            "Content-Type": "application/merge-patch+json",
-                        },
-                    })
-                        .then((r) => r.json())
-                        .then((data) => {
-                            console.debug(data);
-                            if (data["@type"] === "hydra:Error") {
-                                throw new Error(data.description);
-                            }
-                        });
+                    const promise = new Promise(async (resolve, reject) => {
+                        try {
+                            const newLogoId = await (async () => {
+                                if (updatedFile.logo === null) {
+                                    return null;
+                                } else if (updatedFile.logo.file) {
+                                    return await uploadFile({ file: updatedFile.logo.file }).then((r) => r["@id"]);
+                                }
+                            })()
 
+                            const data = {
+                                organizerName: entity.organizerName,
+                                description: entity.description,
+                                address: entity.address,
+                                city: entity.city.value,
+                                postcode: entity.postcode.value,
+                                numberPhone: entity.phoneNumber,
+                                email: entity.email,
+                                state: entity.state,
+                                logo: newLogoId,
+                                country: "France",
+                                websiteUrl: entity.websiteUrl,
+                                organizationType: entity.organizationType.value,
+                            };
+                            console.debug("data", data);
+                            const res = await apiFetch("/organizations/" + organizationId, {
+                                method: "PATCH",
+                                body: JSON.stringify(data),
+                                headers: {
+                                    "Content-Type": "application/merge-patch+json",
+                                },
+                            })
+                                .then((r) => r.json())
+                                .then(async (data) => {
+                                    console.debug(data);
+                                    if (data["@type"] === "hydra:Error") {
+                                        throw new Error(data.description);
+                                    }
+                                    if (updatedFile.logo === null && entity.logo) {
+                                        await deleteFile({ path: entity.logo["@id"] });
+                                    }
+                                })
+                            resolve(res);
+                        } catch (e) {
+                            console.error(e);
+                            reject(e);
+                        }
+                    });
+
+                    promise.then(function () {
+                        navigate("/BO/organization");
+                    });
                     toast.promise(promise, {
                         pending: "Modification en cours",
                         success: "Organisation modifiée",
@@ -130,100 +190,90 @@ export default function OrganizationEdit() {
                 }}
             >
                 <div>
-                    <label htmlFor="organizerName">Nom del'organisation</label>
-                    <Input type="text" name="organizerName" label="Nom de l'organisation" extra={{ required: true }} setState={setOrganizerName} defaultValue={organizerName} />
-                    <div>{errors.organizerName}</div>
-                </div>
-                <div>
-                    <label htmlFor="description">Description</label>
-                    <Input type="text" name="description" label="Description" extra={{ required: true }} setState={setDescription} defaultValue={description} />
-                    <div>{errors.description}</div>
-                </div>
-                <div>
-                    <label htmlFor="phoneNumber">Numéro télephone</label>
-                    <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} setState={setPhoneNumber} defaultValue={phoneNumber} />
-                    <div>{errors.phoneNumber}</div>
-                </div>
-                <div>
-                    <label htmlFor="logo">Logo</label>
-                    <Input type="file" name="logo" label="Logo" setState={setLogo} />
-                    <div>{errors.logo}</div>
-                </div>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} setState={setEmail} defaultValue={email} />
-                    <div>{errors.email}</div>
-                </div>
-                <div>
-                    <label htmlFor="state">Statut</label>
-                    <Input type="checkbox" name="state" label="Actif" defaultValue={state} setState={setState} />
-                    <div>{errors.state}</div>
-                </div>
-                <div>
-                    <label htmlFor="address">Adresse</label>
-                    <Input type="text" name="address" label="Adresse" defaultValue={address} extra={{ required: true }} setState={setAddress} />
-                    <div>{errors.address}</div>
-                </div>
-                <div>
-                    <label htmlFor="websiteUrl">Adresse site internet</label>
-                    <Input type="text" name="websiteUrl" label="WebsiteUrl" defaultValue={websiteUrl} extra={{ required: true }} setState={setWebsiteUrl} />
-                    <div>{errors.websiteUrl}</div>
-                </div>
-                <div>
-                    <label htmlFor="type">Type</label>
-                    <Input type="select" name="type" label="Type" extra={{ options: typePossibility, required: true, value: type }} setState={setType} />
-                    <div>{errors.type}</div>
-                </div>
-                <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="city">Ville</label>
+                    <Input
+                        type="text"
+                        name="organizerName"
+                        label="Nom de l'organisation"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntityState("organizerName", d)}
+                        defaultValue={entity.organizerName}
+                    />
+
+                    <Input type="text" name="description" label="Description" extra={{ required: true }} onChange={(d) => updateEntityState("description", d)} defaultValue={entity.description} />
+
+                    <Input
+                        type="tel"
+                        name="phoneNumber"
+                        label="Numéro de téléphone"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntityState("phoneNumber", d)}
+                        defaultValue={entity.phoneNumber}
+                    />
+
+                    <Input type="file" name="logo" label="Logo" onChange={(d) => updateFileState("logo", d)} extra={{ value: updatedFile.logo, type: "image" }} />
+
+                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntityState("email", d)} defaultValue={entity.email} />
+
+                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntityState("state", d)} defaultValue={entity.state} />
+
+                    <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntityState("address", d)} defaultValue={entity.address} />
+
+                    <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} onChange={(d) => updateEntityState("websiteUrl", d)} defaultValue={entity.websiteUrl} />
+
+                    <Input
+                        type="select"
+                        name="type"
+                        label="Type"
+                        extra={{ options: entityPossibility.types, required: true, value: entity.organizationType }}
+                        onChange={(d) => updateEntityState("organizationType", d)}
+                    />
+
+                    <div style={{ display: "flex", gap: "30px" }}>
                         <Input
                             type="select"
                             name="city"
                             label="Ville"
                             extra={{
-                                value: city,
+                                isLoading: entity.locationPossibilityIsLoading,
+                                value: entity.city,
                                 isClearable: true,
                                 required: true,
                                 options: citiesPossibility,
                                 multiple: false,
-                                onInputChange: (text, { action }) => {
+                                onInputChange: (cityName, { action }) => {
                                     if (action === "menu-close") {
-                                        updatePossibility({ id: "city" });
+                                        updateLocationPossibility({ id: "city", args: { codeCity: entity.city?.value, city: "" } });
                                     }
                                     if (action === "input-change") {
-                                        updatePossibility({ id: "city", args: { name: text } });
+                                        updateLocationPossibility({ id: "city", args: { city: cityName } });
                                     }
                                 },
                             }}
-                            setState={setCity}
+                            onChange={(d) => updateEntityState("city", d)}
                         />
-                        <div>{errors.city}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="postalCode">Code Postal</label>
+
                         <Input
                             type="select"
                             name="postalCode"
                             label="Code postal"
                             extra={{
-                                value: postcode,
+                                isLoading: locationPossibilityIsLoading,
+                                value: entity.postcode,
                                 isClearable: true,
                                 required: true,
                                 options: postalCodesPossibility,
                                 multiple: false,
-                                onInputChange: (postcode, { action }) => {
+                                onInputChange: (_postcode, { action }) => {
                                     if (action === "menu-close") {
-                                        updatePossibility({ id: "city" });
+                                        updateLocationPossibility({ id: "city", args: { postcode: entity.postcode?.value } });
                                     }
-                                    if (action === "input-change" && postcode.length === 5) {
-                                        updatePossibility({ id: "city", args: { postcode } });
+                                    if (action === "input-change" && _postcode.length === 5) {
+                                        updateLocationPossibility({ id: "city", args: { postcode: _postcode } });
                                     }
                                 },
                             }}
-                            setState={setPostcode}
+                            onChange={(d) => updateEntityState("postcode", d)}
                         />
-                        <div>{errors.postalCode}</div>
                     </div>
                 </div>
             </BOForm>

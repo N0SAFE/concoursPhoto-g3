@@ -1,6 +1,28 @@
 /* NORMALIZE FOR GLOBAL PROJECT*/
-body {
-    font-family: $bo-font-family;
+* {
     margin: 0;
     padding: 0;
+    scroll-behavior: smooth;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: $bo-font-family;
+}
+
+.limited-content {
+    padding: 0 100px;
+}
+
+.margin-title {
+    h1, h2 {
+        padding: 20px 0;
+    }
+}
+
+.unselectable {
+    -webkit-user-select: none; /* Safari /
+    -ms-user-select: none; / IE 10 and IE 11 /
+    user-select: none; / Standard syntax */
 }

@@ -2,181 +2,128 @@ import Input from "@/components/atoms/Input/index.jsx";
 import BOCreate from "@/components/organisms/BO/Form";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import { useState, useEffect } from "react";
+import useLocation from "@/hooks/useLocation";
+import { toast } from "react-toastify";
+import useFilesUpdater from "@/hooks/useFilesUploader.js";
+import { useNavigate } from "react-router-dom";
 
 export default function CompetitionCreate() {
+    const {uploadFile} = useFilesUpdater()
+    const navigate = useNavigate();
     const apiFetch = useApiFetch();
+    const { getCityByName, getDepartmentByName, getRegionByName } = useLocation();
 
-    const [regionsPossibility, setRegionsPossibility] = useState([]);
-    const [departmentsPossibility, setDepartmentsPossibility] = useState([]);
-    const [citiesPossibility, setCitiesPossibility] = useState([]);
+    const [locationPossibility, setLocationPossibility] = useState({
+        regions: { isLoading: true, data: [] },
+        departments: { isLoading: true, data: [] },
+        cities: { isLoading: true, data: [] },
+    });
 
-    const [participantCategoryPossibility, setParticipantCategoryPossibility] = useState([]);
-    const [organizationNamePossibility, setOrganizationNamePossibility] = useState([]);
-    const [themePossibility, setThemePossibility] = useState([]);
-
-    const getRegionsPossibility = ({ name } = {}) => {
-        const filter = [regionCriteria ? `code=${regionCriteria.value}` : "", name ? `nom=${name}` : ""].filter((c) => c !== "");
-        fetch(`https://geo.api.gouv.fr/regions?${filter.join("&")}`)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                data.length = 30;
-                const [regionsPossibility] = data.reduce(
-                    ([regionsResponse], c) => {
-                        regionsResponse.push({ label: c.nom, value: c.code });
-                        return [regionsResponse];
-                    },
-                    [[], []]
-                );
-                setRegionsPossibility(regionsPossibility);
-            });
+    const updateLocationPossibility = (key, { data, isLoading } = {}) => {
+        if (isLoading !== undefined) {
+            locationPossibility[key].isLoading = isLoading;
+        }
+        if (data !== undefined) {
+            locationPossibility[key].data = data.map((item) => ({ label: item.nom, value: item.code }));
+        }
+        setLocationPossibility({ ...locationPossibility });
     };
 
-    const getDepartmentsPossibility = ({ codeRegion, name } = {}) => {
-        const filter = [
-            regionCriteria ? `codeRegion=${regionCriteria.value}` : "" || codeRegion ? `codeRegion=${codeRegion}` : "",
-            departmentCriteria ? `code=${departmentCriteria.value}` : "",
-            name ? `nom=${name}` : "",
-        ].filter((c) => c !== "");
-        fetch(`https://geo.api.gouv.fr/departements?${filter.join("&")}`)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                data.length = 30;
-                const [departmentPossibility] = data.reduce(
-                    ([departmentResponse], c) => {
-                        departmentResponse.push({ label: c.nom, value: c.code, codeRegion: c.codeRegion });
-                        return [departmentResponse];
-                    },
-                    [[]]
-                );
-                setDepartmentsPossibility(departmentPossibility);
-            });
-    };
+    const [entityPossibility, setEntityPossibility] = useState({ participantCategories: [], organizers: [], themes: [] });
+    const [entity, setEntity] = useState({
+        state: null,
+        name: null,
+        visual: null,
+        description: null,
+        rules: null,
+        endowments: null,
+        participantCategories: null,
+        organizer: null,
+        themes: null,
+        creationDate: null,
+        publicationDate: null,
+        submissionStartDate: null,
+        submissionEndDate: null,
+        votingStartDate: null,
+        votingEndDate: null,
+        resultsDate: null,
+        weightingOfJuryVotes: null,
+        numberOfMaxVotes: null,
+        numberOfPrices: null,
+        minAgeCriteria: null,
+        maxAgeCriteria: null,
+        cityCriteria: [],
+        departmentCriteria: [],
+        regionCriteria: [],
+    });
 
-    const getCitiesPossibility = ({ codeRegion, codeDepartment, name } = {}) => {
-        const filter = [
-            regionCriteria ? `codeRegion=${regionCriteria.value}` : "" || codeRegion ? `codeRegion=${codeRegion}` : "",
-            departmentCriteria ? `codeDepartement=${departmentCriteria.value}` : "" || codeDepartment ? `codeDepartement=${codeDepartment}` : "",
-            cityCriteria ? `code=${cityCriteria.value}` : "",
-            name ? `nom=${name}` : "",
-        ].filter((c) => c !== "");
-        fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}`)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                data.length = 30;
-                const [citiesPossibility] = data.reduce(
-                    ([citiesResponse], c) => {
-                        citiesResponse.push({
-                            label: c.nom,
-                            value: c.code,
-                            codeDepartement: c.codeDepartement,
-                            codeRegion: c.codeRegion,
-                        });
-                        return [citiesResponse];
-                    },
-                    [[]]
-                );
-                setCitiesPossibility(citiesPossibility);
-            });
-    };
-
-    const getParticipantCategories = () => {
-        apiFetch("/participant_categories", {
-            method: "GET",
-            headers: { "Content-Type": "multipart/form-data" },
-        })
-            .then((r) => r.json())
-            .then((data) => {
-                console.debug(data);
-                setParticipantCategoryPossibility(
-                    data["hydra:member"].map(function (item) {
-                        return { label: item.label, value: item["@id"] };
-                    })
-                );
-            });
-    };
-
-    const getOrganizationsName = () => {
-        apiFetch("/organizations", {
-            method: "GET",
-        })
-            .then((r) => r.json())
-            .then((data) => {
-                console.debug(data);
-                setOrganizationNamePossibility(
-                    data["hydra:member"].map(function (item) {
-                        return { label: item.organizer_name, value: item["@id"] };
-                    })
-                );
-            });
-    };
-
-    const getThemes = () => {
-        apiFetch("/themes", {
-            method: "GET",
-        })
-            .then((r) => r.json())
-            .then((data) => {
-                console.debug(data);
-                setThemePossibility(
-                    data["hydra:member"].map(function (item) {
-                        return { label: item.label, value: item["@id"] };
-                    })
-                );
-            });
+    const updateEntityState = (key, value) => {
+        setEntity({ ...entity, [key]: value });
     };
 
     const [errors, setErrors] = useState({});
 
-    const [participantCategories, setParticipantCategories] = useState([]);
-    const [organizationName, setOrganizationName] = useState();
-    const [themes, setThemes] = useState([]);
+    const getParticipantCategories = (controller) => {
+        return apiFetch("/participant_categories", {
+            method: "GET",
+            headers: { "Content-Type": "multipart/form-data" },
+            signal: controller?.signal,
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.label, value: item["@id"] };
+                });
+            });
+    };
 
-    const [state, setState] = useState(false);
-    const [competitionName, setCompetitionName] = useState("");
-    const [competitionVisual, setCompetitionVisual] = useState("");
-    const [description, setDescription] = useState("");
-    const [rules, setRules] = useState("");
-    const [endowments, setEndowments] = useState("");
-    const [creationDate, setCreationDate] = useState("");
-    const [publicationDate, setPublicationDate] = useState("");
-    const [publicationStartDate, setPublicationStartDate] = useState("");
-    const [submissionStartDate, setSubmissionStartDate] = useState("");
-    const [submissionEndDate, setSubmissionEndDate] = useState("");
-    const [votingStartDate, setVotingStartDate] = useState("");
-    const [votingEndDate, setVotingEndDate] = useState("");
-    const [resultsDate, setResultsDate] = useState("");
-    const [weightingOfJuryVotes, setWeightingOfJuryVotes] = useState("");
-    const [numberOfMaxVotes, setNumberOfMaxVotes] = useState("");
-    const [numberOfPrices, setNumberOfPrices] = useState("");
-    const [minAgeCriteria, setMinAgeCriteria] = useState("");
-    const [maxAgeCriteria, setMaxAgeCriteria] = useState("");
-    const [countryCriteria, setCountryCriteria] = useState("");
-    const [cityCriteria, setCityCriteria] = useState("");
-    const [departmentCriteria, setDepartmentCriteria] = useState("");
-    const [regionCriteria, setRegionCriteria] = useState("");
+    const getOrganizationsName = (controller) => {
+        return apiFetch("/organizations", {
+            method: "GET",
+            signal: controller?.signal,
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.organizer_name, value: item["@id"] };
+                });
+            });
+    };
+
+    const getThemes = (controller) => {
+        return apiFetch("/themes", {
+            method: "GET",
+            signal: controller?.signal,
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.debug(data);
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.label, value: item["@id"] };
+                });
+            });
+    };
 
     useEffect(() => {
-        getRegionsPossibility();
-    }, [departmentCriteria, cityCriteria]);
-
-    useEffect(() => {
-        getDepartmentsPossibility();
-    }, [cityCriteria]);
-
-    useEffect(() => {
-        getCitiesPossibility();
-    }, []);
-
-    useEffect(() => {
-        getParticipantCategories();
-        getOrganizationsName();
-        getThemes();
+        const controller = new AbortController();
+        Promise.all([getRegionByName(null, {controller}), getDepartmentByName(null, {controller}), getCityByName(null, {controller})]).then(([regions, departments, cities]) => {
+            return setLocationPossibility({
+                regions: { isLoading: false, data: regions.map((d) => ({ label: d.nom, value: d.code })) },
+                departments: { isLoading: false, data: departments.map((d) => ({ label: d.nom, value: d.code })) },
+                cities: { isLoading: false, data: cities.map((d) => ({ label: d.nom, value: d.code })) },
+            });
+        });
+        const promise = Promise.all([getParticipantCategories(controller), getOrganizationsName(controller), getThemes(controller)]).then(([participantCategories, organizers, themes]) => {
+            setEntityPossibility({ participantCategories, organizers, themes });
+        });
+        toast.promise(promise, {
+            pending: "Chargement des données",
+            success: "Données chargées",
+            error: "Erreur lors du chargement des données",
+        });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
@@ -184,282 +131,246 @@ export default function CompetitionCreate() {
             <BOCreate
                 title="Création d'un concours"
                 handleSubmit={function () {
-                    console.debug("handleSubmit");
-                    console.debug("fetch");
-                    const data = {
-                        state,
-                        competitionName,
-                        competitionVisual,
-                        participantCategory: participantCategories.map((p) => p.value),
-                        organization: organizationName.value,
-                        description,
-                        rules,
-                        endowments,
-                        creationDate: new Date(creationDate).toISOString(),
-                        publicationDate: new Date(publicationDate).toISOString(),
-                        publicationStartDate: new Date(publicationStartDate).toISOString(),
-                        submissionStartDate: new Date(submissionStartDate).toISOString(),
-                        submissionEndDate: new Date(submissionEndDate).toISOString(),
-                        votingStartDate: new Date(votingStartDate).toISOString(),
-                        votingEndDate: new Date(votingEndDate).toISOString(),
-                        resultsDate: new Date(resultsDate).toISOString(),
-                        weightingOfJuryVotes: parseFloat(weightingOfJuryVotes),
-                        numberOfMaxVotes: parseInt(numberOfMaxVotes),
-                        numberOfPrices: parseInt(numberOfPrices),
-                        minAgeCriteria: parseInt(minAgeCriteria),
-                        maxAgeCriteria: parseInt(maxAgeCriteria),
-                        countryCriteria: ["FRANCE"],
-                        cityCriteria: [cityCriteria.value],
-                        departmentCriteria: [departmentCriteria.value],
-                        regionCriteria: [regionCriteria.value],
-                        theme: themes.map((t) => t.value),
-                    };
-                    console.debug("data", data);
-                    apiFetch("/competitions", {
-                        method: "POST",
-                        body: JSON.stringify(data),
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    })
-                        .then((r) => r.json())
-                        .then((data) => {
-                            console.debug(data);
-                            if (data["@type"] === "hydra:Error") {
-                                throw new Error(data.description);
+                    const promise = new Promise(async (resolve, reject) => {
+                        try{
+                            const visualId =await (async() => {
+                            if(entity.visual === null){
+                                return null
+                            }else {
+                                const visual = await uploadFile({file: entity.visual.file});
+                                return visual["@id"]
                             }
-                        });
+                        })()
+                        const data = {
+                            state: entity.state,
+                            competitionName: entity.name,
+                            competitionVisual: visualId,
+                            participantCategory: entity.participantCategories.map((p) => p.value),
+                            organization: entity.organizer.value,
+                            theme: entity.themes.map((t) => t.value),
+                            description: entity.description,
+                            rules: entity.rules,
+                            creationDate: new Date(entity.creationDate).toISOString(),
+                            publicationDate: new Date(entity.publicationDate).toISOString(),
+                            submissionStartDate: new Date(entity.submissionStartDate).toISOString(),
+                            submissionEndDate: new Date(entity.submissionEndDate).toISOString(),
+                            votingStartDate: new Date(entity.votingStartDate).toISOString(),
+                            votingEndDate: new Date(entity.votingEndDate).toISOString(),
+                            resultsDate: new Date(entity.resultsDate).toISOString(),
+                            weightingOfJuryVotes: parseFloat(entity.weightingOfJuryVotes),
+                            numberOfMaxVotes: parseInt(entity.numberOfMaxVotes),
+                            numberOfPrices: parseInt(entity.numberOfPrices),
+                            minAgeCriteria: parseInt(entity.minAgeCriteria),
+                            maxAgeCriteria: parseInt(entity.maxAgeCriteria),
+                            cityCriteria: [entity.cityCriteria.value],
+                            departmentCriteria: [entity.departmentCriteria.value],
+                            regionCriteria: [entity.regionCriteria.value],
+                            countryCriteria: ["FRANCE"],
+                            endowments: entity.endowments,
+                        };
+                        console.debug("data", data);
+                        const res = await apiFetch("/competitions", {
+                            method: "POST",
+                            body: JSON.stringify(data),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        })
+                            .then((r) => r.json())
+                            .then((data) => {
+                                console.debug(data);
+                                if (data["@type"] === "hydra:Error") {
+                                    throw new Error(data.description);
+                                }
+                            })
+                        resolve(res)
+                        }catch(e){
+                            console.error(e)
+                            reject(e)
+                        }
+                    });
+                    
+                    promise.then(function () {
+                        navigate("/BO/organization");
+                    });
+                    toast.promise(promise, {
+                        pending: "Création du concours",
+                        success: "Concours créé",
+                        error: "Erreur lors de la création du concours",
+                    });
                 }}
             >
                 <div>
-                    <label htmlFor="state">Etat</label>
-                    <Input type="checkbox" name="state" label="Actif" defaultValue={state} setState={setState} />
-                    <div>{errors.state}</div>
-                </div>
-                <div>
-                    <label htmlFor="competitionName">Intitulé du concours</label>
-                    <Input type="text" name="competitionName" label="Intitulé du concours" defaultValue={competitionName} setState={setCompetitionName} />
-                    <div>{errors.competitionName}</div>
-                </div>
-                <div>
-                    <label htmlFor="competitionVisual">Visuel du concours</label>
-                    <Input type="file" name="competitionVisual" label="Visuel du concours" defaultValue={competitionVisual} setState={setCompetitionVisual} />
-                    <div>{errors.competitionVisual}</div>
-                </div>
-                <div>
-                    <label htmlFor="description">Visuel du concours</label>
-                    <Input type="text" name="description" label="Description" defaultValue={description} setState={setDescription} />
-                    <div>{errors.description}</div>
-                </div>
-                <div>
-                    <label htmlFor="rules">Règlement</label>
-                    <Input type="text" name="rules" label="Règlement" defaultValue={rules} setState={setRules} />
-                    <div>{errors.rules}</div>
-                </div>
-                <div>
-                    <label htmlFor="endowments">Dotation</label>
-                    <Input type="text" name="endowments" label="Dotation" defaultValue={endowments} setState={setEndowments} />
-                    <div>{errors.endowments}</div>
-                </div>
-                <div>
-                    <label htmlFor="creationDate">Date de création</label>
-                    <Input type="date" name="creationDate" label="Date de création" defaultValue={creationDate} setState={setCreationDate} />
-                    <div>{errors.creationDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="publicationDate">Date de publication</label>
-                    <Input type="date" name="publicationDate" label="Date de publication" defaultValue={publicationDate} setState={setPublicationDate} />
-                    <div>{errors.publicationDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="publicationStartDate">Date de début de publication</label>
-                    <Input type="date" name="publicationStartDate" label="Date de début de publication" defaultValue={publicationStartDate} setState={setPublicationStartDate} />
-                    <div>{errors.publicationStartDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="submissionStartDate">Date de début de soumission</label>
-                    <Input type="date" name="submissionStartDate" label="Date de début de soumission" defaultValue={submissionStartDate} setState={setSubmissionStartDate} />
-                    <div>{errors.submissionStartDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="submissionEndDate">Date de fin de soumission</label>
-                    <Input type="date" name="submissionEndDate" label="Date de fin de soumission" defaultValue={submissionEndDate} setState={setSubmissionEndDate} />
-                    <div>{errors.submissionEndDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="votingStartDate">Date de début de vote</label>
-                    <Input type="date" name="votingStartDate" label="Date de début de vote" defaultValue={votingStartDate} setState={setVotingStartDate} />
-                    <div>{errors.votingStartDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="votingEndDate">Date de fin de vote</label>
-                    <Input type="date" name="votingEndDate" label="Date de fin de vote" defaultValue={votingEndDate} setState={setVotingEndDate} />
-                    <div>{errors.votingEndDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="resultsDate">Date des résultats</label>
-                    <Input type="date" name="resultsDate" label="Date de fin de vote" defaultValue={resultsDate} setState={setResultsDate} />
-                    <div>{errors.resultsDate}</div>
-                </div>
-                <div>
-                    <label htmlFor="weightingOfJuryVotes">Pondération des votes du jury</label>
+                    <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntityState("state", d)} defaultValue={entity.state} />
+
+                    <Input type="text" name="name" label="Intitulé du concours" onChange={(d) => updateEntityState("name", d)} defaultValue={entity.name} />
+
+                    <Input type="file" name="visual" label="Visuel" onChange={(d) => updateEntityState("visual", d)} extra={{ value: entity.visual, type: "image" }} />
+
+                    <Input type="text" name="description" label="Description" onChange={(d) => updateEntityState("description", d)} defaultValue={entity.description} />
+
+                    <Input type="text" name="rules" label="Règlement" onChange={(d) => updateEntityState("rules", d)} defaultValue={entity.rules} />
+
+                    <Input type="text" name="endowments" label="Dotation" onChange={(d) => updateEntityState("endowments", d)} defaultValue={entity.endowments} />
+
+                    <Input type="date" name="creationDate" label="Date de création" onChange={(d) => updateEntityState("creationDate", d)} defaultValue={entity.creationDate} />
+
+                    <Input type="date" name="publicationDate" label="Date de publication" onChange={(d) => updateEntityState("publicationDate", d)} defaultValue={entity.publicationDate} />
+
+                    <Input
+                        type="date"
+                        name="submissionStartDate"
+                        label="Date de début de soumission"
+                        onChange={(d) => updateEntityState("submissionStartDate", d)}
+                        defaultValue={entity.submissionStartDate}
+                    />
+
+                    <Input type="date" name="submissionEndDate" label="Date de fin de soumission" onChange={(d) => updateEntityState("submissionEndDate", d)} defaultValue={entity.submissionEndDate} />
+
+                    <Input type="date" name="votingStartDate" label="Date de début de vote" onChange={(d) => updateEntityState("votingStartDate", d)} defaultValue={entity.votingStartDate} />
+
+                    <Input type="date" name="votingEndDate" label="Date de fin de vote" onChange={(d) => updateEntityState("votingEndDate", d)} defaultValue={entity.votingEndDate} />
+
+                    <Input type="date" name="resultsDate" label="Date de fin de vote" onChange={(d) => updateEntityState("resultsDate", d)} defaultValue={entity.resultsDate} />
+
                     <Input
                         type="number"
                         extra={{ step: 0.01 }}
                         name="weightingOfJuryVotes"
                         label="Pondération des votes du jury"
-                        defaultValue={weightingOfJuryVotes}
-                        setState={setWeightingOfJuryVotes}
+                        defaultValue={entity.weightingOfJuryVotes}
+                        onChange={(d) => updateEntityState("weightingOfJuryVotes", d)}
                     />
-                    <div>{errors.weightingOfJuryVotes}</div>
-                </div>
-                <div>
-                    <label htmlFor="numberOfMaxVotes">Nombre maximum de votes</label>
-                    <Input type="number" name="numberOfMaxVotes" label="Nombre maximum de votes" defaultValue={numberOfMaxVotes} setState={setNumberOfMaxVotes} />
-                    <div>{errors.numberOfMaxVotes}</div>
-                </div>
-                <div>
-                    <label htmlFor="numberOfPrices">Nombres de prix</label>
-                    <Input type="number" name="numberOfPrices" label="Nombres de prix" defaultValue={numberOfPrices} setState={setNumberOfPrices} />
-                    <div>{errors.numberOfPrices}</div>
-                </div>
-                <div>
-                    <label htmlFor="minAgeCriteria">Âge minimum</label>
-                    <Input type="number" name="minAgeCriteria" label="Âge minimum" defaultValue={minAgeCriteria} setState={setMinAgeCriteria} />
-                    <div>{errors.minAgeCriteria}</div>
-                </div>
-                <div>
-                    <label htmlFor="maxAgeCriteria">Âge maximum</label>
-                    <Input type="number" name="maxAgeCriteria" label="Âge maximum" defaultValue={maxAgeCriteria} setState={setMaxAgeCriteria} />
-                    <div>{errors.maxAgeCriteria}</div>
-                </div>
-                <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="region">Région</label>
+
+                    <Input type="number" name="numberOfMaxVotes" label="Nombre maximum de votes" onChange={(d) => updateEntityState("numberOfMaxVotes", d)} defaultValue={entity.numberOfMaxVotes} />
+
+                    <Input type="number" name="numberOfPrices" label="Nombres de prix" onChange={(d) => updateEntityState("numberOfPrices", d)} defaultValue={entity.numberOfPrices} />
+
+                    <Input type="number" name="minAgeCriteria" label="Âge minimum" onChange={(d) => updateEntityState("minAgeCriteria", d)} defaultValue={entity.minAgeCriteria} />
+
+                    <Input type="number" name="maxAgeCriteria" label="Âge maximum" onChange={(d) => updateEntityState("maxAgeCriteria", d)} defaultValue={entity.maxAgeCriteria} />
+
+                    <div style={{ display: "flex", gap: "30px" }}>
                         <Input
                             type="select"
                             name="region"
                             label="Région"
                             extra={{
+                                isLoading: locationPossibility.regions.loading,
                                 clearable: true,
                                 required: true,
-                                options: regionsPossibility,
-                                multiple: false,
-                                onInputChange: (text, { action, prevInputValue }) => {
+                                options: locationPossibility.regions.data,
+                                isMulti: true,
+                                closeMenuOnSelect: false,
+                                menuPlacement: "top",
+                                onInputChange: (name, { action }) => {
                                     if (action === "input-change") {
-                                        getRegionsPossibility({ name: text });
-                                    } else {
-                                        if (prevInputValue !== "") {
-                                            getRegionsPossibility();
-                                        }
+                                        getRegionByName(name).then(function (p) {
+                                            updateLocationPossibility("regions", { data: p });
+                                        });
+                                    }
+                                    if (action === "menu-close") {
+                                        updateLocationPossibility("regions", { loading: true });
+                                        getRegionByName().then(function (p) {
+                                            updateLocationPossibility("regions", { data: p, loading: false });
+                                        });
                                     }
                                 },
                             }}
-                            setState={(item) => {
-                                setRegionCriteria(item);
-                                getDepartmentsPossibility({ codeRegion: item.value });
-                                getCitiesPossibility({ codeRegion: item.value });
+                            onChange={(d) => {
+                                updateEntityState("regionCriteria", d);
                             }}
                         />
-                        <div>{errors.regionCriteria}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="department">Département</label>
+
                         <Input
                             type="select"
                             name="department"
                             label="Département"
                             extra={{
+                                isLoading: locationPossibility.departments.loading,
                                 clearable: true,
                                 required: true,
-                                options: departmentsPossibility,
-                                multiple: false,
-                                onInputChange: (text, { action, prevInputValue }) => {
+                                options: locationPossibility.departments.data,
+                                isMulti: true,
+                                closeMenuOnSelect: false,
+                                menuPlacement: "top",
+                                onInputChange: (name, { action }) => {
                                     if (action === "input-change") {
-                                        getDepartmentsPossibility({ name: text });
+                                        getDepartmentByName(name).then(function (p) {
+                                            updateLocationPossibility("departments", { data: p });
+                                        });
                                     }
                                     if (action === "menu-close") {
-                                        if (prevInputValue !== "") {
-                                            getDepartmentsPossibility();
-                                        }
+                                        updateLocationPossibility("departments", { loading: true });
+                                        getDepartmentByName().then(function (p) {
+                                            updateLocationPossibility("departments", { data: p, loading: false });
+                                        });
                                     }
                                 },
                             }}
-                            setState={(item) => {
-                                setDepartmentCriteria(item);
-                                setRegionCriteria({ value: item.codeRegion });
-                                getCitiesPossibility({ codeDepartement: item.value });
+                            onChange={(d) => {
+                                updateEntityState("departmentCriteria", d);
                             }}
                         />
-                        <div>{errors.departmentCriteria}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="city">Ville</label>
+
                         <Input
                             type="select"
                             name="city"
                             label="Ville"
                             extra={{
+                                isLoading: locationPossibility.cities.loading,
                                 clearable: true,
                                 required: true,
-                                options: citiesPossibility,
-                                multiple: false,
-                                onInputChange: (text, { action, prevInputValue }) => {
+                                options: locationPossibility.cities.data,
+                                isMulti: true,
+                                closeMenuOnSelect: false,
+                                menuPlacement: "top",
+                                onInputChange: (name, { action }) => {
                                     if (action === "input-change") {
-                                        getCitiesPossibility({ name: text });
-                                    } else {
-                                        if (prevInputValue !== "") {
-                                            getCitiesPossibility();
-                                        }
+                                        getCityByName(name).then(function (p) {
+                                            updateLocationPossibility("cities", { data: p });
+                                        });
+                                    }
+                                    if (action === "menu-close") {
+                                        updateLocationPossibility("cities", { loading: true });
+                                        getCityByName().then(function (p) {
+                                            updateLocationPossibility("cities", { data: p, loading: false });
+                                        });
                                     }
                                 },
                             }}
-                            setState={(item) => {
-                                setCityCriteria(item);
-                                setDepartmentCriteria({ value: item.codeDepartement });
-                                setRegionCriteria({ value: item.codeRegion });
+                            onChange={(d) => {
+                                updateEntityState("cityCriteria", d);
                             }}
-                            defaultValue={cityCriteria}
                         />
-                        <div>{errors.cityCriteria}</div>
                     </div>
                     <div style={{ display: "flex", gap: "30px" }}>
-                        <div>
-                            <label htmlFor="participantCategory">Catégorie de participant</label>
-                            <Input
-                                type="select"
-                                name="participantCategory"
-                                label="Catégorie de participant"
-                                defaultValue={participantCategories}
-                                extra={{ isMulti: true, required: true, options: participantCategoryPossibility, closeMenuOnSelect: false }}
-                                setState={setParticipantCategories}
-                            />
-                            <div>{errors.participantCategories}</div>
-                        </div>
-                        <div>
-                            <label htmlFor="organizationName">Nom de l'organisation</label>
-                            <Input
-                                type="select"
-                                name="organizationName"
-                                label="Nom de l'organisation"
-                                defaultValue={organizationName}
-                                extra={{ required: true, options: organizationNamePossibility }}
-                                setState={setOrganizationName}
-                            />
-                            <div>{errors.organizationName}</div>
-                        </div>
-                        <div>
-                            <label htmlFor="themes">Thème(s)</label>
-                            <Input
-                                type="select"
-                                name="themes"
-                                label="Thèmes"
-                                defaultValue={themes}
-                                extra={{ required: true, isMulti: true, options: themePossibility, closeMenuOnSelect: false }}
-                                setState={setThemes}
-                            />
-                            <div>{errors.themes}</div>
-                        </div>
+                        <Input
+                            type="select"
+                            name="participantCategory"
+                            label="Catégorie de participant"
+                            defaultValue={entity.participantCategories}
+                            extra={{ isMulti: true, required: true, options: entityPossibility.participantCategories, closeMenuOnSelect: false, menuPlacement: "top" }}
+                            onChange={(d) => updateEntityState("participantCategories", d)}
+                        />
+
+                        <Input
+                            type="select"
+                            name="organizer"
+                            label="Nom de l'organisation"
+                            defaultValue={entity.organizer}
+                            extra={{ required: true, options: entityPossibility.organizers, menuPlacement: "top" }}
+                            onChange={(d) => updateEntityState("organizer", d)}
+                        />
+
+                        <Input
+                            type="select"
+                            name="themes"
+                            label="Thèmes"
+                            defaultValue={entity.themes}
+                            extra={{ required: true, isMulti: true, options: entityPossibility.themes, closeMenuOnSelect: false, menuPlacement: "top" }}
+                            onChange={(d) => updateEntityState("themes", d)}
+                        />
                     </div>
                 </div>
             </BOCreate>

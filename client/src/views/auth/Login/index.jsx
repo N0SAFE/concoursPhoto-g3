@@ -13,47 +13,44 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { email, password } = e.target.elements;
-        login({ email: email.value, password: password.value })
-            .then(function (me) {
-                console.log(me)
-                if (me.roles.includes("ROLE_ADMIN")) {
-                    navigate("/BO");
-                } else {
-                    navigate("/");
-                }
-                toast.success("Vous êtes connecté");
-            })
-            .catch(function (error) {
-                toast.error(error.message);
-                console.error(error);
-            });
+        const promise = login({ email: email.value, password: password.value }).then(function (me) {
+            console.debug(me);
+            if (me.roles.includes("ROLE_ADMIN")) {
+                navigate("/BO");
+            } else {
+                navigate("/");
+            }
+        });
+        toast.promise(promise, {
+            pending: "Connexion en cours",
+            success: "Connexion réussie",
+            error: {
+                render({ data }) {
+                    return data.message;
+                },
+            },
+        });
     };
 
     return (
         <div className={style.container}>
             <div>
-                <h1 className={style.title}>Connexion au BackOffice</h1>
+                <h1>Se connecter</h1>
             </div>
             <div>
                 <form onSubmit={handleSubmit} className={style.input}>
                     <div>
                         <div>
-                            <label>Adresse mail</label>
-                        </div>
-                        <div>
-                            <Input name="email" type="email" placeholder="Email" />
+                            <Input label="Email" name="email" type="email" placeholder="Email" />
                         </div>
                     </div>
                     <div>
                         <div>
-                            <label>Mot de passe</label>
-                        </div>
-                        <div>
-                            <Input name="password" type="password" placeholder="Password" />
+                            <Input label="Mot de passe" name="password" type="password" placeholder="Password" />
                         </div>
                     </div>
                     <div className={style.containerButton}>
-                        <Button type="submit" name="Login" color={"green"} textColor={"white"} padding={"5px"} border={false} borderRadius={"10px"}/>
+                        <Button type="submit" name="Login" color={"green"} textColor={"white"} padding={"5px"} border={false} borderRadius={"10px"} />
                     </div>
                 </form>
             </div>

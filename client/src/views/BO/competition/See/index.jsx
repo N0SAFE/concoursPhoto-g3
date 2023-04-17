@@ -5,19 +5,22 @@ import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
+import useApiPath from "@/hooks/useApiPath.js";
 
 export default function () {
+    const toApiPath = useApiPath()
     const apiFetch = useApiFetch();
-    const { getCityByCode } = useLocation();
+    const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
     const [entity, setEntity] = useState({});
     const { id: competitionId } = useParams();
 
-    const getCompetitions = () => {
+    const getCompetitions = (controller) => {
         return apiFetch("/competitions/" + competitionId, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
             .then((data) => {
@@ -25,18 +28,19 @@ export default function () {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                setEntity(data);
-                Promise.all(
-                    data.city_criteria.map((cityCode) => {
-                        return getCityByCode(cityCode).then((city) => city.nom);
-                    })
-                ).then((cities) => {
-                    setEntity((entity) => {
-                        return {
-                            ...entity,
-                            city_criteria: cities,
-                        };
-                    });
+                Promise.all([
+                    Promise.all(data.city_criteria.map(getCityByCode)),
+                    Promise.all(data.department_criteria.map(getDepartmentByCode)),
+                    Promise.all(data.region_criteria.map(getRegionByCode)),
+                ]).then(([cities, departments, regions]) => {
+                    const _competition = {
+                        ...data,
+                        city_criteria: cities,
+                        department_criteria: departments,
+                        region_criteria: regions,
+                    }
+                    setEntity(_competition);
+                    return _competition;
                 });
             })
             .catch((error) => {
@@ -45,12 +49,14 @@ export default function () {
     };
 
     useEffect(() => {
-        const promise = getCompetitions();
+        const controller = new AbortController();
+        const promise = getCompetitions(controller);
         toast.promise(promise, {
             pending: "Chargement du concours",
             success: "Concours chargé",
             error: "Erreur lors du chargement du consours",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
@@ -144,8 +150,12 @@ export default function () {
                     },
                 },
                 {
-                    display: "Ville",
-                    name: "city_criteria",
+                    display: "Visuel",
+                    name: "competition_visual",
+                    type: "img",
+                    customData: ({ entity }) => {
+                        return entity?.competition_visual?.path ? {to: toApiPath(entity?.competition_visual?.path), name: entity?.competition_visual?.default_name} : null;
+                    },
                 },
                 {
                     display: "Pays",
@@ -156,8 +166,25 @@ export default function () {
                     name: "state",
                 },
                 {
+                    display: "Ville",
+                    name: "city_criteria",
+                    customData({ entity, property }) {
+                        return entity?.city_criteria?.map((city) => city.nom).join(", ");
+                    }
+                },
+                {
                     display: "département",
                     name: "department_criteria",
+                    customData({ entity, property }) {
+                        return entity?.department_criteria?.map((department) => department.nom).join(", ");
+                    }
+                },
+                {
+                    display: "région",
+                    name: "region_criteria",
+                    customData({ entity, property }) {
+                        return entity?.region_criteria?.map((region) => region.nom).join(", ");
+                    }
                 },
                 {
                     display: "réglement",

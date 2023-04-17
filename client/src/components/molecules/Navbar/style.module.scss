@@ -1,24 +1,91 @@
-.nav {
-    display: flex;
-    height: auto;
-    background-color: $lightgrey;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-    padding: 0 15px 0 15px;
-
-    ul {
+.navbar {
+    &Container {
+        @extend .limited-content;
         display: flex;
-        list-style: none;
-        padding: 0;
-        gap: 15px;
+        height: 100px;
+        background-color: $background-color-darkgrey;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 
-        & > li, div {
-            & > a {
-                color: $white;
-                text-decoration: none;
-                font-size: 25px;
+        @include below(md) {
+            height: auto;
+            padding: 15px;
+        }
+
+        ul {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            gap: 15px;
+
+            & > li, & > div > div > li {
+                position: relative;
+                display: flex;
+                align-items: center;
+
+                & > a {
+                    color: $text-color-secondary;
+                    text-decoration: none;
+                    font-size: 14px;
+                    font-weight: 700;
+
+                    &:hover {
+                        color: $text-color-primary;
+
+                        &:after {
+                            display: block;
+                            position: absolute;
+                            width: 100%;
+                            content: "";
+                            padding-top: 10px;
+                            border-bottom: 2px solid $text-color-primary;
+                        }
+                    }
+                }
+            }
+
+            @include below(md) {
+                display: none;
             }
         }
+    }
+
+    &Responsive {
+        display: none;
+
+        @include below(md) {
+            display: flex !important;
+
+            & > div {
+                flex-direction: column;
+                z-index: 100;
+                overflow: hidden;
+                background-color: $background-color-darkgrey;
+                width: 100%;
+                transition: 0.25s ease-in-out;
+                max-height: 0;
+
+                .navbarStyle {
+                    &:hover {
+                        &:after {
+                            border-bottom: none !important;
+                        }
+                    }
+                }
+            }
+
+            .icon {
+                cursor: pointer;
+
+                &:hover {
+                    color: $text-color-secondary;
+                }
+            }
+        }
+    }
+
+    &Show {
+        max-height: 300px !important;
     }
 }

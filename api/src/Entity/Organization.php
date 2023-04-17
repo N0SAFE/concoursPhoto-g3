@@ -10,7 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(normalizationContext: ['groups' => ['organization']])]
+#[ApiResource(normalizationContext: ['groups' => ['organization', 'file']])]
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 class Organization
 {
@@ -31,10 +31,6 @@ class Organization
     #[ORM\Column(length: 255)]
     #[Groups('organization')]
     private ?string $description = null;
-
-    #[ORM\Column(length: 255)]
-    #[Groups('organization')]
-    private ?string $logo = null;
 
     #[ORM\Column(length: 255)]
     #[Groups('organization')]
@@ -81,6 +77,18 @@ class Organization
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
+    #[Groups(['organization'])]
+    #[ORM\Column(length: 255)]
+    private ?string $intra_community_vat = null;
+
+    #[Groups(['organization'])]
+    #[ORM\Column(length: 255)]
+    private ?string $number_siret = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups(['organization'])]
+    private ?File $logo = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -126,18 +134,6 @@ class Organization
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getLogo(): ?string
-    {
-        return $this->logo;
-    }
-
-    public function setLogo(string $logo): self
-    {
-        $this->logo = $logo;
 
         return $this;
     }
@@ -351,6 +347,42 @@ class Organization
                 $sponsor->setOrganization(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIntraCommunityVat(): ?string
+    {
+        return $this->intra_community_vat;
+    }
+
+    public function setIntraCommunityVat(string $intra_community_vat): self
+    {
+        $this->intra_community_vat = $intra_community_vat;
+
+        return $this;
+    }
+
+    public function getNumberSiret(): ?string
+    {
+        return $this->number_siret;
+    }
+
+    public function setNumberSiret(string $number_siret): self
+    {
+        $this->number_siret = $number_siret;
+
+        return $this;
+    }
+
+    public function getLogo(): ?File
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?File $logo): self
+    {
+        $this->logo = $logo;
 
         return $this;
     }

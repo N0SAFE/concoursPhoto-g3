@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: PictureRepository::class)]
@@ -16,6 +17,7 @@ class Picture
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('competition')]
     private ?int $id = null;
 
     #[ORM\Column]
@@ -26,9 +28,6 @@ class Picture
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $submission_date = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $file = null;
 
     #[ORM\Column]
     private ?int $number_of_votes = null;
@@ -43,10 +42,15 @@ class Picture
     private Collection $votes;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
+    #[Groups('competition')]
     private ?Competition $competition = null;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
+    #[Groups('competition')]
     private ?User $user = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?File $file = null;
 
     public function __construct()
     {
@@ -90,18 +94,6 @@ class Picture
     public function setSubmissionDate(\DateTimeInterface $submission_date): self
     {
         $this->submission_date = $submission_date;
-
-        return $this;
-    }
-
-    public function getFile(): ?string
-    {
-        return $this->file;
-    }
-
-    public function setFile(string $file): self
-    {
-        $this->file = $file;
 
         return $this;
     }
@@ -192,6 +184,18 @@ class Picture
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(?File $file): self
+    {
+        $this->file = $file;
 
         return $this;
     }

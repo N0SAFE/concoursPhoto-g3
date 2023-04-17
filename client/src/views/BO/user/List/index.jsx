@@ -4,16 +4,19 @@ import BOList from "@/components/organisms/BO/List";
 import useApiFetch from "@/hooks/useApiFetch";
 import { toast } from "react-toastify";
 import Button from "@/components/atoms/Button";
+import useLocation from "@/hooks/useLocation";
+import style from "./style.module.scss";
 
 export default function UserList() {
     const apiFetch = useApiFetch();
     const [users, setUsers] = useState([]);
     const [filterState, setFilterState] = useState("all");
     const [filterVerified, setFilterVerified] = useState("all");
+    const { getCityByCode } = useLocation();
 
     const navigate = useNavigate();
 
-    function getUsers() {
+    function getUsers(controller) {
         const params = {
             method: "GET",
             headers: {
@@ -30,31 +33,34 @@ export default function UserList() {
                 is_verified: filterVerified,
             };
         }
+
         return apiFetch("/users", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
-            .then((data) => {
+            .then(async (data) => {
+                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                setUsers(data["hydra:member"]);
-            })
-            .catch((error) => {
-                console.error(error);
+                setUsers(data['hydra:member']);
+                return data['hydra:member'];
             });
     }
 
     useEffect(() => {
-        const promise = getUsers();
+        const controller = new AbortController();
+        const promise = getUsers(controller);
         toast.promise(promise, {
             pending: "Chargement des utilisateurs",
             success: "Utilisateurs chargés",
             error: "Erreur lors du chargement des utilisateurs",
         });
+        return () => setTimeout(() => controller.abort());
     }, [filterState, filterVerified]);
 
     const handleDelete = (id) => {
@@ -66,6 +72,7 @@ export default function UserList() {
         })
             .then((res) => res.json())
             .then((data) => {
+                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
@@ -105,7 +112,7 @@ export default function UserList() {
     };
 
     return (
-        <div>
+        <div className={style.containerList}>
             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <h1>Liste des utilisateurs</h1>
                 <Button color="green" textColor="white" name="Créer un utilisateur" onClick={() => navigate("/BO/user/create")}></Button>

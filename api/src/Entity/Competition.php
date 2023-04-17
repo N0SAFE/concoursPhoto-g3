@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
-#[ApiResource (normalizationContext: ['groups' => ['competition']])]
+#[ApiResource (normalizationContext: ['groups' => ['competition', 'file']])]
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
 {
@@ -28,9 +28,6 @@ class Competition
     #[ORM\Column(length: 255)]
     #[Groups(['competition', 'organization'])]
     private ?string $competition_name = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $competition_visual = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups('competition')]
@@ -51,10 +48,6 @@ class Competition
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups('competition')]
     private ?\DateTimeInterface $publication_date = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
-    private ?\DateTimeInterface $publication_start_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups('competition')]
@@ -108,12 +101,15 @@ class Competition
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     private ?Organization $organization = null;
 
+    #[Groups('competition')]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
+    #[Groups('competition')]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
+    #[Groups('competition')]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Picture::class)]
     private Collection $pictures;
 
@@ -133,6 +129,10 @@ class Competition
     #[ORM\Column(type: 'json')]
     #[Groups('competition')]
     private array $city_criteria = [];
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups('competition')]
+    private ?File $competition_visual = null;
 
     public function __construct()
     {
@@ -168,18 +168,6 @@ class Competition
     public function setCompetitionName(string $competition_name): self
     {
         $this->competition_name = $competition_name;
-
-        return $this;
-    }
-
-    public function getCompetitionVisual(): ?string
-    {
-        return $this->competition_visual;
-    }
-
-    public function setCompetitionVisual(string $competition_visual): self
-    {
-        $this->competition_visual = $competition_visual;
 
         return $this;
     }
@@ -240,18 +228,6 @@ class Competition
     public function setPublicationDate(\DateTimeInterface $publication_date): self
     {
         $this->publication_date = $publication_date;
-
-        return $this;
-    }
-
-    public function getPublicationStartDate(): ?\DateTimeInterface
-    {
-        return $this->publication_start_date;
-    }
-
-    public function setPublicationStartDate(\DateTimeInterface $publication_start_date): self
-    {
-        $this->publication_start_date = $publication_start_date;
 
         return $this;
     }
@@ -570,6 +546,18 @@ class Competition
     public function setCityCriteria(array $city_criteria): self
     {
         $this->city_criteria = $city_criteria;
+
+        return $this;
+    }
+
+    public function getCompetitionVisual(): ?File
+    {
+        return $this->competition_visual;
+    }
+
+    public function setCompetitionVisual(?File $competition_visual): self
+    {
+        $this->competition_visual = $competition_visual;
 
         return $this;
     }

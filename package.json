@@ -4,20 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deployment": "npm run install:prod && concurrently \"npm run migration\" \"npm run build\"",
-    "migration": "npm run migration:api",
+    "deployment": "npm run install:prod && npm run build",
+    "load:migration": "npm run migration:api",
+    "load:fixtures": "cd api && php bin/console doctrine:schema:update --force --complete && php bin/console doctrine:fixtures:load --no-interaction",
     "migration:api": "cd api && php bin/console doctrine:migration:migrate --no-interaction",
     "build": "npm run build:client",
     "build:client": "cd client && npm run build",
+    "init": "npm i && cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:fixtures",
     "install": "concurrently \"npm run install:api\" \"npm run install:client\"",
+    "install:new": "concurrently \"npm run install:api:new\" \"npm run install:client\"",
     "install:api": "cd api && composer install",
+    "install:api:new": "npm run install:api && cd api && php bin/console lexik:jwt:generate-keypair --no-interaction --overwrite",
     "install:client": "cd client && npm install",
     "install:prod": "npm install --ignore-scripts && concurrently \"npm run install:api:prod\" \"npm run install:client\"",
-    "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader",
+    "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader && php bin/console doctrine:database:create --if-not-exists && npm run load:migration",
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\"",
-    "dev:api": "cd api && symfony server:start --port=8000",
-    "dev:client": "cd client && npm run dev",
-    "load:fixtures": "cd api && php bin/console doctrine:fixtures:load --no-interaction"
+    "dev:api": "cd api && symfony server:stop && symfony server:start --port=8000",
+    "dev:client": "cd client && npm run dev"
+
   },
   "repository": {
     "type": "git",

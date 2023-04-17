@@ -4,84 +4,125 @@ import useApiFetch from "@/hooks/useApiFetch.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function UserCreate() {
     const apiFetch = useApiFetch();
+    const navigate = useNavigate();
 
-    const [entityPossibility, setEntityPossibility] = useState({ genders: [] });
-    const [possibility, updatePossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
-    const citiesPossibility = possibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
-    const postalCodesPossibility = [...new Set(possibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
+    const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
+    const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
+    const postalCodesPossibility = [...new Set(locationPossibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
+    const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] = useState(false);
 
-    const getGendersPossibility = () => {
+    const [entityPossibility, setEntityPossibility] = useState({ genders: [], statut: [] });
+
+    const [entity, setEntity] = useState({
+        state: false,
+        email: "",
+        password: "",
+        passwordConfirm: "",
+        firstname: "",
+        lastname: "",
+        address: "",
+        city: "",
+        postcode: "",
+        phoneNumber: "",
+        roles: [],
+        gender: "",
+        statut: "",
+        dateOfBirth: null,
+    });
+
+    const updateEntityState = (key, value) => {
+        setEntity({ ...entity, [key]: value });
+    };
+
+    const [errors, setErrors] = useState({});
+
+    const getGendersPossibility = (controller) => {
         return apiFetch("/genders", {
             method: "GET",
+            signal: controller?.signal,
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                return data["hydra:member"].map(function (item) {
+                    return { label: item.label, value: item["@id"] };
+                });
+            });
+    };
+    const getPersonalstatus = (controller) => {
+        return apiFetch("/personal_statuts", {
+            method: "GET",
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
                 console.debug(data);
                 return data["hydra:member"].map(function (item) {
-                    return { label: item.label, value: item.id };
+                    return { label: item.label, value: item["@id"] };
                 });
             });
     };
 
-    const [state, setState] = useState(false);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState();
-    const [passwordConfirm, setPasswordConfirm] = useState("");
-    const [firstname, setFirstname] = useState("");
-    const [lastname, setLastname] = useState("");
-    const [address, setAddress] = useState("");
-    const [city, setCity] = useState();
-    const [postcode, setPostcode] = useState();
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [errors, setErrors] = useState({});
-    const [gender, setGender] = useState();
-    const [dateOfBirth, setDateOfBirth] = useState();
-
     useEffect(() => {
-        const promise = Promise.all([getGendersPossibility()]).then(([genders]) => {
-            setEntityPossibility({ genders });
-        });
-        console.log(promise);
+        const controller = new AbortController();
+        const promise = Promise.all([getGendersPossibility(controller), getPersonalstatus(controller)]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
         toast.promise(promise, {
             pending: "Chargement des possibilités",
             success: "Possibilités chargées",
             error: "Erreur lors du chargement des possibilités",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     useEffect(() => {
-        updatePossibility({ args: { codeCity: city?.value, postcode: postcode?.value } });
-    }, [postcode, city]);
+        updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then((d) => {
+            if (d.length === 1 && d[0].id === "cities" && d[0].data.length === 1) {
+                if (d[0].data[0].codesPostaux.length === 1 && !entity.postcode) {
+                    setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
+                } else if (!entity.city) {
+                    setEntity({ ...entity, city: { label: d[0].data[0].nom, value: d[0].data[0].code } });
+                }
+            } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the entity)
+            setLocationPossibilityIsLoading(false);
+        });
+    }, [entity.postcode, entity.city]);
 
     return (
         <div>
             <BOForm
                 title="Ajouter un utilisateur"
-                handleSubmit={function () {
-                    console.debug("handleSubmit");
-                    console.debug("fetch");
+                handleSubmit={async function () {
+                    const { codeRegion, codeDepartement } = await fetch(`https://geo.api.gouv.fr/communes/${entity.city.value}?fields=codeRegion,codeDepartement&format=json&geometry=centre`)
+                        .then((r) => r.json())
+                        .catch((e) => {
+                            console.error(e);
+                            throw new Error("500: the city code is not valid on the gouv api");
+                        });
                     const data = {
-                        state,
-                        email,
-                        plainPassword: password,
-                        firstname,
-                        lastname,
-                        address,
-                        city: city.value,
-                        postcode: postcode.value,
-                        phoneNumber,
+                        state: entity.state,
+                        email: entity.email,
+                        plainPassword: entity.password || undefined,
+                        firstname: entity.firstname,
+                        lastname: entity.lastname,
+                        address: entity.address,
+                        city: entity.city.value,
+                        department: codeDepartement,
+                        region: codeRegion,
+                        postcode: entity.postcode.value,
+                        phoneNumber: entity.phoneNumber,
                         role: [],
-                        gender: "/api/genders/" + gender.value,
+                        gender: entity.gender.value,
+                        personalStatut: entity.statut.value,
+                        dateOfBirth: entity.dateOfBirth.toISOString(),
                         creationDate: new Date().toISOString(),
-                        dateOfBirth: new Date().toISOString(),
                         country: "FRANCE",
                         isVerified: true,
                     };
                     console.debug("data", data);
-                    if (password !== passwordConfirm) {
+                    if (data.password !== data.passwordConfirm) {
                         setErrors({ password: "Les mots de passe ne correspondent pas" });
                         return;
                     }
@@ -98,6 +139,9 @@ export default function UserCreate() {
                                 throw data;
                             }
                         });
+                    promise.then(() => {
+                        navigate("/BO/user");
+                    });
                     toast.promise(promise, {
                         pending: "Ajout de l'utilisateur",
                         success: "Utilisateur ajouté",
@@ -105,114 +149,100 @@ export default function UserCreate() {
                             render: ({ data }) => {
                                 console.debug(data);
                                 if (data["@type"] === "hydra:Error") {
-                                    throw new Error(data.description);
+                                    return data["hydra:description"];
                                 }
+                                return data.message;
                             },
                         },
                     });
                 }}
             >
                 <div>
-                    <label htmlFor="firstname">Prénom</label>
-                    <Input type="text" name="firstname" label="Prénom" extra={{ required: true }} setState={setFirstname} defaultValue={firstname} />
-                    <div>{errors.firstname}</div>
-                </div>
-                <div>
-                    <label htmlFor="lastname">Nom</label>
-                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} setState={setLastname} defaultValue={lastname} />
-                    <div>{errors.lastname}</div>
-                </div>
-                <div>
-                    <label htmlFor="dateOfBirth">Date de Naissance</label>
-                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} setState={setDateOfBirth} defaultValue={dateOfBirth} />
-                    <div>{errors.dateOfBirth}</div>
-                </div>
+                    <Input type="text" name="Prénom" label="Prénom" extra={{ required: true }} onChange={(d) => updateEntityState("firstname", d)} defaultValue={entity.firstname} />
 
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} setState={setEmail} defaultValue={email} />
-                    <div>{errors.email}</div>
-                </div>
-                <div>
-                    <label htmlFor="state">Statut</label>
-                    <Input type="checkbox" name="state" label="Actif" defaultValue={state} setState={setState} />
-                    <div>{errors.state}</div>
-                </div>
-                <div>
-                    <label htmlFor="address">Adresse</label>
-                    <Input type="text" name="address" label="Adresse" defaultValue={address} extra={{ required: true }} setState={setAddress} />
-                    <div>{errors.address}</div>
-                </div>
-                <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="city">Ville</label>
-                        <Input
-                            type="select"
-                            name="city"
-                            label="Ville"
-                            extra={{
-                                value: city,
-                                isClearable: true,
-                                required: true,
-                                options: citiesPossibility,
-                                multiple: false,
-                                onInputChange: (text, { action }) => {
-                                    if (action === "menu-close") {
-                                        updatePossibility({ id: "city" });
-                                    }
-                                    if (action === "input-change") {
-                                        updatePossibility({ id: "city", args: { name: text } });
-                                    }
-                                },
-                            }}
-                            setState={setCity}
-                        />
-                        <div>{errors.city}</div>
-                    </div>
-                    <div>
-                        <label htmlFor="postalCode">Code postal</label>
-                        <Input
-                            type="select"
-                            name="postalCode"
-                            label="Code postal"
-                            extra={{
-                                value: postcode,
-                                isClearable: true,
-                                required: true,
-                                options: postalCodesPossibility,
-                                multiple: false,
-                                onInputChange: (postcode, { action }) => {
-                                    if (action === "menu-close") {
-                                        updatePossibility({ id: "city" });
-                                    }
-                                    if (action === "input-change" && postcode.length === 5) {
-                                        updatePossibility({ id: "city", args: { postcode } });
-                                    }
-                                },
-                            }}
-                            setState={setPostcode}
-                        />
-                        <div>{errors.postalCode}</div>
-                    </div>
-                </div>
-                <div>
-                    <label htmlFor="phoneNumber">Numéro de télephone</label>
-                    <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} setState={setPhoneNumber} defaultValue={phoneNumber} />
-                    <div>{errors.phoneNumber}</div>
+                    <Input type="text" name="lastname" label="Nom" extra={{ required: true }} onChange={(d) => updateEntityState("lastname", d)} defaultValue={entity.lastname} />
+
+                    <Input
+                        type="select"
+                        name="personalStatut"
+                        label="Statut"
+                        defaultValue={entity.statut}
+                        extra={{ options: entityPossibility.statut, required: true }}
+                        onChange={(d) => updateEntityState("statut", d)}
+                    />
+
+                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} onChange={(d) => updateEntityState("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
+
+                    <Input type="email" name="email" label="Adresse mail" extra={{ required: true }} onChange={(d) => updateEntityState("email", d)} defaultValue={entity.email} />
+
+                    <Input type="checkbox" name="state" label="Actif" defaultValue={entity.state} onChange={(d) => updateEntityState("state", d)} />
+                    <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntityState("phoneNumber", d)} defaultValue={entity.phoneNumber} />
+                    <Input type="text" name="address" label="Adresse" defaultValue={entity.address} extra={{ required: true }} onChange={(d) => updateEntityState("address", d)} />
                 </div>
                 <div style={{ display: "flex", gap: "30px" }}>
-                    <div>
-                        <label htmlFor="gender">Genre</label>
-                        <Input type="select" name="gender" label="Genre" extra={{ value: gender, required: true, options: entityPossibility.genders }} setState={setGender} />
-                        <div>{errors.gender}</div>
-                    </div>
+                    <Input
+                        type="select"
+                        name="city"
+                        label="Ville"
+                        extra={{
+                            isLoading: locationPossibilityIsLoading,
+                            value: entity.city,
+                            isClearable: true,
+                            required: true,
+                            options: citiesPossibility,
+                            multiple: false,
+                            onInputChange: (cityName, { action }) => {
+                                if (action === "menu-close") {
+                                    updateLocationPossibility({ id: "city", args: { codeCity: entity.city?.value, city: "" } });
+                                }
+                                if (action === "input-change") {
+                                    setLocationPossibilityIsLoading(true);
+                                    updateLocationPossibility({ id: "city", args: { city: cityName } }).then(function () {
+                                        setLocationPossibilityIsLoading(false);
+                                    });
+                                }
+                            },
+                        }}
+                        onChange={(d) => updateEntityState("city", d)}
+                    />
+                    <Input
+                        type="select"
+                        name="postalCode"
+                        label="Code postal"
+                        extra={{
+                            isLoading: locationPossibilityIsLoading,
+                            value: entity.postcode,
+                            isClearable: true,
+                            required: true,
+                            options: postalCodesPossibility,
+                            multiple: false,
+                            onInputChange: (_postcode, { action }) => {
+                                if (action === "menu-close") {
+                                    updateLocationPossibility({ id: "city", args: { postcode: entity.postcode?.value } });
+                                }
+                                if (action === "input-change" && _postcode.length === 5) {
+                                    setLocationPossibilityIsLoading(true);
+                                    updateLocationPossibility({ id: "city", args: { postcode: _postcode } }).then(function () {
+                                        setLocationPossibilityIsLoading(false);
+                                    });
+                                }
+                            },
+                        }}
+                        onChange={(d) => updateEntityState("postcode", d)}
+                    />
                 </div>
                 <div>
-                    <label htmlFor="password">Mot de passe</label>
-                    <Input type="password" name="password" label="Mot de passe" extra={{ required: true }} setState={setPassword} defaultValue={password} />
-                    <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" extra={{ required: true }} setState={setPasswordConfirm} defaultValue={passwordConfirm} />
-                    <div>{errors.password}</div>
+                    <Input type="select" name="gender" label="Genre" extra={{ value: entity.gender, options: entityPossibility.genders, required: true }} onChange={(d) => updateEntityState("gender", d)} />
                 </div>
+                <Input type="password" name="password" label="Mot de passe" extra={{ required: true }} onChange={(d) => updateEntityState("password", d)} defaultValue={entity.password} />
+                <Input
+                    type="password"
+                    name="passwordConfirm"
+                    label="Confirmation du mot de passe"
+                    extra={{ required: true }}
+                    onChange={(d) => updateEntityState("passwordConfirm", d)}
+                    defaultValue={entity.passwordConfirm}
+                />
             </BOForm>
         </div>
     );

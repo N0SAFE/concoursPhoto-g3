@@ -7,25 +7,25 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\State\UserPasswordHasher;
+use App\State\UserStateProcessor;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(processor: UserPasswordHasher::class),
+        new Post(processor: UserStateProcessor::class),
         new Get(),
-        new Patch(processor: UserPasswordHasher::class),
+        new Patch(processor: UserStateProcessor::class),
         new Delete()
     ],
     normalizationContext: ['groups' => ['user']]
@@ -33,7 +33,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
-    #[Groups('user')]
+    #[Groups(['user', 'competition'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -53,38 +53,45 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups('user')]
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $firstname = null;
 
     #[Groups('user')]
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $lastname = null;
 
     #[Groups('user')]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $date_of_birth = null;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $postcode = null;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $city = null;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
 
     #[Groups('user')]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
     private $email;
 
     #[Groups('user')]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(10, minMessage: 'Le numéro de téléphone doit avoir au moins 10 caractères')]
+    #[Assert\Regex(pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/', message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00')]
     private ?string $phone_number = null;
 
     #[Groups('user')]
@@ -92,6 +99,8 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private $password;
 
     #[Groups('user')]
+    #[Assert\Length(min: 8, minMessage: 'Le mot de passe doit avoir au moins 8 caractères')]
+    #[Assert\Regex(pattern: '/^(?=.*[A-Z])(?=.*\d).+$/', message: 'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre')]
     private ?string $plainPassword = null;
 
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
@@ -122,9 +131,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?\DateTimeInterface $last_connection_date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $picture_profil = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $photographer_description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -133,7 +139,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $socials_networks = null;
 
+
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('user')]
     private ?string $pseudonym = null;
 
     #[Groups('user')]
@@ -143,6 +151,22 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Groups('user')]
     #[ORM\Column]
     private ?bool $is_verified = null;
+
+    #[Groups('user')]
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Assert\NotBlank]
+    private ?PersonalStatut $personal_statut = null;
+
+
+    #[Groups('user')]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?File $picture_profil = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $region = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $department = null;
 
     public function __construct()
     {
@@ -344,8 +368,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
      */
     public function eraseCredentials()
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     /**
@@ -522,18 +545,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getPictureProfil(): ?string
-    {
-        return $this->picture_profil;
-    }
-
-    public function setPictureProfil(string $picture_profil): self
-    {
-        $this->picture_profil = $picture_profil;
-
-        return $this;
-    }
-
     public function getPhotographerDescription(): ?string
     {
         return $this->photographer_description;
@@ -609,6 +620,54 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function setIsVerified(bool $is_verified): self
     {
         $this->is_verified = $is_verified;
+
+        return $this;
+    }
+
+    public function getPersonalStatut(): ?PersonalStatut
+    {
+        return $this->personal_statut;
+    }
+
+    public function setPersonalStatut(?PersonalStatut $personal_statut): self
+    {
+        $this->personal_statut = $personal_statut;
+
+        return $this;
+    }
+
+    public function getPictureProfil(): ?File
+    {
+        return $this->picture_profil;
+    }
+
+    public function setPictureProfil(?File $picture_profil): self
+    {
+        $this->picture_profil = $picture_profil;
+
+        return $this;
+    }
+
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(string $region): self
+    {
+        $this->region = $region;
+
+        return $this;
+    }
+
+    public function getDepartment(): ?string
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(string $department): self
+    {
+        $this->department = $department;
 
         return $this;
     }

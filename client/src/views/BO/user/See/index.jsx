@@ -12,27 +12,21 @@ export default function () {
     const [entity, setEntity] = useState({});
     const { id: userId } = useParams();
 
-    const getUser = () => {
+    const getUser = (controller) => {
         return apiFetch("/users/" + userId, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
+            signal: controller?.signal,
         })
             .then((res) => res.json())
             .then((data) => {
-                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                setEntity(data);
-                getCityByCode(data.city).then((city) => {
-                    setEntity((entity) => {
-                        return {
-                            ...entity,
-                            city: city.nom,
-                        };
-                    });
+                return getCityByCode(data.city).then((city) => {
+                    return setEntity({ ...data, city: city.nom });
                 });
             })
             .catch((error) => {
@@ -41,12 +35,14 @@ export default function () {
     };
 
     useEffect(() => {
-        const promise = getUser();
+        const controller = new AbortController();
+        const promise = getUser(controller);
         toast.promise(promise, {
             pending: "Chargement de l'utilisateur",
             success: "Utilisateur chargé",
             error: "Erreur lors du chargement de l'utilisateur",
         });
+        return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
@@ -76,6 +72,13 @@ export default function () {
                 {
                     display: "Code postal",
                     name: "postcode",
+                },
+                {
+                    display: "Statut",
+                    name: "personal_statut",
+                    customData({ entity, property }) {
+                        return entity?.personal_statut?.label;
+                    },
                 },
                 {
                     display: "Ville",
