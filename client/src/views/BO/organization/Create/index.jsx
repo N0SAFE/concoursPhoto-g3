@@ -76,7 +76,7 @@ export default function OrganizationCreate() {
             setLocationPossibilityIsLoading(false);
         });
     }, [entity.postcode, entity.city]);
-
+    console.debug("entity", entity);
     return (
         <div>
             <BOCreate
@@ -91,7 +91,7 @@ export default function OrganizationCreate() {
                                     const logo = await uploadFile({ file: entity.logo.file });
                                     return logo["@id"];
                                 }
-                            })()
+                            })();
                             const data = {
                                 organizerName: entity.organizerName,
                                 description: entity.description,
@@ -166,10 +166,19 @@ export default function OrganizationCreate() {
                     <Input type="file" name="logo" label="Logo" onChange={(d) => updateEntityState("logo", d)} extra={{ value: entity.logo, type: "image" }} />
 
                     <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntityState("state", d)} defaultValue={entity.state} />
-
+                    <Input type="email" name="email" label="Email" extra={{ required: true }} onChange={(d) => updateEntityState("email", d)} defaultValue={entity.email} />
+                    <Input type="text" name="numberSiret" label="Numéro SIRET" extra={{ required: true }} onChange={(d) => updateEntityState("numberSiret", d)} defaultValue={entity.numberSiret} />
+                    <Input
+                        type="text"
+                        name="intraCommunityVat"
+                        label="Numéro TVA"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntityState("intraCommunityVat", d)}
+                        defaultValue={entity.intraCommunityVat}
+                    />
                     <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntityState("address", d)} defaultValue={entity.address} />
 
-                    <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} setState={(d) => updateEntityState("websiteUrl", d)} defaultValue={entity.websiteUrl} />
+                    <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} onChange={(d) => updateEntityState("websiteUrl", d)} defaultValue={entity.websiteUrl} />
 
                     <Input
                         type="select"

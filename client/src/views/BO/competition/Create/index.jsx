@@ -8,7 +8,7 @@ import useFilesUpdater from "@/hooks/useFilesUploader.js";
 import { useNavigate } from "react-router-dom";
 
 export default function CompetitionCreate() {
-    const {uploadFile} = useFilesUpdater()
+    const { uploadFile } = useFilesUpdater();
     const navigate = useNavigate();
     const apiFetch = useApiFetch();
     const { getCityByName, getDepartmentByName, getRegionByName } = useLocation();
@@ -108,7 +108,7 @@ export default function CompetitionCreate() {
 
     useEffect(() => {
         const controller = new AbortController();
-        Promise.all([getRegionByName(null, {controller}), getDepartmentByName(null, {controller}), getCityByName(null, {controller})]).then(([regions, departments, cities]) => {
+        Promise.all([getRegionByName(null, { controller }), getDepartmentByName(null, { controller }), getCityByName(null, { controller })]).then(([regions, departments, cities]) => {
             return setLocationPossibility({
                 regions: { isLoading: false, data: regions.map((d) => ({ label: d.nom, value: d.code })) },
                 departments: { isLoading: false, data: departments.map((d) => ({ label: d.nom, value: d.code })) },
@@ -132,64 +132,64 @@ export default function CompetitionCreate() {
                 title="Création d'un concours"
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
-                        try{
-                            const visualId =await (async() => {
-                            if(entity.visual === null){
-                                return null
-                            }else {
-                                const visual = await uploadFile({file: entity.visual.file});
-                                return visual["@id"]
-                            }
-                        })()
-                        const data = {
-                            state: entity.state,
-                            competitionName: entity.name,
-                            competitionVisual: visualId,
-                            participantCategory: entity.participantCategories.map((p) => p.value),
-                            organization: entity.organizer.value,
-                            theme: entity.themes.map((t) => t.value),
-                            description: entity.description,
-                            rules: entity.rules,
-                            creationDate: new Date(entity.creationDate).toISOString(),
-                            publicationDate: new Date(entity.publicationDate).toISOString(),
-                            submissionStartDate: new Date(entity.submissionStartDate).toISOString(),
-                            submissionEndDate: new Date(entity.submissionEndDate).toISOString(),
-                            votingStartDate: new Date(entity.votingStartDate).toISOString(),
-                            votingEndDate: new Date(entity.votingEndDate).toISOString(),
-                            resultsDate: new Date(entity.resultsDate).toISOString(),
-                            weightingOfJuryVotes: parseFloat(entity.weightingOfJuryVotes),
-                            numberOfMaxVotes: parseInt(entity.numberOfMaxVotes),
-                            numberOfPrices: parseInt(entity.numberOfPrices),
-                            minAgeCriteria: parseInt(entity.minAgeCriteria),
-                            maxAgeCriteria: parseInt(entity.maxAgeCriteria),
-                            cityCriteria: [entity.cityCriteria.value],
-                            departmentCriteria: [entity.departmentCriteria.value],
-                            regionCriteria: [entity.regionCriteria.value],
-                            countryCriteria: ["FRANCE"],
-                            endowments: entity.endowments,
-                        };
-                        console.debug("data", data);
-                        const res = await apiFetch("/competitions", {
-                            method: "POST",
-                            body: JSON.stringify(data),
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                        })
-                            .then((r) => r.json())
-                            .then((data) => {
-                                console.debug(data);
-                                if (data["@type"] === "hydra:Error") {
-                                    throw new Error(data.description);
+                        try {
+                            const visualId = await (async () => {
+                                if (entity.visual === null) {
+                                    return null;
+                                } else {
+                                    const visual = await uploadFile({ file: entity.visual.file });
+                                    return visual["@id"];
                                 }
+                            })();
+                            const data = {
+                                state: entity.state,
+                                competitionName: entity.name,
+                                competitionVisual: visualId,
+                                participantCategory: entity.participantCategories.map((p) => p.value),
+                                organization: entity.organizer.value,
+                                theme: entity.themes.map((t) => t.value),
+                                description: entity.description,
+                                rules: entity.rules,
+                                creationDate: new Date(entity.creationDate).toISOString(),
+                                publicationDate: new Date(entity.publicationDate).toISOString(),
+                                submissionStartDate: new Date(entity.submissionStartDate).toISOString(),
+                                submissionEndDate: new Date(entity.submissionEndDate).toISOString(),
+                                votingStartDate: new Date(entity.votingStartDate).toISOString(),
+                                votingEndDate: new Date(entity.votingEndDate).toISOString(),
+                                resultsDate: new Date(entity.resultsDate).toISOString(),
+                                weightingOfJuryVotes: parseFloat(entity.weightingOfJuryVotes),
+                                numberOfMaxVotes: parseInt(entity.numberOfMaxVotes),
+                                numberOfPrices: parseInt(entity.numberOfPrices),
+                                minAgeCriteria: parseInt(entity.minAgeCriteria),
+                                maxAgeCriteria: parseInt(entity.maxAgeCriteria),
+                                cityCriteria: [entity.cityCriteria.value],
+                                departmentCriteria: [entity.departmentCriteria.value],
+                                regionCriteria: [entity.regionCriteria.value],
+                                countryCriteria: ["FRANCE"],
+                                endowments: entity.endowments,
+                            };
+                            console.debug("data", data);
+                            const res = await apiFetch("/competitions", {
+                                method: "POST",
+                                body: JSON.stringify(data),
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
                             })
-                        resolve(res)
-                        }catch(e){
-                            console.error(e)
-                            reject(e)
+                                .then((r) => r.json())
+                                .then((data) => {
+                                    console.debug(data);
+                                    if (data["@type"] === "hydra:Error") {
+                                        throw new Error(data.description);
+                                    }
+                                });
+                            resolve(res);
+                        } catch (e) {
+                            console.error(e);
+                            reject(e);
                         }
                     });
-                    
+
                     promise.then(function () {
                         navigate("/BO/organization");
                     });
