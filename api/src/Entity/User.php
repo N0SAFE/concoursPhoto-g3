@@ -104,9 +104,11 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?string $plainPassword = null;
 
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
+    #[Groups('user')]
     private Collection $Manage;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Groups('user')]
     private ?PhotographerCategory $photographer_category = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MemberOfTheJury::class)]
@@ -131,12 +133,15 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?\DateTimeInterface $last_connection_date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('user')]
     private ?string $photographer_description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('user')]
     private ?string $website_url = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    
     private ?string $socials_networks = null;
 
 

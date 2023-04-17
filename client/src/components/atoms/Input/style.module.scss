@@ -1,12 +1,11 @@
 .component {
     display: flex;
     flex-direction: column;
-    height: 100%;
 
     &Input:not([type="checkbox"]) {
         padding: 10px;
         border-radius: 5px;
-        border: .2px solid $lightgrey;
+        border: 0.2px solid $lightgrey;
         box-shadow: rgba(17, 17, 26, 0.1) 0 1px 0;
         background-color: $text-color-lightgrey-2;
 
@@ -14,7 +13,8 @@
             outline: none;
         }
 
-        &[type="date"], &[type="file"] {
+        &[type="date"],
+        &[type="file"] {
             border-radius: 20px;
         }
     }
@@ -29,5 +29,19 @@
         height: 60px;
         padding: 0 20px;
         overflow: hidden;
+    }
+}
+
+.radioList {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+.ckeckboxList {
+    &Input {
+        padding: 10px;
+        border-radius: 5px;
+        border: 0.2px solid $lightgrey;
+        box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
     }
 }

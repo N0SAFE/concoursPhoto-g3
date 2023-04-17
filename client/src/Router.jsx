@@ -21,6 +21,8 @@ import OrganizationEdit from "@/views/BO/organization/Edit";
 import CompetitionSee from "@/views/BO/competition/See";
 import OrganizationSee from "@/views/BO/organization/See";
 import CompetitionEdit from "@/views/BO/competition/Edit";
+import Notif from "@/views/global/Profile/notif/index.jsx";
+import IndexNotif from "@/views/global/Profile/notif/index.jsx";
 
 function Router() {
     return (
@@ -29,7 +31,7 @@ function Router() {
                 <Route path="login" element={<Login />} />
                 <Route path="logout" element={<Logout />} />
             </Route>
-            <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
+            <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={<Navigate to="/auth/login" replace={true} />} />}>
                 <Route path="" element={<Header environment={"backoffice"} />}>
                     <Route element={<BO />} />
                     <Route path="user">
@@ -53,9 +55,10 @@ function Router() {
                 </Route>
             </Route>
             <Route path="/" element={<Header />}>
-                <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />}/>}>
+                <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />} />}>
                     <Route path="" element={<Profile />} />
                     <Route path=":id" element={<ProfileUser />} />
+                    <Route path="notif" element={<IndexNotif />} />
                 </Route>
                 <Route path="" element={<Home />} />
             </Route>

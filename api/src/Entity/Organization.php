@@ -25,7 +25,8 @@ class Organization
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'competition'])]
+    #[Groups(['organization', 'competition', 'user'])]
+    
     private ?string $organizer_name = null;
 
     #[ORM\Column(length: 255)]
