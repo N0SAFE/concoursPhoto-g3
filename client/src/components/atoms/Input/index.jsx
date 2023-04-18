@@ -115,7 +115,7 @@ export default function Input({ type, name, defaultValue, extra, label, classNam
             case "tel":
                 return <input className={style.componentInput} label={label} type="tel" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
             case "textarea":
-                return <input className={style.componentInput} label={label} type="textarea" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
+                return <textarea className={style.componentInput} label={label} type="textarea" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
             case "text":
                 return <input className={style.componentInput} label={label} type="text" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
             case "number":

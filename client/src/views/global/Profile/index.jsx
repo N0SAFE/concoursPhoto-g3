@@ -157,7 +157,6 @@ export default function Profile() {
 
     return (
         <div>
-            <h1>Mon compte</h1>
             <BOForm
                 handleSubmit={function () {
                     const data = {
@@ -219,39 +218,6 @@ export default function Profile() {
                         </div>
                         <Input type="email" name="Email*" label="Adresse email" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
                         <Input type="password" name="Mot de passe*" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
-                        <h3 style={{ marginTop: "10%", marginBottom: "3%" }}>Si vous êtes photographe</h3>
-
-                        <Input
-                            type="textarea"
-                            name="photographerDescription"
-                            label="Description Photographe"
-                            onChange={(d) => updateEntity("photographerDescription", d)}
-                            defaultValue={entity.photographerDescription}
-                        />
-                        <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
-                            <Input
-                                type="select"
-                                name="PhotographeCategory"
-                                label="Votre catégorie en tant que photographe ?"
-                                onChange={(d) => updateEntity("category", d)}
-                                extra={{ value: entity.category, options: entityPossibility.category }}
-                            />
-                            <Input type="text" name="websiteUrl" label="Votre site web personnel" onChange={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
-                        </div>
-
-                        <h2 style={{ marginBottom: "5%", marginTop: "5%" }}>Réseaux sociaux de l’organisation</h2>
-                        <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                            <Input type="text" name="socialNetworks" label="Votre page Facebook" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                            <Input type="text" name="socialNetworks" label="Votre chaîne Youtube" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                        </div>
-                        <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                            <Input type="text" name="socialNetworks" label="Votre page Instagram" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                            <Input type="text" name="socialNetworks" label="Votre compte Twitter" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                        </div>
-                        <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                            <Input type="text" name="socialNetworks" label="Votre page Linkedin" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                            <Input type="text" name="socialNetworks" label="Votre compte TikTok" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                        </div>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column" }}>
                         <Input type="text" name="Adresse" label="Adresse" onChange={(d) => updateEntity("adress", d)} defaultValue={entity.address} />
@@ -309,6 +275,47 @@ export default function Profile() {
 
                         <div>
                             <Input type="text" name="pseudonym" label="Pseudonyme" onChange={(d) => updateEntity("pseudonym", d)} defaultValue={entity.pseudonym} />
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{}}>
+                    <h3 style={{ marginTop: "2%", marginBottom: "3%" }}>Si vous êtes photographe</h3>
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                        {" "}
+                        <Input
+                            type="textarea"
+                            extra={{ rows: 15, cols: 85 }}
+                            name="photographerDescription"
+                            label="Description Photographe"
+                            onChange={(d) => updateEntity("photographerDescription", d)}
+                            defaultValue={entity.photographerDescription}
+                        />
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "row", gap: "30px" }}>
+                        <Input
+                            type="select"
+                            name="PhotographeCategory"
+                            label="Votre catégorie en tant que photographe ?"
+                            onChange={(d) => updateEntity("category", d)}
+                            extra={{ value: entity.category, options: entityPossibility.category }}
+                        />
+                        <Input type="text" name="websiteUrl" label="Votre site web personnel" onChange={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
+                    </div>
+                    <div style={{}}>
+                        <h2 style={{ marginBottom: "5%", marginTop: "5%" }}>Réseaux sociaux de l’organisation</h2>
+                        <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                            <Input type="text" name="socialNetworks" label="Votre page Facebook" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                            <Input type="text" name="socialNetworks" label="Votre chaîne Youtube" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                        </div>
+                        <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                            <Input type="text" name="socialNetworks" label="Votre page Instagram" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                            <Input type="text" name="socialNetworks" label="Votre compte Twitter" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                        </div>
+                        <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                            <Input type="text" name="socialNetworks" label="Votre page Linkedin" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                            <Input type="text" name="socialNetworks" label="Votre compte TikTok" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
                         </div>
                     </div>
                 </div>
