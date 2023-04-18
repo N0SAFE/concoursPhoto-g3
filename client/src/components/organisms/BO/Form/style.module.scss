@@ -7,10 +7,4 @@
     height: 100%;
     padding: 0 20px;
     box-sizing: border-box;
-    & > test {
-        flex-direction: inherit;
-        align-items: inherit;
-        justify-content: inherit;
-        display: inherit;
-    }
 }
