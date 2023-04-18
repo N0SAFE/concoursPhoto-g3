@@ -24,7 +24,13 @@ import CompetitionEdit from "@/views/BO/competition/Edit";
 import Notif from "@/views/global/Profile/notif/index.jsx";
 import IndexNotif from "@/views/global/Profile/notif/index.jsx";
 import Myorganisation from "./views/global/Profile/myorganization/index.jsx";
-import ProfilLayout from "@/layout/Profil.jsx";
+import Navlink from "@/layout/Navlink/index.jsx";
+
+const profileRouteList = [
+    { content: "Mon profil", to: "/profile/me" },
+    { content: "Mes préférences", to: "/profile/preference" },
+    { content: "Mes organisations", to: "/profile/myorganization" },
+];
 
 function Router() {
     return (
@@ -58,7 +64,7 @@ function Router() {
             </Route>
             <Route path="/" element={<Header />}>
                 <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />} />}>
-                    <Route element={<ProfilLayout />}>
+                    <Route element={<Navlink list={profileRouteList} />}>
                         <Route path="me" element={<Profile />} />
                         <Route path="preference" element={<IndexNotif />} />
                         <Route path="myorganization" element={<Myorganisation />} />

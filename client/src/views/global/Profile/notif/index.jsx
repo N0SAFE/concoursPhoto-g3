@@ -12,7 +12,6 @@ import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 export default function IndexNotif() {
     return (
         <div>
-            <h1>Mon compte</h1>
             <BOForm>
                 <div style={{ marginTop: "10px" }}>
                     <h2>Si vous êtes simple membre</h2>

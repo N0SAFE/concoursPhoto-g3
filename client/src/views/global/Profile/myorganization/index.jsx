@@ -98,7 +98,6 @@ export default function Myorganisation() {
 
     return (
         <div>
-            <h1>Mon compte</h1>
             <BOForm
                 handleSubmit={function () {
                     const data = {
