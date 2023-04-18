@@ -141,6 +141,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?string $website_url = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('user')]
     
     private ?string $socials_networks = null;
 

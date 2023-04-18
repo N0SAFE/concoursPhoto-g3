@@ -110,6 +110,8 @@ export default function Input({ type, name, defaultValue, extra, label, classNam
                 return <Select {...extra} name={name} label={label} onChange={(e) => onChange(e)} defaultValue={defaultValue} className={className} />;
             case "password":
                 return <input className={style.componentInput} label={label} type="password" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
+            case "array":
+                return <input className={style.componentInput} label={label} type="array" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
             case "tel":
                 return <input className={style.componentInput} label={label} type="tel" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
             case "textarea":
