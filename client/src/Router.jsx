@@ -13,7 +13,7 @@ import Header from "@/layout/Header";
 import CompetitionList from "@/views/BO/competition/List";
 import OrganizationCreate from "@/views/BO/organization/Create";
 import CompetitionCreate from "@/views/BO/competition/Create";
-import GuardedRoute from "./layout/GuardedRoute.jsx";
+import GuardedRoute from "@/layout/GuardedRoute.jsx";
 import { Navigate } from "react-router-dom";
 import Profile from "@/views/global/Profile";
 import ProfileUser from "@/views/global/Profile/User";
@@ -23,6 +23,8 @@ import OrganizationSee from "@/views/BO/organization/See";
 import CompetitionEdit from "@/views/BO/competition/Edit";
 import Notif from "@/views/global/Profile/notif/index.jsx";
 import IndexNotif from "@/views/global/Profile/notif/index.jsx";
+import Myorganisation from "./views/global/Profile/myorganization/index.jsx";
+import ProfilLayout from "@/layout/Profil.jsx";
 
 function Router() {
     return (
@@ -56,9 +58,12 @@ function Router() {
             </Route>
             <Route path="/" element={<Header />}>
                 <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />} />}>
-                    <Route path="" element={<Profile />} />
+                    <Route element={<ProfilLayout />}>
+                        <Route path="me" element={<Profile />} />
+                        <Route path="preference" element={<IndexNotif />} />
+                        <Route path="myorganization" element={<Myorganisation />} />
+                    </Route>
                     <Route path=":id" element={<ProfileUser />} />
-                    <Route path="notif" element={<IndexNotif />} />
                 </Route>
                 <Route path="" element={<Home />} />
             </Route>
