@@ -92,7 +92,7 @@ export default function Header(environment) {
                             });
                         },
                     },
-                    { title: "Mon profil", to: "/profile" },
+                    { title: "Mon profil", to: "/profile/me" },
                 ],
             });
         } else {
