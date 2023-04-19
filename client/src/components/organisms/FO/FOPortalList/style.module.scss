@@ -3,6 +3,10 @@
     gap: $gapBetweenContainer;
     justify-content: center;
     flex-wrap: wrap;
+
+    @include below(md) {
+        justify-content: inherit;
+    }
 }
 
 .boxSingle {
@@ -11,6 +15,12 @@
     display: flex;
     width: calc((100% - $gapBetweenContainer)/1.5);
     aspect-ratio: 16/9;
+
+    & > img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
 }
 
 .boxDuo {
@@ -18,24 +28,36 @@
     gap: $gapBetweenContainer;
     flex-direction: column;
     width: calc((100% - $gapBetweenContainer)/3);
+    aspect-ratio: 16/9;
 
     & > div {
         height: 100%;
     }
+
+    & > img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        aspect-ratio: 16/9;
+    }
 }
 
-@include below(sm) {
+@include below(md) {
     .boxSingle {
         width: 100%;
     }
 
     .boxDuo {
         flex-direction: row;
-        width: 100%;
         gap: $gapBetweenContainer;
+        aspect-ratio: 16/9;
 
+        // for pictures
+        width: calc((100% - $gapBetweenContainer) / 2);
+
+        // for slider
         & > div {
-            width: calc((100% - $gapBetweenContainer) /2);
+            width: 100%;
         }
     }
 }

@@ -18,7 +18,7 @@ class Competition
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user'])]
     private ?int $id = null;
 
     #[ORM\Column]
@@ -105,8 +105,8 @@ class Competition
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
-    #[Groups('competition')]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
+    #[Groups('competition')]
     private Collection $memberOfTheJuries;
 
     #[Groups('competition')]

@@ -51,12 +51,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
-    #[Groups('user')]
+    #[Groups(['user', 'competition'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $firstname = null;
 
-    #[Groups('user')]
+    #[Groups(['user', 'competition'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $lastname = null;
@@ -104,15 +104,18 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?string $plainPassword = null;
 
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
+    #[Groups('user')]
     private Collection $Manage;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Groups('user')]
     private ?PhotographerCategory $photographer_category = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Picture::class)]
+    #[Groups('user')]
     private Collection $pictures;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]
@@ -131,12 +134,16 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?\DateTimeInterface $last_connection_date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('user')]
     private ?string $photographer_description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('user')]
     private ?string $website_url = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('user')]
+
     private ?string $socials_networks = null;
 
 

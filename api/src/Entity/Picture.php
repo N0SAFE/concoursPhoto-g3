@@ -17,13 +17,15 @@ class Picture
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('competition')]
+    
+    #[Groups(['competition', 'user'])]
     private ?int $id = null;
 
     #[ORM\Column]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('competition')]
     private ?string $picture_name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -38,11 +40,12 @@ class Picture
     #[ORM\Column]
     private ?int $price_rank = null;
 
+    #[Groups('competition')]
     #[ORM\OneToMany(mappedBy: 'picture', targetEntity: Vote::class)]
     private Collection $votes;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user'])]
     private ?Competition $competition = null;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
@@ -50,6 +53,7 @@ class Picture
     private ?User $user = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups('competition')]
     private ?File $file = null;
 
     public function __construct()

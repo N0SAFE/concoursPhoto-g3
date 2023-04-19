@@ -14,12 +14,18 @@ function FileInput({ name, extra, label, onChange, error }) {
                             <Link to={extra?.value.to} target="_blank">
                                 {extra?.value.name}
                             </Link>
-                            <button type="button" onClick={() => inputRef.current.click()}>edit</button>
-                            <button type="button" onClick={() => onChange(null)}>delete</button>
+                            <button type="button" onClick={() => inputRef.current.click()}>
+                                edit
+                            </button>
+                            <button type="button" onClick={() => onChange(null)}>
+                                delete
+                            </button>
                         </>
                     ) : (
                         <>
-                            <button type="button" onClick={() => inputRef.current.click()}>ajouter un fichier</button>
+                            <button type="button" onClick={() => inputRef.current.click()}>
+                                ajouter un fichier
+                            </button>
                         </>
                     )}
 
@@ -104,8 +110,12 @@ export default function Input({ type, name, defaultValue, extra, label, classNam
                 return <Select {...extra} name={name} label={label} onChange={(e) => onChange(e)} defaultValue={defaultValue} className={className} />;
             case "password":
                 return <input className={style.componentInput} label={label} type="password" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
+            case "array":
+                return <input className={style.componentInput} label={label} type="array" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
             case "tel":
                 return <input className={style.componentInput} label={label} type="tel" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
+            case "textarea":
+                return <textarea className={style.componentInput} label={label} type="textarea" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
             case "text":
                 return <input className={style.componentInput} label={label} type="text" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
             case "number":
@@ -128,7 +138,30 @@ export default function Input({ type, name, defaultValue, extra, label, classNam
             case "custom":
                 return extra.component;
             case "radio":
-                return <input className={style.componentInput} type="radio" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
+                return <input className={style.componentInput} value={label} type="radio" {...extra} name={name} onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} />;
+            case "radioList":
+                return (
+                    <div className={style.radioList}>
+                        {extra?.options?.map((option) => {
+                            return (
+                                <div className={style.component}>
+                                    <label className={style.radioListOptionLabel} htmlFor={option.value}>
+                                        {option.label}
+                                    </label>
+                                    <input
+                                        className={style.componentInput}
+                                        value={option.value}
+                                        type="radio"
+                                        {...extra}
+                                        name={name}
+                                        onChange={(e) => onChange(option)}
+                                        checked={extra?.value?.value === option.value}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
             default:
                 throw new Error("Unknown input type : {" + type + "}");
         }

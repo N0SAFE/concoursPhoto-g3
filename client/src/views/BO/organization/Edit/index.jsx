@@ -138,7 +138,7 @@ export default function OrganizationEdit() {
                                 } else if (updatedFile.logo.file) {
                                     return await uploadFile({ file: updatedFile.logo.file }).then((r) => r["@id"]);
                                 }
-                            })()
+                            })();
 
                             const data = {
                                 organizerName: entity.organizerName,
@@ -153,6 +153,8 @@ export default function OrganizationEdit() {
                                 country: "France",
                                 websiteUrl: entity.websiteUrl,
                                 organizationType: entity.organizationType.value,
+                                numberSiret: entity.numberSiret,
+                                intraCommunityVat: entity.intraCommunityVat,
                             };
                             console.debug("data", data);
                             const res = await apiFetch("/organizations/" + organizationId, {
@@ -171,7 +173,7 @@ export default function OrganizationEdit() {
                                     if (updatedFile.logo === null && entity.logo) {
                                         await deleteFile({ path: entity.logo["@id"] });
                                     }
-                                })
+                                });
                             resolve(res);
                         } catch (e) {
                             console.error(e);
@@ -217,7 +219,15 @@ export default function OrganizationEdit() {
                     <Input type="checkbox" name="state" label="Actif" onChange={(d) => updateEntityState("state", d)} defaultValue={entity.state} />
 
                     <Input type="text" name="address" label="Adresse" extra={{ required: true }} onChange={(d) => updateEntityState("address", d)} defaultValue={entity.address} />
-
+                    <Input type="text" name="numberSiret" label="Numéro SIRET" extra={{ required: true }} onChange={(d) => updateEntityState("numberSiret", d)} defaultValue={entity.numberSiret} />
+                    <Input
+                        type="text"
+                        name="intraCommunityVat"
+                        label="Numéro TVA"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntityState("intraCommunityVat", d)}
+                        defaultValue={entity.intraCommunityVat}
+                    />
                     <Input type="text" name="websiteUrl" label="Site internet" extra={{ required: true }} onChange={(d) => updateEntityState("websiteUrl", d)} defaultValue={entity.websiteUrl} />
 
                     <Input
@@ -228,7 +238,7 @@ export default function OrganizationEdit() {
                         onChange={(d) => updateEntityState("organizationType", d)}
                     />
 
-                    <div style={{ display: "flex", gap: "30px" }}>
+                    <div style={{ display: "flex", gap: "10px" }}>
                         <Input
                             type="select"
                             name="city"

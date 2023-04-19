@@ -1,7 +1,7 @@
 import style from "./style.module.scss";
 import FOCompetitionList from "@/components/organisms/FO/FOCompetitionList";
-import FOCompetitionPortalList from "@/components/organisms/FO/FOCompetitionPortalList";
 import FOStats from "@/components/organisms/FO/FOStats";
+import FOPortalList from "@/components/organisms/FO/FOPortalList";
 
 export default function Home() {
     return (
@@ -12,9 +12,11 @@ export default function Home() {
                 </div>
                 <FOStats />
             </div>
-            <FOCompetitionPortalList />
+            <FOPortalList boxSingle={
+                {type: "picture", path: "/fixtures-upload/952-2160-2160.jpg", alt: "Photo de la page d'accueil"}
+            } boxUp={{type: "picture", path: "/fixtures-upload/952-2160-2160.jpg", alt: "Photo de la page d'accueil"}} boxDown={{type: "picture", path: "/fixtures-upload/952-2160-2160.jpg", alt: "Photo de la page d'accueil"}} />
 
-            <h2 className={style.titleMargin}>Derniers concours photo publiés</h2>
+            <h2>Derniers concours photo publiés</h2>
             <FOCompetitionList />
         </div>
     )

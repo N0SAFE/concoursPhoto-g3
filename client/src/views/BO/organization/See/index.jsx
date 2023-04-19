@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
+import toApiPath from "@/hooks/useApiFetch";
 
 export default function () {
     const apiFetch = useApiFetch();
@@ -76,6 +77,14 @@ export default function () {
                     name: "email",
                 },
                 {
+                    display: "Numero de SIRET",
+                    name: "number_siret",
+                },
+                {
+                    display: "Numéro de TVA",
+                    name: "intra_community_vat",
+                },
+                {
                     display: "Site web",
                     name: "website_url",
                 },
@@ -88,7 +97,7 @@ export default function () {
                     name: "logo",
                     type: "img",
                     customData: ({ entity }) => {
-                        return entity?.logo?.path ? {to: toApiPath(entity?.logo?.path), name: entity?.logo?.default_name} : null;
+                        return entity?.logo?.path ? { to: toApiPath(entity?.logo?.path), name: entity?.logo?.default_name } : null;
                     },
                 },
                 {
