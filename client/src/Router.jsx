@@ -16,20 +16,23 @@ import CompetitionCreate from "@/views/BO/competition/Create";
 import GuardedRoute from "@/layout/GuardedRoute.jsx";
 import { Navigate } from "react-router-dom";
 import Profile from "@/views/global/Profile";
-import ProfileUser from "@/views/global/Profile/User";
+// import ProfileUser from "@/views/global/Profile/User";
 import OrganizationEdit from "@/views/BO/organization/Edit";
 import CompetitionSee from "@/views/BO/competition/See";
 import OrganizationSee from "@/views/BO/organization/See";
 import CompetitionEdit from "@/views/BO/competition/Edit";
 import Notif from "@/views/global/Profile/notif/index.jsx";
 import IndexNotif from "@/views/global/Profile/notif/index.jsx";
-import Myorganisation from "./views/global/Profile/myorganization/index.jsx";
 import Navlink from "@/layout/Navlink/index.jsx";
+import Myorganization from "@/views/global/Profile/myorganization/index.jsx";
 
 const profileRouteList = [
-    { content: "Mon profil", to: "/profile/me" },
-    { content: "Mes préférences", to: "/profile/preference" },
-    { content: "Mes organisations", to: "/profile/myorganization" },
+    { content: "Mon profil", to: "/me" },
+    { content: "Mes préférences", to: "/preference" },
+    { content: "Mes organisations", to: "/myorganization" },
+    { content: "Concours créés par mon organisation", to: "/me" },
+    { content: "Concours auxquels j’ai participé", to: "/me" },
+    { content: "Mes publicités", to: "/me" },
 ];
 
 function Router() {
@@ -64,12 +67,12 @@ function Router() {
             </Route>
             <Route path="/" element={<Header />}>
                 <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />} />}>
-                    <Route element={<Navlink list={profileRouteList} />}>
+                    <Route element={<Navlink base="/profile" list={profileRouteList} />}>
                         <Route path="me" element={<Profile />} />
                         <Route path="preference" element={<IndexNotif />} />
-                        <Route path="myorganization" element={<Myorganisation />} />
+                        <Route path="myorganization" element={<Myorganization />} />
                     </Route>
-                    <Route path=":id" element={<ProfileUser />} />
+                    {/* <Route path=":id" element={<ProfileUser />} /> */}
                 </Route>
                 <Route path="" element={<Home />} />
             </Route>

@@ -238,7 +238,7 @@ export default function OrganizationEdit() {
                         onChange={(d) => updateEntityState("organizationType", d)}
                     />
 
-                    <div style={{ display: "flex", gap: "30px" }}>
+                    <div style={{ display: "flex", gap: "10px" }}>
                         <Input
                             type="select"
                             name="city"
