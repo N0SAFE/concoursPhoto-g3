@@ -51,12 +51,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
-    #[Groups('user')]
+    #[Groups(['user', 'competition'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $firstname = null;
 
-    #[Groups('user')]
+    #[Groups(['user', 'competition'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $lastname = null;
@@ -143,7 +143,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups('user')]
-    
+
     private ?string $socials_networks = null;
 
 

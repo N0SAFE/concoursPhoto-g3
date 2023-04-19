@@ -1,4 +1,6 @@
 .formContainer {
+    @extend .limited-content;
+
     form {
         align-items: inherit;
     }

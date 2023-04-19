@@ -1,12 +1,19 @@
 import style from './style.module.scss'
 import Icon from "@/components/atoms/Icon";
 import Chip from "@/components/atoms/Chip";
+import {useNavigate} from "react-router-dom";
 
-export default function Card({imagePath, title, filters = [], stats = [], finalDate }) {
+export default function Card({idContent, imagePath, title, filters = [], stats = [], finalDate }) {
+    const navigate = useNavigate();
+
+    const handleClick = (idContent) => {
+        navigate("/competition/" + idContent);
+    }
+
     return (
-        <div className={style.cardContainer}>
+        <div className={style.cardContainer} onClick={() => handleClick(idContent)}>
             <div className={style.cardHeader}>
-                <img src={imagePath} alt={title}/>
+                <img src={import.meta.env.VITE_API_URL + "/" + imagePath} alt={title}/>
             </div>
             <div className={style.cardBody}>
                 <h3>{title}</h3>

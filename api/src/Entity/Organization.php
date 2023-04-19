@@ -26,7 +26,7 @@ class Organization
 
     #[ORM\Column(length: 255)]
     #[Groups(['organization', 'competition', 'user'])]
-    
+
     private ?string $organizer_name = null;
 
     #[ORM\Column(length: 255)]
@@ -87,7 +87,7 @@ class Organization
     private ?string $number_siret = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['organization'])]
+    #[Groups(['organization', 'competition'])]
     private ?File $logo = null;
 
     public function __construct()

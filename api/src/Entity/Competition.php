@@ -105,8 +105,8 @@ class Competition
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
-    #[Groups('competition')]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
+    #[Groups('competition')]
     private Collection $memberOfTheJuries;
 
     #[Groups('competition')]
