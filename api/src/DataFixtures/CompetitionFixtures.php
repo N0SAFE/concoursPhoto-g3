@@ -15,6 +15,14 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
         $this->faker = Factory::create('fr_FR');
     }
 
+    const PICTURE_ARRAY = [
+        "698-2160-2160.jpg",
+        "814-2160-2160.jpg",
+        "904-2160-2160.jpg",
+        "952-2160-2160.jpg",
+        "12839c32a07ad619a08ccaec9d21c241b732d40d.Capture d'écran 2023-03-22 154847.png"
+    ];
+
     const COMPETITION_REFERENCE = 'competition';
     const COMPETITION_COUNT_REFERENCE = 10;
     const COUNT_REFERENCE = 100;
@@ -35,7 +43,7 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
         $file = new File();
 
         $file->setExtension($this->faker->fileExtension());
-        $file->setPath($this->faker->filePath());
+        $file->setPath("fixtures-upload/" . self::PICTURE_ARRAY[rand(0, count(self::PICTURE_ARRAY) - 1)]);
         $file->setSize($this->faker->randomNumber());
         $file->setType($this->faker->mimeType());
         $file->setDefaultName($this->faker->name());

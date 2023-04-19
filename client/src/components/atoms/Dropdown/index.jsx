@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import Icon from "@/components/atoms/Icon";
 import React, { useRef, useState } from "react";
 
-export default function Dropdown({ title, links, className }) {
-    const dropdownRef = useRef("");
+export default function Dropdown({title, links = [], className, iconColor }) {
+    const dropdownRef = useRef('');
     const [isIconRotated, setIsIconRotated] = useState(false);
 
     const handleDropdown = (e) => {
@@ -21,13 +21,11 @@ export default function Dropdown({ title, links, className }) {
                     <Link className={className} onClick={(e) => handleDropdown(e)}>
                         {title}
                     </Link>
-                    <Icon className={`${style.dropdownIcon} ${isIconRotated ? style.dropdownRotate : ""}`} icon="cheveron-up" size={20} color="white" />
+                    <Icon className={`${style.dropdownIcon} ${isIconRotated ? style.dropdownRotate : ""}`} icon="cheveron-up" size={20} color={iconColor} />
                 </li>
             </div>
             <div ref={dropdownRef} className={style.dropdown}>
                 {links.map((link, index) => {
-                    console.log(link);
-                    console.log(typeof link?.action === "function");
                     return (
                         <li key={index}>
                             <Link

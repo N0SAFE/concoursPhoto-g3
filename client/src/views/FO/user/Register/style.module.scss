@@ -50,6 +50,10 @@
             display: flex;
             gap: 15px;
 
+            & > .component {
+                width: inherit;
+            }
+
             & > p > span {
                 text-decoration: underline;
             }
@@ -87,6 +91,7 @@
 
             & > a {
                 text-decoration: underline;
+                color: $background-color-secondary;
             }
         }
 

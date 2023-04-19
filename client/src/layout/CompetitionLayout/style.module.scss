@@ -1,0 +1,86 @@
+.competitionContainer {
+    @extend .limited-content;
+    @extend .margin-title;
+
+    .competitionBanner {
+        .filter {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding-bottom: 20px;
+
+            .viewFilter {
+                flex-direction: column;
+                flex: 0 66%;
+                display: flex;
+                gap: 15px;
+
+                & > div:last-child {
+                    display: flex;
+                    gap: 15px;
+                }
+            }
+
+            .viewOrganizer {
+                display: flex;
+                flex: 0 33%;
+                flex-direction: column;
+                justify-content: space-between;
+
+                &One {
+                    padding-top: 20px;
+                    padding-bottom: 10px;
+
+                    & > .titleOrganizer {
+                        & > span {
+                            font-weight: 700;
+                            text-decoration: underline;
+                        }
+                    }
+                }
+
+                &Two {
+                    display: flex;
+
+                    & > div {
+                        display: flex;
+                        align-items: center;
+                        flex-direction: row;
+
+                        & > p {
+                            display: flex;
+                        }
+
+                        &:first-child {
+                            margin-right: 20px;
+                        }
+
+                        &:last-child > p {
+                            margin-right: 10px;
+                        }
+                    }
+                }
+
+                &Stats {
+                    display: flex;
+                }
+            }
+        }
+    }
+
+    .competitionDescription {
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+        flex-wrap: wrap;
+
+        & > div:first-child {
+            padding: 20px 0;
+            flex: 0 66%
+        }
+
+        & > div:last-child {
+            flex: 0 33%
+        }
+    }
+}

@@ -10,6 +10,7 @@ $borderRadius: 10px;
         position: relative;
         box-shadow: 3px 5px 30px rgba(0, 0, 0, 0.1);
         overflow: hidden;
+        cursor: pointer;
 
         @include mobile() {
             width: calc($containerWidth / 2);
