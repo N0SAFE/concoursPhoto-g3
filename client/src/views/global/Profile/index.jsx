@@ -8,6 +8,7 @@ import { useAuthContext } from "@/contexts/AuthContext.jsx";
 import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
+import style from "./style.module.scss";
 
 export default function Profile() {
     const [entityPossibility, setEntityPossibility] = useState({ statut: [], gender: [], category: [] });
@@ -156,7 +157,7 @@ export default function Profile() {
     }, [entity.postcode, entity.city]);
 
     return (
-        <div>
+        <div className={style.formContainer}>
             <BOForm
                 handleSubmit={function () {
                     const data = {
@@ -206,10 +207,11 @@ export default function Profile() {
                         error: "Erreur lors de la modification de votre profil",
                     });
                 }}
+                hasSubmit={true}
             >
                 <Input type="radioList" name="genre" onChange={(d) => updateEntity("gender", d)} extra={{ value: entity.gender, options: entityPossibility.genders }} />
                 <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
                         <Input type="text" name="Prénom*" label="Prénom" onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
                         <Input type="text" name="Nom*" label="Nom" onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
                         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
@@ -219,7 +221,7 @@ export default function Profile() {
                         <Input type="email" name="Email*" label="Adresse email" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
                         <Input type="password" name="Mot de passe*" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
                         <Input type="text" name="Adresse" label="Adresse" onChange={(d) => updateEntity("adress", d)} defaultValue={entity.address} />
                         <div style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
                             {" "}
@@ -279,13 +281,13 @@ export default function Profile() {
                     </div>
                 </div>
 
-                <div style={{}}>
-                    <h3 style={{ marginTop: "2%", marginBottom: "3%" }}>Si vous êtes photographe</h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                    <h2>Si vous êtes photographe</h2>
                     <div style={{ display: "flex", flexDirection: "row" }}>
                         {" "}
                         <Input
                             type="textarea"
-                            extra={{ rows: 15, cols: 85 }}
+                            extra={{ rows: 16 }}
                             name="photographerDescription"
                             label="Description Photographe"
                             onChange={(d) => updateEntity("photographerDescription", d)}
@@ -293,7 +295,7 @@ export default function Profile() {
                         />
                     </div>
 
-                    <div style={{ display: "flex", flexDirection: "row", gap: "30px" }}>
+                    <div style={{ display: "flex", flexDirection: "row", gap: "100px", width: "100%" }}>
                         <Input
                             type="select"
                             name="PhotographeCategory"
@@ -304,20 +306,25 @@ export default function Profile() {
                         <Input type="text" name="websiteUrl" label="Votre site web personnel" onChange={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
                     </div>
                     <div style={{}}>
-                        <h2 style={{ marginBottom: "5%", marginTop: "5%" }}>Réseaux sociaux de l’organisation</h2>
-                        <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                            <Input type="text" name="socialNetworks" label="Votre page Facebook" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                            <Input type="text" name="socialNetworks" label="Votre chaîne Youtube" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                        </div>
-                        <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                            <Input type="text" name="socialNetworks" label="Votre page Instagram" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                            <Input type="text" name="socialNetworks" label="Votre compte Twitter" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                        </div>
-                        <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                            <Input type="text" name="socialNetworks" label="Votre page Linkedin" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                            <Input type="text" name="socialNetworks" label="Votre compte TikTok" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                        <h2>Réseaux sociaux de l’organisation</h2>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                            <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                                <Input type="text" name="socialNetworks" label="Votre page Facebook" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                                <Input type="text" name="socialNetworks" label="Votre chaîne Youtube" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                            </div>
+                            <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                                <Input type="text" name="socialNetworks" label="Votre page Instagram" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                                <Input type="text" name="socialNetworks" label="Votre compte Twitter" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                            </div>
+                            <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                                <Input type="text" name="socialNetworks" label="Votre page Linkedin" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                                <Input type="text" name="socialNetworks" label="Votre compte TikTok" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div className={style.registerSubmit}>
+                    <Button type="submit" name="Mettre à jour" color={"black"} textColor={"white"} padding={"14px 30px"} border={false} borderRadius={"44px"} width={"245px"} />
                 </div>
             </BOForm>
         </div>

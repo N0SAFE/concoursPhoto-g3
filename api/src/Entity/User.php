@@ -115,6 +115,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private Collection $memberOfTheJuries;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Picture::class)]
+    #[Groups('user')]
     private Collection $pictures;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]

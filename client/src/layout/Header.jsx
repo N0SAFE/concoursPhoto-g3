@@ -11,23 +11,23 @@ export default function Header(environment) {
     const { hideModal, setModalContent } = useModal();
     const { logout } = useAuth();
     const { isLogged, me } = useAuthContext();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const listRight = [];
     const listLeft = [];
-    
+
     const getLoginComponent = () => {
         return (
             <Login
                 onSuccess={hideModal}
                 onRegisterButtonClick={() => {
-                    console.log("ui")
+                    console.log("ui");
                     setModalContent(getRegisterComponent());
                 }}
             />
         );
     };
-    
+
     const getRegisterComponent = () => {
         return (
             <Register
@@ -83,7 +83,7 @@ export default function Header(environment) {
                         title: "Deconnexion",
                         action: function () {
                             const promise = logout().then(() => {
-                                navigate("/")
+                                navigate("/");
                             });
                             toast.promise(promise, {
                                 pending: "Déconnexion en cours",
@@ -105,7 +105,7 @@ export default function Header(environment) {
                 type: "button",
                 action: function () {
                     const promise = logout().then(() => {
-                        navigate("/")
+                        navigate("/");
                     });
                     toast.promise(promise, {
                         pending: "Déconnexion en cours",

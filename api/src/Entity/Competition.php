@@ -18,7 +18,7 @@ class Competition
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user'])]
     private ?int $id = null;
 
     #[ORM\Column]

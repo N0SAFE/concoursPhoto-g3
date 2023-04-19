@@ -8,8 +8,9 @@ import { useAuthContext } from "@/contexts/AuthContext.jsx";
 import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
+import style from "./style.module.scss";
 
-export default function Myorganisation() {
+export default function Myorganization() {
     const [entityPossibility, setEntityPossibility] = useState({ organization: [], types: [] });
     const { me } = useAuthContext();
     const { getCityByCode } = useLocation();
@@ -33,11 +34,14 @@ export default function Myorganisation() {
         organizationType: null,
         description: null,
         socialNetworks: null,
+        Types: null,
     });
     const updateEntity = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
-
+    const updateEntityState = (key, value) => {
+        setEntity({ ...entity, [key]: value });
+    };
     const [errors, setErrors] = useState({});
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
@@ -55,27 +59,10 @@ export default function Myorganisation() {
             });
     };
 
-    const getOrganizations = () => {
-        return apiFetch("/organizations", {
-            method: "GET",
-        })
-            .then((r) => r.json())
-            .then((data) => {
-                console.debug(data);
-                const _user = {
-                    postcode: { value: data.postcode, label: data.postcode },
-                    city: { label: city.nom, value: city.code },
-                };
-                return data["hydra:member"].map(function (item) {
-                    return { label: item.label, value: item["@id"] };
-                });
-            });
-    };
-
     useEffect(() => {
         setEntity(me.Manage[0]);
         console.log(me.Manage[0]);
-        const promise = Promise.all([getOrganizations(), getOrganizationTypePossibility()]).then(([organization, types]) => setEntityPossibility({ organization, types }));
+        const promise = Promise.all([getOrganizationTypePossibility()]).then(([types]) => setEntityPossibility({ types }));
         toast.promise(promise, {
             pending: "Chargement des données",
             success: "Données chargées",
@@ -84,7 +71,7 @@ export default function Myorganisation() {
     }, []);
 
     useEffect(() => {
-        updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then((d) => {
+        updateLocationPossibility({ args: { codeCity: entity.city?.value, postcode: entity.postcode?.value } }).then(function (d) {
             if (d.length === 1 && d[0].id === "cities" && d[0].data.length === 1) {
                 if (d[0].data[0].codesPostaux.length === 1 && !entity.postcode) {
                     setEntity({ ...entity, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
@@ -97,7 +84,7 @@ export default function Myorganisation() {
     }, [entity.postcode, entity.city]);
 
     return (
-        <div>
+        <div className={style.formContainer}>
             <BOForm
                 handleSubmit={function () {
                     const data = {
@@ -111,8 +98,7 @@ export default function Myorganisation() {
                         intraCommunityVat: entity.intra_community_vat,
                         numberSiret: entity.number_siret,
                         country: entity.country,
-                        // organizationType: { value: data.organization_type["@id"], label: data.organization_type.label },
-                        organizationType: entity.organizationType.value,
+                        organizationType: entity.organization_type.value,
                         description: entity.description,
                     };
                     const promise = apiFetch(`/organizations/${entity.id}`, {
@@ -138,32 +124,34 @@ export default function Myorganisation() {
                         error: "Erreur lors de la modification de votre profil",
                     });
                 }}
+                hasSubmit={true}
             >
                 <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                        {" "}
-                        <Input type="text" name="organizer_name" label="Nom" onChange={(d) => updateEntity("organizer_name", d)} defaultValue={entity.organizer_name} />
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                        <Input type="text" name="organizer_name" label="Nom de l'organisation" onChange={(d) => updateEntity("organizer_name", d)} defaultValue={entity.organizer_name} />
                         <Input
                             type="select"
                             name="type"
                             label="Type"
-                            extra={{ options: entityPossibility.types, required: true, value: entity.organizationType }}
-                            onChange={(d) => updateEntityState("organizationType", d)}
+                            extra={{ options: entityPossibility.types, required: true, value: entity.organization_type }}
+                            onChange={(d) => updateEntityState("organization_type", d)}
                         />
+
                         <Input type="text" name="email" label="Email" onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
                         <Input type="text" name="number_phone" label="Numéro de téléphone" onChange={(d) => updateEntity("number_phone", d)} defaultValue={entity.number_phone} />
                         <Input type="text" name="website_url" label="Site web" onChange={(d) => updateEntity("website_url", d)} defaultValue={entity.website_url} />
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
                         {" "}
                         <Input type="text" name="address" label="Adresse" onChange={(d) => updateEntity("address", d)} defaultValue={entity.address} />
                         <div style={{ display: "flex", flexDirection: "row" }}>
                             <Input
                                 type="select"
-                                name="Ville"
+                                defaultValue={entity.city}
+                                name="city"
                                 label="Ville"
                                 extra={{
-                                    isLoading: locationPossibilityIsLoading,
+                                    isLoading: entity.locationPossibilityIsLoading,
                                     value: entity.city,
                                     isClearable: true,
                                     required: true,
@@ -178,11 +166,12 @@ export default function Myorganisation() {
                                         }
                                     },
                                 }}
-                                onChange={(d) => updateEntity("city", d)}
+                                onChange={(d) => updateEntityState("city", d)}
                             />
+
                             <Input
                                 type="select"
-                                name="Code Postal"
+                                name="postalCode"
                                 label="Code postal"
                                 extra={{
                                     isLoading: locationPossibilityIsLoading,
@@ -200,7 +189,7 @@ export default function Myorganisation() {
                                         }
                                     },
                                 }}
-                                onChange={(d) => updateEntity("postcode", d)}
+                                onChange={(d) => updateEntityState("postcode", d)}
                             />
                         </div>
                         <Input type="text" name="country" label="Pays" onChange={(d) => updateEntity("country", d)} defaultValue={entity.country} />
@@ -209,22 +198,27 @@ export default function Myorganisation() {
                     </div>
                 </div>
                 <div className="test">
-                    <h3 style={{ marginTop: "5%" }}>Présentation</h3>
+                    <h2>Présentation</h2>
                 </div>
 
-                <Input type="textarea" name="description" label="Description" onChange={(d) => updateEntity("country", d)} defaultValue={entity.description}></Input>
-                <h3>Réseaux sociaux de l’organisation</h3>
-                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                    <Input type="text" label="Votre page Facebook"></Input>
-                    <Input type="text" label="Votre chaîne Youtube"></Input>
+                <Input type="textarea" name="description" extra={{ rows: 16 }} label="Description" onChange={(d) => updateEntity("country", d)} defaultValue={entity.description}></Input>
+                <h2>Réseaux sociaux de l’organisation</h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                    <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                        <Input type="text" label="Votre page Facebook"></Input>
+                        <Input type="text" label="Votre chaîne Youtube"></Input>
+                    </div>
+                    <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                        <Input type="text" label="Votre page Instagram"></Input>
+                        <Input type="text" label="Votre compte Twitter"></Input>
+                    </div>
+                    <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                        <Input type="text" label="Votre page Linkedin"></Input>
+                        <Input type="text" label="Votre compte TikTok"></Input>
+                    </div>
                 </div>
-                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                    <Input type="text" label="Votre page Instagram"></Input>
-                    <Input type="text" label="Votre compte Twitter"></Input>
-                </div>
-                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                    <Input type="text" label="Votre page Linkedin"></Input>
-                    <Input type="text" label="Votre compte TikTok"></Input>
+                <div className={style.registerSubmit}>
+                    <Button type="submit" name="Mettre à jour" color={"black"} textColor={"white"} padding={"14px 30px"} border={false} borderRadius={"44px"} width={"245px"} />
                 </div>
             </BOForm>
         </div>
