@@ -42,13 +42,13 @@ function Router() {
             <Login
                 onSuccess={hideModal}
                 onRegisterButtonClick={() => {
-                    console.log("ui")
+                    console.log("ui");
                     setModalContent(getRegisterComponent());
                 }}
             />
         );
     };
-    
+
     const getRegisterComponent = () => {
         return (
             <Register
@@ -59,10 +59,23 @@ function Router() {
             />
         );
     };
-    const {setModalContent, showModal, hideModal} = useModal();
+    const { setModalContent, showModal, hideModal } = useModal();
     return (
         <Routes>
-            <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={() => {toast.info('veuillez vous connecter'); setModalContent(getLoginComponent()); showModal(); return <Navigate to="/" replace={true} />}} />}>
+            <Route
+                path="/BO"
+                element={
+                    <GuardedRoute
+                        verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")}
+                        fallback={() => {
+                            toast.info("veuillez vous connecter");
+                            setModalContent(getLoginComponent());
+                            showModal();
+                            return <Navigate to="/" replace={true} />;
+                        }}
+                    />
+                }
+            >
                 <Route path="" element={<Header environment={"backoffice"} />}>
                     <Route element={<BO />} />
                     <Route path="user">
@@ -86,13 +99,8 @@ function Router() {
                 </Route>
             </Route>
             <Route path="/" element={<Header />}>
-<<<<<<< HEAD
                 <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />} />}>
                     <Route element={<Navlink base="/profile" list={profileRouteList} />}>
-=======
-                <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={() => {toast.info('veuillez vous connecter'); setModalContent(getLoginComponent()); showModal(); return <Navigate to="/" replace={true} />}} />}>
-                    <Route element={<Navlink list={profileRouteList} />}>
->>>>>>> 0cc520de7f32af54b5213a661dc64bfbd7c49920
                         <Route path="me" element={<Profile />} />
                         <Route path="preference" element={<IndexNotif />} />
                         <Route path="myorganization" element={<Myorganization />} />

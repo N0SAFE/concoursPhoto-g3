@@ -53,12 +53,10 @@ export default function Header(environment) {
                 links: [
                     {
                         title: "Deconnexion",
-<<<<<<< HEAD
                         to: "/auth/logout",
-=======
                         action: function () {
                             const promise = logout().then(() => {
-                                navigate("/")
+                                navigate("/");
                             });
                             toast.promise(promise, {
                                 pending: "Déconnexion en cours",
@@ -66,13 +64,11 @@ export default function Header(environment) {
                                 error: "Erreur lors de la déconnexion",
                             });
                         },
->>>>>>> 0cc520de7f32af54b5213a661dc64bfbd7c49920
                     },
                     { title: "Mon profil", to: "/profile/me" },
                 ],
             });
         } else {
-<<<<<<< HEAD
             listRight.push({ type: "modal", title: "Connexion", component: <LoginFO /> });
         }
     } else {
@@ -81,30 +77,6 @@ export default function Header(environment) {
             listRight.push({ type: "button", to: "/auth/logout", title: "Se déconnecter", icon: "sign-out" });
         } else {
             listRight.push({ type: "modal", component: <LoginFO />, title: "Se connecter", icon: "sign-in" });
-=======
-            listRight.push({ type: "modal", title: "Connexion", component: getLoginComponent() });
-        }
-    } else {
-        listRight.push({ type: "modal", component: getRegisterComponent(), title: "S'inscrire", icon: "user-plus" });
-        if (isLogged) {
-            listRight.push({
-                type: "button",
-                action: function () {
-                    const promise = logout().then(() => {
-                        navigate("/")
-                    });
-                    toast.promise(promise, {
-                        pending: "Déconnexion en cours",
-                        success: "Déconnexion réussie",
-                        error: "Erreur lors de la déconnexion",
-                    });
-                },
-                title: "Se déconnecter",
-                icon: "sign-out",
-            });
-        } else {
-            listRight.push({ type: "modal", component: getLoginComponent(), title: "Se connecter", icon: "sign-in" });
->>>>>>> 0cc520de7f32af54b5213a661dc64bfbd7c49920
         }
     }
 
