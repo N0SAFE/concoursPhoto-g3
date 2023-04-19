@@ -1,15 +1,43 @@
 import Navbar from "@/components/molecules/Navbar";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/contexts/AuthContext";
-import UserRegister from "@/views/FO/user/Register";
-import LoginFO from "@/views/auth/LoginFO";
+import Login from "@/components/organisms/auth/Login";
+import Register from "@/components/organisms/auth/Register";
+import { useModal } from "@/contexts/ModalContext";
+import useAuth from "@/hooks/useAuth.js";
+import { toast } from "react-toastify";
 
 export default function Header(environment) {
-    const location = useLocation();
+    const { hideModal, setModalContent } = useModal();
+    const { logout } = useAuth();
     const { isLogged, me } = useAuthContext();
+    const navigate = useNavigate();
 
     const listRight = [];
     const listLeft = [];
+
+    const getLoginComponent = () => {
+        return (
+            <Login
+                onSuccess={hideModal}
+                onRegisterButtonClick={() => {
+                    console.log("ui");
+                    setModalContent(getRegisterComponent());
+                }}
+            />
+        );
+    };
+
+    const getRegisterComponent = () => {
+        return (
+            <Register
+                onSuccess={hideModal}
+                onLoginButtonClick={() => {
+                    setModalContent(getLoginComponent());
+                }}
+            />
+        );
+    };
 
     if (environment.environment === "backoffice") {
         listLeft.push({ type: "classic", title: "Accueil", to: "/" });
@@ -53,7 +81,6 @@ export default function Header(environment) {
                 links: [
                     {
                         title: "Deconnexion",
-                        to: "/auth/logout",
                         action: function () {
                             const promise = logout().then(() => {
                                 navigate("/");
@@ -69,14 +96,28 @@ export default function Header(environment) {
                 ],
             });
         } else {
-            listRight.push({ type: "modal", title: "Connexion", component: <LoginFO /> });
+            listRight.push({ type: "modal", title: "Connexion", component: getLoginComponent() });
         }
     } else {
-        listRight.push({ type: "modal", component: <UserRegister />, title: "S'inscrire", icon: "user-plus" });
+        listRight.push({ type: "modal", component: getRegisterComponent(), title: "S'inscrire", icon: "user-plus" });
         if (isLogged) {
-            listRight.push({ type: "button", to: "/auth/logout", title: "Se déconnecter", icon: "sign-out" });
+            listRight.push({
+                type: "button",
+                action: function () {
+                    const promise = logout().then(() => {
+                        navigate("/");
+                    });
+                    toast.promise(promise, {
+                        pending: "Déconnexion en cours",
+                        success: "Déconnexion réussie",
+                        error: "Erreur lors de la déconnexion",
+                    });
+                },
+                title: "Se déconnecter",
+                icon: "sign-out",
+            });
         } else {
-            listRight.push({ type: "modal", component: <LoginFO />, title: "Se connecter", icon: "sign-in" });
+            listRight.push({ type: "modal", component: getLoginComponent(), title: "Se connecter", icon: "sign-in" });
         }
     }
 
