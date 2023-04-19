@@ -6,8 +6,10 @@ import Button from "@/components/atoms/Button";
 import BOForm from "@/components/organisms/BO/Form";
 import {useState} from "react";
 import style from "./style.module.scss";
+import {Link} from "react-router-dom";
 
-export default function LoginFO() {
+export default function Login({onSuccess, onError, onRegisterButtonClick}) {
+    
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -24,13 +26,13 @@ export default function LoginFO() {
             <BOForm
                 handleSubmit={async function () {
                     const promise = login({ identifier: identifier, password: password }).then(function (me) {
-                        console.debug(me);
                         if (me.roles.includes("ROLE_ADMIN")) {
                             navigate("/BO");
                         } else {
                             navigate("/");
                         }
                     });
+                    promise.then(_ => typeof onSuccess === "function" && onSuccess()).catch(_ => typeof onError === "function" && onError());
                     toast.promise(promise, {
                         pending: "Connexion en cours",
                         success: "Connexion réussie",
@@ -49,7 +51,7 @@ export default function LoginFO() {
                     <div className={style.loginSubmit}>
                         <Button type="submit" name="Se connecter" color={"black"} textColor={"white"} padding={"14px 30px"} border={false} borderRadius={"44px"} width={"245px"} />
                     </div>
-                    <p className={style.loginProposition}>Vous avez oublié votre mot de passe ? <a>Cliquez-ici</a></p>
+                    <p className={style.loginProposition}>Vous avez oublié votre mot de passe ? <Link onClick={(e) => {e.preventDefault(); typeof onRegisterButtonClick === "function" && onRegisterButtonClick()}}>Cliquez-ici</Link></p>
                 </div>
             </BOForm>
         </div>

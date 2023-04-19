@@ -1,6 +1,6 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
-import Login from "@/views/auth/Login";
-import Logout from "@/views/auth/Logout";
+import { Route, Routes } from "react-router-dom";
+import Login from "@/components/organisms/auth/Login";
+import Register from "@/components/organisms/auth/Register";
 import UserList from "@/views/BO/user/List";
 import UserEdit from "@/views/BO/user/Edit";
 import UserCreate from "@/views/BO/user/Create";
@@ -21,10 +21,11 @@ import OrganizationEdit from "@/views/BO/organization/Edit";
 import CompetitionSee from "@/views/BO/competition/See";
 import OrganizationSee from "@/views/BO/organization/See";
 import CompetitionEdit from "@/views/BO/competition/Edit";
-import Notif from "@/views/global/Profile/notif/index.jsx";
 import IndexNotif from "@/views/global/Profile/notif/index.jsx";
 import Myorganisation from "./views/global/Profile/myorganization/index.jsx";
 import Navlink from "@/layout/Navlink/index.jsx";
+import { useModal } from "./contexts/ModalContext/index.jsx";
+import { toast } from "react-toastify";
 
 const profileRouteList = [
     { content: "Mon profil", to: "/profile/me" },
@@ -33,13 +34,32 @@ const profileRouteList = [
 ];
 
 function Router() {
+    const getLoginComponent = () => {
+        return (
+            <Login
+                onSuccess={hideModal}
+                onRegisterButtonClick={() => {
+                    console.log("ui")
+                    setModalContent(getRegisterComponent());
+                }}
+            />
+        );
+    };
+    
+    const getRegisterComponent = () => {
+        return (
+            <Register
+                onSuccess={hideModal}
+                onLoginButtonClick={() => {
+                    setModalContent(getLoginComponent());
+                }}
+            />
+        );
+    };
+    const {setModalContent, showModal, hideModal} = useModal();
     return (
         <Routes>
-            <Route path="/auth" element={<Header environment={"backoffice"} />}>
-                <Route path="login" element={<Login />} />
-                <Route path="logout" element={<Logout />} />
-            </Route>
-            <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={<Navigate to="/auth/login" replace={true} />} />}>
+            <Route path="/BO" element={<GuardedRoute verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")} fallback={() => {toast.info('veuillez vous connecter'); setModalContent(getLoginComponent()); showModal(); return <Navigate to="/" replace={true} />}} />}>
                 <Route path="" element={<Header environment={"backoffice"} />}>
                     <Route element={<BO />} />
                     <Route path="user">
@@ -63,7 +83,7 @@ function Router() {
                 </Route>
             </Route>
             <Route path="/" element={<Header />}>
-                <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />} />}>
+                <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={() => {toast.info('veuillez vous connecter'); setModalContent(getLoginComponent()); showModal(); return <Navigate to="/" replace={true} />}} />}>
                     <Route element={<Navlink list={profileRouteList} />}>
                         <Route path="me" element={<Profile />} />
                         <Route path="preference" element={<IndexNotif />} />
