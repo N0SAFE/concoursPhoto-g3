@@ -36,11 +36,13 @@ export default function () {
     useEffect(() => {
         const controller = new AbortController();
         const promise = getOrganizations(controller);
-        toast.promise(promise, {
-            pending: "Chargement de l'oranisation",
-            success: "l'Organization a bien chargé",
-            error: "Erreur lors du chargement de l'organisation",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement de l'oranisation",
+                success: "l'Organization a bien chargé",
+                error: "Erreur lors du chargement de l'organisation",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 

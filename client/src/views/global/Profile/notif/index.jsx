@@ -1,13 +1,5 @@
 import BOForm from "@/components/organisms/BO/Form/index.jsx";
-import Input from "@/components/atoms/Input/index.jsx";
-import { toast } from "react-toastify";
-import { useState, useEffect } from "react";
-import useApiFetch from "@/hooks/useApiFetch.js";
-import { useNavigate, useParams } from "react-router-dom";
-import { useAuthContext } from "@/contexts/AuthContext.jsx";
 import Button from "@/components/atoms/Button";
-import useLocation from "@/hooks/useLocation.js";
-import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import style from "./style.module.scss";
 
 export default function IndexNotif() {

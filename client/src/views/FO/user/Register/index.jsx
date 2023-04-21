@@ -55,11 +55,13 @@ export default function UserRegister() {
 
     useEffect(() => {
         const promise = Promise.all([getGendersPossibility(), getPersonalstatus()]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
-        toast.promise(promise, {
-            pending: "Chargement des possibilités",
-            success: "Possibilités chargées",
-            error: "Erreur lors du chargement des possibilités",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des possibilités",
+                success: "Possibilités chargées",
+                error: "Erreur lors du chargement des possibilités",
+            });
+        }
     }, []);
 
     return (
@@ -116,7 +118,7 @@ export default function UserRegister() {
                                 }
                             });
                         toast.promise(promise, {
-                            pending: "Inscription de l'utilisateur",
+                            pending: "Inscription en cours",
                             success: "Vous êtes inscrit",
                             error: {
                                 render: ({ data }) => {

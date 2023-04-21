@@ -136,11 +136,13 @@ export default function Profile() {
         const promise = Promise.all([getGendersPossibility(), getPersonalstatus(), getCategoryPossibility(), getUser()]).then(([genders, statut, category]) =>
             setEntityPossibility({ genders, statut, category })
         );
-        toast.promise(promise, {
-            pending: "Chargement des données",
-            success: "Données chargées",
-            error: "Erreur lors du chargement des données",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des données",
+                success: "Données chargées",
+                error: "Erreur lors du chargement des données",
+            });
+        }
     }, []);
 
     useEffect(() => {
@@ -198,12 +200,11 @@ export default function Profile() {
                                 throw new Error(data.description);
                             }
                             navigate("/auth/logout");
-                            toast.success("Votre profil a bien été modifié, veuillez vous reconnecter");
                         });
 
                     toast.promise(promise, {
                         pending: "Modification en cours",
-                        success: "Votre utilisateur a bien été modifié",
+                        success: "Votre profil a bien été modifié, veuillez vous reconnecter",
                         error: "Erreur lors de la modification de votre profil",
                     });
                 }}

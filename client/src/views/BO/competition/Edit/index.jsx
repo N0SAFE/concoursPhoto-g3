@@ -178,11 +178,13 @@ export default function CompetitionEdit() {
                 setEntityPossibility({ participantCategories, organizers, themes });
             }
         );
-        toast.promise(promise, {
-            pending: "Chargement des données",
-            success: "Données chargées",
-            error: "Erreur lors du chargement des données",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des données",
+                success: "Données chargées",
+                error: "Erreur lors du chargement des données",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 

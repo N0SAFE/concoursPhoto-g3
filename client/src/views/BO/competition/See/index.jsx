@@ -51,11 +51,13 @@ export default function () {
     useEffect(() => {
         const controller = new AbortController();
         const promise = getCompetitions(controller);
-        toast.promise(promise, {
-            pending: "Chargement du concours",
-            success: "Concours chargé",
-            error: "Erreur lors du chargement du consours",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement du concours",
+                success: "Concours chargé",
+                error: "Erreur lors du chargement du consours",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 
