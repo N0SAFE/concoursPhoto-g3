@@ -101,11 +101,13 @@ export default function UserCreate() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = Promise.all([getGendersPossibility(controller), getPersonalstatus(controller), getUser(controller)]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
-        toast.promise(promise, {
-            pending: "Chargement des données",
-            success: "Données chargées",
-            error: "Erreur lors du chargement des données",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des données",
+                success: "Données chargées",
+                error: "Erreur lors du chargement des données",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 

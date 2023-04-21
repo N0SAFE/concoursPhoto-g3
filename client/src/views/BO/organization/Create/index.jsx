@@ -56,11 +56,13 @@ export default function OrganizationCreate() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = Promise.all([getOrganizationTypePossibility(controller)]).then(([types]) => setEntityPossibility({ types }));
-        toast.promise(promise, {
-            pending: "Chargement des données",
-            success: "Données chargées",
-            error: "Erreur lors du chargement des données",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des données",
+                success: "Données chargées",
+                error: "Erreur lors du chargement des données",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 

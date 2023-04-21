@@ -55,16 +55,18 @@ export default function UserList() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = getUsers(controller);
-        toast.promise(promise, {
-            pending: "Chargement des utilisateurs",
-            success: "Utilisateurs chargés",
-            error: "Erreur lors du chargement des utilisateurs",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des utilisateurs",
+                success: "Utilisateurs chargés",
+                error: "Erreur lors du chargement des utilisateurs",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, [filterState, filterVerified]);
 
     const handleDelete = (id) => {
-        apiFetch("/users/" + id, {
+        const promise = apiFetch("/users/" + id, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -76,13 +78,13 @@ export default function UserList() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
                 getUsers();
-            });
+            })
+        toast.promise(promise, {
+            pending: "suppression de l'utilisateur",
+            success: "l'utitilisateur a bien été supprimé",
+            error: "une erreur est survenue lors de la suppression de l'utilisateur"
+        })
     };
 
     const handleFilterChange = (e) => {

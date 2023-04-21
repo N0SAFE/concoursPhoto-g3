@@ -69,11 +69,13 @@ export default function UserCreate() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = Promise.all([getGendersPossibility(controller), getPersonalstatus(controller)]).then(([genders, statut]) => setEntityPossibility({ genders, statut }));
-        toast.promise(promise, {
-            pending: "Chargement des possibilités",
-            success: "Possibilités chargées",
-            error: "Erreur lors du chargement des possibilités",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des possibilités",
+                success: "Possibilités chargées",
+                error: "Erreur lors du chargement des possibilités",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 
