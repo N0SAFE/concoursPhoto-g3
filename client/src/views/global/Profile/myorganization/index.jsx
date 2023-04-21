@@ -63,11 +63,13 @@ export default function Myorganization() {
         setEntity(me.Manage[0]);
         console.log(me.Manage[0]);
         const promise = Promise.all([getOrganizationTypePossibility()]).then(([types]) => setEntityPossibility({ types }));
-        toast.promise(promise, {
-            pending: "Chargement des données",
-            success: "Données chargées",
-            error: "Erreur lors du chargement des données",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des données",
+                success: "Données chargées",
+                error: "Erreur lors du chargement des données",
+            });
+        }
     }, []);
 
     useEffect(() => {
@@ -115,13 +117,11 @@ export default function Myorganization() {
                                 console.error(data);
                                 throw new Error(data.description);
                             }
-                            toast.success("Votre organization a bien été modifié");
                         });
-
                     toast.promise(promise, {
                         pending: "Modification en cours",
-                        success: "Votre utilisateur a bien été modifié",
-                        error: "Erreur lors de la modification de votre profil",
+                        success: "Votre organisation a bien été modifié",
+                        error: "Erreur lors de la modification de votre organisation",
                     });
                 }}
                 hasSubmit={true}

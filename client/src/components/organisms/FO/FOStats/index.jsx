@@ -66,11 +66,13 @@ export default function FOStats() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = Promise.all([getCompetitions(controller), getPictures(controller), getMembers(controller)]);
-        toast.promise(promise, {
-            pending: "Chargement des statistiques",
-            success: "Statistiques chargées",
-            error: "Erreur lors du chargement des statistiques",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des statistiques",
+                success: "Statistiques chargées",
+                error: "Erreur lors du chargement des statistiques",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 

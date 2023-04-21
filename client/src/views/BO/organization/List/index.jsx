@@ -35,16 +35,18 @@ export default function OrganizationList() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = getOrganizations(controller);
-        toast.promise(promise, {
-            pending: "Chargement des organisations",
-            success: "Organisations chargées",
-            error: "Erreur lors du chargement des organisations",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des organisations",
+                success: "Organisations chargées",
+                error: "Erreur lors du chargement des organisations",
+            });
+        }
         return () => setTimeout(() => controller.abort())
     }, []);
 
     const handleDelete = (id) => {
-        apiFetch("/organizations/" + id, {
+        const promise = apiFetch("/organizations/" + id, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -56,13 +58,14 @@ export default function OrganizationList() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
                 getOrganizations();
-            });
+            })
+            
+        toast.promise(promise, {
+            pending: "suppression de l'organisation",
+            success: "l'organisation a bien été supprimé",
+            error: "une erreur est survenue lors de la suppression de l'organisation"
+        })
     };
 
     return (

@@ -35,16 +35,18 @@ export default function CompetitionsList() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = getCompetitions(controller)
-        toast.promise(promise, {
-            pending: "Chargement des concours",
-            success: "Concours chargés",
-            error: "Erreur lors du chargement des concours",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des concours",
+                success: "Concours chargés",
+                error: "Erreur lors du chargement des concours",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 
     const handleDelete = (id) => {
-        apiFetch("/competitions/" + id, {
+        const promise = apiFetch("/competitions/" + id, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -55,15 +57,14 @@ export default function CompetitionsList() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                toast.success("Concours supprimé");
-            })
-            .catch((error) => {
-                console.error(error);
-                toast.error("Erreur lors de la suppression du concours");
-            })
-            .finally(() => {
                 getCompetitions();
-            });
+            })
+            
+        toast.promise(promise, {
+            pending: "suppression du concour",
+            success: "le concour a bien été supprimé",
+            error: "une erreur est survenue lors de la suppression du concour"
+        })
     };
 
     return (
