@@ -61,7 +61,7 @@ export default function Myorganization() {
 
     useEffect(() => {
         setEntity(me.Manage[0]);
-        console.log(me.Manage[0]);
+        console.debug(me.Manage[0]);
         const promise = Promise.all([getOrganizationTypePossibility()]).then(([types]) => setEntityPossibility({ types }));
         promise.then(function(){
             setIsLoading(false)

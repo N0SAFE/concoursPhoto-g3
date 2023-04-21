@@ -10,8 +10,6 @@ import { Link } from "react-router-dom";
 export default function UserRegister({ onSuccess, onError, onLoginButtonClick }) {
     const apiFetch = useApiFetch();
 
-    console.log("other");
-
     const [entityPossibility, setEntityPossibility] = useState({ genders: [], statut: [] });
     const [gtc, setGtc] = useState(false);
     const [entity, setEntity] = useState({

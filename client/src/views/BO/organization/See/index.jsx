@@ -6,8 +6,10 @@ import useApiFetch from "@/hooks/useApiFetch";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
 import toApiPath from "@/hooks/useApiFetch";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function () {
+    const [isLoading, setIsLoading] = useState(true)
     const apiFetch = useApiFetch();
     const { getCityByCode } = useLocation();
     const [entity, setEntity] = useState({});
@@ -36,6 +38,9 @@ export default function () {
     useEffect(() => {
         const controller = new AbortController();
         const promise = getOrganizations(controller);
+        promise.then(function(){
+            setIsLoading(false)
+        })
         if(import.meta.env.MODE === 'development'){
             toast.promise(promise, {
                 pending: "Chargement de l'oranisation",
@@ -47,76 +52,78 @@ export default function () {
     }, []);
 
     return (
-        <BOSee
-            entity={entity}
-            properties={[
-                {
-                    display: "Nom",
-                    name: "organizer_name",
-                },
-                {
-                    display: "Ville",
-                    name: "city",
-                },
-                {
-                    display: "Adresse",
-                    name: "address",
-                },
-                {
-                    display: "Code postal",
-                    name: "postcode",
-                },
-                {
-                    display: "pays",
-                    name: "country",
-                },
-                {
-                    display: "Téléphone",
-                    name: "number_phone",
-                },
-                {
-                    display: "Email",
-                    name: "email",
-                },
-                {
-                    display: "Numero de SIRET",
-                    name: "number_siret",
-                },
-                {
-                    display: "Numéro de TVA",
-                    name: "intra_community_vat",
-                },
-                {
-                    display: "Site web",
-                    name: "website_url",
-                },
-                {
-                    display: "Description",
-                    name: "description",
-                },
-                {
-                    display: "Logo",
-                    name: "logo",
-                    type: "img",
-                    customData: ({ entity }) => {
-                        return entity?.logo?.path ? { to: toApiPath(entity?.logo?.path), name: entity?.logo?.default_name } : null;
+        <Loader active={isLoading} >
+            <BOSee
+                entity={entity}
+                properties={[
+                    {
+                        display: "Nom",
+                        name: "organizer_name",
                     },
-                },
-                {
-                    display: "Type d'organisation",
-                    name: "type_organization",
-                    customData: ({ entity }) => {
-                        return entity?.organization_type?.label;
+                    {
+                        display: "Ville",
+                        name: "city",
                     },
-                },
-                {
-                    display: "Competitions",
-                    name: "competitions",
-                    customData: ({ entity }) => {
-                        return entity?.competitions?.map((competition) => competition.competition_name).join(", ");
+                    {
+                        display: "Adresse",
+                        name: "address",
                     },
-                },
-            ]}
-        />
+                    {
+                        display: "Code postal",
+                        name: "postcode",
+                    },
+                    {
+                        display: "pays",
+                        name: "country",
+                    },
+                    {
+                        display: "Téléphone",
+                        name: "number_phone",
+                    },
+                    {
+                        display: "Email",
+                        name: "email",
+                    },
+                    {
+                        display: "Numero de SIRET",
+                        name: "number_siret",
+                    },
+                    {
+                        display: "Numéro de TVA",
+                        name: "intra_community_vat",
+                    },
+                    {
+                        display: "Site web",
+                        name: "website_url",
+                    },
+                    {
+                        display: "Description",
+                        name: "description",
+                    },
+                    {
+                        display: "Logo",
+                        name: "logo",
+                        type: "img",
+                        customData: ({ entity }) => {
+                            return entity?.logo?.path ? { to: toApiPath(entity?.logo?.path), name: entity?.logo?.default_name } : null;
+                        },
+                    },
+                    {
+                        display: "Type d'organisation",
+                        name: "type_organization",
+                        customData: ({ entity }) => {
+                            return entity?.organization_type?.label;
+                        },
+                    },
+                    {
+                        display: "Competitions",
+                        name: "competitions",
+                        customData: ({ entity }) => {
+                            return entity?.competitions?.map((competition) => competition.competition_name).join(", ");
+                        },
+                    },
+                ]}
+            />
+        </Loader>
     );
 }

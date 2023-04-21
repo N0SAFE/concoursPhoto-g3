@@ -21,7 +21,6 @@ export default function Header(environment) {
             <Login
                 onSuccess={hideModal}
                 onRegisterButtonClick={() => {
-                    console.log("ui");
                     setModalContent(getRegisterComponent());
                 }}
             />

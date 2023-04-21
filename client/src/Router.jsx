@@ -57,7 +57,6 @@ function Router() {
             <Login
                 onSuccess={hideModal}
                 onRegisterButtonClick={() => {
-                    console.log("ui");
                     setModalContent(getRegisterComponent());
                 }}
             />
