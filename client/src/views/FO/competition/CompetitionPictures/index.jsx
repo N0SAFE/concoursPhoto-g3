@@ -2,7 +2,7 @@ import useApiPath from "@/hooks/useApiPath.js";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import useLocation from "@/hooks/useLocation.js";
 import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {Outlet, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 import style from "./style.module.scss";
 import Chip from "@/components/atoms/Chip/index.jsx";
@@ -66,23 +66,27 @@ export default function(){
     }, []);
 
     return (
-        <div className={style.picturesContainer}>
-            {entity.pictures && entity.pictures.map((picture) => (
-                <div key={picture.id}>
-                    <div>
-                        <img src={import.meta.env.VITE_API_URL + "/" + picture.file.path} alt={picture.picture_name} />
-                    </div>
-                    <div className={style.picturesStats}>
-                        <div>
-                            <Chip backgroundColor={"#F5F5F5"} title={`${picture.user.firstname} ${picture.user.lastname}`} icon={"user-plus"} />
+        <>
+            <div>
+                <div className={style.picturesContainer}>
+                    {entity.pictures && entity.pictures.map((picture) => (
+                        <div key={picture.id}>
+                            <div>
+                                <img src={import.meta.env.VITE_API_URL + "/" + picture.file.path} alt={picture.picture_name} />
+                            </div>
+                            <div className={style.picturesStats}>
+                                <div>
+                                    <Chip backgroundColor={"#F5F5F5"} title={`${picture.user.firstname} ${picture.user.lastname}`} icon={"user-plus"} />
+                                </div>
+                                <div>
+                                    <Chip backgroundColor={"#F5F5F5"} icon={"user-plus"} />
+                                    <Chip iconColor={"white"} color={"white"} backgroundColor={"#A8A8A8"} title={"Voter"} icon={"like"} />
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <Chip backgroundColor={"#F5F5F5"} icon={"user-plus"} />
-                            <Chip iconColor={"white"} color={"white"} backgroundColor={"#A8A8A8"} title={"Voter"} icon={"like"} />
-                        </div>
-                    </div>
+                    ))}
                 </div>
-            ))}
-        </div>
+            </div>
+        </>
     );
 }

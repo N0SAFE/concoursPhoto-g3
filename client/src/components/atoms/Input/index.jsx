@@ -132,7 +132,7 @@ export default function Input({ type, name, defaultValue, extra, label, classNam
                     />
                 );
             // case "file":
-            //     return <input className={style.componentInput} type="file" {...extra} name={name} onChange={(e) => onChange(e.target.files)} defaultValue={defaultValue} />;
+            //     return <input className={style.module.scss.componentInput} type="file" {...extra} name={name} onChange={(e) => onChange(e.target.files)} defaultValue={defaultValue} />;
             case "file":
                 return <FileInput type="image" extra={extra} name={name} onChange={onChange} />;
             case "custom":

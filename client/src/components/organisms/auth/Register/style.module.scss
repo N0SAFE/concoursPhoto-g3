@@ -50,12 +50,17 @@
             display: flex;
             gap: 15px;
 
+            // delete default width of BOForm component
+            & > div {
+                width: inherit;
+            }
+
             & > p > span {
                 text-decoration: underline;
             }
 
             [type="checkbox"] {
-                // disable default checkbox style
+                // disable default checkbox style.module.scss
                 -webkit-appearance: none;
                 -moz-appearance: none;
                 -ms-appearance: none;
@@ -87,17 +92,18 @@
 
             & > a {
                 text-decoration: underline;
+                color: $background-color-secondary;
             }
         }
 
-        // override component react-select to modify style
+        // override component react-select to modify style.module.scss
         .registerSelect {
             & > div {
                 background-color: $background-color-lightgrey-2;
                 border: none;
 
                 & > div:last-child > span {
-                   display: none;
+                    display: none;
                 }
             }
         }

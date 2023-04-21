@@ -11,6 +11,7 @@ import Chip from "@/components/atoms/Chip/index.jsx";
 import Dropdown from "@/components/atoms/Dropdown/index.jsx";
 import Icon from "@/components/atoms/Icon/index.jsx";
 import {Outlet} from "react-router-dom";
+import PicturesAside from "@/views/FO/competition/PicturesAside";
 
 export default function CompetitionView() {
     const apiPath = useApiPath();
@@ -139,23 +140,7 @@ export default function CompetitionView() {
                     type: "slider"
                 }} boxDownContents={entity.pictures}
             />
-            <div className={style.competitionDescription}>
-                <div>
-                    <Outlet />
-                </div>
-                <div>
-                    {/*TODO: A externaliser (en lien avec le Outlet) car cette section change pratiquement à chaque fois pour chaque onglet*/}
-                    <h2>Dernières photos ayant obtenu un vote</h2>
-                    <div>
-                        <div>1</div>
-                        <div>2</div>
-                        <div>3</div>
-                        <div>4</div>
-                        <div>5</div>
-                        <div>6</div>
-                    </div>
-                </div>
-            </div>
+            <Outlet />
         </div>
     )
 }

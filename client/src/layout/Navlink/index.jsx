@@ -18,15 +18,17 @@ export default function ({ list, base }) {
     }
 
     return (
-        <div className={style.navLinkContainer}>
-            <div>
-                {list.map(({ content, _to, active }, index) => (
-                    <li key={index} className={active ? style.active : ""}>
-                        <Link to={_to}>{content}</Link>
-                    </li>
-                ))}
+        <>
+            <div className={style.navLinkContainer}>
+                <div>
+                    {list.map(({ content, _to, active }, index) => (
+                        <li key={index} className={active ? style.active : ""}>
+                            <Link to={_to}>{content}</Link>
+                        </li>
+                    ))}
+                </div>
             </div>
             <Outlet />
-        </div>
+        </>
     );
 }

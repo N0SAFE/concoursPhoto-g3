@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 import style from "./style.module.scss";
+import PicturesAside from "@/views/FO/competition/PicturesAside/index.jsx";
 
 export default function(){
     const apiPath = useApiPath();
@@ -65,19 +66,22 @@ export default function(){
     }, []);
 
     return (
-        <div className={style.juryContainer}>
-            {entity.memberOfTheJuries && entity.memberOfTheJuries.length > 0 && (
-                <div>
-                    <h2>{entity.memberOfTheJuries.length} membre(s) du jury</h2>
-                    <ul>
-                        {entity.memberOfTheJuries.map((jury) => (
-                            <li key={jury.id}>
-                                {jury.user.firstname} {jury.user.lastname}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+        <div className={style.container}>
+            <div className={style.juryContainer}>
+                {entity.memberOfTheJuries && entity.memberOfTheJuries.length > 0 && (
+                    <div>
+                        <h2>{entity.memberOfTheJuries.length} membre(s) du jury</h2>
+                        <ul>
+                            {entity.memberOfTheJuries.map((jury) => (
+                                <li key={jury.id}>
+                                    {jury.user.firstname} {jury.user.lastname}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+            <PicturesAside requestType={"last-pictures-posted"} />
         </div>
     );
 }

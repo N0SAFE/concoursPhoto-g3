@@ -17,7 +17,7 @@ class Picture
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    
+
     #[Groups(['competition', 'user'])]
     private ?int $id = null;
 
@@ -29,6 +29,7 @@ class Picture
     private ?string $picture_name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('competition')]
     private ?\DateTimeInterface $submission_date = null;
 
     #[ORM\Column]

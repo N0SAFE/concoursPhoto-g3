@@ -67,20 +67,4 @@
             }
         }
     }
-
-    .competitionDescription {
-        display: flex;
-        flex-direction: row;
-        gap: 15px;
-        flex-wrap: wrap;
-
-        & > div:first-child {
-            padding: 20px 0;
-            flex: 0 66%
-        }
-
-        & > div:last-child {
-            flex: 0 33%
-        }
-    }
 }

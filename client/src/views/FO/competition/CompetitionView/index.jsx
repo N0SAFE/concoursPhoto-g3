@@ -4,6 +4,8 @@ import useLocation from "@/hooks/useLocation.js";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {toast} from "react-toastify";
+import style from "./style.module.scss";
+import PicturesAside from "@/views/FO/competition/PicturesAside/index.jsx";
 
 export default function(){
     const apiPath = useApiPath();
@@ -64,10 +66,11 @@ export default function(){
     }, []);
 
     return (
-        <div>
-            <article>
+        <div className={style.container}>
+            <div className={style.viewContainer}>
                 {entity.description}
-            </article>
+            </div>
+            <PicturesAside requestType={"last-pictures-posted"} />
         </div>
     );
 }

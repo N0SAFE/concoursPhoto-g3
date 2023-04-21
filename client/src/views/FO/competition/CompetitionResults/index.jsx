@@ -4,6 +4,8 @@ import useLocation from "@/hooks/useLocation.js";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {toast} from "react-toastify";
+import style from "@/views/FO/competition/CompetitionView/style.module.scss";
+import PicturesAside from "@/views/FO/competition/PicturesAside/index.jsx";
 
 export default function(){
     const apiPath = useApiPath();
@@ -64,8 +66,11 @@ export default function(){
     }, []);
 
     return (
-        <div>
-
+        <div className={style.container}>
+            <div className={style.rulesContainer}>
+                mettre l'entity result ici
+            </div>
+            <PicturesAside requestType={"pictures-obtained-price"} />
         </div>
     );
 }
