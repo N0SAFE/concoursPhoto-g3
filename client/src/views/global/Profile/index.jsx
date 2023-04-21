@@ -9,22 +9,16 @@ import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import style from "./style.module.scss";
+import useAuth from "@/hooks/useAuth.js";
+import { useModal } from "@/contexts/ModalContext/index.jsx";
+import Login from "@/components/organisms/auth/Login/index.jsx";
 
 export default function Profile() {
     const [entityPossibility, setEntityPossibility] = useState({ statut: [], gender: [], category: [] });
     const { me } = useAuthContext();
-    const [email, setEmail] = useState(me?.email);
-    const [password, setPassword] = useState("");
-    const [firstname, setFirstname] = useState(me?.firstname);
-    const [lastname, setLastname] = useState(me?.lastname);
-    const [dateOfBirth, setDateOfBirth] = useState(me?.dateOfBirth);
-    const [statut, setstatut] = useState(me?.personal_statut || "");
-    const [address, setAddress] = useState(me?.address);
-    const [city, setCity] = useState(me?.city);
-    const [postcode, setPostcode] = useState(me?.postcode);
-    const [pseudonym, setPseudonym] = useState(me?.pseudonym);
-    const [gender, setGender] = useState(me?.gender || "");
     const { getCityByCode } = useLocation();
+    const {logout} = useAuth()
+    const {setModalContent, showModal} = useModal()
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -191,19 +185,24 @@ export default function Profile() {
                         },
                     })
                         .then((r) => r.json())
-                        .then((data) => {
+                        .then(async (data) => {
                             console.debug(data);
                             if (data["@type"] === "hydra:Error") {
                                 console.error(data);
                                 throw new Error(data.description);
                             }
-                            navigate("/auth/logout");
-                            toast.success("Votre profil a bien été modifié, veuillez vous reconnecter");
+                            if(me.email !== data.email || data.plainPassword){
+                                await logout().then(function(){
+                                    setModalContent(<Login />)
+                                    showModal();
+                                    navigate('/')
+                                })
+                            }
                         });
 
                     toast.promise(promise, {
                         pending: "Modification en cours",
-                        success: "Votre utilisateur a bien été modifié",
+                        success: "Votre profile a bien été modifié",
                         error: "Erreur lors de la modification de votre profil",
                     });
                 }}

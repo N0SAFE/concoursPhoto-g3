@@ -1,10 +1,14 @@
 import { useAuthContext } from "@/contexts/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+import useAuth from "./useAuth.js";
+import { useModal } from "@/contexts/ModalContext/index.jsx";
+import { getLoginModalContent } from "@/components/organisms/auth/Login/index.jsx";
 
 export default function () {
     const navigate = useNavigate();
+    const {setModalContent, showModal} = useModal()
+    const {logout} = useAuth()
     const { checkLogged } = useAuthContext();
 
     return function apiFetch(path, options, { refreshToken = true } = {}) {
@@ -32,7 +36,7 @@ export default function () {
                         if ((data.message === "Expired JWT Token" || data.message === "Missing token" || data.message === "Invalid credentials.") && path !== "/token/refresh") {
                             const { isLogged } = await checkLogged();
                             if (!isLogged) {
-                                navigate("/auth/logout");
+                                logout().then(() => {navigate("/"); setModalContent(getLoginModalContent()); showModal()})
                                 toast.error("une erreur est survenue, veuillez vous reconnecter");
                                 reject(new Error("une erreur est survenue, veuillez vous reconnecter"));
                                 return;

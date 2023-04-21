@@ -4,11 +4,14 @@ import useApiFetch from "@/hooks/useApiFetch";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import style from "./style.module.scss";
-import Button from "@/components/atoms/Button/index.jsx";
+import Button from "@/components/atoms/Button";
 import { Link } from "react-router-dom";
+import { useModal } from "@/contexts/ModalContext";
+import Login from "@/components/organisms/auth/Login";
 
-export default function UserRegister({ onSuccess, onError, onLoginButtonClick }) {
+export default function UserRegister() {
     const apiFetch = useApiFetch();
+    const {hideModal, setModalContent} = useModal()
 
     console.log("other");
 
@@ -131,7 +134,7 @@ export default function UserRegister({ onSuccess, onError, onLoginButtonClick })
                             reject("Veuillez remplir tous les champs");
                         }
                     });
-                    promise.then((_) => typeof onSuccess === "function" && onSuccess()).catch((_) => typeof onError === "function" && onError());
+                    promise.then(hideModal)
                     toast.promise(promise, {
                         pending: "Création du compte",
                         success: "Compte créé",
@@ -193,7 +196,7 @@ export default function UserRegister({ onSuccess, onError, onLoginButtonClick })
                         <Link
                             onClick={(e) => {
                                 e.preventDefault();
-                                typeof onLoginButtonClick === "function" && onLoginButtonClick();
+                                setModalContent(<Login />)
                             }}
                         >
                             Connectez-vous
@@ -203,4 +206,8 @@ export default function UserRegister({ onSuccess, onError, onLoginButtonClick })
             </BOForm>
         </div>
     );
+}
+
+export function getRegisterModalContent() {
+    return <Register />;
 }
