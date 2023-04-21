@@ -1,6 +1,5 @@
 import style from "./style.module.scss";
 import PortalList from "@/components/organisms/FO/FOPortalList";
-import useApiPath from "@/hooks/useApiPath";
 import useApiFetch from "@/hooks/useApiFetch.js";
 import useLocation from "@/hooks/useLocation.js";
 import {useEffect, useState} from "react";
@@ -11,9 +10,10 @@ import Chip from "@/components/atoms/Chip/index.jsx";
 import Dropdown from "@/components/atoms/Dropdown/index.jsx";
 import Icon from "@/components/atoms/Icon/index.jsx";
 import {Outlet} from "react-router-dom";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function CompetitionView() {
-    const apiPath = useApiPath();
+    const [isLoading, setIsLoading] = useState(true)
     const apiFetch = useApiFetch();
     const {getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
     const [entity, setEntity] = useState({});
@@ -28,12 +28,12 @@ export default function CompetitionView() {
             signal: controller?.signal,
         })
             .then((res) => res.json())
-            .then((data) => {
+            .then(async (data) => {
                 console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                Promise.all([
+                return await Promise.all([
                     Promise.all(data.city_criteria.map(getCityByCode)),
                     Promise.all(data.department_criteria.map(getDepartmentByCode)),
                     Promise.all(data.region_criteria.map(getRegionByCode)),
@@ -54,14 +54,15 @@ export default function CompetitionView() {
                     return _competition;
                 });
             })
-            .catch((error) => {
-                console.error(error);
-            });
     };
 
     useEffect(() => {
         const controller = new AbortController();
         const promise = getCompetitions(controller);
+        promise.then(function (){
+            setIsLoading(false)
+        })
+        console.log("ui")
         toast.promise(promise, {
             pending: "Chargement du concours",
             success: "Concours chargé",
@@ -71,6 +72,7 @@ export default function CompetitionView() {
     }, []);
 
     return (
+        <Loader active={isLoading}>
         <div className={style.competitionContainer}>
             <div className={style.competitionBanner}>
                 <Breadcrumb items={[
@@ -156,6 +158,6 @@ export default function CompetitionView() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div></Loader>
     )
 }
