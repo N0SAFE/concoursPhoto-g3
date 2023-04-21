@@ -8,8 +8,10 @@ import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
 import useApiPath from "@/hooks/useApiPath.js";
 import useFilesUploader from "@/hooks/useFilesUploader.js";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function OrganizationEdit() {
+    const [isLoading, setIsLoading] = useState(true)
     const apiPathComplete = useApiPath();
     const { id: organizationId } = useParams();
     const apiFetch = useApiFetch();
@@ -104,6 +106,9 @@ export default function OrganizationEdit() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = Promise.all([getOrganizationTypePossibility(controller), getOrganizations(controller)]).then(([types]) => setEntityPossibility({ types }));
+        promise.then(function(){
+            setIsLoading(false)
+        })
         if(import.meta.env.MODE === 'development'){
             toast.promise(promise, {
                 pending: "Chargement des données",
@@ -128,7 +133,7 @@ export default function OrganizationEdit() {
     }, [entity.postcode, entity.city]);
 
     return (
-        <div>
+        <Loader active={isLoading}>
             <BOForm
                 title="Modifier une organisation"
                 handleSubmit={function () {
@@ -289,6 +294,6 @@ export default function OrganizationEdit() {
                     </div>
                 </div>
             </BOForm>
-        </div>
+        </Loader>
     );
 }

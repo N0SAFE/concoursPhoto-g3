@@ -14,7 +14,6 @@ export default function UserList() {
     const [users, setUsers] = useState(me.Manage);
     const [filterState, setFilterState] = useState("all");
     const [filterVerified, setFilterVerified] = useState("all");
-    const { getCityByCode } = useLocation();
 
     const navigate = useNavigate();
 

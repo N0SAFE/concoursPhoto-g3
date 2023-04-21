@@ -6,8 +6,10 @@ import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
 import useFilesUpdater from "@/hooks/useFilesUploader.js";
 import { useNavigate } from "react-router-dom";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function CompetitionCreate() {
+    const [isLoading, setIsLoading] = useState(true)
     const { uploadFile } = useFilesUpdater();
     const navigate = useNavigate();
     const apiFetch = useApiFetch();
@@ -118,6 +120,9 @@ export default function CompetitionCreate() {
         const promise = Promise.all([getParticipantCategories(controller), getOrganizationsName(controller), getThemes(controller)]).then(([participantCategories, organizers, themes]) => {
             setEntityPossibility({ participantCategories, organizers, themes });
         });
+        promise.then(function(){
+            setIsLoading(false)
+        })
         if(import.meta.env.MODE === 'development'){
             toast.promise(promise, {
                 pending: "Chargement des données",
@@ -129,7 +134,7 @@ export default function CompetitionCreate() {
     }, []);
 
     return (
-        <div>
+        <Loader active={isLoading}>
             <BOCreate
                 title="Création d'un concours"
                 handleSubmit={function () {
@@ -376,6 +381,6 @@ export default function CompetitionCreate() {
                     </div>
                 </div>
             </BOCreate>
-        </div>
+        </Loader>
     );
 }
