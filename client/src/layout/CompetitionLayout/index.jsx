@@ -62,12 +62,13 @@ export default function CompetitionView() {
         promise.then(function (){
             setIsLoading(false)
         })
-        console.log("ui")
-        toast.promise(promise, {
-            pending: "Chargement du concours",
-            success: "Concours chargé",
-            error: "Erreur lors du chargement du concours",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement du concours",
+                success: "Concours chargé",
+                error: "Erreur lors du chargement du concours",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 

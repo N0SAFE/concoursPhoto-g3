@@ -49,11 +49,13 @@ export default function FOCompetitionList() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = Promise.all([getListCompetitions(controller)]);
-        toast.promise(promise, {
-            pending: "Chargement des concours",
-            success: "Concours chargés",
-            error: "Erreur lors du chargement des concours",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des concours",
+                success: "Concours chargés",
+                error: "Erreur lors du chargement des concours",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 

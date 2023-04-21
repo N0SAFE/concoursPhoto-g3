@@ -37,11 +37,13 @@ export default function () {
     useEffect(() => {
         const controller = new AbortController();
         const promise = getUser(controller);
-        toast.promise(promise, {
-            pending: "Chargement de l'utilisateur",
-            success: "Utilisateur chargé",
-            error: "Erreur lors du chargement de l'utilisateur",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement de l'utilisateur",
+                success: "Utilisateur chargé",
+                error: "Erreur lors du chargement de l'utilisateur",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 

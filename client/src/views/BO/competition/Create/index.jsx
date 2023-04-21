@@ -118,11 +118,13 @@ export default function CompetitionCreate() {
         const promise = Promise.all([getParticipantCategories(controller), getOrganizationsName(controller), getThemes(controller)]).then(([participantCategories, organizers, themes]) => {
             setEntityPossibility({ participantCategories, organizers, themes });
         });
-        toast.promise(promise, {
-            pending: "Chargement des données",
-            success: "Données chargées",
-            error: "Erreur lors du chargement des données",
-        });
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des données",
+                success: "Données chargées",
+                error: "Erreur lors du chargement des données",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 
