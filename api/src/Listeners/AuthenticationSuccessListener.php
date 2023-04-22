@@ -25,6 +25,6 @@ class AuthenticationSuccessListener
             new Cookie('BEARER', $token, new \DateTime('+1 day'), '/', null, $this->secure, true, false, "None")
         );
 
-        $event->setData(['message' => 'loged in', 'code' => 200]);
+        $event->setData(['message' => 'logged in', 'code' => 200]);
     }
 }

@@ -9,24 +9,18 @@ import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import style from "./style.module.scss";
+import useAuth from "@/hooks/useAuth.js";
+import { useModal } from "@/contexts/ModalContext/index.jsx";
+import Login from "@/components/organisms/auth/Login/index.jsx";
 import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function Profile() {
     const [isLoading, setIsLoading] = useState(true)
     const [entityPossibility, setEntityPossibility] = useState({ statut: [], gender: [], category: [] });
     const { me } = useAuthContext();
-    const [email, setEmail] = useState(me?.email);
-    const [password, setPassword] = useState("");
-    const [firstname, setFirstname] = useState(me?.firstname);
-    const [lastname, setLastname] = useState(me?.lastname);
-    const [dateOfBirth, setDateOfBirth] = useState(me?.dateOfBirth);
-    const [statut, setstatut] = useState(me?.personal_statut || "");
-    const [address, setAddress] = useState(me?.address);
-    const [city, setCity] = useState(me?.city);
-    const [postcode, setPostcode] = useState(me?.postcode);
-    const [pseudonym, setPseudonym] = useState(me?.pseudonym);
-    const [gender, setGender] = useState(me?.gender || "");
     const { getCityByCode } = useLocation();
+    const {logout} = useAuth()
+    const {setModalContent, showModal} = useModal()
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -205,82 +199,88 @@ export default function Profile() {
                                     console.error(data);
                                     throw new Error(data.description);
                                 }
-                                navigate("/auth/logout");
-                                });
+                                if(me.email !== entity.email || entity.plainPassword){
+                                    logout().then(function(){
+                                        setModalContent(<Login />)
+                                        showModal()
+                                        navigate('/')
+                                    })
+                                }
+                            });
 
                         toast.promise(promise, {
                             pending: "Modification en cours",
-                            success: "Votre profil a bien été modifié, veuillez vous reconnecter",
+                            success: "Votre profile a bien été modifié, veuillez vous reconnecter",
                             error: "Erreur lors de la modification de votre profil",
                         });
                     }}
                     hasSubmit={true}
                 >
-                    <Input type="radioList" name="genre" onChange={(d) => updateEntity("gender", d)} extra={{ value: entity.gender, options: entityPossibility.genders }} />
-                    <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                        <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
-                            <Input type="text" name="Prénom*" label="Prénom" onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
-                            <Input type="text" name="Nom*" label="Nom" onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
-                            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                                <Input type="date" name="Date de naissance$" label="Date de naissance" onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
-                                <Input type="select" name="vous êtes*" label="Statut" onChange={(d) => updateEntity("statut", d)} extra={{ value: entity.statut, options: entityPossibility.statut }} />
-                            </div>
-                            <Input type="email" name="Email*" label="Adresse email" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
-                            <Input type="password" name="Mot de passe*" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
+                <Input type="radioList" name="genre" onChange={(d) => updateEntity("gender", d)} extra={{ value: entity.gender, options: entityPossibility.genders }} />
+                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
+                        <Input type="text" name="Prénom*" label="Prénom" onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
+                        <Input type="text" name="Nom*" label="Nom" onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
+                        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                            <Input type="date" name="Date de naissance$" label="Date de naissance" onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
+                            <Input type="select" name="vous êtes*" label="Statut" onChange={(d) => updateEntity("statut", d)} extra={{ value: entity.statut, options: entityPossibility.statut }} />
                         </div>
-                        <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
-                            <Input type="text" name="Adresse" label="Adresse" onChange={(d) => updateEntity("adress", d)} defaultValue={entity.address} />
-                            <div style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
-                                {" "}
-                                <Input
-                                    type="select"
-                                    name="Ville"
-                                    label="Ville"
-                                    extra={{
-                                        isLoading: locationPossibilityIsLoading,
-                                        value: entity.city,
-                                        isClearable: true,
-                                        required: true,
-                                        options: citiesPossibility,
-                                        multiple: false,
-                                        onInputChange: (cityName, { action }) => {
-                                            if (action === "menu-close") {
-                                                updateLocationPossibility({ id: "city", args: { codeCity: entity.city?.value, city: "" } });
-                                            }
-                                            if (action === "input-change") {
-                                                updateLocationPossibility({ id: "city", args: { city: cityName } });
-                                            }
-                                        },
-                                    }}
-                                    onChange={(d) => updateEntity("city", d)}
-                                />
-                                <Input
-                                    type="select"
-                                    name="Code Postal"
-                                    label="Code postal"
-                                    extra={{
-                                        isLoading: locationPossibilityIsLoading,
-                                        value: entity.postcode,
-                                        isClearable: true,
-                                        required: true,
-                                        options: postalCodesPossibility,
-                                        multiple: false,
-                                        onInputChange: (_postcode, { action }) => {
-                                            if (action === "menu-close") {
-                                                updateLocationPossibility({ id: "city", args: { postcode: entity.postcode?.value } });
-                                            }
-                                            if (action === "input-change" && _postcode.length === 5) {
-                                                updateLocationPossibility({ id: "city", args: { postcode: _postcode } });
-                                            }
-                                        },
-                                    }}
-                                    onChange={(d) => updateEntity("postcode", d)}
-                                />
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
-                                <Input type="text" name="country" label="Pays" onChange={(d) => updateEntity("country", d)} defaultValue={entity.country} />
-                                <Input type="select" name="langue" label="Langue" extra={{ value: Languetest[0], options: Languetest }} />
-                            </div>
+                        <Input type="email" name="Email*" label="Adresse email" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
+                        <Input type="password" name="Mot de passe*" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
+                        <Input type="text" name="Adresse" label="Adresse" onChange={(d) => updateEntity("adress", d)} defaultValue={entity.address} />
+                        <div style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
+                            {" "}
+                            <Input
+                                type="select"
+                                name="Ville"
+                                label="Ville"
+                                extra={{
+                                    isLoading: locationPossibilityIsLoading,
+                                    value: entity.city,
+                                    isClearable: true,
+                                    required: true,
+                                    options: citiesPossibility,
+                                    multiple: false,
+                                    onInputChange: (cityName, { action }) => {
+                                        if (action === "menu-close") {
+                                            updateLocationPossibility({ id: "city", args: { codeCity: entity.city?.value, city: "" } });
+                                        }
+                                        if (action === "input-change") {
+                                            updateLocationPossibility({ id: "city", args: { city: cityName } });
+                                        }
+                                    },
+                                }}
+                                onChange={(d) => updateEntity("city", d)}
+                            />
+                            <Input
+                                type="select"
+                                name="Code Postal"
+                                label="Code postal"
+                                extra={{
+                                    isLoading: locationPossibilityIsLoading,
+                                    value: entity.postcode,
+                                    isClearable: true,
+                                    required: true,
+                                    options: postalCodesPossibility,
+                                    multiple: false,
+                                    onInputChange: (_postcode, { action }) => {
+                                        if (action === "menu-close") {
+                                            updateLocationPossibility({ id: "city", args: { postcode: entity.postcode?.value } });
+                                        }
+                                        if (action === "input-change" && _postcode.length === 5) {
+                                            updateLocationPossibility({ id: "city", args: { postcode: _postcode } });
+                                        }
+                                    },
+                                }}
+                                onChange={(d) => updateEntity("postcode", d)}
+                            />
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+                            <Input type="text" name="country" label="Pays" onChange={(d) => updateEntity("country", d)} defaultValue={entity.country} />
+                            <Input type="select" name="langue" label="Langue" extra={{ value: Languetest[0], options: Languetest }} />
+                        </div>
 
                             <div>
                                 <Input type="text" name="pseudonym" label="Pseudonyme" onChange={(d) => updateEntity("pseudonym", d)} defaultValue={entity.pseudonym} />

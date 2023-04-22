@@ -8,35 +8,13 @@ import useAuth from "@/hooks/useAuth.js";
 import { toast } from "react-toastify";
 
 export default function Header(environment) {
-    const { hideModal, setModalContent } = useModal();
+    const { showModal, setModalContent } = useModal();
     const { logout } = useAuth();
     const { isLogged, me } = useAuthContext();
     const navigate = useNavigate();
 
     const listRight = [];
     const listLeft = [];
-
-    const getLoginComponent = () => {
-        return (
-            <Login
-                onSuccess={hideModal}
-                onRegisterButtonClick={() => {
-                    setModalContent(getRegisterComponent());
-                }}
-            />
-        );
-    };
-
-    const getRegisterComponent = () => {
-        return (
-            <Register
-                onSuccess={hideModal}
-                onLoginButtonClick={() => {
-                    setModalContent(getLoginComponent());
-                }}
-            />
-        );
-    };
 
     if (environment.environment === "backoffice") {
         listLeft.push({ type: "classic", title: "Accueil", to: "/" });
@@ -95,10 +73,10 @@ export default function Header(environment) {
                 ],
             });
         } else {
-            listRight.push({ type: "modal", title: "Connexion", component: getLoginComponent() });
+            listRight.push({ type: "modal", title: "Connexion", component: <Login /> });
         }
     } else {
-        listRight.push({ type: "modal", component: getRegisterComponent(), title: "S'inscrire", icon: "user-plus" });
+        listRight.push({ type: "modal", component: <Register />, title: "S'inscrire", icon: "user-plus" });
         if (isLogged) {
             listRight.push({
                 type: "button",
@@ -116,7 +94,7 @@ export default function Header(environment) {
                 icon: "sign-out",
             });
         } else {
-            listRight.push({ type: "modal", component: getLoginComponent(), title: "Se connecter", icon: "sign-in" });
+            listRight.push({ type: "modal", component: <Login />, title: "Se connecter", icon: "sign-in" });
         }
     }
 

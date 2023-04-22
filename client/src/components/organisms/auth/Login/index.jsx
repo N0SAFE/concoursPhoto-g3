@@ -7,9 +7,11 @@ import BOForm from "@/components/organisms/BO/Form";
 import {useState} from "react";
 import style from "./style.module.scss";
 import {Link} from "react-router-dom";
+import { useModal } from "@/contexts/ModalContext";
+import Register from "@/components/organisms/auth/Register";
 
-export default function Login({onSuccess, onError, onRegisterButtonClick}) {
-    
+export default function Login() {
+    const {setModalContent, hideModal} = useModal();
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -32,7 +34,9 @@ export default function Login({onSuccess, onError, onRegisterButtonClick}) {
                             navigate("/");
                         }
                     });
-                    promise.then(_ => typeof onSuccess === "function" && onSuccess()).catch(_ => typeof onError === "function" && onError());
+                    promise.then(function(){
+                        hideModal();
+                    })
                     toast.promise(promise, {
                         pending: "Connexion en cours",
                         success: "Connexion réussie",
@@ -51,9 +55,13 @@ export default function Login({onSuccess, onError, onRegisterButtonClick}) {
                     <div className={style.loginSubmit}>
                         <Button type="submit" name="Se connecter" color={"black"} textColor={"white"} padding={"14px 30px"} border={false} borderRadius={"44px"} width={"245px"} />
                     </div>
-                    <p className={style.loginProposition}>Vous avez oublié votre mot de passe ? <Link onClick={(e) => {e.preventDefault(); typeof onRegisterButtonClick === "function" && onRegisterButtonClick()}}>Cliquez-ici</Link></p>
+                    <p className={style.loginProposition}>Vous avez oublié votre mot de passe ? <Link onClick={(e) => {e.preventDefault(); setModalContent(<Register />)}}>Cliquez-ici</Link></p>
                 </div>
             </BOForm>
         </div>
     );
+}
+
+export function getLoginModalContent(){
+    return <Login />
 }
