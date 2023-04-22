@@ -143,12 +143,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups('user')]
-
-    private ?string $socials_networks = null;
-
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups('user')]
     private ?string $pseudonym = null;
 
     #[Groups('user')]
@@ -175,6 +169,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $department = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Link::class)]
+    private Collection $links;
+
     public function __construct()
     {
         $this->Manage = new ArrayCollection();
@@ -182,6 +179,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->pictures = new ArrayCollection();
         $this->votes = new ArrayCollection();
         $this->roles = new ArrayCollection();
+        $this->links = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -576,18 +574,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getSocialsNetworks(): ?string
-    {
-        return $this->socials_networks;
-    }
-
-    public function setSocialsNetworks(?string $socials_networks): self
-    {
-        $this->socials_networks = $socials_networks;
-
-        return $this;
-    }
-
     public function getPseudonym(): ?string
     {
         return $this->pseudonym;
@@ -675,6 +661,36 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function setDepartment(string $department): self
     {
         $this->department = $department;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Link>
+     */
+    public function getLinks(): Collection
+    {
+        return $this->links;
+    }
+
+    public function addLink(Link $link): self
+    {
+        if (!$this->links->contains($link)) {
+            $this->links->add($link);
+            $link->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLink(Link $link): self
+    {
+        if ($this->links->removeElement($link)) {
+            // set the owning side to null (unless already changed)
+            if ($link->getUser() === $this) {
+                $link->setUser(null);
+            }
+        }
 
         return $this;
     }

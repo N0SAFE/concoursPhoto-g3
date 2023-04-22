@@ -128,7 +128,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setUpdateDate($faker->dateTime());
         $user->setWebsiteUrl($faker->url());
         $user->setPhotographerDescription($faker->text());
-        $user->setSocialsNetworks($faker->text());
         $user->setEmail("admin@admin.com");
         $user->setPassword($this->passwordHasher->hashPassword($user, 'test'));
         $user->setAddress($faker->address());
@@ -167,7 +166,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setUpdateDate($faker->dateTime());
             $user->setWebsiteUrl($faker->url());
             $user->setPhotographerDescription($faker->text());
-            $user->setSocialsNetworks($faker->text());
             $user->setEmail($faker->email());
             $user->setPassword($this->passwordHasher->hashPassword($user, 'test'));
             $user->setAddress($faker->address());
