@@ -25,31 +25,12 @@ import { toast } from "react-toastify";
 import Myorganization from "@/views/global/Profile/myorganization/index.jsx";
 import IndexNotif from "@/views/global/Profile/notif";
 import CompetitionView from "@/views/FO/competition/CompetitionView";
-import Navlink from "@/layout/Navlink";
 import CompetitionLayout from "@/layout/CompetitionLayout";
 import CompetitionRules from "@/views/FO/competition/CompetitionRules";
 import CompetitionEndowments from "@/views/FO/competition/CompetitionEndowments";
 import CompetitionJury from "@/views/FO/competition/CompetitionJury";
 import CompetitionPictures from "@/views/FO/competition/CompetitionPictures";
 import CompetitionResults from "@/views/FO/competition/CompetitionResults";
-
-const profileRouteList = [
-    { content: "Mon profil", to: "/me" },
-    { content: "Mes préférences", to: "/preference" },
-    { content: "Mes organisations", to: "/myorganization" },
-    { content: "Concours créés par mon organisation", to: "/me" },
-    { content: "Concours auxquels j’ai participé", to: "/me" },
-    { content: "Mes publicités", to: "/me" },
-];
-
-const competitionRouteList = [
-    { content: "Le concours", to: "" },
-    { content: "Règlement", to: "/rules" },
-    { content: "Prix à gagner", to: "/endowments" },
-    { content: "Membres du Jury", to: "/jury" },
-    { content: "Les photos", to: "/pictures" },
-    { content: "Résultats", to: "/results" },
-]
 
 function Router() {
     const getLoginComponent = () => {
@@ -114,21 +95,17 @@ function Router() {
             </Route>
             <Route path="/" element={<Header />}>
                 <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />} />}>
-                    <Route element={<Navlink base="/profile" list={profileRouteList} />}>
-                        <Route path="me" element={<Profile />} />
-                        <Route path="preference" element={<IndexNotif />} />
-                        <Route path="myorganization" element={<Myorganization />} />
-                    </Route>
+                    <Route path="me" element={<Profile />} />
+                    <Route path="preference" element={<IndexNotif />} />
+                    <Route path="myorganization" element={<Myorganization />} />
                 </Route>
                 <Route path="/competition/:id" element={<CompetitionLayout />}>
-                    <Route path="" element={<Navlink base="/competition/:id" list={competitionRouteList} />}>
-                        <Route path="" element={<CompetitionView />} />
-                        <Route path="rules" element={<CompetitionRules />} />
-                        <Route path="endowments" element={<CompetitionEndowments />} />
-                        <Route path="jury" element={<CompetitionJury />} />
-                        <Route path="pictures" element={<CompetitionPictures />} />
-                        <Route path="results" element={<CompetitionResults />} />
-                    </Route>
+                    <Route path="" element={<CompetitionView />} />
+                    <Route path="rules" element={<CompetitionRules />} />
+                    <Route path="endowments" element={<CompetitionEndowments />} />
+                    <Route path="jury" element={<CompetitionJury />} />
+                    <Route path="pictures" element={<CompetitionPictures />} />
+                    <Route path="results" element={<CompetitionResults />} />
                 </Route>
                 <Route path="" element={<Home />} />
             </Route>

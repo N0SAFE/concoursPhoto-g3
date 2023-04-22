@@ -8,12 +8,22 @@ import { useAuthContext } from "@/contexts/AuthContext.jsx";
 import Button from "@/components/atoms/Button";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import style from "./style.module.scss";
+import Navlink from "@/components/molecules/Navlink/index.jsx";
 import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function Myorganization() {
     const [entityPossibility, setEntityPossibility] = useState({ organization: [], types: [] });
     const { me } = useAuthContext();
     const [isLoading, setIsLoading] = useState(true)
+
+    const profileRouteList = [
+        { content: "Mon profil", to: "/me" },
+        { content: "Mes préférences", to: "/preference" },
+        { content: "Mes organisations", to: "/myorganization" },
+        { content: "Concours créés par mon organisation", to: "/me" },
+        { content: "Concours auxquels j’ai participé", to: "/me" },
+        { content: "Mes publicités", to: "/me" },
+    ];
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -90,56 +100,57 @@ export default function Myorganization() {
 
     return (
         <Loader active={isLoading} >
-            <div className={style.formContainer}>
-                <BOForm
-                    handleSubmit={function () {
-                        const data = {
-                            organizerName: entity.organizer_name,
-                            email: entity.email,
-                            numberPhone: entity.number_phone,
-                            websiteUrl: entity.website_url,
-                            address: entity.address,
-                            city: entity.city?.value,
-                            postcode: entity.postcode?.value,
-                            intraCommunityVat: entity.intra_community_vat,
-                            numberSiret: entity.number_siret,
-                            country: entity.country,
-                            organizationType: entity.organization_type.value,
-                            description: entity.description,
-                        };
-                        const promise = apiFetch(`/organizations/${entity.id}`, {
-                            method: "PATCH",
-                            body: JSON.stringify(data),
-                            headers: {
-                                "Content-Type": "application/merge-patch+json",
-                            },
-                        })
-                            .then((r) => r.json())
-                            .then((data) => {
-                                console.debug(data);
-                                if (data["@type"] === "hydra:Error") {
-                                    console.error(data);
-                                    throw new Error(data.description);
-                                }
-                                });
-                        toast.promise(promise, {
-                            pending: "Modification en cours",
-                            success: "Votre organisation a bien été modifié",
-                            error: "Erreur lors de la modification de votre organisation",
+        <div className={style.formContainer}>
+            <Navlink base="/profile" list={profileRouteList} />
+            <BOForm
+                handleSubmit={function () {
+                    const data = {
+                        organizerName: entity.organizer_name,
+                        email: entity.email,
+                        numberPhone: entity.number_phone,
+                        websiteUrl: entity.website_url,
+                        address: entity.address,
+                        city: entity.city?.value,
+                        postcode: entity.postcode?.value,
+                        intraCommunityVat: entity.intra_community_vat,
+                        numberSiret: entity.number_siret,
+                        country: entity.country,
+                        organizationType: entity.organization_type.value,
+                        description: entity.description,
+                    };
+                    const promise = apiFetch(`/organizations/${entity.id}`, {
+                        method: "PATCH",
+                        body: JSON.stringify(data),
+                        headers: {
+                            "Content-Type": "application/merge-patch+json",
+                        },
+                    })
+                        .then((r) => r.json())
+                        .then((data) => {
+                            console.debug(data);
+                            if (data["@type"] === "hydra:Error") {
+                                console.error(data);
+                                throw new Error(data.description);
+                            }
                         });
-                    }}
-                    hasSubmit={true}
-                >
-                    <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                        <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                            <Input type="text" name="organizer_name" label="Nom de l'organisation" onChange={(d) => updateEntity("organizer_name", d)} defaultValue={entity.organizer_name} />
-                            <Input
-                                type="select"
-                                name="type"
-                                label="Type"
-                                extra={{ options: entityPossibility.types, required: true, value: entity.organization_type }}
-                                onChange={(d) => updateEntityState("organization_type", d)}
-                            />
+                    toast.promise(promise, {
+                        pending: "Modification en cours",
+                        success: "Votre organisation a bien été modifié",
+                        error: "Erreur lors de la modification de votre organisation",
+                    });
+                }}
+                hasSubmit={true}
+            >
+                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                        <Input type="text" name="organizer_name" label="Nom de l'organisation" onChange={(d) => updateEntity("organizer_name", d)} defaultValue={entity.organizer_name} />
+                        <Input
+                            type="select"
+                            name="type"
+                            label="Type"
+                            extra={{ options: entityPossibility.types, required: true, value: entity.organization_type }}
+                            onChange={(d) => updateEntityState("organization_type", d)}
+                        />
 
                             <Input type="text" name="email" label="Email" onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
                             <Input type="text" name="number_phone" label="Numéro de téléphone" onChange={(d) => updateEntity("number_phone", d)} defaultValue={entity.number_phone} />

@@ -10,6 +10,7 @@ import useLocation from "@/hooks/useLocation.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import style from "./style.module.scss";
 import Loader from "@/components/atoms/Loader/index.jsx";
+import Navlink from "@/components/molecules/Navlink/index.jsx";
 
 export default function Profile() {
     const [isLoading, setIsLoading] = useState(true)
@@ -27,6 +28,15 @@ export default function Profile() {
     const [pseudonym, setPseudonym] = useState(me?.pseudonym);
     const [gender, setGender] = useState(me?.gender || "");
     const { getCityByCode } = useLocation();
+
+    const profileRouteList = [
+        { content: "Mon profil", to: "/me" },
+        { content: "Mes préférences", to: "/preference" },
+        { content: "Mes organisations", to: "/myorganization" },
+        { content: "Concours créés par mon organisation", to: "/me" },
+        { content: "Concours auxquels j’ai participé", to: "/me" },
+        { content: "Mes publicités", to: "/me" },
+    ];
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -165,6 +175,7 @@ export default function Profile() {
 
     return (
         <Loader active={isLoading}>
+            <Navlink base="/profile" list={profileRouteList} />
             <div className={style.formContainer}>
                 <BOForm
                     handleSubmit={function () {

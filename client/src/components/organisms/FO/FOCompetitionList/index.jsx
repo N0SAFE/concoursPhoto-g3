@@ -69,10 +69,8 @@ export default function FOCompetitionList() {
                             title={competition.competition_name}
                             imagePath={competition.competition_visual.path}
                             filters={[
-                                "Organisateur",
-                                competition.theme.map((item) => {
-                                    item.label;
-                                }),
+                                competition.organization?.users.map((user) => (user.firstname + " " + user.lastname)),
+                                competition?.theme.map((item) => (item.label)),
                                 competition.state ? "En cours" : "Terminé",
                             ]}
                             stats={[

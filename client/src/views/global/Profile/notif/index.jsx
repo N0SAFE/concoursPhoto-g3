@@ -2,12 +2,23 @@ import BOForm from "@/components/organisms/BO/Form/index.jsx";
 import Button from "@/components/atoms/Button";
 import style from "./style.module.scss";
 import Loader from "@/components/atoms/Loader/index.jsx";
+import Navlink from "@/components/molecules/Navlink/index.jsx";
 
 export default function IndexNotif() {
     const [isLoading, setIsLoading] = useState(false)
+    const profileRouteList = [
+        { content: "Mon profil", to: "/me" },
+        { content: "Mes préférences", to: "/preference" },
+        { content: "Mes organisations", to: "/myorganization" },
+        { content: "Concours créés par mon organisation", to: "/me" },
+        { content: "Concours auxquels j’ai participé", to: "/me" },
+        { content: "Mes publicités", to: "/me" },
+    ];
+
     return (
         <Loader active={isLoading}>
             <div className={style.formContainer}>
+                <Navlink base="/profile" list={profileRouteList} />
                 <BOForm hasSubmit={true}>
                     <div style={{ marginTop: "10px" }}>
                         <h2>Si vous êtes simple membre</h2>
