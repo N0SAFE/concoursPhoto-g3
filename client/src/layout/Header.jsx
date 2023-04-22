@@ -8,7 +8,7 @@ import useAuth from "@/hooks/useAuth.js";
 import { toast } from "react-toastify";
 
 export default function Header(environment) {
-    const { hideModal, setModalContent } = useModal();
+    const { showModal, setModalContent } = useModal();
     const { logout } = useAuth();
     const { isLogged, me } = useAuthContext();
     const navigate = useNavigate();

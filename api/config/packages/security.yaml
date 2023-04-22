@@ -19,6 +19,9 @@ security:
                 check_path: /login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            logout:
+                path: /logout
+        
 
         refresh:
             pattern: ^/token/refresh

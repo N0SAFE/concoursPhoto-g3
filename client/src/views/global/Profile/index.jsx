@@ -199,17 +199,23 @@ export default function Profile() {
                                     console.error(data);
                                     throw new Error(data.description);
                                 }
-                                navigate("/auth/logout");
-                                });
+                                if(me.email !== entity.email || entity.plainPassword){
+                                    logout().then(function(){
+                                        setModalContent(<Login />)
+                                        showModal()
+                                        navigate('/')
+                                    })
+                                }
+                            });
 
-                    toast.promise(promise, {
-                        pending: "Modification en cours",
-                        success: "Votre profile a bien été modifié, veuillez vous reconnecter",
-                        error: "Erreur lors de la modification de votre profil",
-                    });
-                }}
-                hasSubmit={true}
-            >
+                        toast.promise(promise, {
+                            pending: "Modification en cours",
+                            success: "Votre profile a bien été modifié, veuillez vous reconnecter",
+                            error: "Erreur lors de la modification de votre profil",
+                        });
+                    }}
+                    hasSubmit={true}
+                >
                 <Input type="radioList" name="genre" onChange={(d) => updateEntity("gender", d)} extra={{ value: entity.gender, options: entityPossibility.genders }} />
                 <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
                     <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
