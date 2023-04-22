@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Outlet, useLocation, useMatch, useOutletContext } from "react-router-dom";
+import { Link, Outlet, useLocation, useMatch } from "react-router-dom";
 import style from "./style.module.scss";
 
 export default function ({ list, base }) {
@@ -18,15 +18,16 @@ export default function ({ list, base }) {
     }
 
     return (
-        <div className={style.navLinkContainer}>
-            <div>
-                {list.map(({ content, _to, active }, index) => (
-                    <li key={index} className={active ? style.active : ""}>
-                        <Link to={_to}>{content}</Link>
-                    </li>
-                ))}
+        <>
+            <div className={style.navLinkContainer}>
+                <div>
+                    {list.map(({ content, _to, active }, index) => (
+                        <li key={index} className={active ? style.active : ""}>
+                            <Link to={_to}>{content}</Link>
+                        </li>
+                    ))}
+                </div>
             </div>
-            <Outlet context={useOutletContext()} />
-        </div>
+        </>
     );
 }

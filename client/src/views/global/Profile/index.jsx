@@ -13,6 +13,7 @@ import useAuth from "@/hooks/useAuth.js";
 import { useModal } from "@/contexts/ModalContext/index.jsx";
 import Login from "@/components/organisms/auth/Login/index.jsx";
 import Loader from "@/components/atoms/Loader/index.jsx";
+import Navlink from "@/components/molecules/Navlink/index.jsx";
 
 export default function Profile() {
     const [isLoading, setIsLoading] = useState(true)
@@ -21,6 +22,15 @@ export default function Profile() {
     const { getCityByCode } = useLocation();
     const {logout} = useAuth()
     const {setModalContent, showModal} = useModal()
+
+    const profileRouteList = [
+        { content: "Mon profil", to: "/me" },
+        { content: "Mes préférences", to: "/preference" },
+        { content: "Mes organisations", to: "/myorganization" },
+        { content: "Concours créés par mon organisation", to: "/me" },
+        { content: "Concours auxquels j’ai participé", to: "/me" },
+        { content: "Mes publicités", to: "/me" },
+    ];
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -159,6 +169,7 @@ export default function Profile() {
 
     return (
         <Loader active={isLoading}>
+            <Navlink base="/profile" list={profileRouteList} />
             <div className={style.formContainer}>
                 <BOForm
                     handleSubmit={function () {
