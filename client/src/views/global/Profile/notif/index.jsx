@@ -3,6 +3,7 @@ import Button from "@/components/atoms/Button";
 import style from "./style.module.scss";
 import Loader from "@/components/atoms/Loader/index.jsx";
 import Navlink from "@/components/molecules/Navlink/index.jsx";
+import {useState} from "react";
 
 export default function IndexNotif() {
     const [isLoading, setIsLoading] = useState(false)

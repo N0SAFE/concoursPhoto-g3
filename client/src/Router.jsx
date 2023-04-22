@@ -33,28 +33,7 @@ import CompetitionPictures from "@/views/FO/competition/CompetitionPictures";
 import CompetitionResults from "@/views/FO/competition/CompetitionResults";
 
 function Router() {
-    const getLoginComponent = () => {
-        return (
-            <Login
-                onSuccess={hideModal}
-                onRegisterButtonClick={() => {
-                    setModalContent(getRegisterComponent());
-                }}
-            />
-        );
-    };
-
-    const getRegisterComponent = () => {
-        return (
-            <Register
-                onSuccess={hideModal}
-                onLoginButtonClick={() => {
-                    setModalContent(getLoginComponent());
-                }}
-            />
-        );
-    };
-    const { setModalContent, showModal, hideModal } = useModal();
+    const { setModalContent, showModal } = useModal();
     return (
         <Routes>
             <Route
@@ -64,7 +43,7 @@ function Router() {
                         verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")}
                         fallback={() => {
                             toast.info("veuillez vous connecter");
-                            setModalContent(getLoginComponent());
+                            setModalContent(<Login />);
                             showModal();
                             return <Navigate to="/" replace={true} />;
                         }}
