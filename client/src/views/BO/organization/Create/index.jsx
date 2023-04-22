@@ -5,8 +5,10 @@ import { useState, useEffect } from "react";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import { toast } from "react-toastify";
 import useFilesUploader from "@/hooks/useFilesUploader.js";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function OrganizationCreate() {
+    const [isLoading, setIsLoading] = useState(true)
     const apiFetch = useApiFetch();
     const { uploadFile } = useFilesUploader();
 
@@ -56,11 +58,16 @@ export default function OrganizationCreate() {
     useEffect(() => {
         const controller = new AbortController();
         const promise = Promise.all([getOrganizationTypePossibility(controller)]).then(([types]) => setEntityPossibility({ types }));
-        toast.promise(promise, {
-            pending: "Chargement des données",
-            success: "Données chargées",
-            error: "Erreur lors du chargement des données",
-        });
+        promise.then(function(){
+            setIsLoading(false)
+        })
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des données",
+                success: "Données chargées",
+                error: "Erreur lors du chargement des données",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 
@@ -78,7 +85,7 @@ export default function OrganizationCreate() {
     }, [entity.postcode, entity.city]);
     console.debug("entity", entity);
     return (
-        <div>
+        <Loader active={isLoading}>
             <BOCreate
                 title="Création d'une organisation"
                 handleSubmit={function () {
@@ -240,6 +247,6 @@ export default function OrganizationCreate() {
                     </div>
                 </div>
             </BOCreate>
-        </div>
+        </Loader>
     );
 }

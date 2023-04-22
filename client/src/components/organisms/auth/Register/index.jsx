@@ -13,8 +13,6 @@ export default function UserRegister() {
     const apiFetch = useApiFetch();
     const {hideModal, setModalContent} = useModal()
 
-    console.log("other");
-
     const [entityPossibility, setEntityPossibility] = useState({ genders: [], statut: [] });
     const [gtc, setGtc] = useState(false);
     const [entity, setEntity] = useState({

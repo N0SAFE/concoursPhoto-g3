@@ -6,8 +6,10 @@ import useApiFetch from "@/hooks/useApiFetch";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
 import useApiPath from "@/hooks/useApiPath.js";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function () {
+    const [isLoading, setIsLoading] = useState(true)
     const toApiPath = useApiPath()
     const apiFetch = useApiFetch();
     const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
@@ -51,146 +53,153 @@ export default function () {
     useEffect(() => {
         const controller = new AbortController();
         const promise = getCompetitions(controller);
-        toast.promise(promise, {
-            pending: "Chargement du concours",
-            success: "Concours chargé",
-            error: "Erreur lors du chargement du consours",
-        });
+        promise.then(function(){
+            setIsLoading(false)
+        })
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement du concours",
+                success: "Concours chargé",
+                error: "Erreur lors du chargement du consours",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
-        <BOSee
-            entity={entity}
-            properties={[
-                {
-                    display: "nom",
-                    name: "competition_name",
-                },
-                {
-                    display: "Description",
-                    name: "description",
-                },
-                {
-                    display: "Date de création",
-                    name: "creation_date",
-                    type: "date",
-                },
-                {
-                    display: "endowments",
-                    name: "endowments",
-                },
-                {
-                    display: "max age",
-                    name: "max_age_criteria",
-                },
-                {
-                    display: "min age",
-                    name: "min_age_criteria",
-                },
-                {
-                    display: "nombre de vote max",
-                    name: "number_of_max_votes",
-                },
-                {
-                    display: "nombre de prix",
-                    name: "number_of_prices",
-                },
-                {
-                    display: "organisation",
-                    name: "organization",
-                    customData({ entity, property }) {
-                        return entity?.organization?.organizer_name;
+        <Loader active={isLoading}>
+            <BOSee
+                entity={entity}
+                properties={[
+                    {
+                        display: "nom",
+                        name: "competition_name",
                     },
-                },
-                {
-                    display: "date de publication",
-                    name: "publication_date",
-                    type: "date",
-                },
-                {
-                    display: "date début publication",
-                    name: "publication_start_date",
-                    type: "date",
-                },
-                {
-                    display: "date début de soummision",
-                    name: "submission_start_date",
-                    type: "date",
-                },
-                {
-                    display: "date de fin de soummision",
-                    name: "submission_end_date",
-                    type: "date",
-                },
-                {
-                    display: "date de début de vote",
-                    name: "voting_start_date",
-                    type: "date",
-                },
-                {
-                    display: "date de fin de vote",
-                    name: "voting_end_date",
-                    type: "date",
-                },
-                {
-                    display: "date résultat",
-                    name: "results_date",
-                    type: "date",
-                },
-                {
-                    display: "pondération vote jury",
-                    name: "weighting_of_jury_votes",
-                },
-                {
-                    display: "thème",
-                    name: "theme",
-                    customData({ entity, property }) {
-                        return entity?.theme?.map((theme) => theme.label).join(", ");
+                    {
+                        display: "Description",
+                        name: "description",
                     },
-                },
-                {
-                    display: "Visuel",
-                    name: "competition_visual",
-                    type: "img",
-                    customData: ({ entity }) => {
-                        return entity?.competition_visual?.path ? {to: toApiPath(entity?.competition_visual?.path), name: entity?.competition_visual?.default_name} : null;
+                    {
+                        display: "Date de création",
+                        name: "creation_date",
+                        type: "date",
                     },
-                },
-                {
-                    display: "Pays",
-                    name: "country_criteria",
-                },
-                {
-                    display: "status",
-                    name: "state",
-                },
-                {
-                    display: "Ville",
-                    name: "city_criteria",
-                    customData({ entity, property }) {
-                        return entity?.city_criteria?.map((city) => city.nom).join(", ");
-                    }
-                },
-                {
-                    display: "département",
-                    name: "department_criteria",
-                    customData({ entity, property }) {
-                        return entity?.department_criteria?.map((department) => department.nom).join(", ");
-                    }
-                },
-                {
-                    display: "région",
-                    name: "region_criteria",
-                    customData({ entity, property }) {
-                        return entity?.region_criteria?.map((region) => region.nom).join(", ");
-                    }
-                },
-                {
-                    display: "réglement",
-                    name: "rules",
-                },
-            ]}
-        />
+                    {
+                        display: "endowments",
+                        name: "endowments",
+                    },
+                    {
+                        display: "max age",
+                        name: "max_age_criteria",
+                    },
+                    {
+                        display: "min age",
+                        name: "min_age_criteria",
+                    },
+                    {
+                        display: "nombre de vote max",
+                        name: "number_of_max_votes",
+                    },
+                    {
+                        display: "nombre de prix",
+                        name: "number_of_prices",
+                    },
+                    {
+                        display: "organisation",
+                        name: "organization",
+                        customData({ entity, property }) {
+                            return entity?.organization?.organizer_name;
+                        },
+                    },
+                    {
+                        display: "date de publication",
+                        name: "publication_date",
+                        type: "date",
+                    },
+                    {
+                        display: "date début publication",
+                        name: "publication_start_date",
+                        type: "date",
+                    },
+                    {
+                        display: "date début de soummision",
+                        name: "submission_start_date",
+                        type: "date",
+                    },
+                    {
+                        display: "date de fin de soummision",
+                        name: "submission_end_date",
+                        type: "date",
+                    },
+                    {
+                        display: "date de début de vote",
+                        name: "voting_start_date",
+                        type: "date",
+                    },
+                    {
+                        display: "date de fin de vote",
+                        name: "voting_end_date",
+                        type: "date",
+                    },
+                    {
+                        display: "date résultat",
+                        name: "results_date",
+                        type: "date",
+                    },
+                    {
+                        display: "pondération vote jury",
+                        name: "weighting_of_jury_votes",
+                    },
+                    {
+                        display: "thème",
+                        name: "theme",
+                        customData({ entity, property }) {
+                            return entity?.theme?.map((theme) => theme.label).join(", ");
+                        },
+                    },
+                    {
+                        display: "Visuel",
+                        name: "competition_visual",
+                        type: "img",
+                        customData: ({ entity }) => {
+                            return entity?.competition_visual?.path ? {to: toApiPath(entity?.competition_visual?.path), name: entity?.competition_visual?.default_name} : null;
+                        },
+                    },
+                    {
+                        display: "Pays",
+                        name: "country_criteria",
+                    },
+                    {
+                        display: "status",
+                        name: "state",
+                    },
+                    {
+                        display: "Ville",
+                        name: "city_criteria",
+                        customData({ entity, property }) {
+                            return entity?.city_criteria?.map((city) => city.nom).join(", ");
+                        }
+                    },
+                    {
+                        display: "département",
+                        name: "department_criteria",
+                        customData({ entity, property }) {
+                            return entity?.department_criteria?.map((department) => department.nom).join(", ");
+                        }
+                    },
+                    {
+                        display: "région",
+                        name: "region_criteria",
+                        customData({ entity, property }) {
+                            return entity?.region_criteria?.map((region) => region.nom).join(", ");
+                        }
+                    },
+                    {
+                        display: "réglement",
+                        name: "rules",
+                    },
+                ]}
+            />
+        </Loader>
     );
 }

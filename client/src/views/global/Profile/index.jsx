@@ -12,8 +12,10 @@ import style from "./style.module.scss";
 import useAuth from "@/hooks/useAuth.js";
 import { useModal } from "@/contexts/ModalContext/index.jsx";
 import Login from "@/components/organisms/auth/Login/index.jsx";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function Profile() {
+    const [isLoading, setIsLoading] = useState(true)
     const [entityPossibility, setEntityPossibility] = useState({ statut: [], gender: [], category: [] });
     const { me } = useAuthContext();
     const { getCityByCode } = useLocation();
@@ -130,11 +132,16 @@ export default function Profile() {
         const promise = Promise.all([getGendersPossibility(), getPersonalstatus(), getCategoryPossibility(), getUser()]).then(([genders, statut, category]) =>
             setEntityPossibility({ genders, statut, category })
         );
-        toast.promise(promise, {
-            pending: "Chargement des données",
-            success: "Données chargées",
-            error: "Erreur lors du chargement des données",
-        });
+        promise.then(function(){
+            setIsLoading(false)
+        })
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des données",
+                success: "Données chargées",
+                error: "Erreur lors du chargement des données",
+            });
+        }
     }, []);
 
     useEffect(() => {
@@ -151,58 +158,53 @@ export default function Profile() {
     }, [entity.postcode, entity.city]);
 
     return (
-        <div className={style.formContainer}>
-            <BOForm
-                handleSubmit={function () {
-                    const data = {
-                        email: entity.email,
-                        plainPassword: entity.password || undefined,
-                        firstname: entity.firstname,
-                        lastname: entity.lastname,
-                        address: entity.address,
-                        city: entity.city.value,
-                        postcode: entity.postcode.value,
-                        gender: entity.gender.value,
-                        personalStatut: entity.statut.value,
-                        dateOfBirth: entity.dateOfBirth.toISOString(),
-                        pseudonym: entity.pseudonym,
-                        photographerDescription: entity.photographerDescription,
-                        photographerCategory: entity.category.value,
-                        websiteUrl: entity.websiteUrl,
-                        socialsNetworks: entity.socialNetworks,
-                        country: entity.country,
-                    };
-                    console.debug("data", data);
-                    // if (password !== passwordConfirm) {
-                    //     setErrors({ password: "Les mots de passe ne correspondent pas" });
-                    //     return;
-                    // }
-                    const promise = apiFetch("/users/" + me.id, {
-                        method: "PATCH",
-                        body: JSON.stringify(data),
-                        headers: {
-                            "Content-Type": "application/merge-patch+json",
-                        },
-                    })
-                        .then((r) => r.json())
-                        .then(async (data) => {
-                            console.debug(data);
-                            if (data["@type"] === "hydra:Error") {
-                                console.error(data);
-                                throw new Error(data.description);
-                            }
-                            if(me.email !== data.email || data.plainPassword){
-                                await logout().then(function(){
-                                    setModalContent(<Login />)
-                                    showModal();
-                                    navigate('/')
-                                })
-                            }
-                        });
+        <Loader active={isLoading}>
+            <div className={style.formContainer}>
+                <BOForm
+                    handleSubmit={function () {
+                        const data = {
+                            email: entity.email,
+                            plainPassword: entity.password || undefined,
+                            firstname: entity.firstname,
+                            lastname: entity.lastname,
+                            address: entity.address,
+                            city: entity.city.value,
+                            postcode: entity.postcode.value,
+                            gender: entity.gender.value,
+                            personalStatut: entity.statut.value,
+                            dateOfBirth: entity.dateOfBirth.toISOString(),
+                            pseudonym: entity.pseudonym,
+                            photographerDescription: entity.photographerDescription,
+                            photographerCategory: entity.category.value,
+                            websiteUrl: entity.websiteUrl,
+                            socialsNetworks: entity.socialNetworks,
+                            country: entity.country,
+                        };
+                        console.debug("data", data);
+                        // if (password !== passwordConfirm) {
+                        //     setErrors({ password: "Les mots de passe ne correspondent pas" });
+                        //     return;
+                        // }
+                        const promise = apiFetch("/users/" + me.id, {
+                            method: "PATCH",
+                            body: JSON.stringify(data),
+                            headers: {
+                                "Content-Type": "application/merge-patch+json",
+                            },
+                        })
+                            .then((r) => r.json())
+                            .then((data) => {
+                                console.debug(data);
+                                if (data["@type"] === "hydra:Error") {
+                                    console.error(data);
+                                    throw new Error(data.description);
+                                }
+                                navigate("/auth/logout");
+                                });
 
                     toast.promise(promise, {
                         pending: "Modification en cours",
-                        success: "Votre profile a bien été modifié",
+                        success: "Votre profile a bien été modifié, veuillez vous reconnecter",
                         error: "Erreur lors de la modification de votre profil",
                     });
                 }}
@@ -274,58 +276,59 @@ export default function Profile() {
                             <Input type="select" name="langue" label="Langue" extra={{ value: Languetest[0], options: Languetest }} />
                         </div>
 
-                        <div>
-                            <Input type="text" name="pseudonym" label="Pseudonyme" onChange={(d) => updateEntity("pseudonym", d)} defaultValue={entity.pseudonym} />
-                        </div>
-                    </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                    <h2>Si vous êtes photographe</h2>
-                    <div style={{ display: "flex", flexDirection: "row" }}>
-                        {" "}
-                        <Input
-                            type="textarea"
-                            extra={{ rows: 16 }}
-                            name="photographerDescription"
-                            label="Description Photographe"
-                            onChange={(d) => updateEntity("photographerDescription", d)}
-                            defaultValue={entity.photographerDescription}
-                        />
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "row", gap: "100px", width: "100%" }}>
-                        <Input
-                            type="select"
-                            name="PhotographeCategory"
-                            label="Votre catégorie en tant que photographe ?"
-                            onChange={(d) => updateEntity("category", d)}
-                            extra={{ value: entity.category, options: entityPossibility.category }}
-                        />
-                        <Input type="text" name="websiteUrl" label="Votre site web personnel" onChange={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
-                    </div>
-                    <div style={{}}>
-                        <h2>Réseaux sociaux de l’organisation</h2>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                            <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                                <Input type="text" name="socialNetworks" label="Votre page Facebook" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                                <Input type="text" name="socialNetworks" label="Votre chaîne Youtube" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                            </div>
-                            <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                                <Input type="text" name="socialNetworks" label="Votre page Instagram" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                                <Input type="text" name="socialNetworks" label="Votre compte Twitter" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                            </div>
-                            <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                                <Input type="text" name="socialNetworks" label="Votre page Linkedin" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
-                                <Input type="text" name="socialNetworks" label="Votre compte TikTok" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                            <div>
+                                <Input type="text" name="pseudonym" label="Pseudonyme" onChange={(d) => updateEntity("pseudonym", d)} defaultValue={entity.pseudonym} />
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className={style.registerSubmit}>
-                    <Button type="submit" name="Mettre à jour" color={"black"} textColor={"white"} padding={"14px 30px"} border={false} borderRadius={"44px"} width={"245px"} />
-                </div>
-            </BOForm>
-        </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                        <h2>Si vous êtes photographe</h2>
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                            {" "}
+                            <Input
+                                type="textarea"
+                                extra={{ rows: 16 }}
+                                name="photographerDescription"
+                                label="Description Photographe"
+                                onChange={(d) => updateEntity("photographerDescription", d)}
+                                defaultValue={entity.photographerDescription}
+                            />
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "row", gap: "100px", width: "100%" }}>
+                            <Input
+                                type="select"
+                                name="PhotographeCategory"
+                                label="Votre catégorie en tant que photographe ?"
+                                onChange={(d) => updateEntity("category", d)}
+                                extra={{ value: entity.category, options: entityPossibility.category }}
+                            />
+                            <Input type="text" name="websiteUrl" label="Votre site web personnel" onChange={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
+                        </div>
+                        <div style={{}}>
+                            <h2>Réseaux sociaux de l’organisation</h2>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                                    <Input type="text" name="socialNetworks" label="Votre page Facebook" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                                    <Input type="text" name="socialNetworks" label="Votre chaîne Youtube" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                                </div>
+                                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                                    <Input type="text" name="socialNetworks" label="Votre page Instagram" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                                    <Input type="text" name="socialNetworks" label="Votre compte Twitter" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                                </div>
+                                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                                    <Input type="text" name="socialNetworks" label="Votre page Linkedin" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                                    <Input type="text" name="socialNetworks" label="Votre compte TikTok" onChange={(d) => updateEntity("socialNetworks", d)} defaultValue={entity.socialNetworks} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={style.registerSubmit}>
+                        <Button type="submit" name="Mettre à jour" color={"black"} textColor={"white"} padding={"14px 30px"} border={false} borderRadius={"44px"} width={"245px"} />
+                    </div>
+                </BOForm>
+            </div>
+        </Loader>
     );
 }

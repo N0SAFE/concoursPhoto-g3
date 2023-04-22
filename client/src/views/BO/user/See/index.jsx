@@ -5,8 +5,10 @@ import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch";
 import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function () {
+    const [isLoading, setIsLoading] = useState(true)
     const apiFetch = useApiFetch();
     const { getCityByCode } = useLocation();
     const [entity, setEntity] = useState({});
@@ -37,15 +39,21 @@ export default function () {
     useEffect(() => {
         const controller = new AbortController();
         const promise = getUser(controller);
-        toast.promise(promise, {
-            pending: "Chargement de l'utilisateur",
-            success: "Utilisateur chargé",
-            error: "Erreur lors du chargement de l'utilisateur",
-        });
+        promise.then(function(){
+            setIsLoading(false)
+        })
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement de l'utilisateur",
+                success: "Utilisateur chargé",
+                error: "Erreur lors du chargement de l'utilisateur",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
+        <Loader active={isLoading} >
         <BOSee
             entity={entity}
             properties={[
@@ -115,5 +123,6 @@ export default function () {
                 },
             ]}
         />
+        </Loader>
     );
 }

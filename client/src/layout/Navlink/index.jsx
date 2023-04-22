@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Outlet, useLocation, useMatch } from "react-router-dom";
+import { Link, Outlet, useLocation, useMatch, useOutletContext } from "react-router-dom";
 import style from "./style.module.scss";
 
 export default function ({ list, base }) {
@@ -26,7 +26,7 @@ export default function ({ list, base }) {
                     </li>
                 ))}
             </div>
-            <Outlet />
+            <Outlet context={useOutletContext()} />
         </div>
     );
 }

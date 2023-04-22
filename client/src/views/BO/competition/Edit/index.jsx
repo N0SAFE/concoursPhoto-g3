@@ -8,8 +8,10 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import useFilesUpdater from "@/hooks/useFilesUploader.js";
 import useApiPath from "@/hooks/useApiPath.js";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function CompetitionEdit() {
+    const [isLoading, setIsLoading] = useState(true)
     const apiPathComplete = useApiPath();
     const {uploadFile, deleteFile} = useFilesUpdater()
     const navigate = useNavigate();
@@ -122,9 +124,9 @@ export default function CompetitionEdit() {
             signal: controller?.signal,
         })
             .then((r) => r.json())
-            .then((data) => {
+            .then(async (data) => {
                 console.debug(data);
-                Promise.all([
+                return await Promise.all([
                     Promise.all(data.city_criteria.map((c) => c && getCityByCode(c))),
                     Promise.all(data.department_criteria.map((d) => d && getDepartmentByCode(d))),
                     Promise.all(data.region_criteria.map((r) => r && getRegionByCode(r))),
@@ -178,16 +180,21 @@ export default function CompetitionEdit() {
                 setEntityPossibility({ participantCategories, organizers, themes });
             }
         );
-        toast.promise(promise, {
-            pending: "Chargement des données",
-            success: "Données chargées",
-            error: "Erreur lors du chargement des données",
-        });
+        promise.then(function(){
+            setIsLoading(false)
+        })
+        if(import.meta.env.MODE === 'development'){
+            toast.promise(promise, {
+                pending: "Chargement des données",
+                success: "Données chargées",
+                error: "Erreur lors du chargement des données",
+            });
+        }
         return () => setTimeout(() => controller.abort());
     }, []);
 
     return (
-        <div>
+        <Loader active={isLoading}>
             <BOCreate
                 title="Création d'un concours"
                 handleSubmit={function () {
@@ -446,6 +453,6 @@ export default function CompetitionEdit() {
                     </div>
                 </div>
             </BOCreate>
-        </div>
+        </Loader>
     );
 }
