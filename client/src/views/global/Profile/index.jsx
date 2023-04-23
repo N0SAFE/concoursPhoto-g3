@@ -3,7 +3,7 @@ import Input from "@/components/atoms/Input/index.jsx";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch.js";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useAuthContext } from "@/contexts/AuthContext.jsx";
 import Button from "@/components/atoms/Button";
 import useLocation from "@/hooks/useLocation.js";
@@ -16,12 +16,12 @@ import Loader from "@/components/atoms/Loader/index.jsx";
 import Navlink from "@/components/molecules/Navlink/index.jsx";
 
 export default function Profile() {
-    const [isLoading, setIsLoading] = useState(true)
-    const [entityPossibility, setEntityPossibility] = useState({ statut: [], gender: [], category: [] });
+    const {gendersPossibility} = useOutletContext() // to avoid the loading when we change the page
+    const [statusPossibility, setStatusPossibility] = useState({ list: [], isLoading: true });
+    const [categoriesPossibility, setCategoriesPossibility] = useState({ list: [], isLoading: true });
     const { me } = useAuthContext();
-    const { getCityByCode } = useLocation();
-    const {logout} = useAuth()
-    const {setModalContent, showModal} = useModal()
+    const { logout } = useAuth();
+    const { setModalContent, showModal } = useModal();
 
     const profileRouteList = [
         { content: "Mon profil", to: "/me" },
@@ -37,27 +37,18 @@ export default function Profile() {
     const postalCodesPossibility = [...new Set(locationPossibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] = useState(false);
     const [entity, setEntity] = useState({
-        state: false,
-        email: "",
-        password: "",
-        passwordConfirm: "",
-        firstname: "",
-        lastname: "",
-        address: "",
-        city: "",
-        postcode: "",
-        phoneNumber: "",
-        roles: [],
-        gender: "",
-        statut: "",
-        category: "",
-        dateOfBirth: null,
-        pseudonym: "",
-        photographerDescription: "",
-        websiteUrl: "",
-        socialNetworks: "",
-        country: "",
+        ...me,
+        city: { label: me.city.nom, value: me.city.code },
+        postcode: { label: me.postcode, value: me.postcode },
+        gender: { label: me.gender.label, value: me.gender["@id"] },
+        statut: { label: me.personal_statut.label, value: me.personal_statut["@id"] },
+        dateOfBirth: new Date(me.date_of_birth),
+        category: { label: me.photographer_category.label, value: me.photographer_category["@id"] },
+        photographerDescription: me.photographer_description,
+        websiteUrl: me.website_url,
+        socialNetworks: me.socials_networks,
     });
+
     const updateEntity = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
@@ -69,18 +60,6 @@ export default function Profile() {
         { label: "Francais", value: "Francais" },
         { label: "Anglais", value: "Anglais" },
     ];
-
-    const getGendersPossibility = () => {
-        return apiFetch("/genders", {
-            method: "GET",
-        })
-            .then((r) => r.json())
-            .then((data) => {
-                return data["hydra:member"].map(function (item) {
-                    return { label: item.label, value: item["@id"] };
-                });
-            });
-    };
 
     const getCategoryPossibility = () => {
         return apiFetch("/photographer_categories", {
@@ -107,51 +86,13 @@ export default function Profile() {
             });
     };
 
-    function getUser() {
-        apiFetch("/users/" + me.id, {
-            method: "GET",
-        })
-            .then((r) => r.json())
-            .then((data) => {
-                console.debug(data);
-                return Promise.all([getCityByCode(data.city)]).then(([city]) => {
-                    const _user = {
-                        email: data.email,
-                        firstname: data.firstname,
-                        lastname: data.lastname,
-                        address: data.address,
-                        postcode: { value: data.postcode, label: data.postcode },
-                        city: { label: city.nom, value: city.code },
-                        gender: { label: data.gender.label, value: data.gender["@id"] },
-                        statut: { label: data.personal_statut.label, value: data.personal_statut["@id"] },
-                        dateOfBirth: new Date(data.date_of_birth),
-                        pseudonym: data.pseudonym,
-                        photographerDescription: data.photographer_description,
-                        category: { label: data.photographer_category.label, value: data.photographer_category["@id"] },
-                        websiteUrl: data.website_url,
-                        socialNetworks: data.socials_networks,
-                        country: data.country,
-                    };
-                    console.debug(_user);
-                    setEntity(_user);
-                });
-            });
-    }
-
     useEffect(() => {
-        const promise = Promise.all([getGendersPossibility(), getPersonalstatus(), getCategoryPossibility(), getUser()]).then(([genders, statut, category]) =>
-            setEntityPossibility({ genders, statut, category })
-        );
-        promise.then(function(){
-            setIsLoading(false)
-        })
-        if(import.meta.env.MODE === 'development'){
-            toast.promise(promise, {
-                pending: "Chargement des données",
-                success: "Données chargées",
-                error: "Erreur lors du chargement des données",
-            });
-        }
+        getPersonalstatus().then((data) => {
+            setStatusPossibility({ list: data, isLoading: false });
+        });
+        getCategoryPossibility().then((data) => {
+            setCategoriesPossibility({ list: data, isLoading: false });
+        });
     }, []);
 
     useEffect(() => {
@@ -168,7 +109,7 @@ export default function Profile() {
     }, [entity.postcode, entity.city]);
 
     return (
-        <Loader active={isLoading}>
+        <Loader active={gendersPossibility.isLoading}>
             <Navlink base="/profile" list={profileRouteList} />
             <div className={style.formContainer}>
                 <BOForm
@@ -210,14 +151,15 @@ export default function Profile() {
                                     console.error(data);
                                     throw new Error(data.description);
                                 }
-                                if(me.email !== entity.email || entity.plainPassword){
-                                    logout().then(function(){
-                                        setModalContent(<Login />)
-                                        showModal()
-                                        navigate('/')
-                                    })
+                                if (me.email !== entity.email || entity.plainPassword) {
+                                    logout().then(function () {
+                                        setModalContent(<Login />);
+                                        showModal();
+                                        navigate("/");
+                                    });
                                 }
                             });
+                        console.lgo("io");
 
                         toast.promise(promise, {
                             pending: "Modification en cours",
@@ -227,71 +169,71 @@ export default function Profile() {
                     }}
                     hasSubmit={true}
                 >
-                <Input type="radioList" name="genre" onChange={(d) => updateEntity("gender", d)} extra={{ value: entity.gender, options: entityPossibility.genders }} />
-                <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
-                    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
-                        <Input type="text" name="Prénom*" label="Prénom" onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
-                        <Input type="text" name="Nom*" label="Nom" onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
-                        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                            <Input type="date" name="Date de naissance$" label="Date de naissance" onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
-                            <Input type="select" name="vous êtes*" label="Statut" onChange={(d) => updateEntity("statut", d)} extra={{ value: entity.statut, options: entityPossibility.statut }} />
+                    <Input type="radioList" name="genre" onChange={(d) => updateEntity("gender", d)} extra={{ value: entity.gender, options: gendersPossibility.list }} />
+                    <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
+                        <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
+                            <Input type="text" name="Prénom*" label="Prénom" onChange={(d) => updateEntity("firstname", d)} defaultValue={entity.firstname} />
+                            <Input type="text" name="Nom*" label="Nom" onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
+                            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                                <Input type="date" name="Date de naissance$" label="Date de naissance" onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
+                                <Input type="select" name="vous êtes*" label="Statut" onChange={(d) => updateEntity("statut", d)} extra={{ value: entity.statut, options: statusPossibility.list, isLoading: statusPossibility.isLoading }} />
+                            </div>
+                            <Input type="email" name="Email*" label="Adresse email" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
+                            <Input type="password" name="Mot de passe*" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
                         </div>
-                        <Input type="email" name="Email*" label="Adresse email" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
-                        <Input type="password" name="Mot de passe*" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
-                        <Input type="text" name="Adresse" label="Adresse" onChange={(d) => updateEntity("adress", d)} defaultValue={entity.address} />
-                        <div style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
-                            {" "}
-                            <Input
-                                type="select"
-                                name="Ville"
-                                label="Ville"
-                                extra={{
-                                    isLoading: locationPossibilityIsLoading,
-                                    value: entity.city,
-                                    isClearable: true,
-                                    required: true,
-                                    options: citiesPossibility,
-                                    multiple: false,
-                                    onInputChange: (cityName, { action }) => {
-                                        if (action === "menu-close") {
-                                            updateLocationPossibility({ id: "city", args: { codeCity: entity.city?.value, city: "" } });
-                                        }
-                                        if (action === "input-change") {
-                                            updateLocationPossibility({ id: "city", args: { city: cityName } });
-                                        }
-                                    },
-                                }}
-                                onChange={(d) => updateEntity("city", d)}
-                            />
-                            <Input
-                                type="select"
-                                name="Code Postal"
-                                label="Code postal"
-                                extra={{
-                                    isLoading: locationPossibilityIsLoading,
-                                    value: entity.postcode,
-                                    isClearable: true,
-                                    required: true,
-                                    options: postalCodesPossibility,
-                                    multiple: false,
-                                    onInputChange: (_postcode, { action }) => {
-                                        if (action === "menu-close") {
-                                            updateLocationPossibility({ id: "city", args: { postcode: entity.postcode?.value } });
-                                        }
-                                        if (action === "input-change" && _postcode.length === 5) {
-                                            updateLocationPossibility({ id: "city", args: { postcode: _postcode } });
-                                        }
-                                    },
-                                }}
-                                onChange={(d) => updateEntity("postcode", d)}
-                            />
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
-                            <Input type="text" name="country" label="Pays" onChange={(d) => updateEntity("country", d)} defaultValue={entity.country} />
-                            <Input type="select" name="langue" label="Langue" extra={{ value: Languetest[0], options: Languetest }} />
-                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
+                            <Input type="text" name="Adresse" label="Adresse" onChange={(d) => updateEntity("adress", d)} defaultValue={entity.address} />
+                            <div style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
+                                {" "}
+                                <Input
+                                    type="select"
+                                    name="Ville"
+                                    label="Ville"
+                                    extra={{
+                                        isLoading: locationPossibilityIsLoading,
+                                        value: entity.city,
+                                        isClearable: true,
+                                        required: true,
+                                        options: citiesPossibility,
+                                        multiple: false,
+                                        onInputChange: (cityName, { action }) => {
+                                            if (action === "menu-close") {
+                                                updateLocationPossibility({ id: "city", args: { codeCity: entity.city?.value, city: "" } });
+                                            }
+                                            if (action === "input-change") {
+                                                updateLocationPossibility({ id: "city", args: { city: cityName } });
+                                            }
+                                        },
+                                    }}
+                                    onChange={(d) => updateEntity("city", d)}
+                                />
+                                <Input
+                                    type="select"
+                                    name="Code Postal"
+                                    label="Code postal"
+                                    extra={{
+                                        isLoading: locationPossibilityIsLoading,
+                                        value: entity.postcode,
+                                        isClearable: true,
+                                        required: true,
+                                        options: postalCodesPossibility,
+                                        multiple: false,
+                                        onInputChange: (_postcode, { action }) => {
+                                            if (action === "menu-close") {
+                                                updateLocationPossibility({ id: "city", args: { postcode: entity.postcode?.value } });
+                                            }
+                                            if (action === "input-change" && _postcode.length === 5) {
+                                                updateLocationPossibility({ id: "city", args: { postcode: _postcode } });
+                                            }
+                                        },
+                                    }}
+                                    onChange={(d) => updateEntity("postcode", d)}
+                                />
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+                                <Input type="text" name="country" label="Pays" onChange={(d) => updateEntity("country", d)} defaultValue={entity.country} />
+                                <Input type="select" name="langue" label="Langue" extra={{ value: Languetest[0], options: Languetest }} />
+                            </div>
 
                             <div>
                                 <Input type="text" name="pseudonym" label="Pseudonyme" onChange={(d) => updateEntity("pseudonym", d)} defaultValue={entity.pseudonym} />
@@ -319,7 +261,7 @@ export default function Profile() {
                                 name="PhotographeCategory"
                                 label="Votre catégorie en tant que photographe ?"
                                 onChange={(d) => updateEntity("category", d)}
-                                extra={{ value: entity.category, options: entityPossibility.category }}
+                                extra={{ value: entity.category, options: categoriesPossibility.list, isLoading: categoriesPossibility.isLoading }}
                             />
                             <Input type="text" name="websiteUrl" label="Votre site web personnel" onChange={(d) => updateEntity("websiteUrl", d)} defaultValue={entity.websiteUrl} />
                         </div>

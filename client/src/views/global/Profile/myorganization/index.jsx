@@ -30,6 +30,7 @@ export default function Myorganization() {
     const postalCodesPossibility = [...new Set(locationPossibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] = useState(false);
     const [entity, setEntity] = useState({
+        ...me.Manage[0],
         id: null,
         organizerName: null,
         email: null,
@@ -46,6 +47,9 @@ export default function Myorganization() {
         socialNetworks: null,
         Types: null,
     });
+    
+    console.log(entity)
+    
     const updateEntity = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
@@ -71,7 +75,6 @@ export default function Myorganization() {
 
     useEffect(() => {
         setEntity(me.Manage[0]);
-        console.debug(me.Manage[0]);
         const promise = Promise.all([getOrganizationTypePossibility()]).then(([types]) => setEntityPossibility({ types }));
         promise.then(function(){
             setIsLoading(false)

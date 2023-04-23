@@ -28,97 +28,97 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Patch(processor: UserStateProcessor::class),
         new Delete()
     ],
-    normalizationContext: ['groups' => ['user']]
+    normalizationContext: ['groups' => ['user:read', 'user:current:read']]
 )]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
-    #[Groups(['user', 'competition'])]
+    #[Groups(['user:read', 'competition'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column]
     private ?bool $state = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $creation_date = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
-    #[Groups(['user', 'competition'])]
+    #[Groups(['user:read', 'competition'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $firstname = null;
 
-    #[Groups(['user', 'competition'])]
+    #[Groups(['user:read', 'user:current:read', 'competition'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $lastname = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank]
     private ?\DateTimeInterface $date_of_birth = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $postcode = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $city = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
     private $email;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(10, minMessage: 'Le numéro de téléphone doit avoir au moins 10 caractères')]
     #[Assert\Regex(pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/', message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00')]
     private ?string $phone_number = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(type: 'string')]
     private $password;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[Assert\Length(min: 8, minMessage: 'Le mot de passe doit avoir au moins 8 caractères')]
     #[Assert\Regex(pattern: '/^(?=.*[A-Z])(?=.*\d).+$/', message: 'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre')]
     private ?string $plainPassword = null;
 
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     private Collection $Manage;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     private ?PhotographerCategory $photographer_category = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: MemberOfTheJury::class)]
+    #[ORM\OneToMany(mappedBy: 'user:read', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Picture::class)]
-    #[Groups('user')]
+    #[ORM\OneToMany(mappedBy: 'user:read', targetEntity: Picture::class)]
+    #[Groups(['user:read', 'user:current:read'])]
     private Collection $pictures;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]
+    #[ORM\OneToMany(mappedBy: 'user:read', targetEntity: Vote::class)]
     private Collection $votes;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -134,32 +134,32 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?\DateTimeInterface $last_connection_date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     private ?string $photographer_description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     private ?string $website_url = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     private ?string $pseudonym = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column]
     private ?bool $is_verified = null;
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[Assert\NotBlank]
     private ?PersonalStatut $personal_statut = null;
 
 
-    #[Groups('user')]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?File $picture_profil = null;
 
@@ -359,7 +359,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     }
 
     /**
-     * A visual identifier that represents this user.
+     * A visual identifier that represents this user:read.
      *
      * @see UserInterface
      */
@@ -592,7 +592,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // guarantee every user:read at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
