@@ -12,7 +12,7 @@ import Icon from "@/components/atoms/Icon/index.jsx";
 import {Outlet} from "react-router-dom";
 import Loader from "@/components/atoms/Loader/index.jsx";
 
-export default function CompetitionView() {
+export default function CompetitionLayout() {
     const [isLoading, setIsLoading] = useState(true)
     const apiFetch = useApiFetch();
     const {getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
@@ -104,7 +104,7 @@ export default function CompetitionView() {
                     <div className={style.viewOrganizer}>
                         <div>
                             <div className={style.viewOrganizerOne}>
-                                <p className={style.titleOrganizer}>Organisateur : <span>{entity.organization?.organizer_name}</span></p>
+                                <p className={style.titleOrganizer}>Organisateur : <span>{entity.organization?.users.map((user) => user.firstname + " " + user.lastname).join(", ")}</span></p>
                             </div>
                             <div className={style.viewOrganizerTwo}>
                                 <div>
@@ -142,23 +142,8 @@ export default function CompetitionView() {
                     type: "slider"
                 }} boxDownContents={entity.pictures}
             />
-            <div className={style.competitionDescription}>
-                <div>
-                    <Outlet />
-                </div>
-                <div>
-                    {/*TODO: A externaliser (en lien avec le Outlet) car cette section change pratiquement à chaque fois pour chaque onglet*/}
-                    <h2>Dernières photos ayant obtenu un vote</h2>
-                    <div>
-                        <div>1</div>
-                        <div>2</div>
-                        <div>3</div>
-                        <div>4</div>
-                        <div>5</div>
-                        <div>6</div>
-                    </div>
-                </div>
-            </div>
-        </div></Loader>
+            <Outlet context={{competition: entity}} />
+        </div>
+        </Loader>
     )
 }
