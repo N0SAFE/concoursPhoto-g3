@@ -19,7 +19,7 @@ class PhotographerCategory
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('user')]
+    #[Groups('user:read')]
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'photographer_category', targetEntity: User::class)]

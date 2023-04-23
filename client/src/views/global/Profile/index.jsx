@@ -16,7 +16,7 @@ import Loader from "@/components/atoms/Loader/index.jsx";
 import Navlink from "@/components/molecules/Navlink/index.jsx";
 
 export default function Profile() {
-    const {gendersPossibility} = useOutletContext() // to avoid the loading when we change the page
+    const { gendersPossibility } = useOutletContext(); // to avoid the loading when we change the page
     const [statusPossibility, setStatusPossibility] = useState({ list: [], isLoading: true });
     const [categoriesPossibility, setCategoriesPossibility] = useState({ list: [], isLoading: true });
     const { me } = useAuthContext();
@@ -159,13 +159,20 @@ export default function Profile() {
                                     });
                                 }
                             });
-                        console.lgo("io");
 
-                        toast.promise(promise, {
-                            pending: "Modification en cours",
-                            success: "Votre profile a bien été modifié, veuillez vous reconnecter",
-                            error: "Erreur lors de la modification de votre profil",
-                        });
+                        if (me.email !== entity.email || entity.plainPassword) {
+                            toast.promise(promise, {
+                                pending: "Modification en cours",
+                                success: "Votre profile a bien été modifié, veuillez vous reconnecter",
+                                error: "Erreur lors de la modification de votre profil",
+                            });
+                        } else {
+                            toast.promise(promise, {
+                                pending: "Modification en cours",
+                                success: "Votre profile a bien été modifié",
+                                error: "Erreur lors de la modification de votre profil",
+                            });
+                        }
                     }}
                     hasSubmit={true}
                 >
@@ -176,7 +183,13 @@ export default function Profile() {
                             <Input type="text" name="Nom*" label="Nom" onChange={(d) => updateEntity("lastname", d)} defaultValue={entity.lastname} />
                             <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                                 <Input type="date" name="Date de naissance$" label="Date de naissance" onChange={(d) => updateEntity("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
-                                <Input type="select" name="vous êtes*" label="Statut" onChange={(d) => updateEntity("statut", d)} extra={{ value: entity.statut, options: statusPossibility.list, isLoading: statusPossibility.isLoading }} />
+                                <Input
+                                    type="select"
+                                    name="vous êtes*"
+                                    label="Statut"
+                                    onChange={(d) => updateEntity("statut", d)}
+                                    extra={{ value: entity.statut, options: statusPossibility.list, isLoading: statusPossibility.isLoading }}
+                                />
                             </div>
                             <Input type="email" name="Email*" label="Adresse email" extra={{ required: true }} onChange={(d) => updateEntity("email", d)} defaultValue={entity.email} />
                             <Input type="password" name="Mot de passe*" label="Mot de passe" onChange={(d) => updateEntity("password", d)} defaultValue={entity.password} />

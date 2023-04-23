@@ -17,52 +17,52 @@ class Organization
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['organization', 'competition'])]
+    #[Groups(['organization', 'competition', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'competition', 'user'])]
+    #[Groups(['organization', 'competition', 'user:current:read', 'user:read'])]
 
     private ?string $organizer_name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $address = null;
 
     #[ORM\Column]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $postcode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $website_url = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $number_phone = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $country = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizations')]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?OrganizationType $organization_type = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Manage')]
@@ -72,23 +72,24 @@ class Organization
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Rent::class)]
     private Collection $rents;
 
-    #[Groups(['organization'])]
+    #[Groups(['organization', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Competition::class)]
     private Collection $competitions;
 
+    #[Groups(['organization', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
-    #[Groups(['organization'])]
+    #[Groups(['organization', 'user:current:read'])]
     #[ORM\Column(length: 255)]
     private ?string $intra_community_vat = null;
 
-    #[Groups(['organization'])]
+    #[Groups(['organization', 'user:current:read'])]
     #[ORM\Column(length: 255)]
     private ?string $number_siret = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['organization', 'competition'])]
+    #[Groups(['organization', 'competition', 'user:current:read'])]
     private ?File $logo = null;
 
     public function __construct()

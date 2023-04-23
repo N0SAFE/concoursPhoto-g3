@@ -28,12 +28,13 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Patch(processor: UserStateProcessor::class),
         new Delete()
     ],
-    normalizationContext: ['groups' => ['user:read', 'user:current:read']]
+    normalizationContext: ['groups' => ['user:read']]
+    
 )]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
-    #[Groups(['user:read', 'competition'])]
+    #[Groups(['user:read', 'competition', 'user:current:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -51,12 +52,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
-    #[Groups(['user:read', 'competition'])]
+    #[Groups(['user:read', 'competition', 'user:current:read'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $firstname = null;
 
-    #[Groups(['user:read', 'user:current:read', 'competition'])]
+    #[Groups(['user:read', 'competition', 'user:current:read'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $lastname = null;
@@ -111,14 +112,16 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Groups(['user:read', 'user:current:read'])]
     private ?PhotographerCategory $photographer_category = null;
 
-    #[ORM\OneToMany(mappedBy: 'user:read', targetEntity: MemberOfTheJury::class)]
+    #[Groups(['user:read', 'user:current:read'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
-    #[ORM\OneToMany(mappedBy: 'user:read', targetEntity: Picture::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Picture::class)]
     #[Groups(['user:read', 'user:current:read'])]
     private Collection $pictures;
 
-    #[ORM\OneToMany(mappedBy: 'user:read', targetEntity: Vote::class)]
+    #[Groups(['user:read', 'user:current:read'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]
     private Collection $votes;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -158,7 +161,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Assert\NotBlank]
     private ?PersonalStatut $personal_statut = null;
 
-
     #[Groups(['user:read', 'user:current:read'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?File $picture_profil = null;
@@ -169,6 +171,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $department = null;
 
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Link::class)]
     private Collection $links;
 

@@ -27,7 +27,7 @@ class AuthController extends AbstractController
         $this->contextBuilder = $contextBuilder;
         $this->serializer = $serializer;
     }
-    
+
     #[Route('/logout', name: 'logout', methods: ['POST'])]
     public function logout(Request $request)
     {
@@ -46,6 +46,6 @@ class AuthController extends AbstractController
     #[Route('/whoami', name: 'whoami', methods: ['GET'])]
     public function whoami()
     {
-        return new JsonResponse($this->serializer->serialize($this->getUser(), 'jsonld', ["groups" => ["user:current"]]), 201, [], true);
+        return new JsonResponse($this->serializer->serialize($this->getUser(), 'jsonld', ["groups" => ["user:current:read"]]), 201, [], true);
     }
 }
