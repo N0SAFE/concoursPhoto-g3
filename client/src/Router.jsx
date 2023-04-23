@@ -9,7 +9,6 @@ import BO from "@/views/BO";
 import Home from "@/views/Home";
 import NotFound from "@/views/error/NotFound";
 import OrganizationList from "@/views/BO/organization/List";
-import Header from "@/layout/Header";
 import CompetitionList from "@/views/BO/competition/List";
 import OrganizationCreate from "@/views/BO/organization/Create";
 import CompetitionCreate from "@/views/BO/competition/Create";
@@ -31,6 +30,7 @@ import CompetitionEndowments from "@/views/FO/competition/CompetitionEndowments"
 import CompetitionJury from "@/views/FO/competition/CompetitionJury";
 import CompetitionPictures from "@/views/FO/competition/CompetitionPictures";
 import CompetitionResults from "@/views/FO/competition/CompetitionResults";
+import PageLayout from "@/layout/PageLayout";
 
 function Router() {
     const { setModalContent, showModal } = useModal();
@@ -42,7 +42,7 @@ function Router() {
                     <GuardedRoute
                         verify={({ isLogged, me }) => isLogged && me.roles.includes("ROLE_ADMIN")}
                         fallback={() => {
-                            toast.info("veuillez vous connecter");
+                            toast.info("Veuillez vous connecter");
                             setModalContent(<Login />);
                             showModal();
                             return <Navigate to="/" replace={true} />;
@@ -50,7 +50,7 @@ function Router() {
                     />
                 }
             >
-                <Route path="" element={<Header environment={"backoffice"} />}>
+                <Route path="" element={<PageLayout environment={"backoffice"} />}>
                     <Route element={<BO />} />
                     <Route path="user">
                         <Route path="" element={<UserList />} />
@@ -72,7 +72,7 @@ function Router() {
                     </Route>
                 </Route>
             </Route>
-            <Route path="/" element={<Header />}>
+            <Route path="/" element={<PageLayout />}>
                 <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />} />}>
                     <Route path="me" element={<Profile />} />
                     <Route path="preference" element={<IndexNotif />} />

@@ -1,0 +1,18 @@
+.footerContainer {
+    padding: 32px;
+
+    & > ul {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+
+        & > li {
+            display: flex;
+
+            &:first-child > p > span {
+                font-weight: 700;
+            }
+        }
+    }
+}
