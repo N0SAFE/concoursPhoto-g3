@@ -31,6 +31,7 @@ import CompetitionEndowments from "@/views/FO/competition/CompetitionEndowments"
 import CompetitionJury from "@/views/FO/competition/CompetitionJury";
 import CompetitionPictures from "@/views/FO/competition/CompetitionPictures";
 import CompetitionResults from "@/views/FO/competition/CompetitionResults";
+import ProfileLayout from "./layout/ProfileLayout/index.jsx";
 
 function Router() {
     const { setModalContent, showModal } = useModal();
@@ -74,9 +75,11 @@ function Router() {
             </Route>
             <Route path="/" element={<Header />}>
                 <Route path="profile" element={<GuardedRoute verify={({ isLogged }) => isLogged} fallback={<Navigate to="/auth/login" replace={true} />} />}>
-                    <Route path="me" element={<Profile />} />
-                    <Route path="preference" element={<IndexNotif />} />
-                    <Route path="myorganization" element={<Myorganization />} />
+                    <Route path="" element={<ProfileLayout />}>
+                        <Route path="me" element={<Profile />} />
+                        <Route path="preference" element={<IndexNotif />} />
+                        <Route path="myorganization" element={<Myorganization />} />
+                    </Route>
                 </Route>
                 <Route path="/competition/:id" element={<CompetitionLayout />}>
                     <Route path="" element={<CompetitionView />} />

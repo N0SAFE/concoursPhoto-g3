@@ -18,7 +18,7 @@ class Picture
     #[ORM\GeneratedValue]
     #[ORM\Column]
     
-    #[Groups(['competition', 'user'])]
+    #[Groups(['competition', 'user:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
@@ -45,7 +45,7 @@ class Picture
     private Collection $votes;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
-    #[Groups(['competition', 'user'])]
+    #[Groups(['competition', 'user:read'])]
     private ?Competition $competition = null;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]

@@ -41,120 +41,120 @@ class Competition
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['competition', 'user'])]
+    #[Groups(['competition', 'user:read', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['competition', 'organization'])]
+    #[Groups(['competition', 'organization', 'user:current:read'])]
     private ?string $competition_name = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?string $rules = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?string $endowments = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?\DateTimeInterface $creation_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?\DateTimeInterface $publication_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?\DateTimeInterface $submission_start_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?\DateTimeInterface $submission_end_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?\DateTimeInterface $voting_start_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?\DateTimeInterface $voting_end_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?\DateTimeInterface $results_date = null;
 
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?float $weighting_of_jury_votes = null;
 
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?int $number_of_max_votes = null;
 
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?int $number_of_prices = null;
 
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?int $min_age_criteria = null;
 
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?int $max_age_criteria = null;
 
     #[ORM\ManyToMany(targetEntity: Theme::class, inversedBy: 'competitions')]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private Collection $theme;
 
     #[ORM\ManyToMany(targetEntity: ParticipantCategory::class, inversedBy: 'competitions')]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private Collection $participant_category;
 
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     private ?Organization $organization = null;
 
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private Collection $memberOfTheJuries;
 
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Picture::class)]
     private Collection $pictures;
 
     #[ORM\Column(type: 'json')]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private array $country_criteria = [];
 
     #[ORM\Column(type: 'json')]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private array $region_criteria = [];
 
     #[ORM\Column(type: 'json')]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
 
     private array $department_criteria = [];
 
     #[ORM\Column(type: 'json')]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private array $city_criteria = [];
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups('competition')]
+    #[Groups(['competition', 'user:current:read'])]
     private ?File $competition_visual = null;
 
     public function __construct()

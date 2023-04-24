@@ -1,3 +1,5 @@
+import Loader from "@/components/atoms/Loader/index.jsx";
+import useLocation from "@/hooks/useLocation.js";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext({
@@ -8,6 +10,7 @@ function AuthProvider(props) {
     const [isLogged, setIsLogged] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [me, setMe] = useState(null);
+    const { getCityByCode, getDepartmentByCode, getRegionByCode } = useLocation();
 
     function checkLogged(controller) {
         return new Promise(async (resolve, reject) => {
@@ -29,7 +32,12 @@ function AuthProvider(props) {
                         credentials: "include",
                         signal: controller?.signal,
                     });
-                    const data = await whoami.json();
+                    const data = await whoami.json().then(async (d) => {
+                        return {
+                            ...d,
+                            city: await getCityByCode(d.city),
+                        };
+                    });
                     setMe(data);
                     setIsLogged(true);
                     console.group("AuthContext");
@@ -62,7 +70,7 @@ function AuthProvider(props) {
         return () => controller.abort();
     }, []);
 
-    return <AuthContext.Provider value={{ isLogged, checkLogged, me }}>{!isLoading && props.children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ isLogged, checkLogged, me }}>{isLoading ? <Loader active={true} /> : props.children}</AuthContext.Provider>;
 }
 
 function useAuthContext() {
