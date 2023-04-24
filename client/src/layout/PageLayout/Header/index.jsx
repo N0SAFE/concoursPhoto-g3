@@ -1,16 +1,14 @@
 import Navbar from "@/components/molecules/Navbar";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/contexts/AuthContext";
 import Login from "@/components/organisms/auth/Login";
 import Register from "@/components/organisms/auth/Register";
-import { useModal } from "@/contexts/ModalContext";
-import useAuth from "@/hooks/useAuth.js";
+import useAuth from "@/hooks/useAuth";
 import { toast } from "react-toastify";
 
 export default function Header(environment) {
-    const { showModal, setModalContent } = useModal();
     const { logout } = useAuth();
-    const { isLogged, me } = useAuthContext();
+    const { isLogged } = useAuthContext();
     const navigate = useNavigate();
 
     const listRight = [];
@@ -103,7 +101,6 @@ export default function Header(environment) {
             <header>
                 <Navbar listLeft={listLeft} listRight={listRight} />
             </header>
-            <Outlet />
         </>
     );
 }
