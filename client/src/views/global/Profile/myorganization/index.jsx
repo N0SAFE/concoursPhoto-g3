@@ -30,10 +30,10 @@ export default function Myorganization() {
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
     const postalCodesPossibility = [...new Set(locationPossibility.citiesPossibility.map((c) => c.codesPostaux).flat())].map((c) => ({ label: c, value: c }));
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] = useState(false);
-    const [orgnisation, setOrganisation] = useState(me.Manage.length > 0 ? { ...me.Manage[0] } : null);
+    const [organisation, setOrganisation] = useState(me.Manage.length > 0 ? { ...me.Manage[0] } : null);
 
     const updateOrgnisation = (key, value) => {
-        setOrganisation({ ...orgnisation, [key]: value });
+        setOrganisation({ ...organisation, [key]: value });
     };
     const [errors, setErrors] = useState({});
     const apiFetch = useApiFetch();
@@ -56,32 +56,32 @@ export default function Myorganization() {
     }, []);
 
     useEffect(() => {
-        updateLocationPossibility({ args: { codeCity: orgnisation.city?.value, postcode: orgnisation.postcode?.value } }).then(function (d) {
+        updateLocationPossibility({ args: { codeCity: organisation.city?.value, postcode: organisation.postcode?.value } }).then(function (d) {
             if (d.length === 1 && d[0].id === "cities" && d[0].data.length === 1) {
-                if (d[0].data[0].codesPostaux.length === 1 && !orgnisation.postcode) {
-                    setOrganisation({ ...orgnisation, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
-                } else if (!orgnisation.city) {
+                if (d[0].data[0].codesPostaux.length === 1 && !organisation.postcode) {
+                    setOrganisation({ ...organisation, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
+                } else if (!organisation.city) {
                     console.log('ui')
-                    setOrganisation({ ...orgnisation, city: { label: d[0].data[0].nom, value: d[0].data[0].code } });
+                    setOrganisation({ ...organisation, city: { label: d[0].data[0].nom, value: d[0].data[0].code } });
                 }
-            } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the orgnisation)
+            } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the organisation)
             setLocationPossibilityIsLoading(false);
         });
-    }, [orgnisation.postcode, orgnisation.city]);
+    }, [organisation.postcode, organisation.city]);
 
     return (
         <div className={style.formContainer}>
             <Navlink base="/profile" list={profileRouteList} />
             <Input
                 type="select"
-                name="orgnisation"
+                name="organisation"
                 label="selectionner une organisation"
                 extra={{
                     options: me.Manage.map(function ({ organizer_name, id }) {
                         return { value: id, label: organizer_name };
                     }),
                     required: true,
-                    value: { label: orgnisation.organizer_name, value: orgnisation.id },
+                    value: { label: organisation.organizer_name, value: organisation.id },
                 }}
                 onChange={(d) => {
                     const o = me.Manage.find((o) => o.id === d.value);
@@ -92,20 +92,20 @@ export default function Myorganization() {
             <BOForm
                 handleSubmit={function () {
                     const data = {
-                        organizerName: orgnisation.organizer_name,
-                        email: orgnisation.email,
-                        numberPhone: orgnisation.number_phone,
-                        websiteUrl: orgnisation.website_url,
-                        address: orgnisation.address,
-                        city: orgnisation.city?.value,
-                        postcode: orgnisation.postcode?.value,
-                        intraCommunityVat: orgnisation.intra_community_vat,
-                        numberSiret: orgnisation.number_siret,
-                        country: orgnisation.country,
-                        organizationType: orgnisation.organization_type.value,
-                        description: orgnisation.description,
+                        organizerName: organisation.organizer_name,
+                        email: organisation.email,
+                        numberPhone: organisation.number_phone,
+                        websiteUrl: organisation.website_url,
+                        address: organisation.address,
+                        city: organisation.city?.value,
+                        postcode: organisation.postcode?.value,
+                        intraCommunityVat: organisation.intra_community_vat,
+                        numberSiret: organisation.number_siret,
+                        country: organisation.country,
+                        organizationType: organisation.organization_type.value,
+                        description: organisation.description,
                     };
-                    const promise = apiFetch(`/organizations/${orgnisation.id}`, {
+                    const promise = apiFetch(`/organizations/${organisation.id}`, {
                         method: "PATCH",
                         body: JSON.stringify(data),
                         headers: {
@@ -130,37 +130,37 @@ export default function Myorganization() {
             >
                 <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
                     <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                        <Input type="text" name="organizer_name" label="Nom de l'organisation" onChange={(d) => updateOrgnisation("organizer_name", d)} extra={{value: orgnisation.organizer_name}} />
+                        <Input type="text" name="organizer_name" label="Nom de l'organisation" onChange={(d) => updateOrgnisation("organizer_name", d)} extra={{value: organisation.organizer_name}} />
                         <Input
                             type="select"
                             name="type"
                             label="Type"
-                            extra={{ isLoading: typePossibility.isLoading, options: typePossibility.list, required: true, value: orgnisation.organization_type }}
+                            extra={{ isLoading: typePossibility.isLoading, options: typePossibility.list, required: true, value: organisation.organization_type }}
                             onChange={(d) => updateOrgnisation("organization_type", d)}
                         />
 
-                        <Input type="text" name="email" label="Email" onChange={(d) => updateOrgnisation("email", d)} extra={{value: orgnisation.email}} />
-                        <Input type="text" name="number_phone" label="Numéro de téléphone" onChange={(d) => updateOrgnisation("number_phone", d)} extra={{value: orgnisation.number_phone}} />
-                        <Input type="text" name="website_url" label="Site web" onChange={(d) => updateOrgnisation("website_url", d)} extra={{value: orgnisation.website_url}} />
+                        <Input type="text" name="email" label="Email" onChange={(d) => updateOrgnisation("email", d)} extra={{value: organisation.email}} />
+                        <Input type="text" name="number_phone" label="Numéro de téléphone" onChange={(d) => updateOrgnisation("number_phone", d)} extra={{value: organisation.number_phone}} />
+                        <Input type="text" name="website_url" label="Site web" onChange={(d) => updateOrgnisation("website_url", d)} extra={{value: organisation.website_url}} />
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
                         {" "}
-                        <Input type="text" name="address" label="Adresse" onChange={(d) => updateOrgnisation("address", d)} extra={{ value: orgnisation.address }} />
+                        <Input type="text" name="address" label="Adresse" onChange={(d) => updateOrgnisation("address", d)} extra={{ value: organisation.address }} />
                         <div style={{ display: "flex", flexDirection: "row" }}>
                             <Input
                                 type="select"
                                 name="city"
                                 label="Ville"
                                 extra={{
-                                    isLoading: orgnisation.locationPossibilityIsLoading,
-                                    value: orgnisation.city,
+                                    isLoading: organisation.locationPossibilityIsLoading,
+                                    value: organisation.city,
                                     isClearable: true,
                                     required: true,
                                     options: citiesPossibility,
                                     multiple: false,
                                     onInputChange: (cityName, { action }) => {
                                         if (action === "menu-close") {
-                                            updateLocationPossibility({ id: "city", args: { codeCity: orgnisation.city?.value, city: "" } });
+                                            updateLocationPossibility({ id: "city", args: { codeCity: organisation.city?.value, city: "" } });
                                         }
                                         if (action === "input-change") {
                                             updateLocationPossibility({ id: "city", args: { city: cityName } });
@@ -176,14 +176,14 @@ export default function Myorganization() {
                                 label="Code postal"
                                 extra={{
                                     isLoading: locationPossibilityIsLoading,
-                                    value: orgnisation.postcode,
+                                    value: organisation.postcode,
                                     isClearable: true,
                                     required: true,
                                     options: postalCodesPossibility,
                                     multiple: false,
                                     onInputChange: (_postcode, { action }) => {
                                         if (action === "menu-close") {
-                                            updateLocationPossibility({ id: "city", args: { postcode: orgnisation.postcode?.value } });
+                                            updateLocationPossibility({ id: "city", args: { postcode: organisation.postcode?.value } });
                                         }
                                         if (action === "input-change" && _postcode.length === 5) {
                                             updateLocationPossibility({ id: "city", args: { postcode: _postcode } });
@@ -193,22 +193,22 @@ export default function Myorganization() {
                                 onChange={(d) => updateEntityState("postcode", d)}
                             />
                         </div>
-                        <Input type="text" name="country" label="Pays" onChange={(d) => updateOrgnisation("country", d)} extra={{value: orgnisation.country}} />
+                        <Input type="text" name="country" label="Pays" onChange={(d) => updateOrgnisation("country", d)} extra={{value: organisation.country}} />
                         <Input
                             type="text"
                             name="intra_community_vat"
                             label="Numéro de TVA"
                             onChange={(d) => updateOrgnisation("intra_community_vat", d)}
-                            defaultValue={orgnisation.intra_community_vat}
+                            defaultValue={organisation.intra_community_vat}
                         />
-                        <Input type="text" name="number_siret" label="Numéro de SIRET" onChange={(d) => updateOrgnisation("number_siret", d)} extra={{value: orgnisation.number_siret}} />
+                        <Input type="text" name="number_siret" label="Numéro de SIRET" onChange={(d) => updateOrgnisation("number_siret", d)} extra={{value: organisation.number_siret}} />
                     </div>
                 </div>
                 <div className="test">
                     <h2>Présentation</h2>
                 </div>
 
-                <Input type="textarea" name="description" extra={{ rows: 16, value: orgnisation.description }} label="Description" onChange={(d) => updateOrgnisation("country", d)} ></Input>
+                <Input type="textarea" name="description" extra={{ rows: 16, value: organisation.description }} label="Description" onChange={(d) => updateOrgnisation("country", d)} ></Input>
                 <h2>Réseaux sociaux de l’organisation</h2>
                 <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
                     <div className="container" style={{ display: "flex", flexDirection: "row", gap: "50px" }}>
