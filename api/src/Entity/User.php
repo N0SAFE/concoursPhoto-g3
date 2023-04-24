@@ -171,9 +171,8 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $department = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Link::class)]
-    private Collection $links;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class)]
+    private Collection $userLinks;
 
     public function __construct()
     {
@@ -182,7 +181,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->pictures = new ArrayCollection();
         $this->votes = new ArrayCollection();
         $this->roles = new ArrayCollection();
-        $this->links = new ArrayCollection();
+        $this->userLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -669,29 +668,29 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     }
 
     /**
-     * @return Collection<int, Link>
+     * @return Collection<int, UserLink>
      */
-    public function getLinks(): Collection
+    public function getUserLinks(): Collection
     {
-        return $this->links;
+        return $this->userLinks;
     }
 
-    public function addLink(Link $link): self
+    public function addUserLink(UserLink $userLink): self
     {
-        if (!$this->links->contains($link)) {
-            $this->links->add($link);
-            $link->setUser($this);
+        if (!$this->userLinks->contains($userLink)) {
+            $this->userLinks->add($userLink);
+            $userLink->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeLink(Link $link): self
+    public function removeUserLink(UserLink $userLink): self
     {
-        if ($this->links->removeElement($link)) {
+        if ($this->userLinks->removeElement($userLink)) {
             // set the owning side to null (unless already changed)
-            if ($link->getUser() === $this) {
-                $link->setUser(null);
+            if ($userLink->getUser() === $this) {
+                $userLink->setUser(null);
             }
         }
 
