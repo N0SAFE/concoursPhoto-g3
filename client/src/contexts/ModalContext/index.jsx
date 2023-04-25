@@ -33,7 +33,14 @@ function ModalProvider({ children }) {
                         <div>{modalContent}</div>
                     </div>
                 </div>
-                <div style={{ overflow: active ? "hidden" : "" }}>{children}</div>
+                <div
+                    className={style.modalOutlet}
+                    style={{
+                        overflow: active ? "hidden" : "",
+                    }}
+                >
+                    {children}
+                </div>
             </modalContext.Provider>
         </>
     );

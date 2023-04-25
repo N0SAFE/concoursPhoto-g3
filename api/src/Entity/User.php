@@ -95,7 +95,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Assert\Regex(pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/', message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00')]
     private ?string $phone_number = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(type: 'string')]
     private $password;
 
