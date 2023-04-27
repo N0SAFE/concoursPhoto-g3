@@ -20,6 +20,7 @@ jobs:
                   prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml}
 
             - name: Revert commit if Prettier fails
+              if: ${{ failure() }}
               shell: bash
               run: |
                   set -e
@@ -34,4 +35,4 @@ jobs:
               env:
                   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
               with:
-                  args: "Prettier failed on branch '${{ github.head_ref }}'. The previous commit has been reverted by ${{ github.actor }}."
+                  args: "Prettier failed on branch '${{ github.ref_name }}'. The previous commit has been reverted by ${{ github.actor }}."
