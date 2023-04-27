@@ -18,12 +18,16 @@ class SocialNetworks
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[ORM\OneToMany(mappedBy: 'socialnetworks', targetEntity: Link::class)]
-    private Collection $links;
+    #[ORM\OneToMany(mappedBy: 'social_networks', targetEntity: UserLink::class)]
+    private Collection $userLinks;
+
+    #[ORM\OneToMany(mappedBy: 'social_networks', targetEntity: OrganizationLink::class)]
+    private Collection $organizationLinks;
 
     public function __construct()
     {
-        $this->links = new ArrayCollection();
+        $this->userLinks = new ArrayCollection();
+        $this->organizationLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -44,29 +48,59 @@ class SocialNetworks
     }
 
     /**
-     * @return Collection<int, Link>
+     * @return Collection<int, UserLink>
      */
-    public function getLinks(): Collection
+    public function getUserLinks(): Collection
     {
-        return $this->links;
+        return $this->userLinks;
     }
 
-    public function addLink(Link $link): self
+    public function addUserLink(UserLink $userLink): self
     {
-        if (!$this->links->contains($link)) {
-            $this->links->add($link);
-            $link->setSocialnetworks($this);
+        if (!$this->userLinks->contains($userLink)) {
+            $this->userLinks->add($userLink);
+            $userLink->setSocialNetworks($this);
         }
 
         return $this;
     }
 
-    public function removeLink(Link $link): self
+    public function removeUserLink(UserLink $userLink): self
     {
-        if ($this->links->removeElement($link)) {
+        if ($this->userLinks->removeElement($userLink)) {
             // set the owning side to null (unless already changed)
-            if ($link->getSocialnetworks() === $this) {
-                $link->setSocialnetworks(null);
+            if ($userLink->getSocialNetworks() === $this) {
+                $userLink->setSocialNetworks(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrganizationLink>
+     */
+    public function getOrganizationLinks(): Collection
+    {
+        return $this->organizationLinks;
+    }
+
+    public function addOrganizationLink(OrganizationLink $organizationLink): self
+    {
+        if (!$this->organizationLinks->contains($organizationLink)) {
+            $this->organizationLinks->add($organizationLink);
+            $organizationLink->setSocialNetworks($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrganizationLink(OrganizationLink $organizationLink): self
+    {
+        if ($this->organizationLinks->removeElement($organizationLink)) {
+            // set the owning side to null (unless already changed)
+            if ($organizationLink->getSocialNetworks() === $this) {
+                $organizationLink->setSocialNetworks(null);
             }
         }
 

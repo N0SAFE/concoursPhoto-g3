@@ -26,7 +26,6 @@ class Organization
 
     #[ORM\Column(length: 255)]
     #[Groups(['organization', 'competition', 'user:current:read', 'user:read'])]
-
     private ?string $organizer_name = null;
 
     #[ORM\Column(length: 255)]
@@ -92,12 +91,16 @@ class Organization
     #[Groups(['organization', 'competition', 'user:current:read'])]
     private ?File $logo = null;
 
+    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: OrganizationLink::class)]
+    private Collection $organizationLinks;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->rents = new ArrayCollection();
         $this->competitions = new ArrayCollection();
         $this->sponsors = new ArrayCollection();
+        $this->organizationLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -386,6 +389,36 @@ class Organization
     public function setLogo(?File $logo): self
     {
         $this->logo = $logo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrganizationLink>
+     */
+    public function getOrganizationLinks(): Collection
+    {
+        return $this->organizationLinks;
+    }
+
+    public function addOrganizationLink(OrganizationLink $organizationLink): self
+    {
+        if (!$this->organizationLinks->contains($organizationLink)) {
+            $this->organizationLinks->add($organizationLink);
+            $organizationLink->setOrganization($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrganizationLink(OrganizationLink $organizationLink): self
+    {
+        if ($this->organizationLinks->removeElement($organizationLink)) {
+            // set the owning side to null (unless already changed)
+            if ($organizationLink->getOrganization() === $this) {
+                $organizationLink->setOrganization(null);
+            }
+        }
 
         return $this;
     }
