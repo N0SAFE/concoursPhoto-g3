@@ -35,7 +35,7 @@ function AuthProvider(props) {
                     const data = await whoami.json().then(async (d) => {
                         return {
                             ...d,
-                            city: await getCityByCode(d.city),
+                            city: await getCityByCode(d.citycode),
                         };
                     });
                     setMe(data);

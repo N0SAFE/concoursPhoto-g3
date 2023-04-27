@@ -16,11 +16,11 @@ class PersonalStatut
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('user:read')]
+    #[Groups(['user:read', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('user:read')]
+    #[Groups(['user:read', 'user:current:read'])]
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'personal_statut', targetEntity: User::class)]

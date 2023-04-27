@@ -3,17 +3,15 @@ import Input from "@/components/atoms/Input/index.jsx";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import useApiFetch from "@/hooks/useApiFetch.js";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useAuthContext } from "@/contexts/AuthContext.jsx";
 import Button from "@/components/atoms/Button";
-import useLocation from "@/hooks/useLocation.js";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import style from "./style.module.scss";
 import useAuth from "@/hooks/useAuth.js";
 import { useModal } from "@/contexts/ModalContext/index.jsx";
 import Login from "@/components/organisms/auth/Login/index.jsx";
 import Loader from "@/components/atoms/Loader/index.jsx";
-import Navlink from "@/components/molecules/Navlink/index.jsx";
 
 export default function Profile() {
     const { gendersPossibility } = useOutletContext(); // to avoid the loading when we change the page
@@ -22,15 +20,6 @@ export default function Profile() {
     const { me } = useAuthContext();
     const { logout } = useAuth();
     const { setModalContent, showModal } = useModal();
-
-    const profileRouteList = [
-        { content: "Mon profil", to: "/me" },
-        { content: "Mes préférences", to: "/preference" },
-        { content: "Mes organisations", to: "/myorganization" },
-        { content: "Concours créés par mon organisation", to: "/me" },
-        { content: "Concours auxquels j’ai participé", to: "/me" },
-        { content: "Mes publicités", to: "/me" },
-    ];
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -110,7 +99,6 @@ export default function Profile() {
 
     return (
         <Loader active={gendersPossibility.isLoading}>
-            <Navlink base="/profile" list={profileRouteList} />
             <div className={style.formContainer}>
                 <BOForm
                     handleSubmit={function () {

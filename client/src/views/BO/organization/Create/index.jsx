@@ -103,7 +103,7 @@ export default function OrganizationCreate() {
                                 organizerName: entity.organizerName,
                                 description: entity.description,
                                 address: entity.address,
-                                city: entity.city.value,
+                                citycode: entity.city.value,
                                 postcode: entity.postcode.value,
                                 numberPhone: entity.phoneNumber,
                                 email: entity.email,

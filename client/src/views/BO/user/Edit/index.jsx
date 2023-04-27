@@ -30,7 +30,7 @@ export default function UserCreate() {
         firstname: "",
         lastname: "",
         address: "",
-        city: "",
+        citycode: "",
         postcode: "",
         phoneNumber: "",
         roles: [],
@@ -80,7 +80,7 @@ export default function UserCreate() {
             .then((r) => r.json())
             .then((data) => {
                 console.debug(data);
-                return Promise.all([getCityByCode(data.city)]).then(([city]) => {
+                return Promise.all([getCityByCode(data.citycode)]).then(([city]) => {
                     const _user = {
                         state: data.state,
                         email: data.email,
@@ -141,7 +141,7 @@ export default function UserCreate() {
                         firstname: entity.firstname,
                         lastname: entity.lastname,
                         address: entity.address,
-                        city: entity.city.value,
+                        citycode: entity.city.value,
                         postcode: entity.postcode.value,
                         phoneNumber: entity.phoneNumber,
                         gender: entity.gender.value,

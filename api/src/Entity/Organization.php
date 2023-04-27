@@ -42,7 +42,7 @@ class Organization
 
     #[ORM\Column(length: 255)]
     #[Groups(['organization', 'user:current:read'])]
-    private ?string $city = null;
+    private ?string $citycode = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['organization', 'user:current:read'])]
@@ -168,14 +168,14 @@ class Organization
         return $this;
     }
 
-    public function getCity(): ?string
+    public function getCitycode(): ?string
     {
-        return $this->city;
+        return $this->citycode;
     }
 
-    public function setCity(string $city): self
+    public function setCitycode(string $citycode): self
     {
-        $this->city = $city;
+        $this->citycode = $citycode;
 
         return $this;
     }

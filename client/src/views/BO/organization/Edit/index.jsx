@@ -76,7 +76,7 @@ export default function OrganizationEdit() {
             .then((r) => r.json())
             .then((data) => {
                 console.debug(data);
-                return Promise.all([getCityByCode(data.city)]).then(([city]) => {
+                return Promise.all([getCityByCode(data.citycode)]).then(([city]) => {
                     const _organization = {
                         organizerName: data.organizer_name,
                         description: data.description,
@@ -151,7 +151,7 @@ export default function OrganizationEdit() {
                                 organizerName: entity.organizerName,
                                 description: entity.description,
                                 address: entity.address,
-                                city: entity.city.value,
+                                citycode: entity.city.value,
                                 postcode: entity.postcode.value,
                                 numberPhone: entity.phoneNumber,
                                 email: entity.email,
