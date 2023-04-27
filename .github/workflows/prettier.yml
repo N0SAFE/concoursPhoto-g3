@@ -32,6 +32,6 @@ jobs:
               if: ${{ failure() }}
               uses: Ilshidur/action-discord@master
               env:
-                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
               with:
                   args: "Prettier failed on branch '${{ github.head_ref }}'. The previous commit has been reverted by ${{ github.actor }}."
