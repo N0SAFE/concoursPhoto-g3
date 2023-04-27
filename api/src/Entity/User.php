@@ -77,7 +77,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $city = null;
+    private ?string $citycode = null;
 
     #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
@@ -285,14 +285,14 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getCity(): ?string
+    public function getCitycode(): ?string
     {
-        return $this->city;
+        return $this->citycode;
     }
 
-    public function setCity(string $city): self
+    public function setCitycode(string $citycode): self
     {
-        $this->city = $city;
+        $this->citycode = $citycode;
 
         return $this;
     }

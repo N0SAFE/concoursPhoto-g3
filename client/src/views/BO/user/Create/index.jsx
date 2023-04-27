@@ -115,7 +115,7 @@ export default function UserCreate() {
                         firstname: entity.firstname,
                         lastname: entity.lastname,
                         address: entity.address,
-                        city: entity.city.value,
+                        citycode: entity.city.value,
                         department: codeDepartement,
                         region: codeRegion,
                         postcode: entity.postcode.value,

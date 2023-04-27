@@ -5,8 +5,12 @@ import Footer from "@/layout/PageLayout/Footer";
 export default function PageLayout({environment}) {
     return (
         <>
-            <Header environment={environment} />
-            <Outlet />
+            <div>
+                <Header environment={environment} />
+                <div style={{marginLeft: "40px", marginRight: "40px"}}>
+                    <Outlet />
+                </div>
+            </div>
             <Footer />
         </>
     );
