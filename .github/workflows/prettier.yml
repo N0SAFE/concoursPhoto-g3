@@ -20,4 +20,4 @@ jobs:
               uses: creyD/prettier_action@v4.3
               with:
                   # This part is also where you can pass other options, for example:
-                  prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml,php}
+                  prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml}
