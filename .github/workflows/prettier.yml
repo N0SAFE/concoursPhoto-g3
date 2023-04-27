@@ -32,6 +32,8 @@ jobs:
                   fi
 
             - name: Send Discord message on failure
+              env:
+                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
               if: ${{ steps.prettier.outputs.status == 'failure' }}
               uses: Ilshidur/action-discord@master
               with:
