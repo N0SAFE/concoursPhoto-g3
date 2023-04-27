@@ -20,21 +20,18 @@ jobs:
                   prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml}
 
             - name: Revert commit if Prettier fails
+              shell: bash
               run: |
-                  if [ $? -ne 0 ]; then
-                    git config --global user.email "github-actions[bot]@users.noreply.github.com"
-                    git config --global user.name "GitHub Actions"
-                    git revert HEAD --no-edit
-                    git push origin HEAD:${{ github.head_ref }}
-                    echo "::set-output name=status::failure"
-                  else
-                    echo "::set-output name=status::success"
-                  fi
+                  set -e
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                  git config --global user.name "GitHub Actions"
+                  git revert HEAD --no-edit
+                  git push origin HEAD:${{ github.head_ref }}
 
             - name: Send Discord message on failure
-              env:
-                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-              if: ${{ steps.prettier.outputs.status == 'failure' }}
+              if: ${{ failure() }}
               uses: Ilshidur/action-discord@master
+              env:
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
               with:
                   args: "Prettier failed on branch '${{ github.head_ref }}'. The previous commit has been reverted by ${{ github.actor }}."
