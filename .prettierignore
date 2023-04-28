@@ -1,0 +1,5 @@
+.github/**
+api/public/bundles/**
+api/config/**
+api/vendor/**
+client/dist/**
