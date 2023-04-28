@@ -21,7 +21,7 @@ jobs:
               if: ${{ failure() }}
               uses: exions/undo-push@v1
               with:
-                  branch: ${{ github.head_ref }}
+                  branch: ${{ github.ref_name }}
 
             - name: Send Discord message on failure
               if: ${{ failure() }}
