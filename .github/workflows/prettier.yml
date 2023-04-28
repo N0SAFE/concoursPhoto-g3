@@ -10,25 +10,27 @@ jobs:
               uses: actions/checkout@v2
               with:
                   # Make sure the actual branch is checked out when running on pull requests
-                  ref: ${{ github.head_ref }}
+                  ref: ${{ github.ref_name }}
 
             - name: Prettify code
               uses: creyD/prettier_action@v4.3
               with:
                   prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml}
+
             - name: write github.ref_name
+              if: ${{ failure() }}
               run: echo ${{ github.ref_name }}
 
-            - name: Undo Push
-              if: ${{ failure() }}
-              uses: exions/undo-push@v1
-              with:
-                  branch: ${{ github.ref_name }}
+            # - name: Undo Push
+            #   if: ${{ failure() }}
+            #   uses: exions/undo-push@v1
+            #   with:
+            #       branch: ${{ github.ref_name }}
 
-            - name: Send Discord message on failure
-              if: ${{ failure() }}
-              uses: Ilshidur/action-discord@master
-              env:
-                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-              with:
-                  args: "@here: Prettier failed on branch '${{ github.ref_name }}'. The previous commit has been reverted by ${{ github.actor }}. Please fix your code and push again: link to PR: ${{ github.event.pull_request.html_url }}, link to commit: ${{ github.event.pull_request.head.sha }}, link to action run: ${{ github.event.pull_request.head.repo.html_url }}/actions/runs/${{ github.run_id }}"
+            # - name: Send Discord message on failure
+            #   if: ${{ failure() }}
+            #   uses: Ilshidur/action-discord@master
+            #   env:
+            #       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+            #   with:
+            #       args: "@here: Prettier failed on branch '${{ github.ref_name }}'. The previous commit has been reverted by ${{ github.actor }}. Please fix your code and push again."
