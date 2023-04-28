@@ -12,14 +12,14 @@
             list-style: none;
 
             &::after {
-                content: "";
+                content: '';
                 width: 100%;
                 border-bottom: 2px solid $text-color-darkgrey;
                 position: absolute;
             }
 
             &.active::after {
-                content: "";
+                content: '';
                 width: 100%;
                 border-bottom: 2px solid $text-color-secondary;
                 position: absolute;

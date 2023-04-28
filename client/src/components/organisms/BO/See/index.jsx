@@ -1,30 +1,30 @@
-import { Link } from "react-router-dom";
-import style from "./style.module.scss";
+import { Link } from 'react-router-dom';
+import style from './style.module.scss';
 
 export default function ({ properties = [], entity }) {
     if (!Array.isArray(properties)) {
-        throw new Error("properties must be an array");
+        throw new Error('properties must be an array');
     }
     if (!(entity instanceof Object)) {
-        throw new Error("entity must be an object");
+        throw new Error('entity must be an object');
     }
     function createField(property, key) {
         if (!(property instanceof Object)) {
-            throw new Error("property must be an object");
+            throw new Error('property must be an object');
         }
 
-        const { display, customData, type = "text", name } = property;
+        const { display, customData, type = 'text', name } = property;
 
         let data = entity[name];
         if (customData) {
-            if (typeof customData === "function") {
+            if (typeof customData === 'function') {
                 data = customData({ entity, property });
             } else {
                 data = customData;
             }
         }
 
-        if (type === "text") {
+        if (type === 'text') {
             return (
                 <div key={key}>
                     <label>{display} : </label>
@@ -32,7 +32,7 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if (type === "img") {
+        if (type === 'img') {
             return (
                 <div key={key}>
                     <label>{display} : </label>
@@ -44,7 +44,7 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if (type === "custom") {
+        if (type === 'custom') {
             return (
                 <div key={key}>
                     <label>{display}</label>
@@ -52,7 +52,7 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if (type === "list") {
+        if (type === 'list') {
             return (
                 <div key={key}>
                     <label>{display}</label>
@@ -64,7 +64,7 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if (type === "list-dropdown") {
+        if (type === 'list-dropdown') {
             return (
                 <div key={key}>
                     <label>{display}</label>
@@ -76,15 +76,15 @@ export default function ({ properties = [], entity }) {
                 </div>
             );
         }
-        if (type === "date") {
+        if (type === 'date') {
             return (
                 <div key={key}>
                     <label>{display} : </label>
                     <span>
-                        {new Date(data).toLocaleDateString("fr-FR", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
+                        {new Date(data).toLocaleDateString('fr-FR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
                         })}
                     </span>
                 </div>
@@ -96,7 +96,11 @@ export default function ({ properties = [], entity }) {
         <div className={style.containerSee}>
             {properties.map((p, i) => {
                 if (Array.isArray(p)) {
-                    return <div key={i}>{p.map((property, y) => createField(property, y))}</div>;
+                    return (
+                        <div key={i}>
+                            {p.map((property, y) => createField(property, y))}
+                        </div>
+                    );
                 }
                 return <div key={i}>{createField(p, i)}</div>;
             })}

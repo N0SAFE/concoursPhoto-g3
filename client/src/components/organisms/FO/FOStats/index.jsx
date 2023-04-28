@@ -1,7 +1,7 @@
-import useApiFetch from "@/hooks/useApiFetch";
-import { useEffect, useState } from "react";
-import style from "./style.module.scss";
-import { toast } from "react-toastify";
+import useApiFetch from '@/hooks/useApiFetch';
+import { useEffect, useState } from 'react';
+import style from './style.module.scss';
+import { toast } from 'react-toastify';
 
 export default function FOStats() {
     const apiFetch = useApiFetch();
@@ -11,51 +11,51 @@ export default function FOStats() {
     const [members, setMembers] = useState([]);
     const [photographers, setPhotographers] = useState([]);
 
-    const getCompetitions = (controller) => {
-        return apiFetch("/competitions", {
-            method: "GET",
+    const getCompetitions = controller => {
+        return apiFetch('/competitions', {
+            method: 'GET',
             signal: controller?.signal,
         })
-            .then((r) => r.json())
-            .then((data) => {
+            .then(r => r.json())
+            .then(data => {
                 console.debug(data);
-                setCompetitions(data["hydra:member"].length);
+                setCompetitions(data['hydra:member'].length);
             });
     };
 
-    const getPictures = (controller) => {
-        return apiFetch("/pictures", {
-            method: "GET",
+    const getPictures = controller => {
+        return apiFetch('/pictures', {
+            method: 'GET',
             signal: controller?.signal,
         })
-            .then((r) => r.json())
-            .then((data) => {
+            .then(r => r.json())
+            .then(data => {
                 console.debug(data);
-                setPictures(data["hydra:member"].length);
+                setPictures(data['hydra:member'].length);
             });
     };
 
-    const getMembers = (controller) => {
-        return apiFetch("/users", {
-            method: "GET",
+    const getMembers = controller => {
+        return apiFetch('/users', {
+            method: 'GET',
             signal: controller?.signal,
         })
-            .then((r) => r.json())
-            .then((data) => {
-                console.debug(data["hydra:member"]);
-                setMembers(data["hydra:member"].length);
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data['hydra:member']);
+                setMembers(data['hydra:member'].length);
 
                 const photographers = [];
-                data["hydra:member"].map((item) => {
-                    if (item.roles.includes("ROLE_PHOTOGRAPHER")) {
+                data['hydra:member'].map(item => {
+                    if (item.roles.includes('ROLE_PHOTOGRAPHER')) {
                         photographers.push(item);
                     }
                 });
                 setPhotographers(photographers.length);
 
                 const organizers = [];
-                data["hydra:member"].map((item) => {
-                    if (item.roles.includes("ROLE_ORGANIZER")) {
+                data['hydra:member'].map(item => {
+                    if (item.roles.includes('ROLE_ORGANIZER')) {
                         organizers.push(item);
                     }
                 });
@@ -65,12 +65,16 @@ export default function FOStats() {
 
     useEffect(() => {
         const controller = new AbortController();
-        const promise = Promise.all([getCompetitions(controller), getPictures(controller), getMembers(controller)]);
-        if(import.meta.env.MODE === 'development'){
+        const promise = Promise.all([
+            getCompetitions(controller),
+            getPictures(controller),
+            getMembers(controller),
+        ]);
+        if (import.meta.env.MODE === 'development') {
             toast.promise(promise, {
-                pending: "Chargement des statistiques",
-                success: "Statistiques chargées",
-                error: "Erreur lors du chargement des statistiques",
+                pending: 'Chargement des statistiques',
+                success: 'Statistiques chargées',
+                error: 'Erreur lors du chargement des statistiques',
             });
         }
         return () => setTimeout(() => controller.abort());
