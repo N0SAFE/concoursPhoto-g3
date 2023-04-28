@@ -20,7 +20,8 @@
         "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader && php bin/console doctrine:database:create --if-not-exists && npm run load:migration",
         "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\"",
         "dev:api": "cd api && symfony server:stop && symfony server:start --port=8000",
-        "dev:client": "cd client && npm run dev"
+        "dev:client": "cd client && npm run dev",
+        "pretty": "prettier --write \"**/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml}\""
     },
     "repository": {
         "type": "git",
@@ -33,7 +34,8 @@
         "url": "https://github.com/N0SAFE/concoursPhoto-g3/issues"
     },
     "homepage": "https://github.com/N0SAFE/concoursPhoto-g3#readme",
-    "dependencies": {
+    "devDependencies": {
+        "prettier": "^2.8.8",
         "concurrently": "^7.6.0"
     }
 }
