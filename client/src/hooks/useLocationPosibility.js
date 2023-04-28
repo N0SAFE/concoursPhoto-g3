@@ -1,95 +1,161 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const getRegionsPossibility = (event, state, { name, code } = {}) => {
     const promiseArray = [];
-    if (event === "down" || event === "all") {
-        promiseArray.push(getDepartmentsPossibility("down", state));
+    if (event === 'down' || event === 'all') {
+        promiseArray.push(getDepartmentsPossibility('down', state));
     }
-    if (state.actives.includes("regions")) {
+    if (state.actives.includes('regions')) {
         const filter = [
-            code ? `code=${code}` : "" || state.actual.value.codeRegion ? `code=${state.actual.value.codeRegion}` : "",
-            name ? `nom=${name}` : "" || state.actual.value.region ? `nom=${state.actual.value.region}` : "",
-        ].filter((c) => c !== "");
-        console.debug(`https://geo.api.gouv.fr/regions?${filter.join("&")}`);
-        promiseArray.push(fetch(`https://geo.api.gouv.fr/regions?${filter.join("&")}`)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                data.length = 30;
-                const [regionsPossibility] = data.reduce(
-                    ([regionsResponse], c) => {
-                        regionsResponse.push({ label: c.nom, value: c.code });
-                        return [regionsResponse];
-                    },
-                    [[], []]
-                );
-                return { id: "regions", data: regionsPossibility };
-            }));
-    }
-    return Promise.all(promiseArray).then(d => d.flat(2));
-};
-
-const getDepartmentsPossibility = (event, state, { codeRegion, name, code } = {}) => {
-    const promiseArray = [];
-    if (event === "up" || event === "all") {
-        promiseArray.push(getRegionsPossibility("up", state));
-    }
-    if (event === "down" || event === "all") {
-        promiseArray.push(getCitiesPossibility("down", state));
-    }
-    if (state.actives.includes("departments")) {
-        const filter = [
-            codeRegion ? `codeRegion=${codeRegion}` : "" || state.actual.value.codeRegion ? `codeRegion=${state.actual.value.codeRegion}` : "",
-            code ? `code=${code}` : "" || state.actual.value.codeDepartment ? `code=${state.actual.value.codeDepartment}` : "",
-            name ? `nom=${name}` : "" || state.actual.value.department ? `nom=${state.actual.value.department}` : "",
-        ].filter((c) => c !== "");
-        console.debug(`https://geo.api.gouv.fr/departements?${filter.join("&")}`);
-        promiseArray.push(fetch(`https://geo.api.gouv.fr/departements?${filter.join("&")}`)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                data.length = 30;
-                const [departmentPossibility] = data.reduce(
-                    ([departmentResponse], c) => {
-                        departmentResponse.push({ label: c.nom, value: c.code, codeRegion: c.codeRegion });
-                        return [departmentResponse];
-                    },
-                    [[]]
-                );
-                return {id: "departments", data: departmentPossibility};
-            }));
-    }
-    return Promise.all(promiseArray).then(d => d.flat(2));
-};
-
-const getCitiesPossibility = async (event, state, { codeRegion, codeDepartment, postcode, name, code } = {}) => {
-    const promiseArray = [];
-    if (event === "up" || event === "all") {
-        promiseArray.push(getDepartmentsPossibility("up", state));
-    }
-    if (state.actives.includes("cities")) {
-        const filter = [
-            codeRegion ? `codeRegion=${codeRegion}` : "" || state.actual.value.codeRegion ? `codeRegion=${state.actual.value.codeRegion}` : "",
-            codeDepartment ? `codeDepartement=${codeDepartment}` : "" || state.actual.value.codeDepartement ? `codeDepartement=${state.actual.value.codeDepartement}` : "",
-            code ? `code=${code}` : "" || state.actual.value.codeCity ? `code=${state.actual.value.codeCity}` : "",
-            name ? `nom=${name}` : "" || state.actual.value.city ? `nom=${state.actual.value.city}` : "",
-            postcode ? `codePostal=${postcode}` : "" || state.actual.value.postcode ? `codePostal=${state.actual.value.postcode}` : "",
-        ].filter((c) => c !== "");
-        console.debug("https://geo.api.gouv.fr/communes?" + filter.join("&") + "");
+            code
+                ? `code=${code}`
+                : '' || state.actual.value.codeRegion
+                ? `code=${state.actual.value.codeRegion}`
+                : '',
+            name
+                ? `nom=${name}`
+                : '' || state.actual.value.region
+                ? `nom=${state.actual.value.region}`
+                : '',
+        ].filter(c => c !== '');
+        console.debug(`https://geo.api.gouv.fr/regions?${filter.join('&')}`);
         promiseArray.push(
-            fetch(`https://geo.api.gouv.fr/communes?${filter.join("&")}`)
-                .then((response) => {
+            fetch(`https://geo.api.gouv.fr/regions?${filter.join('&')}`)
+                .then(response => {
                     return response.json();
                 })
-                .then((data) => {
+                .then(data => {
                     data.length = 30;
-                    const citiesPossibility = data.reduce((citiesResponse, c) => {
-                        citiesResponse.push(c);
-                        return citiesResponse;
-                    }, []);
-                    return {id: "cities", data: citiesPossibility}
+                    const [regionsPossibility] = data.reduce(
+                        ([regionsResponse], c) => {
+                            regionsResponse.push({
+                                label: c.nom,
+                                value: c.code,
+                            });
+                            return [regionsResponse];
+                        },
+                        [[], []]
+                    );
+                    return { id: 'regions', data: regionsPossibility };
+                })
+        );
+    }
+    return Promise.all(promiseArray).then(d => d.flat(2));
+};
+
+const getDepartmentsPossibility = (
+    event,
+    state,
+    { codeRegion, name, code } = {}
+) => {
+    const promiseArray = [];
+    if (event === 'up' || event === 'all') {
+        promiseArray.push(getRegionsPossibility('up', state));
+    }
+    if (event === 'down' || event === 'all') {
+        promiseArray.push(getCitiesPossibility('down', state));
+    }
+    if (state.actives.includes('departments')) {
+        const filter = [
+            codeRegion
+                ? `codeRegion=${codeRegion}`
+                : '' || state.actual.value.codeRegion
+                ? `codeRegion=${state.actual.value.codeRegion}`
+                : '',
+            code
+                ? `code=${code}`
+                : '' || state.actual.value.codeDepartment
+                ? `code=${state.actual.value.codeDepartment}`
+                : '',
+            name
+                ? `nom=${name}`
+                : '' || state.actual.value.department
+                ? `nom=${state.actual.value.department}`
+                : '',
+        ].filter(c => c !== '');
+        console.debug(
+            `https://geo.api.gouv.fr/departements?${filter.join('&')}`
+        );
+        promiseArray.push(
+            fetch(`https://geo.api.gouv.fr/departements?${filter.join('&')}`)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    data.length = 30;
+                    const [departmentPossibility] = data.reduce(
+                        ([departmentResponse], c) => {
+                            departmentResponse.push({
+                                label: c.nom,
+                                value: c.code,
+                                codeRegion: c.codeRegion,
+                            });
+                            return [departmentResponse];
+                        },
+                        [[]]
+                    );
+                    return { id: 'departments', data: departmentPossibility };
+                })
+        );
+    }
+    return Promise.all(promiseArray).then(d => d.flat(2));
+};
+
+const getCitiesPossibility = async (
+    event,
+    state,
+    { codeRegion, codeDepartment, postcode, name, code } = {}
+) => {
+    const promiseArray = [];
+    if (event === 'up' || event === 'all') {
+        promiseArray.push(getDepartmentsPossibility('up', state));
+    }
+    if (state.actives.includes('cities')) {
+        const filter = [
+            codeRegion
+                ? `codeRegion=${codeRegion}`
+                : '' || state.actual.value.codeRegion
+                ? `codeRegion=${state.actual.value.codeRegion}`
+                : '',
+            codeDepartment
+                ? `codeDepartement=${codeDepartment}`
+                : '' || state.actual.value.codeDepartement
+                ? `codeDepartement=${state.actual.value.codeDepartement}`
+                : '',
+            code
+                ? `code=${code}`
+                : '' || state.actual.value.codeCity
+                ? `code=${state.actual.value.codeCity}`
+                : '',
+            name
+                ? `nom=${name}`
+                : '' || state.actual.value.city
+                ? `nom=${state.actual.value.city}`
+                : '',
+            postcode
+                ? `codePostal=${postcode}`
+                : '' || state.actual.value.postcode
+                ? `codePostal=${state.actual.value.postcode}`
+                : '',
+        ].filter(c => c !== '');
+        console.debug(
+            'https://geo.api.gouv.fr/communes?' + filter.join('&') + ''
+        );
+        promiseArray.push(
+            fetch(`https://geo.api.gouv.fr/communes?${filter.join('&')}`)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    data.length = 30;
+                    const citiesPossibility = data.reduce(
+                        (citiesResponse, c) => {
+                            citiesResponse.push(c);
+                            return citiesResponse;
+                        },
+                        []
+                    );
+                    return { id: 'cities', data: citiesPossibility };
                 })
         );
     }
@@ -98,19 +164,25 @@ const getCitiesPossibility = async (event, state, { codeRegion, codeDepartment, 
 
 function dataFetch(id, state) {
     switch (id) {
-        case "cities":
-            return getCitiesPossibility("all", state);
-        case "departments":
-            return getDepartmentsPossibility("all", state);
-        case "regions":
-            return getRegionsPossibility("all", state);
+        case 'cities':
+            return getCitiesPossibility('all', state);
+        case 'departments':
+            return getDepartmentsPossibility('all', state);
+        case 'regions':
+            return getRegionsPossibility('all', state);
         default:
-            return getCitiesPossibility("up", state);
+            return getCitiesPossibility('up', state);
     }
 }
 
-export default function useLocationPosibility(actives, defaultArgs, {updateOnStart = true} = {}) {
-    const [possibilities, setPossibilities] = useState(actives.reduce((p, c) => ((p[c + "Possibility"] = []), p), {}));
+export default function useLocationPosibility(
+    actives,
+    defaultArgs,
+    { updateOnStart = true } = {}
+) {
+    const [possibilities, setPossibilities] = useState(
+        actives.reduce((p, c) => ((p[c + 'Possibility'] = []), p), {})
+    );
     const [actualArgs, setActualArgs] = useState();
     const state = {
         possibilities,
@@ -131,16 +203,40 @@ export default function useLocationPosibility(actives, defaultArgs, {updateOnSta
             setActualArgs(args);
             state.actual.value = args;
             const data = dataFetch(id, state);
-            return data.then(p => setPossibilities(p.reduce((acc, { id, data }) => ({ ...acc, [id + "Possibility"]: data }), {}))).then(() => data);
+            return data
+                .then(p =>
+                    setPossibilities(
+                        p.reduce(
+                            (acc, { id, data }) => ({
+                                ...acc,
+                                [id + 'Possibility']: data,
+                            }),
+                            {}
+                        )
+                    )
+                )
+                .then(() => data);
         } else {
             const newArgs = { ...state.actual.value, ...args };
             setActualArgs(newArgs);
             state.actual.value = newArgs;
             const data = dataFetch(id, state);
-            return data.then(p => setPossibilities(p.reduce((acc, { id, data }) => ({ ...acc, [id + "Possibility"]: data }), {}))).then(() => data);
+            return data
+                .then(p =>
+                    setPossibilities(
+                        p.reduce(
+                            (acc, { id, data }) => ({
+                                ...acc,
+                                [id + 'Possibility']: data,
+                            }),
+                            {}
+                        )
+                    )
+                )
+                .then(() => data);
         }
     };
-    if(updateOnStart){
+    if (updateOnStart) {
         useEffect(() => {
             update(defaultArgs);
         }, []);

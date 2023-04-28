@@ -3,7 +3,7 @@
     flex-direction: column;
     width: 100%;
 
-    &Input:not([type="radio"], [type="checkbox"]) {
+    &Input:not([type='radio'], [type='checkbox']) {
         padding: 10px;
         border-radius: 5px;
         border: 0.2px solid $lightgrey;
@@ -14,8 +14,8 @@
             outline: none;
         }
 
-        &[type="date"],
-        &[type="file"] {
+        &[type='date'],
+        &[type='file'] {
             border-radius: 20px;
         }
     }

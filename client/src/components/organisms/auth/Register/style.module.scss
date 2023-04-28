@@ -54,7 +54,7 @@
                 text-decoration: underline;
             }
 
-            [type="checkbox"] {
+            [type='checkbox'] {
                 // disable default checkbox style
                 -webkit-appearance: none;
                 -moz-appearance: none;
@@ -66,8 +66,8 @@
                 border: 2px solid $background-color-secondary;
 
                 &:checked {
-                    background-color: #2196F3;
-                    border-color: #2196F3;
+                    background-color: #2196f3;
+                    border-color: #2196f3;
 
                     &::before {
                         content: '';
@@ -97,7 +97,7 @@
                 border: none;
 
                 & > div:last-child > span {
-                   display: none;
+                    display: none;
                 }
             }
         }

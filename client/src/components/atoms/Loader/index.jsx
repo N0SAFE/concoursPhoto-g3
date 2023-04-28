@@ -1,12 +1,23 @@
-import style from "./style.module.scss"
+import style from './style.module.scss';
 
-export default function Loader({children, active, style: _style}){
-    if(active){
+export default function Loader({ children, active, style: _style }) {
+    if (active) {
         return (
             <>
-                <div className={style.container} style={_style}><div className={style["lds-roller"]}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
+                <div className={style.container} style={_style}>
+                    <div className={style['lds-roller']}>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
             </>
-        )
+        );
     }
-    return children
+    return children;
 }

@@ -5,5 +5,5 @@ export default function BO() {
         <div>
             <Link to="/BO/user">Liste des utilisateurs</Link>
         </div>
-    )
+    );
 }

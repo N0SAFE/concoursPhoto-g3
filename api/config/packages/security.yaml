@@ -1,9 +1,9 @@
 security:
     enable_authenticator_manager: true
     password_hashers:
-        App\Entity\User: "auto"
+        App\Entity\User: 'auto'
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-            algorithm: "auto"
+            algorithm: 'auto'
             cost: 15
     providers:
         app_user_provider:
@@ -21,7 +21,6 @@ security:
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             logout:
                 path: /logout
-        
 
         refresh:
             pattern: ^/token/refresh
@@ -46,4 +45,3 @@ security:
         - { path: ^/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI docs
         - { path: ^/auth, roles: PUBLIC_ACCESS }
         - { path: ^/logout, roles: PUBLIC_ACCESS }
-

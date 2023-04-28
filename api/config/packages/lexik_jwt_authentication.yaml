@@ -11,8 +11,8 @@ lexik_jwt_authentication:
     token_extractors:
         authorization_header:
             enabled: true
-            prefix:  Bearer
-            name:    Authorization
+            prefix: Bearer
+            name: Authorization
         cookie:
             enabled: true
-            name:    BEARER
+            name: BEARER

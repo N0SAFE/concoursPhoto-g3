@@ -1,136 +1,166 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import BOList from "@/components/organisms/BO/List";
-import useApiFetch from "@/hooks/useApiFetch.js";
-import Button from "@/components/atoms/Button";
-import useLocation from "@/hooks/useLocation";
-import { toast } from "react-toastify";
-import style from "./style.module.scss";
-import Loader from "@/components/atoms/Loader/index.jsx";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import BOList from '@/components/organisms/BO/List';
+import useApiFetch from '@/hooks/useApiFetch.js';
+import Button from '@/components/atoms/Button';
+import useLocation from '@/hooks/useLocation';
+import { toast } from 'react-toastify';
+import style from './style.module.scss';
+import Loader from '@/components/atoms/Loader/index.jsx';
 
 export default function OrganizationList() {
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true);
     const [Organizations, setOrganizations] = useState([]);
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
 
     function getOrganizations(controller) {
-        return apiFetch("/organizations", {
-            method: "GET",
+        return apiFetch('/organizations', {
+            method: 'GET',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
             signal: controller?.signal,
         })
-            .then((res) => res.json())
-            .then(async (data) => {
+            .then(res => res.json())
+            .then(async data => {
                 console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
                 setOrganizations(data['hydra:member']);
                 return data['hydra:member'];
-            })
+            });
     }
 
     useEffect(() => {
         const controller = new AbortController();
         const promise = getOrganizations(controller);
-        promise.then(function(){
-            setIsLoading(false)
-        })
-        if(import.meta.env.MODE === 'development'){
+        promise.then(function () {
+            setIsLoading(false);
+        });
+        if (import.meta.env.MODE === 'development') {
             toast.promise(promise, {
-                pending: "Chargement des organisations",
-                success: "Organisations chargées",
-                error: "Erreur lors du chargement des organisations",
+                pending: 'Chargement des organisations',
+                success: 'Organisations chargées',
+                error: 'Erreur lors du chargement des organisations',
             });
         }
-        return () => setTimeout(() => controller.abort())
+        return () => setTimeout(() => controller.abort());
     }, []);
 
-    const handleDelete = (id) => {
-        const promise = apiFetch("/organizations/" + id, {
-            method: "DELETE",
+    const handleDelete = id => {
+        const promise = apiFetch('/organizations/' + id, {
+            method: 'DELETE',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
         })
-            .then((res) => res.json())
-            .then((data) => {
+            .then(res => res.json())
+            .then(data => {
                 console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
                 getOrganizations();
-            })
-            
+            });
+
         toast.promise(promise, {
             pending: "suppression de l'organisation",
             success: "l'organisation a bien été supprimé",
-            error: "une erreur est survenue lors de la suppression de l'organisation"
-        })
+            error: "une erreur est survenue lors de la suppression de l'organisation",
+        });
     };
 
     return (
-        <Loader active={isLoading} >
+        <Loader active={isLoading}>
             <div className={style.containerList}>
-                <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '15px',
+                    }}
+                >
                     <h1>Liste des organisations</h1>
-                    <Button color="green" textColor="white" name="Créer une organisation" onClick={() => navigate("/BO/organization/create")}></Button>
+                    <Button
+                        color="green"
+                        textColor="white"
+                        name="Créer une organisation"
+                        onClick={() => navigate('/BO/organization/create')}
+                    ></Button>
                 </div>
                 <BOList
                     entityList={Organizations}
                     fields={[
-                        { property: "id", display: "ID" },
-                        { property: "state", display: "Statut" },
-                        { property: "organizer_name", display: "Nom de l'organisation" },
-                        { property: "description", display: "Description" },
-                        { property: "address", display: "Addresse" },
-                        { property: "postcode", display: "Code postal" },
-                        { property: "city", display: "Ville" },
-                        { property: "number_phone", display: "Téléphone" },
-                        { property: "email", display: "Adresse mail" },
-                        { property: "website_url", display: "Site web" },
-                        { property: "organization_type", display: "Type d'organisation" },
-                        { property: "country", display: "Pays" },
-                        { property: "competitions", display: "Nom du concours" },
+                        { property: 'id', display: 'ID' },
+                        { property: 'state', display: 'Statut' },
+                        {
+                            property: 'organizer_name',
+                            display: "Nom de l'organisation",
+                        },
+                        { property: 'description', display: 'Description' },
+                        { property: 'address', display: 'Addresse' },
+                        { property: 'postcode', display: 'Code postal' },
+                        { property: 'city', display: 'Ville' },
+                        { property: 'number_phone', display: 'Téléphone' },
+                        { property: 'email', display: 'Adresse mail' },
+                        { property: 'website_url', display: 'Site web' },
+                        {
+                            property: 'organization_type',
+                            display: "Type d'organisation",
+                        },
+                        { property: 'country', display: 'Pays' },
+                        {
+                            property: 'competitions',
+                            display: 'Nom du concours',
+                        },
                     ]}
                     customAction={({ entity, property }) => {
-                        if (property === "organization_type") {
+                        if (property === 'organization_type') {
                             return entity.organization_type.label;
                         }
-                        if (property === "competitions") {
-                            return entity.competitions.map((competition) => competition.competition_name).join(", ");
+                        if (property === 'competitions') {
+                            return entity.competitions
+                                .map(
+                                    competition => competition.competition_name
+                                )
+                                .join(', ');
                         }
-                        if (property === "state") {
-                            return entity.state === "validated" ? "Validée" : "En attente";
+                        if (property === 'state') {
+                            return entity.state === 'validated'
+                                ? 'Validée'
+                                : 'En attente';
                         }
                         return entity[property];
                     }}
                     actions={[
                         {
-                            label: "Modifier",
-                            color: "blue",
-                            textColor: "white",
+                            label: 'Modifier',
+                            color: 'blue',
+                            textColor: 'white',
                             action: ({ entity }) => {
-                                navigate("/BO/organization/edit/" + entity.id);
+                                navigate('/BO/organization/edit/' + entity.id);
                             },
                         },
                         {
-                            label: "Supprimer",
-                            color: "red",
-                            textColor: "white",
+                            label: 'Supprimer',
+                            color: 'red',
+                            textColor: 'white',
                             action: ({ entity }) => {
-                                if (confirm("Êtes-vous sûr de vouloir supprimer cette organisation ?")) {
+                                if (
+                                    confirm(
+                                        'Êtes-vous sûr de vouloir supprimer cette organisation ?'
+                                    )
+                                ) {
                                     return handleDelete(entity.id);
                                 }
                             },
                         },
                         {
-                            label: "Voir",
+                            label: 'Voir',
                             action: ({ entity }) => {
-                                navigate("/BO/organization/" + entity.id);
+                                navigate('/BO/organization/' + entity.id);
                             },
                         },
                     ]}

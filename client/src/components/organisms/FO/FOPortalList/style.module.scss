@@ -13,7 +13,7 @@
     @extend .unselectable;
     flex-direction: column;
     display: flex;
-    width: calc((100% - $gapBetweenContainer)/1.5);
+    width: calc((100% - $gapBetweenContainer) / 1.5);
     aspect-ratio: 16/9;
 
     & > img {
@@ -27,7 +27,7 @@
     display: flex;
     gap: $gapBetweenContainer;
     flex-direction: column;
-    width: calc((100% - $gapBetweenContainer)/3);
+    width: calc((100% - $gapBetweenContainer) / 3);
     aspect-ratio: 16/9;
 
     & > div {
