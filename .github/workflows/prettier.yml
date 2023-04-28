@@ -15,7 +15,7 @@ jobs:
             - name: Prettify code
               uses: creyD/prettier_action@v4.3
               with:
-                  prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml} --ignore-path .github
+                  prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml} --ignore-path .github/**/*
                 
 
             # - name: Send Discord message on failure
