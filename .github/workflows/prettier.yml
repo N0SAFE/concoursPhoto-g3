@@ -16,6 +16,8 @@ jobs:
               uses: creyD/prettier_action@v4.3
               with:
                   prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml}
+            - name: write github.ref_name
+              run: echo ${{ github.ref_name }}
 
             - name: Undo Push
               if: ${{ failure() }}
