@@ -6,7 +6,6 @@ on:
 jobs:
     prettier:
         runs-on: ubuntu-latest
-
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -19,15 +18,11 @@ jobs:
               with:
                   prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml}
 
-            - name: Revert commit if Prettier fails
+            - name: Undo Push
               if: ${{ failure() }}
-              shell: bash
-              run: |
-                  set -e
-                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
-                  git config --global user.name "GitHub Actions"
-                  git revert HEAD --no-edit
-                  git push origin HEAD:${{ github.head_ref }}
+              uses: exions/undo-push@v1
+              with:
+                  branch: ${{ github.head_ref }}
 
             - name: Send Discord message on failure
               if: ${{ failure() }}
@@ -35,4 +30,4 @@ jobs:
               env:
                   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
               with:
-                  args: "Prettier failed on branch '${{ github.ref_name }}'. The previous commit has been reverted by ${{ github.actor }}."
+                  args: "@here: Prettier failed on branch '${{ github.ref_name }}'. The previous commit has been reverted by ${{ github.actor }}. Please fix your code and push again: link to PR: ${{ github.event.pull_request.html_url }}, link to commit: ${{ github.event.pull_request.head.sha }}, link to action run: ${{ github.event.pull_request.head.repo.html_url }}/actions/runs/${{ github.run_id }}"

@@ -68,7 +68,6 @@ export default function Myorganization() {
                 if (d[0].data[0].codesPostaux.length === 1 && !organisation.postcode) {
                     setOrganisation({ ...organisation, postcode: { label: d[0].data[0].codesPostaux[0], value: d[0].data[0].codesPostaux[0] } });
                 } else if (!organisation.city) {
-                    console.log("ui");
                     setOrganisation({ ...organisation, city: { label: d[0].data[0].nom, value: d[0].data[0].code } });
                 }
             } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the organisation)
