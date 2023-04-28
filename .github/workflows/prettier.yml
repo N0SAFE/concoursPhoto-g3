@@ -1,4 +1,3 @@
-# This action works with pull requests and pushes
 on:
     pull_request:
     push:
