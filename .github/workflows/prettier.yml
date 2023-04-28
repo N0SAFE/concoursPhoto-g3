@@ -21,15 +21,11 @@ jobs:
               if: ${{ failure() }}
               run: echo ${{ github.ref_name }}
 
-            - name: Revert commit if Prettier fails
+            - name: Undo Push
               if: ${{ failure() }}
-              shell: bash
-              run: |
-                  set -e
-                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
-                  git config --global user.name "GitHub Actions"
-                  git revert HEAD --no-edit
-                  git push origin HEAD:${{ github.head_ref }}
+              uses: exions/undo-push@v1
+              with:
+                  branch: ${{ github.ref_name }}
 
             # - name: Send Discord message on failure
             #   if: ${{ failure() }}
