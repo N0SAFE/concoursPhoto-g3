@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import Button from '@/components/atoms/Button';
 import style from './style.module.scss';
 import Loader from '@/components/atoms/Loader';
-import Table from "@/components/molecules/Table";
+import Table from '@/components/molecules/Table';
 
 export default function UserList() {
     const apiFetch = useApiFetch();

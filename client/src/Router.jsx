@@ -97,7 +97,10 @@ function Router() {
                             path="myorganization"
                             element={<Myorganization />}
                         />
-                        <Route path="participations" element={<CompetitionParticipation />} />
+                        <Route
+                            path="participations"
+                            element={<CompetitionParticipation />}
+                        />
                     </Route>
                 </Route>
                 <Route path="/competition/:id" element={<CompetitionLayout />}>

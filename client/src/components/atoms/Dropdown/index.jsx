@@ -31,7 +31,7 @@ export default function Dropdown({ title, links = [], className, iconColor }) {
                         icon="cheveron-up"
                         size={20}
                         color={iconColor}
-                        onClick={(e) => handleDropdown(e)}
+                        onClick={e => handleDropdown(e)}
                     />
                 </li>
             </div>

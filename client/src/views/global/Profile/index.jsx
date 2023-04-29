@@ -14,7 +14,6 @@ import Login from '@/components/organisms/auth/Login/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';
 
 export default function Profile() {
-
     const { gendersPossibility } = useOutletContext(); // to avoid the loading when we change the page
     const [statusPossibility, setStatusPossibility] = useState({
         list: [],
@@ -31,12 +30,12 @@ export default function Profile() {
     const { setModalContent, showModal } = useModal();
 
     const profileRouteList = [
-        { content: "Mon profil", to: "/me" },
-        { content: "Mes préférences", to: "/preference" },
-        { content: "Mes organisations", to: "/myorganization" },
-        { content: "Concours créés par mon organisation", to: "/me" },
-        { content: "Concours auxquels j’ai participé", to: "/participations" },
-        { content: "Mes publicités", to: "/me" },
+        { content: 'Mon profil', to: '/me' },
+        { content: 'Mes préférences', to: '/preference' },
+        { content: 'Mes organisations', to: '/myorganization' },
+        { content: 'Concours créés par mon organisation', to: '/me' },
+        { content: 'Concours auxquels j’ai participé', to: '/participations' },
+        { content: 'Mes publicités', to: '/me' },
     ];
 
     const [locationPossibility, updateLocationPossibility] =
