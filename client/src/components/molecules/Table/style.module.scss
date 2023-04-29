@@ -1,0 +1,18 @@
+.tableContainer {
+    border-collapse: collapse;
+    width: 100%;
+
+    & td {
+        border: 1px solid $background-color-secondary;
+        padding: 10px;
+    }
+
+    & th {
+        border-top: 2px solid $text-color-third;
+    }
+
+    thead, tfoot {
+        background-color: $background-color-lightgrey;
+        color: $background-color-secondary;
+    }
+}

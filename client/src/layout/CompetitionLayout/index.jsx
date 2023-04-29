@@ -215,20 +215,20 @@ export default function CompetitionLayout() {
                 </div>
                 <PortalList
                     boxSingle={{
-                        type: 'picture',
+                        type: "picture",
                         path: entity.competition_visual?.path,
-                        alt: 'Photo du concours',
+                        alt: "Photo du concours"
                     }}
                     boxUp={{
-                        type: 'picture',
-                        path: entity.organization?.logo.path,
+                        type: "picture", path: entity.organization?.logo.path
                     }}
                     boxDown={{
-                        type: 'slider',
-                    }}
-                    boxDownContents={entity.pictures}
+                        type: "slider"
+                    }} boxDownContents={entity.sponsors?.map((image) => (
+                    image.logo.path
+                ))}
                 />
-                <Outlet context={{ competition: entity }} />
+                <Outlet context={{competition: entity}} />
             </div>
         </Loader>
     );

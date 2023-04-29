@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BOList from '@/components/organisms/BO/List';
 import useApiFetch from '@/hooks/useApiFetch';
-import { toast } from 'react-toastify';
-import Button from '@/components/atoms/Button';
-import useLocation from '@/hooks/useLocation';
 import style from './style.module.scss';
 import { useAuthContext } from '@/contexts/AuthContext.jsx';
 
@@ -97,7 +93,7 @@ export default function UserList() {
                     <option value="false">Non vérifié</option>
                 </select>
             </div>
-            <BOList
+            <Table
                 entityList={userFiltering()}
                 fields={[{ property: 'pictures.id', display: 'ID' }]}
                 actions={[

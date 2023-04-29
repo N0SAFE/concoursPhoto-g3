@@ -14,25 +14,39 @@ import Login from '@/components/organisms/auth/Login/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';
 
 export default function Profile() {
+
     const { gendersPossibility } = useOutletContext(); // to avoid the loading when we change the page
     const [statusPossibility, setStatusPossibility] = useState({
         list: [],
         isLoading: true,
     });
+
     const [categoriesPossibility, setCategoriesPossibility] = useState({
         list: [],
         isLoading: true,
     });
+
     const { me } = useAuthContext();
     const { logout } = useAuth();
     const { setModalContent, showModal } = useModal();
 
+    const profileRouteList = [
+        { content: "Mon profil", to: "/me" },
+        { content: "Mes préférences", to: "/preference" },
+        { content: "Mes organisations", to: "/myorganization" },
+        { content: "Concours créés par mon organisation", to: "/me" },
+        { content: "Concours auxquels j’ai participé", to: "/participations" },
+        { content: "Mes publicités", to: "/me" },
+    ];
+
     const [locationPossibility, updateLocationPossibility] =
         useLocationPosibility(['cities'], {}, { updateOnStart: false });
+
     const citiesPossibility = locationPossibility.citiesPossibility.map(c => ({
         label: `${c.nom} [${c.codesPostaux.join(',')}]`,
         value: c.code,
     }));
+
     const postalCodesPossibility = [
         ...new Set(
             locationPossibility.citiesPossibility
@@ -40,8 +54,10 @@ export default function Profile() {
                 .flat()
         ),
     ].map(c => ({ label: c, value: c }));
+
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] =
         useState(false);
+
     const [entity, setEntity] = useState({
         ...me,
         city: { label: me.city.nom, value: me.city.code },
@@ -146,6 +162,7 @@ export default function Profile() {
 
     return (
         <Loader active={gendersPossibility.isLoading}>
+            <Navlink base="/profile" list={profileRouteList} />
             <div className={style.formContainer}>
                 <BOForm
                     handleSubmit={function () {

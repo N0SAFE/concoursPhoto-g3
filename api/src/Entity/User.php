@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\UserController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -25,6 +26,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(),
         new Post(processor: UserStateProcessor::class),
         new Get(),
+        new Get(
+            name: UserController::USER_COMPETITIONS,
+            uriTemplate: '/users/{id}/user-competitions',
+            controller: UserController::class
+        ),
         new Patch(processor: UserStateProcessor::class),
         new Delete()
     ],

@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import BOList from '@/components/organisms/BO/List';
 import useApiFetch from '@/hooks/useApiFetch';
 import Button from '@/components/atoms/Button';
-import useLocation from '@/hooks/useLocation';
 import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import Loader from '@/components/atoms/Loader/index.jsx';
@@ -90,7 +88,7 @@ export default function CompetitionsList() {
                     ></Button>
                 </div>
 
-                <BOList
+                <Table
                     entityList={competitions}
                     fields={[
                         { property: 'id', display: 'ID' },

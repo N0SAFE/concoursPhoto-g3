@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SponsorsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: SponsorsRepository::class)]
@@ -35,6 +36,7 @@ class Sponsors
     private ?float $price = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups(['competition', 'user:current:read'])]
     private ?File $logo = null;
 
     public function getId(): ?int

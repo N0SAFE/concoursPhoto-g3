@@ -19,8 +19,8 @@ export default function FOPortalList({
                                 imagePath:
                                     import.meta.env.VITE_API_URL +
                                     '/' +
-                                    content.file.path,
-                                imageAlt: content.file.default_name,
+                                    content,
+                                imageAlt: content,
                             };
                         })}
                     />
@@ -43,8 +43,8 @@ export default function FOPortalList({
                                     imagePath:
                                         import.meta.env.VITE_API_URL +
                                         '/' +
-                                        content.file.path,
-                                    imageAlt: content.file.default_name,
+                                        content,
+                                    imageAlt: content,
                                 };
                             })}
                         />
@@ -64,8 +64,8 @@ export default function FOPortalList({
                                     imagePath:
                                         import.meta.env.VITE_API_URL +
                                         '/' +
-                                        content.file.path,
-                                    imageAlt: content.file.default_name,
+                                        content,
+                                    imageAlt: content,
                                 };
                             })}
                         />
