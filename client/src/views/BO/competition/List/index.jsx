@@ -5,6 +5,7 @@ import Button from '@/components/atoms/Button';
 import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import Loader from '@/components/atoms/Loader/index.jsx';
+import Table from "@/components/molecules/Table";
 
 export default function CompetitionsList() {
     const [isLoading, setIsLoading] = useState(true);
