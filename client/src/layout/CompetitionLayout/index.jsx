@@ -43,7 +43,6 @@ export default function CompetitionLayout() {
                     ),
                     Promise.all(data.region_criteria.map(getRegionByCode)),
                 ]).then(([cities, departments, regions]) => {
-                    console.log()
                     const _competition = {
                         ...data,
                         city_criteria: cities,
