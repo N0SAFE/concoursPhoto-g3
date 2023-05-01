@@ -297,7 +297,6 @@ export default function Input({
                             return (
                                 <div className={style.component}>
                                     <label
-                                        className={style.radioListOptionLabel}
                                         htmlFor={option.value}
                                     >
                                         {option.label}

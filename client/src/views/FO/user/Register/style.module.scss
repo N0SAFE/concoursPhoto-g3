@@ -27,7 +27,7 @@
             & > .group {
                 display: flex;
                 flex-direction: row;
-                gap: 15px;
+                gap: $gapBetweenElement;
 
                 & > div {
                     flex: 50%;
@@ -48,7 +48,7 @@
         .registerRule {
             flex-direction: row;
             display: flex;
-            gap: 15px;
+            gap: $gapBetweenElement;
 
             & > .component {
                 width: inherit;

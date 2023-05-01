@@ -31,19 +31,27 @@
         padding: 0 20px;
         overflow: hidden;
     }
-}
 
-.radioList {
-    display: flex;
-    flex-direction: row;
-    gap: 50px;
-    width: 30%;
-}
-.ckeckboxList {
-    &Input {
-        padding: 10px;
-        border-radius: 5px;
-        border: 0.2px solid $lightgrey;
-        box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
+    .radioList {
+        display: flex;
+        flex-direction: row;
+        gap: $gapBetweenElement;
+
+        // component take width to 100% but we need to override it
+        & > div {
+            width: inherit;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: $gapBetweenElement;
+        }
     }
 }
+//.ckeckboxList {
+//    &Input {
+//        padding: 10px;
+//        border-radius: 5px;
+//        border: 0.2px solid $lightgrey;
+//        box-shadow: rgba(17, 17, 26, 0.1) 0 1px 0;
+//    }
+//}

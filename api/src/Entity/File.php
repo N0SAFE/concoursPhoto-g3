@@ -30,7 +30,7 @@ class File
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['file'])]
+    #[Groups(['file', 'user:current:read'])]
     private ?string $path = null;
 
     #[ORM\Column(length: 255)]
@@ -46,7 +46,7 @@ class File
     private ?string $type = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['file'])]
+    #[Groups(['file', 'user:current:read'])]
     private ?string $default_name = null;
 
     public function getId(): ?int

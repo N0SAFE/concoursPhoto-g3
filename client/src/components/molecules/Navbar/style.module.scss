@@ -18,7 +18,7 @@
             display: flex;
             list-style: none;
             padding: 0;
-            gap: 15px;
+            gap: $gapBetweenElement;
 
             & > li,
             & > div > div > li {

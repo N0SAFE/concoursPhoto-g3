@@ -12,6 +12,8 @@ import useAuth from '@/hooks/useAuth.js';
 import { useModal } from '@/contexts/ModalContext/index.jsx';
 import Login from '@/components/organisms/auth/Login/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';
+import useFilesUploader from "@/hooks/useFilesUploader.js";
+import useApiPath from "@/hooks/useApiPath.js";
 
 export default function Profile() {
     const { gendersPossibility } = useOutletContext(); // to avoid the loading when we change the page
@@ -26,6 +28,17 @@ export default function Profile() {
     const { me } = useAuthContext();
     const { logout } = useAuth();
     const { setModalContent, showModal } = useModal();
+    const apiPathComplete = useApiPath();
+    const [updatedFile, setUpdatedFile] = useState({
+        picture_profil: me.picture_profil ? {
+            to: apiPathComplete(me.picture_profil.path),
+            name: me.picture_profil.default_name,
+        } : null,
+    });
+    const updateFileState = (key, value) => {
+        setUpdatedFile({ ...updatedFile, [key]: value });
+    };
+    const { deleteFile, uploadFile } = useFilesUploader();
 
     const [locationPossibility, updateLocationPossibility] =
         useLocationPosibility(['cities'], {}, { updateOnStart: false });
@@ -144,11 +157,22 @@ export default function Profile() {
         });
     }, [entity.postcode, entity.city]);
 
+    console.log(entity.picture_profil)
+
     return (
         <Loader active={gendersPossibility.isLoading}>
             <div className={style.formContainer}>
                 <BOForm
                     handleSubmit={function () {
+                        const newLogoId = (async () => {
+                            if (updatedFile.picture_profil === null) {
+                                return null;
+                            } else if (updatedFile.picture_profil.file) {
+                                return await uploadFile({
+                                    file: updatedFile.picture_profil.file,
+                                }).then(r => r['@id']);
+                            }
+                        })();
                         const data = {
                             email: entity.email,
                             plainPassword: entity.password || undefined,
@@ -167,6 +191,7 @@ export default function Profile() {
                             websiteUrl: entity.websiteUrl,
                             socialsNetworks: entity.socialNetworks,
                             country: entity.country,
+                            picture_profil: newLogoId,
                         };
                         console.debug('data', data);
                         // if (password !== passwordConfirm) {
@@ -197,6 +222,14 @@ export default function Profile() {
                                         navigate('/');
                                     });
                                 }
+                                if (
+                                    updatedFile.picture_profil === null &&
+                                    entity.picture_profil
+                                ) {
+                                    deleteFile({
+                                        path: entity.picture_profil['@id'],
+                                    });
+                                }
                             });
 
                         if (me.email !== entity.email || entity.plainPassword) {
@@ -217,6 +250,13 @@ export default function Profile() {
                     hasSubmit={true}
                 >
                     <Input
+                        type="file"
+                        name="picture_profil"
+                        label="Logo"
+                        onChange={d => updateFileState('picture_profil', d)}
+                        extra={{ value: updatedFile.picture_profil, type: 'image' }}
+                    />
+                    <Input
                         type="radioList"
                         name="genre"
                         onChange={d => updateEntity('gender', d)}
@@ -225,47 +265,27 @@ export default function Profile() {
                             options: gendersPossibility.list,
                         }}
                     />
-                    <div
-                        className="container"
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: '50px',
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                width: '100%',
-                                gap: '15px',
-                            }}
-                        >
+                    <div className={style.formWrapper}>
+                        <div className={style.formColumn}>
                             <Input
                                 type="text"
-                                name="Prénom*"
-                                label="Prénom"
+                                name="Prénom"
+                                label="Prénom*"
                                 onChange={d => updateEntity('firstname', d)}
                                 defaultValue={entity.firstname}
                             />
                             <Input
                                 type="text"
-                                name="Nom*"
-                                label="Nom"
+                                name="Nom"
+                                label="Nom*"
                                 onChange={d => updateEntity('lastname', d)}
                                 defaultValue={entity.lastname}
                             />
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '15px',
-                                }}
-                            >
+                            <div className={style.formRow}>
                                 <Input
                                     type="date"
-                                    name="Date de naissance$"
-                                    label="Date de naissance"
+                                    name="Date de naissance"
+                                    label="Date de naissance*"
                                     onChange={d =>
                                         updateEntity('dateOfBirth', d)
                                     }
@@ -273,40 +293,34 @@ export default function Profile() {
                                 />
                                 <Input
                                     type="select"
-                                    name="vous êtes*"
-                                    label="Statut"
+                                    name="status"
+                                    label="Vous êtes*"
                                     onChange={d => updateEntity('statut', d)}
                                     extra={{
                                         value: entity.statut,
                                         options: statusPossibility.list,
                                         isLoading: statusPossibility.isLoading,
                                     }}
+                                    className={style.formSelect}
                                 />
                             </div>
                             <Input
                                 type="email"
                                 name="Email*"
-                                label="Adresse email"
+                                label="Email*"
                                 extra={{ required: true }}
                                 onChange={d => updateEntity('email', d)}
                                 defaultValue={entity.email}
                             />
                             <Input
                                 type="password"
-                                name="Mot de passe*"
-                                label="Mot de passe"
+                                name="Mot de passe"
+                                label="Mot de passe*"
+                                extra={{ placeholder: '8 caractères min dont 1 chiffre et 1 lettre majuscule' }}
                                 onChange={d => updateEntity('password', d)}
-                                defaultValue={entity.password}
                             />
                         </div>
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                width: '100%',
-                                gap: '15px',
-                            }}
-                        >
+                        <div className={style.formColumn}>
                             <Input
                                 type="text"
                                 name="Adresse"
@@ -314,14 +328,49 @@ export default function Profile() {
                                 onChange={d => updateEntity('adress', d)}
                                 defaultValue={entity.address}
                             />
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: '15px',
-                                }}
-                            >
+                            <div className={style.formRow}>
                                 {' '}
+                                <Input
+                                    type="select"
+                                    name="Code Postal"
+                                    label="Code postal"
+                                    extra={{
+                                        isLoading: locationPossibilityIsLoading,
+                                        value: entity.postcode,
+                                        isClearable: true,
+                                        required: true,
+                                        options: postalCodesPossibility,
+                                        multiple: false,
+                                        onInputChange: (
+                                            _postcode,
+                                            { action }
+                                        ) => {
+                                            if (action === 'menu-close') {
+                                                updateLocationPossibility({
+                                                    id: 'city',
+                                                    args: {
+                                                        postcode:
+                                                        entity.postcode
+                                                            ?.value,
+                                                    },
+                                                });
+                                            }
+                                            if (
+                                                action === 'input-change' &&
+                                                _postcode.length === 5
+                                            ) {
+                                                updateLocationPossibility({
+                                                    id: 'city',
+                                                    args: {
+                                                        postcode: _postcode,
+                                                    },
+                                                });
+                                            }
+                                        },
+                                    }}
+                                    onChange={d => updateEntity('postcode', d)}
+                                    className={style.formSelect}
+                                />
                                 <Input
                                     type="select"
                                     name="Ville"
@@ -356,55 +405,10 @@ export default function Profile() {
                                         },
                                     }}
                                     onChange={d => updateEntity('city', d)}
-                                />
-                                <Input
-                                    type="select"
-                                    name="Code Postal"
-                                    label="Code postal"
-                                    extra={{
-                                        isLoading: locationPossibilityIsLoading,
-                                        value: entity.postcode,
-                                        isClearable: true,
-                                        required: true,
-                                        options: postalCodesPossibility,
-                                        multiple: false,
-                                        onInputChange: (
-                                            _postcode,
-                                            { action }
-                                        ) => {
-                                            if (action === 'menu-close') {
-                                                updateLocationPossibility({
-                                                    id: 'city',
-                                                    args: {
-                                                        postcode:
-                                                            entity.postcode
-                                                                ?.value,
-                                                    },
-                                                });
-                                            }
-                                            if (
-                                                action === 'input-change' &&
-                                                _postcode.length === 5
-                                            ) {
-                                                updateLocationPossibility({
-                                                    id: 'city',
-                                                    args: {
-                                                        postcode: _postcode,
-                                                    },
-                                                });
-                                            }
-                                        },
-                                    }}
-                                    onChange={d => updateEntity('postcode', d)}
+                                    className={style.formSelect}
                                 />
                             </div>
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: '10px',
-                                }}
-                            >
+                            <div className={style.formRow}>
                                 <Input
                                     type="text"
                                     name="country"
@@ -420,51 +424,36 @@ export default function Profile() {
                                         value: Languetest[0],
                                         options: Languetest,
                                     }}
+                                    className={style.formSelect}
                                 />
                             </div>
-
-                            <div>
+                            <div className={style.formColumn}>
                                 <Input
                                     type="text"
                                     name="pseudonym"
-                                    label="Pseudonyme"
+                                    label="Pseudo"
                                     onChange={d => updateEntity('pseudonym', d)}
                                     defaultValue={entity.pseudonym}
                                 />
                             </div>
                         </div>
                     </div>
-
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '15px',
-                        }}
-                    >
-                        <h2>Si vous êtes photographe</h2>
-                        <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <h2>Si vous êtes photographe</h2>
+                    <div className={style.formWrapperColumn}>
+                        <div className={style.formColumn}>
                             {' '}
                             <Input
                                 type="textarea"
                                 extra={{ rows: 16 }}
                                 name="photographerDescription"
-                                label="Description Photographe"
+                                label="Bio / fiche de présentation dans l’annuaire des photographes (si vous avez soumis au moins 1 photo à un concours)"
                                 onChange={d =>
                                     updateEntity('photographerDescription', d)
                                 }
                                 defaultValue={entity.photographerDescription}
                             />
                         </div>
-
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                gap: '100px',
-                                width: '100%',
-                            }}
-                        >
+                        <div className={style.formWrapper}>
                             <Input
                                 type="select"
                                 name="PhotographeCategory"
@@ -475,6 +464,7 @@ export default function Profile() {
                                     options: categoriesPossibility.list,
                                     isLoading: categoriesPossibility.isLoading,
                                 }}
+                                className={style.formSelect}
                             />
                             <Input
                                 type="text"
@@ -484,100 +474,69 @@ export default function Profile() {
                                 defaultValue={entity.websiteUrl}
                             />
                         </div>
-                        <div style={{}}>
-                            <h2>Réseaux sociaux de l’organisation</h2>
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '15px',
-                                }}
-                            >
-                                <div
-                                    className="container"
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        gap: '50px',
-                                    }}
-                                >
-                                    <Input
-                                        type="text"
-                                        name="socialNetworks"
-                                        label="Votre page Facebook"
-                                        onChange={d =>
-                                            updateEntity('socialNetworks', d)
-                                        }
-                                        defaultValue={entity.socialNetworks}
-                                    />
-                                    <Input
-                                        type="text"
-                                        name="socialNetworks"
-                                        label="Votre chaîne Youtube"
-                                        onChange={d =>
-                                            updateEntity('socialNetworks', d)
-                                        }
-                                        defaultValue={entity.socialNetworks}
-                                    />
-                                </div>
-                                <div
-                                    className="container"
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        gap: '50px',
-                                    }}
-                                >
-                                    <Input
-                                        type="text"
-                                        name="socialNetworks"
-                                        label="Votre page Instagram"
-                                        onChange={d =>
-                                            updateEntity('socialNetworks', d)
-                                        }
-                                        defaultValue={entity.socialNetworks}
-                                    />
-                                    <Input
-                                        type="text"
-                                        name="socialNetworks"
-                                        label="Votre compte Twitter"
-                                        onChange={d =>
-                                            updateEntity('socialNetworks', d)
-                                        }
-                                        defaultValue={entity.socialNetworks}
-                                    />
-                                </div>
-                                <div
-                                    className="container"
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        gap: '50px',
-                                    }}
-                                >
-                                    <Input
-                                        type="text"
-                                        name="socialNetworks"
-                                        label="Votre page Linkedin"
-                                        onChange={d =>
-                                            updateEntity('socialNetworks', d)
-                                        }
-                                        defaultValue={entity.socialNetworks}
-                                    />
-                                    <Input
-                                        type="text"
-                                        name="socialNetworks"
-                                        label="Votre compte TikTok"
-                                        onChange={d =>
-                                            updateEntity('socialNetworks', d)
-                                        }
-                                        defaultValue={entity.socialNetworks}
-                                    />
-                                </div>
-                            </div>
+                    </div>
+                    <h2>Réseaux sociaux de l’organisation</h2>
+                    <div className={style.formWrapper}>
+                        <div className={style.formColumn}>
+                                <Input
+                                    type="text"
+                                    name="socialNetworks"
+                                    label="Votre page Facebook"
+                                    onChange={d =>
+                                        updateEntity('socialNetworks', d)
+                                    }
+                                    defaultValue={entity.socialNetworks}
+                                />
+                                <Input
+                                    type="text"
+                                    name="socialNetworks"
+                                    label="Votre chaîne Youtube"
+                                    onChange={d =>
+                                        updateEntity('socialNetworks', d)
+                                    }
+                                    defaultValue={entity.socialNetworks}
+                                />
+                                <Input
+                                    type="text"
+                                    name="socialNetworks"
+                                    label="Votre page Instagram"
+                                    onChange={d =>
+                                        updateEntity('socialNetworks', d)
+                                    }
+                                    defaultValue={entity.socialNetworks}
+                                />
+                        </div>
+                        <div className={style.formColumn}>
+                            <Input
+                                type="text"
+                                name="socialNetworks"
+                                label="Votre compte Twitter"
+                                onChange={d =>
+                                    updateEntity('socialNetworks', d)
+                                }
+                                defaultValue={entity.socialNetworks}
+                            />
+                            <Input
+                                type="text"
+                                name="socialNetworks"
+                                label="Votre page Linkedin"
+                                onChange={d =>
+                                    updateEntity('socialNetworks', d)
+                                }
+                                defaultValue={entity.socialNetworks}
+                            />
+                            <Input
+                                type="text"
+                                name="socialNetworks"
+                                label="Votre compte TikTok"
+                                onChange={d =>
+                                    updateEntity('socialNetworks', d)
+                                }
+                                defaultValue={entity.socialNetworks}
+                            />
                         </div>
                     </div>
-                    <div className={style.registerSubmit}>
+                    <div className={style.formSubmit}>
                         <Button
                             type="submit"
                             name="Mettre à jour"
