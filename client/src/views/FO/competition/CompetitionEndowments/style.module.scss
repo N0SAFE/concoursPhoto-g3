@@ -1,8 +1,11 @@
-.container {
+.endowmentsContainer {
     display: flex;
     flex-direction: row;
     gap: 15px;
-    flex-wrap: wrap;
+
+    .description {
+        margin: 25px 0;
+    }
 
     & > div:first-child {
         padding: 20px 0;
@@ -11,5 +14,14 @@
 
     & > div:last-child {
         flex: 0 33%;
+    }
+
+    @include below(xl) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    @include below(sm) {
+        display: block;
     }
 }

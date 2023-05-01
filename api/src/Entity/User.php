@@ -147,7 +147,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Groups(['user:read', 'user:current:read'])]
     private ?string $pseudonym = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'competition'])]
     #[ORM\Column(type: 'json')]
     private $roles = [];
 

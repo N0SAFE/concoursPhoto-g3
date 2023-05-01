@@ -16,7 +16,7 @@ export default function () {
     ];
 
     return (
-        <div className={style.container}>
+        <div className={style.jury}>
             <div className={style.juryContainer}>
                 <Navlink base="/competition/:id" list={competitionRouteList} />
                 {competition.memberOfTheJuries &&

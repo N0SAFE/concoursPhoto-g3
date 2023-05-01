@@ -8,6 +8,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use FileFixtures;
 
 class SponsorsFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -18,26 +19,6 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
 
     public function __construct(){
         $this->faker = Factory::create('fr_FR');
-    }
-
-    const PICTURE_ARRAY = [
-        "698-2160-2160.jpg",
-        "814-2160-2160.jpg",
-        "904-2160-2160.jpg",
-        "952-2160-2160.jpg",
-        "12839c32a07ad619a08ccaec9d21c241b732d40d.Capture d'écran 2023-03-22 154847.png"
-    ];
-
-    public function createFile() {
-        $file = new File();
-
-        $file->setExtension($this->faker->fileExtension());
-        $file->setPath("fixtures-upload/" . self::PICTURE_ARRAY[rand(0, count(self::PICTURE_ARRAY) - 1)]);
-        $file->setSize($this->faker->randomNumber());
-        $file->setType($this->faker->mimeType());
-        $file->setDefaultName($this->faker->name());
-
-        return $file;
     }
 
     public function load(ObjectManager $manager): void
@@ -53,7 +34,7 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
             $sponsors->setOrganization($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, self::SPONSORS_COUNT_REFERENCE)));
             $sponsors->setCompetition($this->getReference(CompetitionFixtures::COMPETITION_REFERENCE . rand(1, self::SPONSORS_COUNT_REFERENCE)));
             $sponsors->setPrice($faker->randomFloat(3, 0, self::COUNT_REFERENCE));
-            $sponsors->setLogo($this->createFile());
+            $sponsors->setLogo((new FileFixtures)->createFile());
 
             $manager->persist($sponsors);
         }

@@ -16,10 +16,10 @@ export default function () {
     ];
 
     return (
-        <div className={style.container}>
-            <div className={style.rulesContainer}>
+        <div className={style.rulesContainer}>
+            <div>
                 <Navlink base="/competition/:id" list={competitionRouteList} />
-                {competition.rules}
+                <p className={style.description}>{competition.rules}</p>
             </div>
             <PicturesAside requestType={'last-pictures-obtained-votes'} />
         </div>

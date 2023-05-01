@@ -1,8 +1,7 @@
-.container {
+.jury {
     display: flex;
     flex-direction: row;
     gap: 15px;
-    flex-wrap: wrap;
 
     & > div:first-child {
         padding: 20px 0;
@@ -13,7 +12,7 @@
         flex: 0 33%;
     }
 
-    .juryContainer {
+    &Container {
         & > div {
             width: 100%;
 
@@ -32,5 +31,14 @@
                 }
             }
         }
+    }
+
+    @include below(xl) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    @include below(sm) {
+        display: block;
     }
 }

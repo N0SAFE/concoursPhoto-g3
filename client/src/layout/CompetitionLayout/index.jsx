@@ -3,7 +3,7 @@ import PortalList from '@/components/organisms/FO/FOPortalList';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import useLocation from '@/hooks/useLocation.js';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Breadcrumb from '@/components/atoms/Breadcrumb';
 import Chip from '@/components/atoms/Chip/index.jsx';
@@ -11,6 +11,7 @@ import Dropdown from '@/components/atoms/Dropdown/index.jsx';
 import Icon from '@/components/atoms/Icon/index.jsx';
 import { Outlet } from 'react-router-dom';
 import Loader from '@/components/atoms/Loader/index.jsx';
+import Button from "@/components/atoms/Button/index.jsx";
 
 export default function CompetitionLayout() {
     const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +20,7 @@ export default function CompetitionLayout() {
         useLocation();
     const [entity, setEntity] = useState({});
     const { id: competitionId } = useParams();
+    const navigate = useNavigate();
 
     const getCompetitions = controller => {
         return apiFetch('/competitions/' + competitionId, {
@@ -41,6 +43,7 @@ export default function CompetitionLayout() {
                     ),
                     Promise.all(data.region_criteria.map(getRegionByCode)),
                 ]).then(([cities, departments, regions]) => {
+                    console.log()
                     const _competition = {
                         ...data,
                         city_criteria: cities,
@@ -54,6 +57,15 @@ export default function CompetitionLayout() {
                             (sum, p) => sum + p.votes.length,
                             0
                         ),
+                        numberOfPhotograph: data.pictures.reduce(
+                            (set, p) => {
+                                if (p.user.roles.includes('ROLE_PHOTOGRAPHER')) {
+                                    set.add(p.user.id);
+                                }
+                                return set;
+                            },
+                            new Set()
+                        ).size,
                     };
                     setEntity(_competition);
                     return _competition;
@@ -229,6 +241,7 @@ export default function CompetitionLayout() {
                     boxDownContents={entity.pictures}
                 />
                 <Outlet context={{ competition: entity }} />
+                <Button name={"Retour"} borderRadius={"30px"} padding={"20px"} icon={"arrow-thin-left"} iconPosition={"left"} onClick={() => navigate('/')} />
             </div>
         </Loader>
     );

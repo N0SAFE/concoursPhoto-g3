@@ -8,20 +8,13 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use FileFixtures;
 
 class CompetitionFixtures extends Fixture implements DependentFixtureInterface
 {
     public function __construct(){
         $this->faker = Factory::create('fr_FR');
     }
-
-    const PICTURE_ARRAY = [
-        "698-2160-2160.jpg",
-        "814-2160-2160.jpg",
-        "904-2160-2160.jpg",
-        "952-2160-2160.jpg",
-        "12839c32a07ad619a08ccaec9d21c241b732d40d.Capture d'écran 2023-03-22 154847.png"
-    ];
 
     const COMPETITION_REFERENCE = 'competition';
     const COMPETITION_COUNT_REFERENCE = 10;
@@ -39,16 +32,15 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
         '32', '11', '24', '27', '28', '44', '52', '53', '02', '04'
     ];
 
-    public function createFile() {
-        $file = new File();
+    const ENDOWMENTS_ARRAY = [
+        'Cadeaux', 'Prix', 'Récompenses', 'Lots', 'Bons d\'achat', 'Bons cadeaux', 'Chèques cadeaux', 'Chèques'
+    ];
 
-        $file->setExtension($this->faker->fileExtension());
-        $file->setPath("fixtures-upload/" . self::PICTURE_ARRAY[rand(0, count(self::PICTURE_ARRAY) - 1)]);
-        $file->setSize($this->faker->randomNumber());
-        $file->setType($this->faker->mimeType());
-        $file->setDefaultName($this->faker->name());
-
-        return $file;
+    public function getRandomElements(array $array, int $count): string
+    {
+        shuffle($array);
+        $randomElements = array_slice($array, 0, $count);
+        return $randomElements[0];
     }
 
     public function load(ObjectManager $manager): void
@@ -61,10 +53,10 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
 
             $competition->setState($faker->boolean());
             $competition->setCompetitionName($faker->text());
-            $competition->setCompetitionVisual($this->createFile());
+            $competition->setCompetitionVisual((new FileFixtures)->createFile());
             $competition->setDescription($faker->text());
             $competition->setRules($faker->text());
-            $competition->setEndowments($faker->text());
+            $competition->setEndowments($this->getRandomElements(self::ENDOWMENTS_ARRAY, 1));
             $competition->setCreationDate($faker->dateTime());
             $competition->setPublicationDate($faker->dateTime());
             $competition->setSubmissionStartDate($faker->dateTime());

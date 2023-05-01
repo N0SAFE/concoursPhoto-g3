@@ -135,6 +135,7 @@ export default function UserList() {
                         color="green"
                         textColor="white"
                         name="Créer un utilisateur"
+                        borderRadius={'30px'}
                         onClick={() => navigate('/BO/user/create')}
                     ></Button>
                 </div>
@@ -182,7 +183,7 @@ export default function UserList() {
                         { property: 'gender', display: 'Genre' },
                         { property: 'address', display: 'Adresse' },
                         { property: 'postcode', display: 'Code postal' },
-                        { property: 'city', display: 'Ville' },
+                        { property: 'citycode', display: 'Ville' },
                         { property: 'country', display: 'Pays' },
                         {
                             property: 'phone_number',
