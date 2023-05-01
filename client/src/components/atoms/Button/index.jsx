@@ -41,13 +41,21 @@ export default function Button({
                         <>
                             {iconPosition === 'left' ? (
                                 <>
-                                    <Icon icon={icon} size={20} color={textColor} />
+                                    <Icon
+                                        icon={icon}
+                                        size={20}
+                                        color={textColor}
+                                    />
                                     {name}
                                 </>
                             ) : (
                                 <>
                                     {name}
-                                    <Icon icon={icon} size={20} color={textColor} />
+                                    <Icon
+                                        icon={icon}
+                                        size={20}
+                                        color={textColor}
+                                    />
                                 </>
                             )}
                         </>

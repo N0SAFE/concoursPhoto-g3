@@ -18,7 +18,10 @@ export default function () {
     return (
         <div className={style.pictures}>
             <Navlink base="/competition/:id" list={competitionRouteList} />
-            <h2>{competition.pictures.length} photos soumises par {competition.numberOfPhotograph} photographes</h2>
+            <h2>
+                {competition.pictures.length} photos soumises par{' '}
+                {competition.numberOfPhotograph} photographes
+            </h2>
             <div className={style.picturesContainer}>
                 {competition.pictures &&
                     competition.pictures.map(picture => (

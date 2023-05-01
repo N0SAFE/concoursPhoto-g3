@@ -2,7 +2,7 @@ import style from './style.module.scss';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Button from "@/components/atoms/Button/index.jsx";
+import Button from '@/components/atoms/Button/index.jsx';
 
 // requestType possibility :
 // last-pictures-posted
@@ -70,7 +70,14 @@ export default function PicturesAside({ requestType }) {
                     })}
                 </div>
             </div>
-            <Button name={"Voir les photos et voter"} borderRadius={"30px"} padding={"20px"} color={"#A8A8A8"} textColor={"#fff"} onClick={() => navigate('/')} />
+            <Button
+                name={'Voir les photos et voter'}
+                borderRadius={'30px'}
+                padding={'20px'}
+                color={'#A8A8A8'}
+                textColor={'#fff'}
+                onClick={() => navigate('/')}
+            />
         </div>
     );
 }

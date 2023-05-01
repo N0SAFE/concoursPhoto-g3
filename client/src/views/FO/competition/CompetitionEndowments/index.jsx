@@ -23,7 +23,9 @@ export default function () {
                         base="/competition/:id"
                         list={competitionRouteList}
                     />
-                    <p className={style.description}>{competition.endowments}</p>
+                    <p className={style.description}>
+                        {competition.endowments}
+                    </p>
                 </div>
                 <PicturesAside requestType={'last-pictures-obtained-votes'} />
             </div>
