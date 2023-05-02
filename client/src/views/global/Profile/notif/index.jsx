@@ -10,8 +10,6 @@ export default function IndexNotif() {
     return (
         <Loader active={isLoading}>
             <div className={style.formContainer}>
-                <h1>Mon compte</h1>
-                <Navlink base="/profile" list={profileRouteList} />
                 <BOForm hasSubmit={true}>
                     <div style={{ marginTop: '10px' }}>
                         <h2>Si vous êtes simple membre</h2>

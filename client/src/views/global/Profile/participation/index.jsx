@@ -52,8 +52,6 @@ export default function CompetitionParticipation() {
 
     return (
         <div className={style.participationsContainer}>
-            <h1>Mon compte</h1>
-            <Navlink base="/profile" list={profileRouteList} />
             <Table
                 entityList={userCompetitions}
                 fields={[
