@@ -16,11 +16,11 @@ class OrganizationType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'organization_type', targetEntity: Organization::class)]

@@ -1,0 +1,5 @@
+.formContainer {
+    & > .group {
+        @extend .form-control;
+    }
+}

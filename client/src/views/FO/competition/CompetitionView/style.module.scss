@@ -1,0 +1,23 @@
+.viewContainer {
+    display: flex;
+    flex-direction: row;
+    gap: $gapBetweenElement;
+
+    .description {
+        margin: 25px 0;
+    }
+
+    & > div:first-child {
+        padding: 20px 0;
+        flex: 0 66%;
+    }
+
+    & > div:last-child {
+        flex: 0 33%;
+    }
+
+    @include below(xl) {
+        display: flex;
+        flex-direction: column;
+    }
+}

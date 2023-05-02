@@ -1,0 +1,21 @@
+.breadcrumbContainer {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+
+    & > ol {
+        display: flex;
+        list-style: none;
+        gap: 10px;
+
+        & > li > a {
+            text-decoration: none;
+            color: $text-color-secondary;
+
+            &::after {
+                content: '>';
+                margin-left: 10px;
+            }
+        }
+    }
+}

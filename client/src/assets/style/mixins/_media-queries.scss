@@ -47,7 +47,8 @@
 
 // @include between(sm, md) {}
 @mixin between($lower, $upper) {
-    @if map-has-key($breakpoints, $lower) and map-has-key($breakpoints, $upper) {
+    @if map-has-key($breakpoints, $lower) and map-has-key($breakpoints, $upper)
+    {
         $lower-breakpoint: map-get($breakpoints, $lower);
         $upper-breakpoint: map-get($breakpoints, $upper);
 

@@ -12,11 +12,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
-
     private $faker;
 
     public function __construct(
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
     ){
         $this->faker = Factory::create('fr_FR');
     }
@@ -84,18 +83,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         ],
     ];
 
-    public function createFile() {
-        $file = new File();
-
-        $file->setExtension($this->faker->fileExtension());
-        $file->setPath($this->faker->filePath());
-        $file->setSize($this->faker->randomNumber());
-        $file->setType($this->faker->mimeType());
-        $file->setDefaultName($this->faker->name());
-
-        return $file;
-    }
-
     public function getRandomElements(array $array, int $count): array
     {
         shuffle($array);
@@ -120,7 +107,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setUpdateDate($faker->dateTime());
         $user->setWebsiteUrl($faker->url());
         $user->setPhotographerDescription($faker->text());
-        $user->setSocialsNetworks($faker->text());
         $user->setEmail("admin@admin.com");
         $user->setPassword($this->passwordHasher->hashPassword($user, 'test'));
         $user->setAddress($faker->address());
@@ -130,13 +116,13 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setFirstname($faker->firstName());
         $user->setLastname($faker->lastName());
         $user->setRoles(['ROLE_ADMIN']);
-        $user->setCity($city['code']);
+        $user->setCitycode($city['code']);
         $user->setDepartment($city['codeDepartment']);
         $user->setRegion($city['codeRegion']);
         $user->setPostcode(str_replace(' ', '', $faker->postcode()));
         $user->setCountry($faker->countryCode());
         $user->setPostcode(str_replace(' ', '', $faker->postcode()));
-        $user->setPictureProfil($this->createFile());
+        $user->setPictureProfil((new FileFixtures)->createFile());
         $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
         $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
         $user->setPersonalStatut($this->getReference(PersonalStatutFixtures::PERSONAL_STATUT_REFERENCE . rand(1, count(PersonalStatutFixtures::PERSONAL_STATUT_ARRAY))));
@@ -159,7 +145,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setUpdateDate($faker->dateTime());
             $user->setWebsiteUrl($faker->url());
             $user->setPhotographerDescription($faker->text());
-            $user->setSocialsNetworks($faker->text());
             $user->setEmail($faker->email());
             $user->setPassword($this->passwordHasher->hashPassword($user, 'test'));
             $user->setAddress($faker->address());
@@ -170,12 +155,12 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setFirstname($faker->firstName());
             $user->setLastname($faker->lastName());
             $user->setRoles($this->getRandomElements(self::ROLE_ARRAY, 1));
-            $user->setCity($city['code']);
+            $user->setCitycode($city['code']);
             $user->setDepartment($city['codeDepartment']);
             $user->setRegion($city['codeRegion']);
             $user->setCountry("FRANCE");
             $user->setPostcode(str_replace(' ', '', $faker->postcode()));
-            $user->setPictureProfil($this->createFile());
+            $user->setPictureProfil((new FileFixtures)->createFile());
             $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
             $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
             $user->setPersonalStatut($this->getReference(PersonalStatutFixtures::PERSONAL_STATUT_REFERENCE . rand(1, count(PersonalStatutFixtures::PERSONAL_STATUT_ARRAY))));

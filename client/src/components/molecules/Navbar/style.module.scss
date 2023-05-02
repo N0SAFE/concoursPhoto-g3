@@ -6,7 +6,8 @@
         background-color: $background-color-darkgrey;
         align-items: center;
         justify-content: space-between;
-        box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+        box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px,
+            rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 
         @include below(md) {
             height: auto;
@@ -17,9 +18,10 @@
             display: flex;
             list-style: none;
             padding: 0;
-            gap: 15px;
+            gap: $gapBetweenElement;
 
-            & > li, & > div > div > li {
+            & > li,
+            & > div > div > li {
                 position: relative;
                 display: flex;
                 align-items: center;
@@ -37,7 +39,7 @@
                             display: block;
                             position: absolute;
                             width: 100%;
-                            content: "";
+                            content: '';
                             padding-top: 10px;
                             border-bottom: 2px solid $text-color-primary;
                         }
@@ -59,7 +61,7 @@
 
             & > div {
                 flex-direction: column;
-                z-index: 100;
+                z-index: 10;
                 overflow: hidden;
                 background-color: $background-color-darkgrey;
                 width: 100%;

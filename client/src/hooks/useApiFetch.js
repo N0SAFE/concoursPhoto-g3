@@ -1,22 +1,29 @@
-import { useAuthContext } from "@/contexts/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { useEffect } from "react";
+import { useAuthContext } from '@/contexts/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import useAuth from './useAuth.js';
+import { useModal } from '@/contexts/ModalContext/index.jsx';
+import { getLoginModalContent } from '@/components/organisms/auth/Login/index.jsx';
 
 export default function () {
     const navigate = useNavigate();
+    const { setModalContent, showModal } = useModal();
+    const { logout } = useAuth();
     const { checkLogged } = useAuthContext();
 
     return function apiFetch(path, options, { refreshToken = true } = {}) {
         if (!options) {
             options = {};
         }
-        if (typeof options !== "object") {
-            reject(new Error("options must be an object"));
+        if (typeof options !== 'object') {
+            reject(new Error('options must be an object'));
             return;
         }
-        options.credentials = "include";
-        const request = fetch(new URL(import.meta.env.VITE_API_URL + path), options);
+        options.credentials = 'include';
+        const request = fetch(
+            new URL(import.meta.env.VITE_API_URL + path),
+            options
+        );
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await request;
@@ -29,15 +36,35 @@ export default function () {
                     if (response.status === 401) {
                         const data = await response.json();
                         response.json = async () => data;
-                        if ((data.message === "Expired JWT Token" || data.message === "Missing token" || data.message === "Invalid credentials.") && path !== "/token/refresh") {
+                        if (
+                            (data.message === 'Expired JWT Token' ||
+                                data.message === 'Missing token' ||
+                                data.message === 'Invalid credentials.') &&
+                            path !== '/token/refresh'
+                        ) {
                             const { isLogged } = await checkLogged();
                             if (!isLogged) {
-                                navigate("/auth/logout");
-                                toast.error("une erreur est survenue, veuillez vous reconnecter");
-                                reject(new Error("une erreur est survenue, veuillez vous reconnecter"));
+                                logout().then(() => {
+                                    navigate('/');
+                                    setModalContent(getLoginModalContent());
+                                    showModal();
+                                });
+                                toast.error(
+                                    'une erreur est survenue, veuillez vous reconnecter'
+                                );
+                                reject(
+                                    new Error(
+                                        'une erreur est survenue, veuillez vous reconnecter'
+                                    )
+                                );
                                 return;
                             }
-                            resolve(await apiFetch(path, options, { refreshToken: false, signal }).resPromise);
+                            resolve(
+                                await apiFetch(path, options, {
+                                    refreshToken: false,
+                                    signal,
+                                }).resPromise
+                            );
                             return;
                         }
                     }
@@ -53,6 +80,6 @@ export default function () {
                 reject(e);
                 return;
             }
-        })
+        });
     };
 }

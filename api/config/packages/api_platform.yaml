@@ -1,16 +1,16 @@
 # api/config/packages/api_platform.yaml
 api_platform:
-  eager_loading:
-    force_eager: false
-  swagger:
-    api_keys:
-      JWT:
-        name: Authorization
-        type: header
-  formats:
-    jsonld: ['application/ld+json']
-    jsonhal: ['application/hal+json']
-    jsonapi: ['application/vnd.api+json']
-    json: ['application/json', 'application/ld+json']
-    html: ['text/html']
-    multipart: ['multipart/form-data']
+    eager_loading:
+        force_eager: false
+    swagger:
+        api_keys:
+            JWT:
+                name: Authorization
+                type: header
+    formats:
+        jsonld: ['application/ld+json']
+        jsonhal: ['application/hal+json']
+        jsonapi: ['application/vnd.api+json']
+        json: ['application/json', 'application/ld+json']
+        html: ['text/html']
+        multipart: ['multipart/form-data']

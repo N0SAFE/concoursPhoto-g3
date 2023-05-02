@@ -1,0 +1,27 @@
+.page {
+    &Container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    &Content {
+        flex-grow: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        & > div {
+            
+            flex-grow: 1;
+            height: 100%;
+            position: relative;
+            
+            @extend .limited-content;
+
+            @include below(md) {
+                padding: 0 50px;
+            }
+        }
+    }
+}

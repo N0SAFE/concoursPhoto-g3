@@ -8,27 +8,18 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\Filesystem\Filesystem;
 
 class PictureFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function __construct(){
+    public function __construct(private Filesystem $filesystem)
+    {
         $this->faker = Factory::create('fr_FR');
     }
 
+
     const PICTURE_REFERENCE = 'picture';
     const PICTURE_COUNT_REFERENCE = 500;
-
-    public function createFile() {
-        $file = new File();
-
-        $file->setExtension($this->faker->fileExtension());
-        $file->setPath($this->faker->filePath());
-        $file->setSize($this->faker->randomNumber());
-        $file->setType($this->faker->mimeType());
-        $file->setDefaultName($this->faker->name());
-
-        return $file;
-    }
 
     public function load(ObjectManager $manager): void
     {
@@ -40,7 +31,7 @@ class PictureFixtures extends Fixture implements DependentFixtureInterface
             $picture->setState($faker->boolean());
             $picture->setPictureName($faker->text());
             $picture->setSubmissionDate($faker->dateTime());
-            $picture->setFile($this->createFile());
+            $picture->setFile((new FileFixtures)->createFile());
             $picture->setNumberOfVotes(random_int(0, 100));
             $picture->setPriceWon($faker->randomFloat(3, 0, 100));
             $picture->setPriceRank(random_int(0, 100));

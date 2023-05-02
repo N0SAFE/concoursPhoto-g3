@@ -1,8 +1,20 @@
 .dropdownContainer {
     position: relative;
+    list-style: none;
 
     @include below(md) {
         flex-direction: column;
+    }
+
+    & > div {
+        & > li {
+            display: flex;
+
+            & > a {
+                text-decoration: none;
+                color: $text-color-secondary;
+            }
+        }
     }
 
     .dropdown {
@@ -18,6 +30,7 @@
         transition: 0.25s ease-in-out;
         max-height: 0;
         border-radius: 5px;
+        list-style: none;
 
         @include below(md) {
             position: inherit;
@@ -25,6 +38,7 @@
         }
 
         & > li {
+            list-style: none;
             margin-top: 10px;
 
             & > a {
@@ -50,6 +64,7 @@
         &Icon {
             transform: rotate(180deg);
             transition-duration: 0.5s;
+            cursor: pointer;
         }
 
         &Rotate {

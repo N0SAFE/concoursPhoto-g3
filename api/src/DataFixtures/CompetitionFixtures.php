@@ -31,16 +31,15 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
         '32', '11', '24', '27', '28', '44', '52', '53', '02', '04'
     ];
 
-    public function createFile() {
-        $file = new File();
+    const ENDOWMENTS_ARRAY = [
+        'Cadeaux', 'Prix', 'Récompenses', 'Lots', 'Bons d\'achat', 'Bons cadeaux', 'Chèques cadeaux', 'Chèques'
+    ];
 
-        $file->setExtension($this->faker->fileExtension());
-        $file->setPath($this->faker->filePath());
-        $file->setSize($this->faker->randomNumber());
-        $file->setType($this->faker->mimeType());
-        $file->setDefaultName($this->faker->name());
-
-        return $file;
+    public function getRandomElements(array $array, int $count): string
+    {
+        shuffle($array);
+        $randomElements = array_slice($array, 0, $count);
+        return $randomElements[0];
     }
 
     public function load(ObjectManager $manager): void
@@ -53,10 +52,10 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
 
             $competition->setState($faker->boolean());
             $competition->setCompetitionName($faker->text());
-            $competition->setCompetitionVisual($this->createFile());
+            $competition->setCompetitionVisual((new FileFixtures)->createFile());
             $competition->setDescription($faker->text());
             $competition->setRules($faker->text());
-            $competition->setEndowments($faker->text());
+            $competition->setEndowments($this->getRandomElements(self::ENDOWMENTS_ARRAY, 1));
             $competition->setCreationDate($faker->dateTime());
             $competition->setPublicationDate($faker->dateTime());
             $competition->setSubmissionStartDate($faker->dateTime());

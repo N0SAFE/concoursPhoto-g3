@@ -27,7 +27,7 @@
             & > .group {
                 display: flex;
                 flex-direction: row;
-                gap: 15px;
+                gap: $gapBetweenElement;
 
                 & > div {
                     flex: 50%;
@@ -48,13 +48,17 @@
         .registerRule {
             flex-direction: row;
             display: flex;
-            gap: 15px;
+            gap: $gapBetweenElement;
+
+            & > .component {
+                width: inherit;
+            }
 
             & > p > span {
                 text-decoration: underline;
             }
 
-            [type="checkbox"] {
+            [type='checkbox'] {
                 // disable default checkbox style
                 -webkit-appearance: none;
                 -moz-appearance: none;
@@ -66,8 +70,8 @@
                 border: 2px solid $background-color-secondary;
 
                 &:checked {
-                    background-color: #2196F3;
-                    border-color: #2196F3;
+                    background-color: #2196f3;
+                    border-color: #2196f3;
 
                     &::before {
                         content: '';
@@ -87,6 +91,7 @@
 
             & > a {
                 text-decoration: underline;
+                color: $background-color-secondary;
             }
         }
 
@@ -97,7 +102,7 @@
                 border: none;
 
                 & > div:last-child > span {
-                   display: none;
+                    display: none;
                 }
             }
         }

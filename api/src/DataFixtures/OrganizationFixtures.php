@@ -23,18 +23,6 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
         '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
     ];
 
-    public function createFile() {
-        $file = new File();
-
-        $file->setExtension($this->faker->fileExtension());
-        $file->setPath($this->faker->filePath());
-        $file->setSize($this->faker->randomNumber());
-        $file->setType($this->faker->mimeType());
-        $file->setDefaultName($this->faker->name());
-
-        return $file;
-    }
-
     public function load(ObjectManager $manager): void
     {
         $faker = $this->faker;
@@ -45,10 +33,10 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setState($faker->boolean());
             $organization->setOrganizerName($faker->text());
             $organization->setDescription($faker->text());
-            $organization->setLogo($this->createFile());
+            $organization->setLogo((new FileFixtures)->createFile());
             $organization->setAddress($faker->address());
             $organization->setPostcode(str_replace(' ', '', $faker->postcode()));
-            $organization->setCity(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
+            $organization->setCitycode(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
             $organization->setWebsiteUrl($faker->url());
             $organization->setEmail($faker->email());
             $organization->setNumberPhone($faker->phoneNumber());
