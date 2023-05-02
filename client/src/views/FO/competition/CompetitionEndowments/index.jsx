@@ -17,13 +17,15 @@ export default function () {
 
     return (
         <div>
-            <div className={style.container}>
-                <div className={style.endowmentsContainer}>
+            <div className={style.endowmentsContainer}>
+                <div>
                     <Navlink
                         base="/competition/:id"
                         list={competitionRouteList}
                     />
-                    {competition.endowments}
+                    <p className={style.description}>
+                        {competition.endowments}
+                    </p>
                 </div>
                 <PicturesAside requestType={'last-pictures-obtained-votes'} />
             </div>

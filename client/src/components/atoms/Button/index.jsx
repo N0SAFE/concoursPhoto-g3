@@ -13,6 +13,7 @@ export default function Button({
     borderRadius,
     icon,
     disabled,
+    iconPosition,
 }) {
     return (
         <div
@@ -36,8 +37,31 @@ export default function Button({
                 }}
             >
                 <div>
-                    {name}
-                    {icon && <Icon icon={icon} size={20} color={textColor} />}
+                    {icon ? (
+                        <>
+                            {iconPosition === 'left' ? (
+                                <>
+                                    <Icon
+                                        icon={icon}
+                                        size={20}
+                                        color={textColor}
+                                    />
+                                    {name}
+                                </>
+                            ) : (
+                                <>
+                                    {name}
+                                    <Icon
+                                        icon={icon}
+                                        size={20}
+                                        color={textColor}
+                                    />
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        name
+                    )}
                 </div>
             </button>
         </div>

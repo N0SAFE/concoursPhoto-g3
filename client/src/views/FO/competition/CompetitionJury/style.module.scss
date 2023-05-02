@@ -1,4 +1,4 @@
-.container {
+.jury {
     display: flex;
     flex-direction: row;
     gap: $gapBetweenElement;
@@ -13,7 +13,7 @@
         flex: 0 33%;
     }
 
-    .juryContainer {
+    &Container {
         & > div {
             width: 100%;
 
@@ -32,5 +32,14 @@
                 }
             }
         }
+    }
+
+    @include below(xl) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    @include below(sm) {
+        display: block;
     }
 }

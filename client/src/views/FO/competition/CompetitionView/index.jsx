@@ -16,10 +16,10 @@ export default function () {
     ];
 
     return (
-        <div className={style.container}>
-            <div className={style.viewContainer}>
+        <div className={style.viewContainer}>
+            <div>
                 <Navlink base="/competition/:id" list={competitionRouteList} />
-                {competition.description}
+                <p className={style.description}>{competition.description}</p>
             </div>
             <PicturesAside requestType={'last-pictures-posted'} />
         </div>

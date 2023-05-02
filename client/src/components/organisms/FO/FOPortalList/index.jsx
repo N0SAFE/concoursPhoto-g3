@@ -10,7 +10,7 @@ export default function FOPortalList({
     boxDownContents = [],
 }) {
     return (
-        <div className={style.container}>
+        <div className={style.portalContainer}>
             <div className={style.boxSingle}>
                 {boxSingle.type === 'slider' && (
                     <Slider
