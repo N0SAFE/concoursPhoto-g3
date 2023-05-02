@@ -1,7 +1,7 @@
 .viewContainer {
     display: flex;
     flex-direction: row;
-    gap: 15px;
+    gap: $gapBetweenElement;
 
     .description {
         margin: 25px 0;

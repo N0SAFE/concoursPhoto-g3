@@ -4,7 +4,7 @@
     .competitionBanner {
         .filter {
             display: flex;
-            gap: 15px;
+            gap: $gapBetweenElement;
             flex-wrap: wrap;
             padding-bottom: 20px;
 
@@ -12,11 +12,11 @@
                 flex-direction: column;
                 flex: 0 66%;
                 display: flex;
-                gap: 15px;
+                gap: $gapBetweenElement;
 
                 & > div:last-child {
                     display: flex;
-                    gap: 15px;
+                    gap: $gapBetweenElement;
                 }
             }
 
@@ -70,7 +70,7 @@
     .competitionDescription {
         display: flex;
         flex-direction: row;
-        gap: 15px;
+        gap: $gapBetweenElement;
         flex-wrap: wrap;
 
         & > div:first-child {

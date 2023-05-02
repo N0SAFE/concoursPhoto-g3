@@ -27,85 +27,72 @@
             & > .group {
                 display: flex;
                 flex-direction: row;
-                gap: 15px;
+                gap: $gapBetweenElement;
 
                 & > div {
                     flex: 50%;
                 }
             }
         }
+    }
 
-        .registerSubmit {
-            display: flex;
-            align-self: center;
+    &Submit {
+        display: flex;
+        align-self: center;
 
-            & > button > div {
-                display: inherit;
-                align-items: inherit;
-            }
+        & > button > div {
+            display: inherit;
+            align-items: inherit;
+        }
+    }
+
+    &Rule {
+        flex-direction: row;
+        display: flex;
+        gap: $gapBetweenElement;
+
+        & > p > span {
+            text-decoration: underline;
         }
 
-        .registerRule {
-            flex-direction: row;
-            display: flex;
-            gap: 15px;
+        [type='checkbox'] {
+            // disable default checkbox style
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            -ms-appearance: none;
 
-            // cancel width from Input component
-            & > div {
-                width: inherit;
-            }
+            border-radius: 4px;
+            height: 25px;
+            width: 25px;
+            border: 2px solid $background-color-secondary;
 
-            & > p > span {
-                text-decoration: underline;
-            }
+            &:checked {
+                background-color: #2196f3;
+                border-color: #2196f3;
 
-            [type='checkbox'] {
-                // disable default checkbox style
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                -ms-appearance: none;
-
-                border-radius: 4px;
-                height: 25px;
-                width: 25px;
-                border: 2px solid $background-color-secondary;
-
-                &:checked {
-                    background-color: $background-color-secondary;
-                    border-color: $text-color-secondary;
-
-                    &::before {
-                        content: '';
-                        display: block;
-                        width: 100%;
-                        height: 100%;
-                        margin: 0 auto;
-                        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9,16.2L4.8,12l-1.4,1.4L9,19l11-11l-1.4-1.4L9,16.2z'/%3E%3C/svg%3E");
-                    }
+                &::before {
+                    content: '';
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    margin: 0 auto;
+                    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9,16.2L4.8,12l-1.4,1.4L9,19l11-11l-1.4-1.4L9,16.2z'/%3E%3C/svg%3E");
                 }
             }
         }
+    }
 
-        .registerProposition {
-            text-align: center;
-            padding-bottom: 15px;
+    &Proposition {
+        text-align: center;
+        padding-bottom: 15px;
 
-            & > a {
-                text-decoration: underline;
-                color: $background-color-secondary;
-            }
+        & > a {
+            text-decoration: underline;
         }
+    }
 
-        // override component react-select to modify style
-        .registerSelect {
-            & > div {
-                background-color: $background-color-lightgrey-2;
-                border: none;
-
-                & > div:last-child > span {
-                    display: none;
-                }
-            }
-        }
+    // override component react-select to modify style
+    &Select {
+        @extend .select-style;
     }
 }

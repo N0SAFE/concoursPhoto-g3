@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import Navlink from '@/components/molecules/Navlink';
+import style from './style.module.scss';
 
 const profileRouteList = [
     { content: 'Mon profil', to: '/me' },
@@ -37,11 +38,11 @@ export default function ProfileLayout() {
     }, []);
     return (
         <Loader active={gendersPossibility.isLoading}>
-            <h2 style={{ marginTop: '20px', marginBottom: '20px' }}>
-                Mon profile
-            </h2>
-            <Navlink base="/profile" list={profileRouteList} />
-            <Outlet context={{ gendersPossibility }} />
+            <div className={style.profilContainer}>
+                <h2>Mon profil</h2>
+                <Navlink base="/profile" list={profileRouteList} />
+                <Outlet context={{ gendersPossibility }} />
+            </div>
         </Loader>
     );
 }

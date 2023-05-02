@@ -27,3 +27,15 @@ body {
     -ms-user-select: none; / IE 10 and IE 11 /
     user-select: none; / Standard syntax */
 }
+
+// global style for Select component (override Select component)
+.select-style {
+    & > div {
+        background-color: $background-color-lightgrey-2;
+        border: none;
+
+        & > div:last-child > span {
+            display: none;
+        }
+    }
+}

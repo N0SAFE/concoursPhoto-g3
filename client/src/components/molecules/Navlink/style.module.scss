@@ -4,7 +4,8 @@
     & > div {
         display: flex;
         flex-direction: row;
-        gap: 15px;
+        gap: $gapBetweenElement;
+        margin-bottom: 30px;
 
         & > li {
             position: relative;

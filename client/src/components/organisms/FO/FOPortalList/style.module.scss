@@ -1,6 +1,6 @@
 .portalContainer {
     display: flex;
-    gap: $gapBetweenContainer;
+    gap: $gapBetweenElement;
     justify-content: center;
     flex-wrap: wrap;
 
@@ -12,7 +12,7 @@
         @extend .unselectable;
         flex-direction: column;
         display: flex;
-        width: calc((100% - $gapBetweenContainer) / 1.5);
+        width: calc((100% - $gapBetweenElement) / 1.5);
         aspect-ratio: 16/9;
 
         & > img {
@@ -24,9 +24,9 @@
 
     .boxDuo {
         display: flex;
-        gap: $gapBetweenContainer;
+        gap: $gapBetweenElement;
         flex-direction: column;
-        width: calc((100% - $gapBetweenContainer) / 3);
+        width: calc((100% - $gapBetweenElement) / 3);
         aspect-ratio: 16/9;
 
         & > div {
@@ -48,11 +48,11 @@
 
         .boxDuo {
             flex-direction: row;
-            gap: $gapBetweenContainer;
+            gap: $gapBetweenElement;
             aspect-ratio: 16/9;
 
             // for pictures
-            width: calc((100% - $gapBetweenContainer) / 2);
+            width: calc((100% - $gapBetweenElement) / 2);
 
             // for slider
             & > div {

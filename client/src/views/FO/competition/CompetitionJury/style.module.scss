@@ -1,7 +1,7 @@
 .jury {
     display: flex;
     flex-direction: row;
-    gap: 15px;
+    gap: $gapBetweenElement;
 
     & > div:first-child {
         padding: 20px 0;

@@ -296,10 +296,7 @@ export default function Input({
                         {extra?.options?.map(option => {
                             return (
                                 <div className={style.component}>
-                                    <label
-                                        className={style.radioListOptionLabel}
-                                        htmlFor={option.value}
-                                    >
+                                    <label htmlFor={option.value}>
                                         {option.label}
                                     </label>
                                     <input
