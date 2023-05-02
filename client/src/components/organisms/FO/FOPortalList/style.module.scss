@@ -7,7 +7,6 @@
     @include below(md) {
         justify-content: inherit;
     }
-}
 
     .boxSingle {
         @extend .unselectable;
