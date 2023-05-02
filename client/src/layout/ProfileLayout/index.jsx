@@ -10,7 +10,7 @@ const profileRouteList = [
     { content: 'Mes préférences', to: '/preference' },
     { content: 'Mes organisations', to: '/myorganization' },
     { content: 'Concours créés par mon organisation', to: '/me' },
-    { content: 'Concours auxquels j’ai participé', to: '/me' },
+    { content: 'Concours auxquels j’ai participé', to: '/participations' },
     { content: 'Mes publicités', to: '/me' },
 ];
 
@@ -39,7 +39,7 @@ export default function ProfileLayout() {
     return (
         <Loader active={gendersPossibility.isLoading}>
             <div className={style.profilContainer}>
-                <h2>Mon profil</h2>
+                <h1>Mon compte</h1>
                 <Navlink base="/profile" list={profileRouteList} />
                 <Outlet context={{ gendersPossibility }} />
             </div>

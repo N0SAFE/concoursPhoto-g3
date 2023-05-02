@@ -178,19 +178,21 @@ export default function Profile() {
 
     return (
         <Loader active={gendersPossibility.isLoading}>
-            <Navlink base="/profile" list={profileRouteList} />
             <div className={style.formContainer}>
                 <BOForm
-                    handleSubmit={function () {
-                        const newLogoId = (async () => {
+                    handleSubmit={async function () {
+                        const newLogoId = await (async () => {
                             if (updatedFile.picture_profil === null) {
                                 return null;
                             } else if (updatedFile.picture_profil.file) {
+                                console.log('uploading');
+                                console.log(updatedFile.picture_profil);
                                 return await uploadFile({
                                     file: updatedFile.picture_profil.file,
                                 }).then(r => r['@id']);
                             }
                         })();
+                        console.log(newLogoId)
                         const data = {
                             email: entity.email,
                             plainPassword: entity.password || undefined,
@@ -209,7 +211,7 @@ export default function Profile() {
                             websiteUrl: entity.websiteUrl,
                             socialsNetworks: entity.socialNetworks,
                             country: entity.country,
-                            picture_profil: newLogoId,
+                            pictureProfil: newLogoId,
                         };
                         console.debug('data', data);
                         // if (password !== passwordConfirm) {
