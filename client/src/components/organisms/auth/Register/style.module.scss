@@ -50,6 +50,11 @@
             display: flex;
             gap: 15px;
 
+            // cancel width from Input component
+            & > div {
+                width: inherit;
+            }
+
             & > p > span {
                 text-decoration: underline;
             }
@@ -66,8 +71,8 @@
                 border: 2px solid $background-color-secondary;
 
                 &:checked {
-                    background-color: #2196f3;
-                    border-color: #2196f3;
+                    background-color: $background-color-secondary;
+                    border-color: $text-color-secondary;
 
                     &::before {
                         content: '';
@@ -87,6 +92,7 @@
 
             & > a {
                 text-decoration: underline;
+                color: $background-color-secondary;
             }
         }
 

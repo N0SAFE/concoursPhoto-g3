@@ -18,17 +18,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new Get(
-            name: 'lastPicturesPosted',
+            name: CompetitionController::LAST_PICTURES_POSTED,
             uriTemplate: '/competitions/{id}/last-pictures-posted',
             controller: CompetitionController::class
         ),
         new Get(
-            name: 'lastPicturesObtainedVotes',
+            name: CompetitionController::LAST_PICTURES_OBTAINED_VOTES,
             uriTemplate: '/competitions/{id}/last-pictures-obtained-votes',
             controller: CompetitionController::class
         ),
         new Get(
-            name: 'picturesObtainedPrice',
+            name: CompetitionController::PICTURES_OBTAINED_PRICE,
             uriTemplate: '/competitions/{id}/pictures-obtained-price',
             controller: CompetitionController::class
         )

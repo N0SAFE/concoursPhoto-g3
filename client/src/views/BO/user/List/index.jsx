@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BOList from '@/components/organisms/BO/List';
 import useApiFetch from '@/hooks/useApiFetch';
 import { toast } from 'react-toastify';
 import Button from '@/components/atoms/Button';
-import useLocation from '@/hooks/useLocation';
 import style from './style.module.scss';
-import Loader from '@/components/atoms/Loader/index.jsx';
+import Loader from '@/components/atoms/Loader';
+import Table from '@/components/molecules/Table';
 
 export default function UserList() {
     const apiFetch = useApiFetch();
@@ -163,7 +162,7 @@ export default function UserList() {
                         <option value="false">Non vérifié</option>
                     </select>
                 </div>
-                <BOList
+                <Table
                     entityList={userFiltering()}
                     fields={[
                         { property: 'id', display: 'ID' },
