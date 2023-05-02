@@ -17,78 +17,82 @@ class Organization
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['organization', 'competition'])]
+    #[Groups(['organization', 'competition', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'competition', 'user'])]
-
+    #[Groups(['organization', 'competition', 'user:current:read', 'user:read'])]
     private ?string $organizer_name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $address = null;
 
     #[ORM\Column]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $postcode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
-    private ?string $city = null;
+    #[Groups(['organization', 'user:current:read'])]
+    private ?string $citycode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $website_url = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $number_phone = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?string $country = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizations')]
-    #[Groups('organization')]
+    #[Groups(['organization', 'user:current:read'])]
     private ?OrganizationType $organization_type = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Manage')]
+    #[Groups('competition')]
     private Collection $users;
 
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Rent::class)]
     private Collection $rents;
 
-    #[Groups(['organization'])]
+    #[Groups(['organization', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Competition::class)]
     private Collection $competitions;
 
+    #[Groups(['organization', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
-    #[Groups(['organization'])]
+    #[Groups(['organization', 'user:current:read'])]
     #[ORM\Column(length: 255)]
     private ?string $intra_community_vat = null;
 
-    #[Groups(['organization'])]
+    #[Groups(['organization', 'user:current:read'])]
     #[ORM\Column(length: 255)]
     private ?string $number_siret = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['organization', 'competition'])]
+    #[Groups(['organization', 'competition', 'user:current:read'])]
     private ?File $logo = null;
+
+    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: OrganizationLink::class)]
+    private Collection $organizationLinks;
 
     public function __construct()
     {
@@ -96,6 +100,7 @@ class Organization
         $this->rents = new ArrayCollection();
         $this->competitions = new ArrayCollection();
         $this->sponsors = new ArrayCollection();
+        $this->organizationLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,14 +168,14 @@ class Organization
         return $this;
     }
 
-    public function getCity(): ?string
+    public function getCitycode(): ?string
     {
-        return $this->city;
+        return $this->citycode;
     }
 
-    public function setCity(string $city): self
+    public function setCitycode(string $citycode): self
     {
-        $this->city = $city;
+        $this->citycode = $citycode;
 
         return $this;
     }
@@ -384,6 +389,36 @@ class Organization
     public function setLogo(?File $logo): self
     {
         $this->logo = $logo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrganizationLink>
+     */
+    public function getOrganizationLinks(): Collection
+    {
+        return $this->organizationLinks;
+    }
+
+    public function addOrganizationLink(OrganizationLink $organizationLink): self
+    {
+        if (!$this->organizationLinks->contains($organizationLink)) {
+            $this->organizationLinks->add($organizationLink);
+            $organizationLink->setOrganization($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrganizationLink(OrganizationLink $organizationLink): self
+    {
+        if ($this->organizationLinks->removeElement($organizationLink)) {
+            // set the owning side to null (unless already changed)
+            if ($organizationLink->getOrganization() === $this) {
+                $organizationLink->setOrganization(null);
+            }
+        }
 
         return $this;
     }

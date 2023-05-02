@@ -39,6 +39,52 @@ class CompetitionRepository extends ServiceEntityRepository
         }
     }
 
+    // select the 8 last pictures posted (path of file, the name of competition and the submission dat) from competition order by submission date
+    public function getLastPicturesPosted(Competition $competition): array {
+        return $this->createQueryBuilder('c')
+            // select 8 pictures path related to file path from competition order by submission date
+            ->select('f.path', 'p.submission_date', 'c.competition_name')
+            ->join('c.pictures', 'p')
+            ->join('p.file', 'f')
+            ->where('c.id = :id')
+            ->setParameter('id', $competition->getId())
+            ->orderBy('p.submission_date', 'DESC')
+            ->setMaxResults(8)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // select the 8 last pictures obtained votes (path of file, the name of competition and the vote date) from competition order by vote date
+    public function getLastPicturesObtainedVotes(Competition $competition): array {
+        return $this->createQueryBuilder('c')
+            ->select('f.path', 'c.competition_name', 'v.vote_date')
+            ->join('c.pictures', 'p')
+            ->join('p.file', 'f')
+            ->join('p.votes', 'v')
+            ->where('c.id = :id')
+            ->setParameter('id', $competition->getId())
+            ->orderBy('v.vote_date', 'DESC')
+            ->setMaxResults(8)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // select the pictures obtained price (path of file, the name of competition and the price won) from competition order by price won
+    public function getPicturesObtainedPrice(Competition $competition): array {
+        return $this->createQueryBuilder('c')
+            ->select('f.path', 'c.competition_name', 'p.price_won')
+            ->join('c.pictures', 'p')
+            ->join('p.file', 'f')
+            ->where('c.id = :id')
+            ->setParameter('id', $competition->getId())
+            ->orderBy('p.price_won', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return competition[] Returns an array of competition objects
 //     */

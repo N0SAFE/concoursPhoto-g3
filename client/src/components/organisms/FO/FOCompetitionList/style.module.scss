@@ -2,7 +2,7 @@
     & > div {
         display: flex;
         justify-content: center;
-        gap: $gapBetweenContainer;
+        gap: $gapBetweenElement;
         flex-wrap: wrap;
     }
 }

@@ -1,5 +1,5 @@
 $paddingBorder: 15px;
-$containerWidth: calc((100% - ($gapBetweenContainer) * 2));
+$containerWidth: calc((100% - ($gapBetweenElement) * 2));
 $borderRadius: 10px;
 
 .card {
@@ -11,6 +11,9 @@ $borderRadius: 10px;
         box-shadow: 3px 5px 30px rgba(0, 0, 0, 0.1);
         overflow: hidden;
         cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
         @include mobile() {
             width: calc($containerWidth / 2);
@@ -39,6 +42,7 @@ $borderRadius: 10px;
             width: 100%;
             height: 100%;
             object-fit: cover;
+            aspect-ratio: 16/9;
         }
     }
 
@@ -66,7 +70,7 @@ $borderRadius: 10px;
             gap: 10px;
 
             p {
-                font-size: .9rem;
+                font-size: 0.9rem;
             }
         }
     }

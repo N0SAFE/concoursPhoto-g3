@@ -1,9 +1,27 @@
 .componentButton {
-    border-radius: 10px;
+    @extend .unselectable;
+    &Container {
+        border-radius: 10px;
+        align-items: center;
+        &Disabled {
+            cursor: not-allowed;
+            opacity: 0.65;
+            filter: alpha(opacity=65);
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+    }
+
+    border: none;
     align-items: center;
     cursor: pointer;
-    border: none;
     font-size: 1.1rem;
+    justify-content: center;
+    display: flex;
+
+    &Disabled {
+        pointer-events: none;
+    }
 
     & > div {
         display: flex;

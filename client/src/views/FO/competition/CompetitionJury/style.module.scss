@@ -1,20 +1,44 @@
-.juryContainer {
-    & > div {
-        width: 100%;
+.jury {
+    display: flex;
+    flex-direction: row;
+    gap: $gapBetweenElement;
 
-        & > ul {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            padding: 0;
-            margin: 0;
-            list-style: none;
+    & > div:first-child {
+        padding: 20px 0;
+        flex: 0 66%;
+    }
 
-            & > li {
-                font-weight: 700;
-                background-color: $background-color-lightgrey-2;
-                padding: 15px;
+    & > div:last-child {
+        flex: 0 33%;
+    }
+
+    &Container {
+        & > div {
+            width: 100%;
+
+            & > ul {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                padding: 0;
+                margin: 0;
+                list-style: none;
+
+                & > li {
+                    font-weight: 700;
+                    background-color: $background-color-lightgrey-2;
+                    padding: 15px;
+                }
             }
         }
+    }
+
+    @include below(xl) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    @include below(sm) {
+        display: block;
     }
 }

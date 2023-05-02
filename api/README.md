@@ -2,7 +2,7 @@
 
 ## Configuration de l'environnement de travail
 
-__Si vous êtes sur Windows__
+**Si vous êtes sur Windows**
 
 Installez Chocolatey pour pouvoir installer OpenSSL
 
@@ -34,24 +34,25 @@ composer install
 
 ## Configuration de l'API
 
-- Démarrer l'API avec la commande suivante :
+-   Démarrer l'API avec la commande suivante :
 
 ```
 symfony server:start -d
 ```
-- Créer votre base de données avec :
+
+-   Créer votre base de données avec :
 
 ```
 php bin/console doctrine:database:create
 ```
 
-- Mettre à jour la base de données :
+-   Mettre à jour la base de données :
 
 ```
 php bin/console doctrine:schema:update --force
 ```
 
-- Générer les jeux d'essais :
+-   Générer les jeux d'essais :
 
 ```
 php bin/console doctrine:fixtures:load
