@@ -1,4 +1,4 @@
-.container {
+.portalContainer {
     display: flex;
     gap: $gapBetweenContainer;
     justify-content: center;
@@ -7,56 +7,63 @@
     @include below(md) {
         justify-content: inherit;
     }
-}
 
-.boxSingle {
-    @extend .unselectable;
-    flex-direction: column;
-    display: flex;
-    width: calc((100% - $gapBetweenContainer) / 1.5);
-    aspect-ratio: 16/9;
-
-    & > img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-    }
-}
-
-.boxDuo {
-    display: flex;
-    gap: $gapBetweenContainer;
-    flex-direction: column;
-    width: calc((100% - $gapBetweenContainer) / 3);
-    aspect-ratio: 16/9;
-
-    & > div {
-        height: 100%;
-    }
-
-    & > img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        aspect-ratio: 16/9;
-    }
-}
-
-@include below(md) {
     .boxSingle {
-        width: 100%;
+        @extend .unselectable;
+        flex-direction: column;
+        display: flex;
+        width: calc((100% - $gapBetweenContainer) / 1.5);
+        aspect-ratio: 16/9;
+
+        & > img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
     }
 
     .boxDuo {
-        flex-direction: row;
+        display: flex;
         gap: $gapBetweenContainer;
+        flex-direction: column;
+        width: calc((100% - $gapBetweenContainer) / 3);
         aspect-ratio: 16/9;
 
-        // for pictures
-        width: calc((100% - $gapBetweenContainer) / 2);
-
-        // for slider
         & > div {
+            height: 100%;
+        }
+
+        & > img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            aspect-ratio: 16/9;
+        }
+    }
+
+    @include below(md) {
+        .boxSingle {
+            width: 100%;
+        }
+
+        .boxDuo {
+            flex-direction: row;
+            gap: $gapBetweenContainer;
+            aspect-ratio: 16/9;
+
+            // for pictures
+            width: calc((100% - $gapBetweenContainer) / 2);
+
+            // for slider
+            & > div {
+                width: 100%;
+            }
+        }
+    }
+
+    @include below(sm) {
+        .boxDuo {
+            flex-direction: column;
             width: 100%;
         }
     }

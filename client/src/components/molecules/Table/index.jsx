@@ -50,6 +50,7 @@ export default function Table({
                                             textColor={textColor}
                                             name={label}
                                             key={index}
+                                            borderRadius={'30px'}
                                             onClick={() => action({ entity })}
                                         />
                                     );

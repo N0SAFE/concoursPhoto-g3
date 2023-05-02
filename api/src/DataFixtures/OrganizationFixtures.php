@@ -9,6 +9,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use FileFixtures;
 
 class OrganizationFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -23,26 +24,6 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
         '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
     ];
 
-    const PICTURE_ARRAY = [
-        "698-2160-2160.jpg",
-        "814-2160-2160.jpg",
-        "904-2160-2160.jpg",
-        "952-2160-2160.jpg",
-        "12839c32a07ad619a08ccaec9d21c241b732d40d.Capture d'écran 2023-03-22 154847.png"
-    ];
-
-    public function createFile() {
-        $file = new File();
-
-        $file->setExtension($this->faker->fileExtension());
-        $file->setPath("fixtures-upload/" . self::PICTURE_ARRAY[rand(0, count(self::PICTURE_ARRAY) - 1)]);
-        $file->setSize($this->faker->randomNumber());
-        $file->setType($this->faker->mimeType());
-        $file->setDefaultName($this->faker->name());
-
-        return $file;
-    }
-
     public function load(ObjectManager $manager): void
     {
         $faker = $this->faker;
@@ -53,10 +34,10 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setState($faker->boolean());
             $organization->setOrganizerName($faker->text());
             $organization->setDescription($faker->text());
-            $organization->setLogo($this->createFile());
+            $organization->setLogo((new FileFixtures)->createFile());
             $organization->setAddress($faker->address());
             $organization->setPostcode(str_replace(' ', '', $faker->postcode()));
-            $organization->setCity(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
+            $organization->setCitycode(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
             $organization->setWebsiteUrl($faker->url());
             $organization->setEmail($faker->email());
             $organization->setNumberPhone($faker->phoneNumber());

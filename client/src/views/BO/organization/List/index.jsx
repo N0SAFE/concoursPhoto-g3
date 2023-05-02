@@ -86,6 +86,7 @@ export default function OrganizationList() {
                         color="green"
                         textColor="white"
                         name="Créer une organisation"
+                        borderRadius={'30px'}
                         onClick={() => navigate('/BO/organization/create')}
                     ></Button>
                 </div>
@@ -101,7 +102,7 @@ export default function OrganizationList() {
                         { property: 'description', display: 'Description' },
                         { property: 'address', display: 'Addresse' },
                         { property: 'postcode', display: 'Code postal' },
-                        { property: 'city', display: 'Ville' },
+                        { property: 'citycode', display: 'Ville' },
                         { property: 'number_phone', display: 'Téléphone' },
                         { property: 'email', display: 'Adresse mail' },
                         { property: 'website_url', display: 'Site web' },
