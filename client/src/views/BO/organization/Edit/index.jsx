@@ -1,13 +1,14 @@
-import Input from '@/components/atoms/Input/index.jsx';
-import BOForm from '@/components/organisms/BO/Form';
-import useApiFetch from '@/hooks/useApiFetch.js';
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import useLocationPosibility from '@/hooks/useLocationPosibility.js';
-import useLocation from '@/hooks/useLocation.js';
-import { toast } from 'react-toastify';
-import useApiPath from '@/hooks/useApiPath.js';
-import useFilesUploader from '@/hooks/useFilesUploader.js';
+import Input from "@/components/atoms/Input/index.jsx";
+import BOForm from "@/components/organisms/BO/Form";
+import useApiFetch from "@/hooks/useApiFetch.js";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import useLocationPosibility from "@/hooks/useLocationPosibility.js";
+import useLocation from "@/hooks/useLocation.js";
+import { toast } from "react-toastify";
+import useApiPath from "@/hooks/useApiPath.js";
+import useFilesUploader from "@/hooks/useFilesUploader.js";
+import Button from "@/components/atoms/Button";
 import Loader from '@/components/atoms/Loader/index.jsx';
 
 export default function OrganizationEdit() {
@@ -430,6 +431,7 @@ export default function OrganizationEdit() {
                     </div>
                 </div>
             </BOForm>
+            <Button name="Retour" onClick={() => navigate("/BO/organization")} />
         </Loader>
     );
 }

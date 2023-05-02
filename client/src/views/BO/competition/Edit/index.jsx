@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import useFilesUpdater from '@/hooks/useFilesUploader.js';
 import useApiPath from '@/hooks/useApiPath.js';
 import Loader from '@/components/atoms/Loader/index.jsx';
+import Button from '@/components/atoms/Button';
 
 export default function CompetitionEdit() {
     const [isLoading, setIsLoading] = useState(true);
@@ -702,6 +703,7 @@ export default function CompetitionEdit() {
                     </div>
                 </div>
             </BOCreate>
+            <Button name="Retour" onClick={() => navigate('/BO/competition')} />
         </Loader>
     );
 }
