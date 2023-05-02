@@ -39,9 +39,7 @@ export default function ProfileLayout() {
     return (
         <Loader active={gendersPossibility.isLoading}>
             <div className={style.profilContainer}>
-                <h2>
-                    Mon profil
-                </h2>
+                <h2>Mon profil</h2>
                 <Navlink base="/profile" list={profileRouteList} />
                 <Outlet context={{ gendersPossibility }} />
             </div>

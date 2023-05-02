@@ -12,8 +12,8 @@ import useAuth from '@/hooks/useAuth.js';
 import { useModal } from '@/contexts/ModalContext/index.jsx';
 import Login from '@/components/organisms/auth/Login/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';
-import useFilesUploader from "@/hooks/useFilesUploader.js";
-import useApiPath from "@/hooks/useApiPath.js";
+import useFilesUploader from '@/hooks/useFilesUploader.js';
+import useApiPath from '@/hooks/useApiPath.js';
 
 export default function Profile() {
     const { gendersPossibility } = useOutletContext(); // to avoid the loading when we change the page
@@ -32,10 +32,12 @@ export default function Profile() {
     const { setModalContent, showModal } = useModal();
     const apiPathComplete = useApiPath();
     const [updatedFile, setUpdatedFile] = useState({
-        picture_profil: me.picture_profil ? {
-            to: apiPathComplete(me.picture_profil.path),
-            name: me.picture_profil.default_name,
-        } : null,
+        picture_profil: me.picture_profil
+            ? {
+                  to: apiPathComplete(me.picture_profil.path),
+                  name: me.picture_profil.default_name,
+              }
+            : null,
     });
     const updateFileState = (key, value) => {
         setUpdatedFile({ ...updatedFile, [key]: value });
@@ -172,7 +174,7 @@ export default function Profile() {
         });
     }, [entity.postcode, entity.city]);
 
-    console.log(entity.picture_profil)
+    console.log(entity.picture_profil);
 
     return (
         <Loader active={gendersPossibility.isLoading}>
@@ -270,7 +272,10 @@ export default function Profile() {
                         name="picture_profil"
                         label="Logo"
                         onChange={d => updateFileState('picture_profil', d)}
-                        extra={{ value: updatedFile.picture_profil, type: 'image' }}
+                        extra={{
+                            value: updatedFile.picture_profil,
+                            type: 'image',
+                        }}
                     />
                     <Input
                         type="radioList"
@@ -332,7 +337,10 @@ export default function Profile() {
                                 type="password"
                                 name="Mot de passe"
                                 label="Mot de passe*"
-                                extra={{ placeholder: '8 caractères min dont 1 chiffre et 1 lettre majuscule' }}
+                                extra={{
+                                    placeholder:
+                                        '8 caractères min dont 1 chiffre et 1 lettre majuscule',
+                                }}
                                 onChange={d => updateEntity('password', d)}
                             />
                         </div>
@@ -366,8 +374,8 @@ export default function Profile() {
                                                     id: 'city',
                                                     args: {
                                                         postcode:
-                                                        entity.postcode
-                                                            ?.value,
+                                                            entity.postcode
+                                                                ?.value,
                                                     },
                                                 });
                                             }
@@ -494,33 +502,33 @@ export default function Profile() {
                     <h2>Réseaux sociaux de l’organisation</h2>
                     <div className={style.formWrapper}>
                         <div className={style.formColumn}>
-                                <Input
-                                    type="text"
-                                    name="socialNetworks"
-                                    label="Votre page Facebook"
-                                    onChange={d =>
-                                        updateEntity('socialNetworks', d)
-                                    }
-                                    defaultValue={entity.socialNetworks}
-                                />
-                                <Input
-                                    type="text"
-                                    name="socialNetworks"
-                                    label="Votre chaîne Youtube"
-                                    onChange={d =>
-                                        updateEntity('socialNetworks', d)
-                                    }
-                                    defaultValue={entity.socialNetworks}
-                                />
-                                <Input
-                                    type="text"
-                                    name="socialNetworks"
-                                    label="Votre page Instagram"
-                                    onChange={d =>
-                                        updateEntity('socialNetworks', d)
-                                    }
-                                    defaultValue={entity.socialNetworks}
-                                />
+                            <Input
+                                type="text"
+                                name="socialNetworks"
+                                label="Votre page Facebook"
+                                onChange={d =>
+                                    updateEntity('socialNetworks', d)
+                                }
+                                defaultValue={entity.socialNetworks}
+                            />
+                            <Input
+                                type="text"
+                                name="socialNetworks"
+                                label="Votre chaîne Youtube"
+                                onChange={d =>
+                                    updateEntity('socialNetworks', d)
+                                }
+                                defaultValue={entity.socialNetworks}
+                            />
+                            <Input
+                                type="text"
+                                name="socialNetworks"
+                                label="Votre page Instagram"
+                                onChange={d =>
+                                    updateEntity('socialNetworks', d)
+                                }
+                                defaultValue={entity.socialNetworks}
+                            />
                         </div>
                         <div className={style.formColumn}>
                             <Input

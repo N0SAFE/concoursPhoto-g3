@@ -296,9 +296,7 @@ export default function Input({
                         {extra?.options?.map(option => {
                             return (
                                 <div className={style.component}>
-                                    <label
-                                        htmlFor={option.value}
-                                    >
+                                    <label htmlFor={option.value}>
                                         {option.label}
                                     </label>
                                     <input
