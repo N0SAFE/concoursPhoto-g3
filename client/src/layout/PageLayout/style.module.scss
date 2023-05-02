@@ -6,7 +6,7 @@
     flex-direction: column;
     justify-content: space-between;
 
-    & > div  {
+    & > div {
         @extend .limited-content;
 
         @include below(md) {
