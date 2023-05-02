@@ -8,6 +8,7 @@ import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
 import useApiPath from "@/hooks/useApiPath.js";
 import useFilesUploader from "@/hooks/useFilesUploader.js";
+import Button from "@/components/atoms/Button";
 
 export default function OrganizationEdit() {
     const apiPathComplete = useApiPath();
@@ -287,6 +288,7 @@ export default function OrganizationEdit() {
                     </div>
                 </div>
             </BOForm>
+            <Button name="Retour" onClick={() => navigate("/BO/organization")} />
         </div>
     );
 }

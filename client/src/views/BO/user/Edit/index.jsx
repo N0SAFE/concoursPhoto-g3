@@ -7,6 +7,7 @@ import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import useLocation from "@/hooks/useLocation.js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Button from "@/components/atoms/Button";
 
 export default function UserCreate() {
     const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function UserCreate() {
     const getGendersPossibility = (controller) => {
         return apiFetch("/genders", {
             method: "GET",
-            signal: controller?.signal
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -59,7 +60,7 @@ export default function UserCreate() {
     const getPersonalstatus = (controller) => {
         return apiFetch("/personal_statuts", {
             method: "GET",
-            signal: controller?.signal
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -73,7 +74,7 @@ export default function UserCreate() {
     function getUser(controller) {
         return apiFetch("/users/" + userId, {
             method: "GET",
-            signal: controller?.signal
+            signal: controller?.signal,
         })
             .then((r) => r.json())
             .then((data) => {
@@ -160,9 +161,9 @@ export default function UserCreate() {
                                 throw new Error(data.description);
                             }
                         });
-                        promise.then(() => {
-                            navigate("/BO/user");
-                        })
+                    promise.then(() => {
+                        navigate("/BO/user");
+                    });
                     toast.promise(promise, {
                         pending: "Modification en cours",
                         success: "Utilisateur modifié",
@@ -175,7 +176,14 @@ export default function UserCreate() {
 
                     <Input type="text" name="lastname" label="Nom" extra={{ required: true }} onChange={(d) => updateEntityStateState("lastname", d)} defaultValue={entity.lastname} />
 
-                    <Input type="date" name="dateOfBirth" label="Date de naissance" extra={{ required: true }} onChange={(d) => updateEntityStateState("dateOfBirth", d)} defaultValue={entity.dateOfBirth} />
+                    <Input
+                        type="date"
+                        name="dateOfBirth"
+                        label="Date de naissance"
+                        extra={{ required: true }}
+                        onChange={(d) => updateEntityStateState("dateOfBirth", d)}
+                        defaultValue={entity.dateOfBirth}
+                    />
 
                     <Input
                         type="select"
@@ -238,11 +246,31 @@ export default function UserCreate() {
                         onChange={(d) => updateEntityStateState("postcode", d)}
                     />
                 </div>
-                <Input type="tel" name="phoneNumber" label="Numéro de téléphone" extra={{ required: true }} onChange={(d) => updateEntityStateState("phoneNumber", d)} defaultValue={entity.phoneNumber} />
-                <Input type="select" name="gender" label="Genre" extra={{ value: entity.gender, options: entityPossibility.genders, required: true }} onChange={(d) => updateEntityStateState("gender", d)} />
+                <Input
+                    type="tel"
+                    name="phoneNumber"
+                    label="Numéro de téléphone"
+                    extra={{ required: true }}
+                    onChange={(d) => updateEntityStateState("phoneNumber", d)}
+                    defaultValue={entity.phoneNumber}
+                />
+                <Input
+                    type="select"
+                    name="gender"
+                    label="Genre"
+                    extra={{ value: entity.gender, options: entityPossibility.genders, required: true }}
+                    onChange={(d) => updateEntityStateState("gender", d)}
+                />
                 <Input type="password" name="password" label="Mot de passe" onChange={(d) => updateEntityStateState("password", d)} defaultValue={entity.password} />
-                <Input type="password" name="passwordConfirm" label="Confirmation du mot de passe" onChange={(d) => updateEntityStateState("passwordConfirm", d)} defaultValue={entity.passwordConfirm} />
+                <Input
+                    type="password"
+                    name="passwordConfirm"
+                    label="Confirmation du mot de passe"
+                    onChange={(d) => updateEntityStateState("passwordConfirm", d)}
+                    defaultValue={entity.passwordConfirm}
+                />
             </BOForm>
+            <Button name="Retour" onClick={() => navigate("/BO/user")} />
         </div>
     );
 }

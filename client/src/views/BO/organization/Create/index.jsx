@@ -5,10 +5,13 @@ import { useState, useEffect } from "react";
 import useLocationPosibility from "@/hooks/useLocationPosibility.js";
 import { toast } from "react-toastify";
 import useFilesUploader from "@/hooks/useFilesUploader.js";
+import Button from "@/components/atoms/Button";
+import { useNavigate } from "react-router-dom";
 
 export default function OrganizationCreate() {
     const apiFetch = useApiFetch();
     const { uploadFile } = useFilesUploader();
+    const navigate = useNavigate();
 
     const [locationPossibility, updateLocationPossibility] = useLocationPosibility(["cities"], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map((c) => ({ label: `${c.nom} [${c.codesPostaux.join(",")}]`, value: c.code }));
@@ -240,6 +243,7 @@ export default function OrganizationCreate() {
                     </div>
                 </div>
             </BOCreate>
+            <Button name="Retour" onClick={() => navigate("/BO/organization")} />
         </div>
     );
 }

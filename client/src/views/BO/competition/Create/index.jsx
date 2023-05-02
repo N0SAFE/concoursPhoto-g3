@@ -6,6 +6,7 @@ import useLocation from "@/hooks/useLocation";
 import { toast } from "react-toastify";
 import useFilesUpdater from "@/hooks/useFilesUploader.js";
 import { useNavigate } from "react-router-dom";
+import Button from "@/components/atoms/Button";
 
 export default function CompetitionCreate() {
     const { uploadFile } = useFilesUpdater();
@@ -374,6 +375,7 @@ export default function CompetitionCreate() {
                     </div>
                 </div>
             </BOCreate>
+            <Button name="Retour" onClick={() => navigate("/BO/competition")} />
         </div>
     );
 }

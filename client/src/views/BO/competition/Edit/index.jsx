@@ -11,7 +11,7 @@ import useApiPath from "@/hooks/useApiPath.js";
 
 export default function CompetitionEdit() {
     const apiPathComplete = useApiPath();
-    const {uploadFile, deleteFile} = useFilesUpdater()
+    const { uploadFile, deleteFile } = useFilesUpdater();
     const navigate = useNavigate();
     const { id: competitionId } = useParams();
     const apiFetch = useApiFetch();
@@ -151,9 +151,9 @@ export default function CompetitionEdit() {
                         numberOfPrices: data.number_of_prices,
                         minAgeCriteria: data.min_age_criteria,
                         maxAgeCriteria: data.max_age_criteria,
-                        cityCriteria: cities.map((c) => c && ({ label: c.nom, value: c.code })).filter((c) => c),
-                        departmentCriteria: departments.map((d) => d && ({ label: d.nom, value: d.code })).filter((d) => d),
-                        regionCriteria: regions.map((r) => r && ({ label: r.nom, value: r.code })).filter((r) => r),
+                        cityCriteria: cities.map((c) => c && { label: c.nom, value: c.code }).filter((c) => c),
+                        departmentCriteria: departments.map((d) => d && { label: d.nom, value: d.code }).filter((d) => d),
+                        regionCriteria: regions.map((r) => r && { label: r.nom, value: r.code }).filter((r) => r),
                     };
                     const _updatedFile = {
                         visual: data.competition_visual ? { to: apiPathComplete(data.competition_visual.path), name: data.competition_visual.default_name } : null,
@@ -193,65 +193,65 @@ export default function CompetitionEdit() {
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
                         try {
-                        const newVisualId = await (async () => {
-                            if (updatedFile.visual === null) {
-                                return null;
-                            } else if (updatedFile.visual.file) {
-                                return await uploadFile({ file: updatedFile.visual.file }).then((r) => r["@id"]);
-                            }
-                        })().catch((e) => {
-                            reject(e);
-                            throw e;
-                        });
-                        const data = {
-                            state: entity.state,
-                            competitionName: entity.name,
-                            competitionVisual: newVisualId,
-                            participantCategory: entity.participantCategories.map((p) => p.value),
-                            organization: entity.organizer.value,
-                            theme: entity.themes.map((t) => t.value),
-                            description: entity.description,
-                            rules: entity.rules,
-                            creationDate: new Date(entity.creationDate).toISOString(),
-                            publicationDate: new Date(entity.publicationDate).toISOString(),
-                            submissionStartDate: new Date(entity.submissionStartDate).toISOString(),
-                            submissionEndDate: new Date(entity.submissionEndDate).toISOString(),
-                            votingStartDate: new Date(entity.votingStartDate).toISOString(),
-                            votingEndDate: new Date(entity.votingEndDate).toISOString(),
-                            resultsDate: new Date(entity.resultsDate).toISOString(),
-                            weightingOfJuryVotes: parseFloat(entity.weightingOfJuryVotes),
-                            numberOfMaxVotes: parseInt(entity.numberOfMaxVotes),
-                            numberOfPrices: parseInt(entity.numberOfPrices),
-                            minAgeCriteria: parseInt(entity.minAgeCriteria),
-                            maxAgeCriteria: parseInt(entity.maxAgeCriteria),
-                            cityCriteria: entity.cityCriteria.map((c) => c.value),
-                            departmentCriteria: entity.departmentCriteria.map((d) => d.value),
-                            regionCriteria: entity.regionCriteria.map((r) => r.value),
-                            countryCriteria: ["FRANCE"],
-                            endowments: entity.endowments,
-                        };
-                        const res = await apiFetch(`/competitions/${competitionId}`, {
-                            method: "PATCH",
-                            body: JSON.stringify(data),
-                            headers: {
-                                "Content-Type": "application/merge-patch+json",
-                            },
-                        })
-                            .then((r) => r.json())
-                            .then(async (data) => {
-                                console.debug(data);
-                                if (data["@type"] === "hydra:Error") {
-                                    throw new Error(data.description);
+                            const newVisualId = await (async () => {
+                                if (updatedFile.visual === null) {
+                                    return null;
+                                } else if (updatedFile.visual.file) {
+                                    return await uploadFile({ file: updatedFile.visual.file }).then((r) => r["@id"]);
                                 }
-                                if (updatedFile.visual === null && entity.visual) {
-                                    await deleteFile({ path: entity.visual["@id"] });
-                                }
-                            })
-                            .catch((e) => {
+                            })().catch((e) => {
                                 reject(e);
                                 throw e;
                             });
-                        resolve(res);
+                            const data = {
+                                state: entity.state,
+                                competitionName: entity.name,
+                                competitionVisual: newVisualId,
+                                participantCategory: entity.participantCategories.map((p) => p.value),
+                                organization: entity.organizer.value,
+                                theme: entity.themes.map((t) => t.value),
+                                description: entity.description,
+                                rules: entity.rules,
+                                creationDate: new Date(entity.creationDate).toISOString(),
+                                publicationDate: new Date(entity.publicationDate).toISOString(),
+                                submissionStartDate: new Date(entity.submissionStartDate).toISOString(),
+                                submissionEndDate: new Date(entity.submissionEndDate).toISOString(),
+                                votingStartDate: new Date(entity.votingStartDate).toISOString(),
+                                votingEndDate: new Date(entity.votingEndDate).toISOString(),
+                                resultsDate: new Date(entity.resultsDate).toISOString(),
+                                weightingOfJuryVotes: parseFloat(entity.weightingOfJuryVotes),
+                                numberOfMaxVotes: parseInt(entity.numberOfMaxVotes),
+                                numberOfPrices: parseInt(entity.numberOfPrices),
+                                minAgeCriteria: parseInt(entity.minAgeCriteria),
+                                maxAgeCriteria: parseInt(entity.maxAgeCriteria),
+                                cityCriteria: entity.cityCriteria.map((c) => c.value),
+                                departmentCriteria: entity.departmentCriteria.map((d) => d.value),
+                                regionCriteria: entity.regionCriteria.map((r) => r.value),
+                                countryCriteria: ["FRANCE"],
+                                endowments: entity.endowments,
+                            };
+                            const res = await apiFetch(`/competitions/${competitionId}`, {
+                                method: "PATCH",
+                                body: JSON.stringify(data),
+                                headers: {
+                                    "Content-Type": "application/merge-patch+json",
+                                },
+                            })
+                                .then((r) => r.json())
+                                .then(async (data) => {
+                                    console.debug(data);
+                                    if (data["@type"] === "hydra:Error") {
+                                        throw new Error(data.description);
+                                    }
+                                    if (updatedFile.visual === null && entity.visual) {
+                                        await deleteFile({ path: entity.visual["@id"] });
+                                    }
+                                })
+                                .catch((e) => {
+                                    reject(e);
+                                    throw e;
+                                });
+                            resolve(res);
                         } catch (e) {
                             console.error(e);
                             reject(e);
@@ -446,6 +446,7 @@ export default function CompetitionEdit() {
                     </div>
                 </div>
             </BOCreate>
+            <Button name="Retour" onClick={() => navigate("/BO/competition")} />
         </div>
     );
 }
