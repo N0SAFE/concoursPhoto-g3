@@ -45,7 +45,7 @@ class Picture
     private Collection $votes;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
-    #[Groups(['competition', 'user:read'])]
+    #[Groups(['competition', 'user:read', 'user:current:read'])]
     private ?Competition $competition = null;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]

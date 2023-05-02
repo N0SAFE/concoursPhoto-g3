@@ -11,8 +11,8 @@ export default function PageLayout({ environment }) {
                 <div>
                     <Outlet />
                 </div>
-                <Footer />
             </div>
+            <Footer />
         </>
     );
 }

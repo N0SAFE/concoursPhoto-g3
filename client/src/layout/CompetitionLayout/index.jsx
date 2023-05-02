@@ -234,7 +234,9 @@ export default function CompetitionLayout() {
                     boxDown={{
                         type: 'slider',
                     }}
-                    boxDownContents={entity.pictures}
+                    boxDownContents={entity.sponsors?.map(
+                        image => image.logo.path
+                    )}
                 />
                 <Outlet context={{ competition: entity }} />
                 <Button

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -55,6 +56,36 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $this->save($user, true);
     }
+
+    // TROUVER UN MOYEN D'AFFICHER TOUTES LES COMPETITIONS OU L'UTILISATEUR A POSTER UNE PHOTO MAIS AUSSI LES COMPETITIONS OU IL A VOTE EN MÊME TEMPS
+    public function getCompetitionsParticipates(User $user): array {
+        // select all competitions where user have posted a picture
+        return $this->createQueryBuilder('u')
+            ->select('c.competition_name', 'c.id', 'c.submission_start_date', 'c.submission_end_date', 'c.state', 'c.results_date', 'COUNT(p.id) AS number_of_pictures')
+            ->join('u.pictures', 'p')
+            ->join('p.competition', 'c')
+            ->where('u.id = :id')
+            ->setParameter('id', $user->getId())
+            ->orderBy('c.competition_name', 'ASC')
+            ->groupBy('c.id')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    // A FUSIONNER AVEC LA REQUETE AU DESSUS MAIS J'AI PAS TROUVE COMMENT FAIRE
+
+//        return $this->createQueryBuilder('u')
+//            ->select('c.competition_name', 'c.id')
+//            ->join('u.votes', 'v')
+//            ->join('v.picture', 'p')
+//            ->join('p.competition', 'c')
+//            ->where('u.id = :id')
+//            ->setParameter('id', $user->getId())
+//            ->orderBy('c.competition_name', 'ASC')
+//            ->getQuery()
+//            ->getResult()
+//            ;
 
 //    /**
 //     * @return User[] Returns an array of User objects
