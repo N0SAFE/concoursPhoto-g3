@@ -5,14 +5,14 @@ import style from './style.module.scss';
 
 export default function PageLayout({ environment }) {
     return (
-        <>
-            <div className={style.pageContainer}>
+        <div className={style.pageContainer}>
+            <div className={style.pageContent}>
                 <Header environment={environment} />
                 <div>
                     <Outlet />
                 </div>
             </div>
             <Footer />
-        </>
+        </div>
     );
 }
