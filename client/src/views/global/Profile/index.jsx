@@ -192,7 +192,7 @@ export default function Profile() {
                                 }).then(r => r['@id']);
                             }
                         })();
-                        console.log(newLogoId)
+                        console.log(newLogoId);
                         const data = {
                             email: entity.email,
                             plainPassword: entity.password || undefined,
