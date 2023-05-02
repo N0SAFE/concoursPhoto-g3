@@ -123,6 +123,8 @@ export default function Myorganization() {
 
     return (
         <div className={style.formContainer}>
+            <h1>Mon compte</h1>
+            <Navlink base="/profile" list={profileRouteList} />
             <Input
                 type="select"
                 name="organisation"

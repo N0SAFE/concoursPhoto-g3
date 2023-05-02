@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 import Login from '@/components/organisms/auth/Login';
-import Register from '@/components/organisms/auth/Register';
 import UserList from '@/views/BO/user/List';
 import UserEdit from '@/views/BO/user/Edit';
 import UserCreate from '@/views/BO/user/Create';
@@ -31,7 +30,8 @@ import CompetitionJury from '@/views/FO/competition/CompetitionJury';
 import CompetitionPictures from '@/views/FO/competition/CompetitionPictures';
 import CompetitionResults from '@/views/FO/competition/CompetitionResults';
 import PageLayout from '@/layout/PageLayout';
-import ProfileLayout from './layout/ProfileLayout/index.jsx';
+import ProfileLayout from './layout/ProfileLayout';
+import CompetitionParticipation from '@/views/global/Profile/participation';
 
 function Router() {
     const { setModalContent, showModal } = useModal();
@@ -96,6 +96,10 @@ function Router() {
                         <Route
                             path="myorganization"
                             element={<Myorganization />}
+                        />
+                        <Route
+                            path="participations"
+                            element={<CompetitionParticipation />}
                         />
                     </Route>
                 </Route>
