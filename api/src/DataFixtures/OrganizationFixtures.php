@@ -9,7 +9,6 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
-use FileFixtures;
 
 class OrganizationFixtures extends Fixture implements DependentFixtureInterface
 {
