@@ -120,7 +120,7 @@ class Competition
     #[Groups(['competition', 'user:current:read'])]
     private Collection $participant_category;
 
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['competition'])]
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     private ?Organization $organization = null;
 
