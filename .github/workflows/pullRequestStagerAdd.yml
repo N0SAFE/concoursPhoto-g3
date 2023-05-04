@@ -1,0 +1,17 @@
+name: pull request event
+
+on: 
+    pull_request:
+        types: [opened, synchronize, reopened]
+    
+jobs:
+    add:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy Stage
+              uses: fjogeleit/http-request-action@v1
+              with:
+                url: 'https://directus.n0safe.space/items/process'
+                method: 'POST'
+                customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer nLuIN0yW9Pwwfq87fBGQ0oYlOCh3qT5J"}'
+                data: '{"owner": "3246a087-cbbf-4809-a173-4eafc737c431","projectgetter": "frefd","${{ github.event.pull_request.number }}": "dfr","modifier": [1,2]}'
