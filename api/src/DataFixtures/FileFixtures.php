@@ -1,5 +1,7 @@
 <?php
 
+namespace App\DataFixtures;
+
 use App\Entity\File;
 use Faker\Factory;
 
@@ -24,5 +26,9 @@ class FileFixtures {
         $file->setDefaultName($faker->name());
 
         return $file;
+    }
+    
+    public function load(){
+        
     }
 }

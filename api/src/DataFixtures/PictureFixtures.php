@@ -8,7 +8,6 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
-use FileFixtures;
 use Symfony\Component\Filesystem\Filesystem;
 
 class PictureFixtures extends Fixture implements DependentFixtureInterface

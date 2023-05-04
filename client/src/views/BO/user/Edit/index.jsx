@@ -1,12 +1,13 @@
-import Input from '@/components/atoms/Input/index.jsx';
-import BOForm from '@/components/organisms/BO/Form';
-import useApiFetch from '@/hooks/useApiFetch.js';
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import useLocationPosibility from '@/hooks/useLocationPosibility.js';
-import useLocation from '@/hooks/useLocation.js';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import Input from "@/components/atoms/Input/index.jsx";
+import BOForm from "@/components/organisms/BO/Form";
+import useApiFetch from "@/hooks/useApiFetch.js";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import useLocationPosibility from "@/hooks/useLocationPosibility.js";
+import useLocation from "@/hooks/useLocation.js";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import Button from "@/components/atoms/Button";
 import Loader from '@/components/atoms/Loader/index.jsx';
 
 export default function UserCreate() {
@@ -406,7 +407,31 @@ export default function UserCreate() {
                         defaultValue={entity.passwordConfirm}
                     />
                 </div>
+                <Input
+                    type="tel"
+                    name="phoneNumber"
+                    label="Numéro de téléphone"
+                    extra={{ required: true }}
+                    onChange={(d) => updateEntityStateState("phoneNumber", d)}
+                    defaultValue={entity.phoneNumber}
+                />
+                <Input
+                    type="select"
+                    name="gender"
+                    label="Genre"
+                    extra={{ value: entity.gender, options: entityPossibility.genders, required: true }}
+                    onChange={(d) => updateEntityStateState("gender", d)}
+                />
+                <Input type="password" name="password" label="Mot de passe" onChange={(d) => updateEntityStateState("password", d)} defaultValue={entity.password} />
+                <Input
+                    type="password"
+                    name="passwordConfirm"
+                    label="Confirmation du mot de passe"
+                    onChange={(d) => updateEntityStateState("passwordConfirm", d)}
+                    defaultValue={entity.passwordConfirm}
+                />
             </BOForm>
+            <Button name="Retour" onClick={() => navigate("/BO/user")} />
         </Loader>
     );
 }
