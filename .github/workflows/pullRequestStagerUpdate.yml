@@ -11,7 +11,7 @@ jobs:
             - name: Deploy Stage
               uses: fjogeleit/http-request-action@v1
               with:
-                url: 'https://directus.n0safe.space/items/process'
+                url: 'https://directus.n0safe.space/items/process/${{github.event.pull_request.number}}'
                 method: 'PATCH'
                 customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer nLuIN0yW9Pwwfq87fBGQ0oYlOCh3qT5J"}'
                 data: '{"owner": "3246a087-cbbf-4809-a173-4eafc737c431","projectgetter": "${{github.event.pull_request.head.ref}}","id": "${{ github.event.pull_request.number }}","modifier": [1,2]}'
