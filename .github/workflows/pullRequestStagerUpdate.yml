@@ -14,4 +14,4 @@ jobs:
                 url: 'https://directus.n0safe.space/flows/trigger/523b57ad-a681-4177-8599-f5f5fd45d476'
                 method: 'POST'
                 customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer nLuIN0yW9Pwwfq87fBGQ0oYlOCh3qT5J"}'
-                data: '{"process": [035478215${{github.event.pull_request.number}}]}'
+                data: '{"process": [12520${{github.event.pull_request.number}}]}'
