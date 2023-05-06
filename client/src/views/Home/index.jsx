@@ -10,7 +10,7 @@ export default function Home() {
     return (
         <Loader active={isLoading}>
             testudifvgvhierufdjv fgijbsfkibjngfjkngfjkn
-            <div className={style.homeContainer}>bdf
+            <div className={style.homeContainer}>bdf je suis le test
                 <div className={style.homeBanner}>
                     <div>
                         <h1>Le portail des concours photo</h1>
