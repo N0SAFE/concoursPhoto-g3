@@ -14,4 +14,4 @@ jobs:
                 url: 'https://directus.n0safe.space/items/process'
                 method: 'POST'
                 customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer nLuIN0yW9Pwwfq87fBGQ0oYlOCh3qT5J"}'
-                data: '{"owner": "3246a087-cbbf-4809-a173-4eafc737c431","projectgetter": "${{github.event.pull_request.head.ref}}","modifier": [1,2], "init": "npm run init && npm run build:dev"}'
+                data: '{"owner": "3246a087-cbbf-4809-a173-4eafc737c431","projectgetter": "gist clone -b ${{github.event.pull_request.head.ref}} https://github.com/N0SAFE/concoursPhoto-g3.git && rsync -vau --remove-source-files ./concoursPhoto-g3/ ./ && rm -r ./concoursPhoto-g3","modifier": [1,2], "init": "npm run init && npm run build:dev", "id": 035478215${{github.event.pull_request.number}}}'
