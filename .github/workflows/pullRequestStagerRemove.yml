@@ -8,9 +8,9 @@ jobs:
     remove:
         runs-on: ubuntu-latest
         steps:
-            - name: Deploy Stage
+            - name: Deploy pr
               uses: fjogeleit/http-request-action@v1
               with:
-                url: 'https://directus.n0safe.space/items/process/ci-G3-pr-${{github.event.pull_request.number}}'
+                url: 'https://directus.n0safe.space/items/process/0124-ci-G3-pr-${{github.event.pull_request.number}}'
                 method: 'DELETE'
                 customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer nLuIN0yW9Pwwfq87fBGQ0oYlOCh3qT5J"}'

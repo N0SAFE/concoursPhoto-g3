@@ -9,8 +9,7 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(false);
     return (
         <Loader active={isLoading}>
-            testudifvgvhierufdjv fgijbsfkibjngfjkngfjkn
-            <div className={style.homeContainer}>bdf je suis le test lilia je t'aime de fou genre enormement
+            <div className={style.homeContainer}>
                 <div className={style.homeBanner}>
                     <div>
                         <h1>Le portail des concours photo</h1>
