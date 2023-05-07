@@ -13,6 +13,7 @@
         "build:dev": "npm run build:client:dev",
         "build:client:dev": "cd client && npm run build:dev",
         "init": "npm install --ignore-scripts && npm run install:new && cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:fixtures",
+        "init:prod": "npm install --ignore-scripts && npm run install:new && cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:migration",
         "install": "concurrently \"npm run install:api\" \"npm run install:client\"",
         "install:new": "concurrently \"npm run install:api:new\" \"npm run install:client\"",
         "install:api": "cd api && composer install",
