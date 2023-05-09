@@ -10,6 +10,7 @@ import useFilesUpdater from '@/hooks/useFilesUploader.js';
 import useApiPath from '@/hooks/useApiPath.js';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import Button from '@/components/atoms/Button';
+import style from './style.module.scss';
 
 export default function CompetitionEdit() {
     const [isLoading, setIsLoading] = useState(true);
@@ -376,7 +377,7 @@ export default function CompetitionEdit() {
                     });
                 }}
             >
-                <div>
+                <div className={style.all}>
                     <Input
                         type="checkbox"
                         name="state"

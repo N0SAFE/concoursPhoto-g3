@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Button from "@/components/atoms/Button";
 import Loader from '@/components/atoms/Loader/index.jsx';
+import style from './style.module.scss';
 
 export default function UserCreate() {
     const [isLoading, setIsLoading] = useState(true);
@@ -235,7 +236,7 @@ export default function UserCreate() {
                     });
                 }}
             >
-                <div>
+                <div className={style.all}>
                     <Input
                         type="text"
                         name="firstname"

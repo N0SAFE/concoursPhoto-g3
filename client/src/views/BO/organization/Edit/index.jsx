@@ -10,6 +10,7 @@ import useApiPath from "@/hooks/useApiPath.js";
 import useFilesUploader from "@/hooks/useFilesUploader.js";
 import Button from "@/components/atoms/Button";
 import Loader from '@/components/atoms/Loader/index.jsx';
+import style from './style.module.scss';
 
 export default function OrganizationEdit() {
     const [isLoading, setIsLoading] = useState(true);
@@ -261,7 +262,7 @@ export default function OrganizationEdit() {
                     });
                 }}
             >
-                <div>
+                <div className={style.all}>
                     <Input
                         type="text"
                         name="organizerName"

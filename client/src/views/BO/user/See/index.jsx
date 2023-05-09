@@ -6,6 +6,7 @@ import useApiFetch from '@/hooks/useApiFetch';
 import useLocation from '@/hooks/useLocation';
 import { toast } from 'react-toastify';
 import Loader from '@/components/atoms/Loader/index.jsx';
+import style from './style.module.scss';
 
 export default function () {
     const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +28,7 @@ export default function () {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                return getCityByCode(data.city).then(city => {
+                return getCityByCode(data.citycode).then(city => {
                     return setEntity({ ...data, city: city.nom });
                 });
             })
@@ -54,6 +55,7 @@ export default function () {
 
     return (
         <Loader active={isLoading}>
+            <div className={style.all}>
             <BOSee
                 entity={entity}
                 properties={[
@@ -126,7 +128,8 @@ export default function () {
                         },
                     },
                 ]}
-            />
+                />
+                </div>
         </Loader>
     );
 }

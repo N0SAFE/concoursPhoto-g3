@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import useApiPath from '@/hooks/useApiPath.js';
 import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
+import style from './style.module.scss';
 
 export default function () {
     const [isLoading, setIsLoading] = useState(true);
@@ -75,6 +76,7 @@ export default function () {
         <>
             <Button name="Retour" onClick={() => navigate('/BO/competition')} />
             <Loader active={isLoading}>
+            <div className={style.all}>
                 <BOSee
                     entity={entity}
                     properties={[
@@ -222,7 +224,8 @@ export default function () {
                             name: 'rules',
                         },
                     ]}
-                />
+                    />
+                    </div>
             </Loader>
         </>
     );
