@@ -72,8 +72,7 @@ export default function CompetitionsList() {
 
     return (
         <Loader active={isLoading}>
-            <div className={style.containerList}>
-                <div
+                 <div
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -89,6 +88,8 @@ export default function CompetitionsList() {
                         onClick={() => navigate('/BO/competition/create')}
                     ></Button>
                 </div>
+            <div className={style.containerList}>
+           
 
                 <Table
                     entityList={competitions}

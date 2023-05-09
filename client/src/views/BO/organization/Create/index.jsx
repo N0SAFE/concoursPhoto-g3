@@ -8,6 +8,8 @@ import useFilesUploader from "@/hooks/useFilesUploader.js";
 import Button from "@/components/atoms/Button";
 import Loader from '@/components/atoms/Loader/index.jsx';
 import { useNavigate } from "react-router-dom";
+import style from './style.module.scss';
+
 
 export default function OrganizationCreate() {
     const [isLoading, setIsLoading] = useState(true);
@@ -191,7 +193,7 @@ export default function OrganizationCreate() {
                     });
                 }}
             >
-                <div>
+                <div className={style.all}>
                     <Input
                         type="text"
                         name="organizerName"

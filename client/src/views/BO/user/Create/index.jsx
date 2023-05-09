@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Button from "@/components/atoms/Button";
 import Loader from '@/components/atoms/Loader/index.jsx';
+import style from './style.module.scss';
+
 
 export default function UserCreate() {
     const [isLoading, setIsLoading] = useState(true);
@@ -214,7 +216,7 @@ export default function UserCreate() {
                     });
                 }}
             >
-                <div>
+                <div className={style.all}>
                     <Input
                         type="text"
                         name="Prénom"
@@ -232,7 +234,13 @@ export default function UserCreate() {
                         onChange={d => updateEntityState('lastname', d)}
                         defaultValue={entity.lastname}
                     />
-
+                    <Input
+                        type="select"
+                        name="gender"
+                        label="Genre"
+                        extra={{ value: entity.gender, options: entityPossibility.genders, required: true }}
+                        onChange={(d) => updateEntityState("gender", d)}
+                    />
                     <Input
                         type="select"
                         name="personalStatut"
@@ -364,17 +372,6 @@ export default function UserCreate() {
                         />
                     </div>
                     <Input
-                        type="select"
-                        name="gender"
-                        label="Genre"
-                        extra={{
-                            value: entity.gender,
-                            options: entityPossibility.genders,
-                            required: true,
-                        }}
-                        onChange={d => updateEntityState('gender', d)}
-                    />
-                    <Input
                         type="password"
                         name="password"
                         label="Mot de passe"
@@ -391,24 +388,7 @@ export default function UserCreate() {
                         defaultValue={entity.passwordConfirm}
                     />
                 </div>
-                <div>
-                    <Input
-                        type="select"
-                        name="gender"
-                        label="Genre"
-                        extra={{ value: entity.gender, options: entityPossibility.genders, required: true }}
-                        onChange={(d) => updateEntityState("gender", d)}
-                    />
-                </div>
-                <Input type="password" name="password" label="Mot de passe" extra={{ required: true }} onChange={(d) => updateEntityState("password", d)} defaultValue={entity.password} />
-                <Input
-                    type="password"
-                    name="passwordConfirm"
-                    label="Confirmation du mot de passe"
-                    extra={{ required: true }}
-                    onChange={(d) => updateEntityState("passwordConfirm", d)}
-                    defaultValue={entity.passwordConfirm}
-                />
+                
             </BOForm>
             <Button name="Retour" onClick={() => navigate("/BO/user")} />
         </Loader>

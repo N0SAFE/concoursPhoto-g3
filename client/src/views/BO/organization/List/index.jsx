@@ -73,8 +73,7 @@ export default function OrganizationList() {
 
     return (
         <Loader active={isLoading}>
-            <div className={style.containerList}>
-                <div
+              <div
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -90,6 +89,8 @@ export default function OrganizationList() {
                         onClick={() => navigate('/BO/organization/create')}
                     ></Button>
                 </div>
+            <div className={style.containerList}>
+              
                 <Table
                     entityList={Organizations}
                     fields={[

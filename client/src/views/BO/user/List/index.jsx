@@ -121,8 +121,7 @@ export default function UserList() {
 
     return (
         <Loader active={isLoading}>
-            <div className={style.containerList}>
-                <div
+             <div
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -162,6 +161,8 @@ export default function UserList() {
                         <option value="false">Non vérifié</option>
                     </select>
                 </div>
+            <div className={style.containerList}>
+               
                 <Table
                     entityList={userFiltering()}
                     fields={[
