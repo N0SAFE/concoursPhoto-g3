@@ -6,6 +6,7 @@ import React, { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
+
 export default function () {
     const { competition } = useOutletContext();
     const apiFetch = useApiFetch();
