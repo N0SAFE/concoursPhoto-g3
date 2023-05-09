@@ -105,7 +105,7 @@ export default function OrganizationList() {
                         { property: 'postcode', display: 'Code postal' },
                         { property: 'citycode', display: 'Ville' },
                         { property: 'number_phone', display: 'Téléphone' },
-                        { property: 'email', display: 'Adresse mail' },
+                        { property: 'email', display: 'Adresse mails' },
                         { property: 'website_url', display: 'Site web' },
                         {
                             property: 'organization_type',

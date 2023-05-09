@@ -73,5 +73,9 @@ $borderRadius: 10px;
                 font-size: 0.9rem;
             }
         }
+
+        @include below(xl) {
+            justify-content: center;
+        }
     }
 }

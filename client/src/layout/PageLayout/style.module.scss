@@ -17,10 +17,6 @@
             position: relative;
 
             @extend .limited-content;
-
-            @include below(md) {
-                padding: 0 50px;
-            }
         }
     }
 }

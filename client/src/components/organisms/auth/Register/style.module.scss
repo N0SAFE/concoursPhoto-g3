@@ -44,12 +44,22 @@
             display: inherit;
             align-items: inherit;
         }
+
+        & > a {
+            text-decoration: underline;
+            color: $text-color-secondary;
+        }
     }
 
     &Rule {
         flex-direction: row;
         display: flex;
         gap: $gapBetweenElement;
+
+        // override component Form to delete default width
+        & > div {
+            width: inherit;
+        }
 
         & > p > span {
             text-decoration: underline;
