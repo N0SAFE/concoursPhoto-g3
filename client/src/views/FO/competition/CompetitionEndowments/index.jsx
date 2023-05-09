@@ -26,10 +26,6 @@ export default function () {
                     <p className={style.description}>
                         {competition.endowments}
                     </p>
-                    <div>
-                   
-                    </div>
-                   
                 </div>
                 <PicturesAside requestType={'last-pictures-obtained-votes'} />
             </div>
