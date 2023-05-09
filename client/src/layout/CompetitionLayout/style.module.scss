@@ -5,7 +5,6 @@
         .filter {
             display: flex;
             gap: $gapBetweenElement;
-            flex-wrap: wrap;
             padding-bottom: 20px;
 
             .viewFilter {
@@ -17,6 +16,7 @@
                 & > div:last-child {
                     display: flex;
                     gap: $gapBetweenElement;
+                    flex-wrap: wrap;
                 }
             }
 
@@ -25,6 +25,11 @@
                 flex: 0 33%;
                 flex-direction: column;
                 justify-content: space-between;
+
+                @include below(md) {
+                    display: flex;
+                    align-items: end;
+                }
 
                 &One {
                     padding-top: 20px;
@@ -63,6 +68,16 @@
                 &Stats {
                     display: flex;
                 }
+
+                @include below(md) {
+                    display: flex;
+                    flex-direction: row;
+                }
+            }
+
+            @include below(md) {
+                display: flex;
+                flex-direction: column;
             }
         }
     }
