@@ -43,6 +43,8 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setCountry("FRANCE");
             $organization->setIntraCommunityVat($faker->creditCardNumber());
             $organization->setNumberSiret($faker->creditCardNumber());
+            $organization->setOrganizationVisual((new FileFixtures)->createFile());
+            $organization->setLastUpdateDate($faker->dateTime());
             $organization->setOrganizationType($this->getReference(OrganizationTypeFixtures::ORGANIZATION_TYPE_REFERENCE . rand(1, count(OrganizationTypeFixtures::ORGANIZATION_TYPE_ARRAY))));
 
             $manager->persist($organization);
