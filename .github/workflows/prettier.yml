@@ -1,0 +1,29 @@
+on:
+    pull_request:
+        types: [opened, reopened, synchronize, edited]
+        branches:
+            - master
+
+jobs:
+    prettier:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  # Make sure the actual branch is checked out when running on pull requests
+                  ref: ${{ github.head_ref }}
+
+            - name: Prettify code
+              uses: creyD/prettier_action@v4.3
+              with:
+                  prettier_options: --write **/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml}
+                
+
+            - name: Send Discord message on failure
+              if: ${{ failure() }}
+              uses: Ilshidur/action-discord@master
+              env:
+                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+              with:
+                  args: "@here: Prettier failed on branch '${{ github.ref_name }}'. Please fix your code and push again. github action link : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
