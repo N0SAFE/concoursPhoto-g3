@@ -11,6 +11,8 @@ import useApiPath from '@/hooks/useApiPath.js';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import Button from '@/components/atoms/Button';
 import style from './style.module.scss';
+import React, { useRef } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 
 export default function CompetitionEdit() {
     const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +29,12 @@ export default function CompetitionEdit() {
         getRegionByName,
         getRegionByCode,
     } = useLocation();
-
+    const editorRef = useRef(null);
+    const log = () => {
+      if (editorRef.current) {
+        console.log(editorRef.current.getContent());
+      }
+    };
     const [locationPossibility, setLocationPossibility] = useState({
         regions: { isLoading: true, data: [] },
         departments: { isLoading: true, data: [] },
@@ -288,7 +295,7 @@ export default function CompetitionEdit() {
                                     ),
                                 organization: entity.organizer.value,
                                 theme: entity.themes.map(t => t.value),
-                                description: entity.description,
+                                description: editorRef.current.getContent(),
                                 rules: entity.rules,
                                 creationDate: new Date(
                                     entity.creationDate
@@ -403,15 +410,25 @@ export default function CompetitionEdit() {
                         onChange={d => updateFileState('visual', d)}
                         extra={{ value: updatedFile.visual, type: 'image' }}
                     />
-
-                    <Input
-                        type="text"
-                        name="description"
-                        label="Description"
-                        onChange={d => updateEntityState('description', d)}
-                        defaultValue={entity.description}
-                        extra={{ require: true }}
-                    />
+                    <label>Description</label>
+                    <Editor
+                    onInit={(evt, editor) => editorRef.current = editor}
+                     initialValue={entity.description}
+                        init={{
+                        height: 500,
+          menubar: false,
+          plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+          ],
+          toolbar: 'undo redo | blocks | ' +
+            'bold italic forecolor | alignleft aligncenter ' +
+            'alignright alignjustify | bullist numlist outdent indent | ' +
+            'removeformat | help',
+          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+        }}
+      />
 
                     <Input
                         type="text"
