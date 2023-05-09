@@ -1,0 +1,17 @@
+name: pull request event
+
+on: 
+    pull_request:
+        types: [synchronize, reopened]
+    
+jobs:
+    update:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy pr
+              uses: fjogeleit/http-request-action@v1
+              with:
+                url: 'https://directus.n0safe.space/flows/trigger/7c07ca7d-3be0-4a25-b49c-b29d1f45e405'
+                method: 'POST'
+                customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer nLuIN0yW9Pwwfq87fBGQ0oYlOCh3qT5J"}'
+                data: '{"process": ["0124-ci-G3-pr-${{github.event.pull_request.number}}"]}'

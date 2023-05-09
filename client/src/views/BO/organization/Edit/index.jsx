@@ -1,14 +1,16 @@
-import Input from '@/components/atoms/Input/index.jsx';
-import BOForm from '@/components/organisms/BO/Form';
-import useApiFetch from '@/hooks/useApiFetch.js';
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import useLocationPosibility from '@/hooks/useLocationPosibility.js';
-import useLocation from '@/hooks/useLocation.js';
-import { toast } from 'react-toastify';
-import useApiPath from '@/hooks/useApiPath.js';
-import useFilesUploader from '@/hooks/useFilesUploader.js';
+import Input from "@/components/atoms/Input/index.jsx";
+import BOForm from "@/components/organisms/BO/Form";
+import useApiFetch from "@/hooks/useApiFetch.js";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import useLocationPosibility from "@/hooks/useLocationPosibility.js";
+import useLocation from "@/hooks/useLocation.js";
+import { toast } from "react-toastify";
+import useApiPath from "@/hooks/useApiPath.js";
+import useFilesUploader from "@/hooks/useFilesUploader.js";
+import Button from "@/components/atoms/Button";
 import Loader from '@/components/atoms/Loader/index.jsx';
+import style from './style.module.scss';
 
 export default function OrganizationEdit() {
     const [isLoading, setIsLoading] = useState(true);
@@ -260,7 +262,7 @@ export default function OrganizationEdit() {
                     });
                 }}
             >
-                <div>
+                <div className={style.all}>
                     <Input
                         type="text"
                         name="organizerName"
@@ -430,6 +432,7 @@ export default function OrganizationEdit() {
                     </div>
                 </div>
             </BOForm>
+            <Button name="Retour" onClick={() => navigate("/BO/organization")} />
         </Loader>
     );
 }

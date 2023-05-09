@@ -6,7 +6,9 @@ import useLocation from '@/hooks/useLocation';
 import { toast } from 'react-toastify';
 import useFilesUpdater from '@/hooks/useFilesUploader.js';
 import { useNavigate } from 'react-router-dom';
+import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
+import style from './style.module.scss';
 
 export default function CompetitionCreate() {
     const [isLoading, setIsLoading] = useState(true);
@@ -163,6 +165,7 @@ export default function CompetitionCreate() {
 
     return (
         <Loader active={isLoading}>
+
             <BOCreate
                 title="Création d'un concours"
                 handleSubmit={function () {
@@ -260,7 +263,7 @@ export default function CompetitionCreate() {
                     });
                 }}
             >
-                <div>
+                <div className={style.all}>
                     <Input
                         type="checkbox"
                         name="state"
@@ -587,6 +590,7 @@ export default function CompetitionCreate() {
                     </div>
                 </div>
             </BOCreate>
+            <Button name="Retour" onClick={() => navigate('/BO/competition')} />
         </Loader>
     );
 }

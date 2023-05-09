@@ -1,16 +1,21 @@
-import Input from '@/components/atoms/Input/index.jsx';
-import BOCreate from '@/components/organisms/BO/Form';
-import useApiFetch from '@/hooks/useApiFetch.js';
-import { useState, useEffect } from 'react';
-import useLocationPosibility from '@/hooks/useLocationPosibility.js';
-import { toast } from 'react-toastify';
-import useFilesUploader from '@/hooks/useFilesUploader.js';
+import Input from "@/components/atoms/Input/index.jsx";
+import BOCreate from "@/components/organisms/BO/Form";
+import useApiFetch from "@/hooks/useApiFetch.js";
+import { useState, useEffect } from "react";
+import useLocationPosibility from "@/hooks/useLocationPosibility.js";
+import { toast } from "react-toastify";
+import useFilesUploader from "@/hooks/useFilesUploader.js";
+import Button from "@/components/atoms/Button";
 import Loader from '@/components/atoms/Loader/index.jsx';
+import { useNavigate } from "react-router-dom";
+import style from './style.module.scss';
+
 
 export default function OrganizationCreate() {
     const [isLoading, setIsLoading] = useState(true);
     const apiFetch = useApiFetch();
     const { uploadFile } = useFilesUploader();
+    const navigate = useNavigate();
 
     const [locationPossibility, updateLocationPossibility] =
         useLocationPosibility(['cities'], {}, { updateOnStart: false });
@@ -188,7 +193,7 @@ export default function OrganizationCreate() {
                     });
                 }}
             >
-                <div>
+                <div className={style.all}>
                     <Input
                         type="text"
                         name="organizerName"
@@ -359,6 +364,7 @@ export default function OrganizationCreate() {
                     </div>
                 </div>
             </BOCreate>
+            <Button name="Retour" onClick={() => navigate("/BO/organization")} />
         </Loader>
     );
 }
