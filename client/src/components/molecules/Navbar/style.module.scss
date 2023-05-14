@@ -11,20 +11,20 @@
 
         @include below(md) {
             height: auto;
-            padding: 15px;
+            padding: 15px 50px;
         }
 
         ul {
             display: flex;
             list-style: none;
             padding: 0;
-            gap: $gapBetweenElement;
+            gap: $gapBetweenElement * 2;
 
-            & > li,
+            .navbarElement,
             & > div > div > li {
                 position: relative;
                 display: flex;
-                align-items: center;
+                align-self: center;
 
                 & > a {
                     color: $text-color-secondary;
@@ -60,13 +60,19 @@
             display: flex !important;
 
             & > div {
-                flex-direction: column;
+                width: 100%;
                 z-index: 10;
                 overflow: hidden;
+                padding-top: 15px;
                 background-color: $background-color-darkgrey;
-                width: 100%;
                 transition: 0.25s ease-in-out;
-                max-height: 0;
+                max-width: 0;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
 
                 .navbarStyle {
                     &:hover {
@@ -88,6 +94,12 @@
     }
 
     &Show {
-        max-height: 300px !important;
+        max-width: 250px !important;
+        gap: $gapBetweenElement;
+
+        & > div {
+            align-self: center;
+            display: flex;
+        }
     }
 }

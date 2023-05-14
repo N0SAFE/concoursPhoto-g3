@@ -2,13 +2,12 @@ import style from './style.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Dropdown from '@/components/atoms/Dropdown';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import Icon from '@/components/atoms/Icon';
 import Button from '@/components/atoms/Button';
-import Modal from '@/components/atoms/Modal';
 import { useModal } from '@/contexts/ModalContext/index.jsx';
 
-export default function Navbar({ listLeft = [], listRight = [] }) {
+export default function Navbar({ icon, listLeft = [], listRight = [] }) {
     const { isLogged } = useAuthContext();
     const navbarRef = useRef('');
     const navigate = useNavigate();
@@ -23,7 +22,7 @@ export default function Navbar({ listLeft = [], listRight = [] }) {
         return disposition.map((item, index) => {
             if (item.type === 'classic') {
                 return (
-                    <li key={index}>
+                    <li key={index} className={style.navbarElement}>
                         <Link className={style.navbarStyle} to={item.to}>
                             {item.title}
                         </Link>
@@ -73,12 +72,16 @@ export default function Navbar({ listLeft = [], listRight = [] }) {
     return (
         <>
             <nav className={style.navbarContainer}>
-                <ul>{list(listLeft)}</ul>
+                <ul>
+                    {icon}
+                    {list(listLeft)}
+                </ul>
                 <ul>{list(listRight)}</ul>
                 <ul
                     className={style.navbarResponsive}
                     style={{ display: 'none' }}
                 >
+                    {icon}
                     <div ref={navbarRef}>
                         {list(listLeft)}
                         {list(listRight)}
