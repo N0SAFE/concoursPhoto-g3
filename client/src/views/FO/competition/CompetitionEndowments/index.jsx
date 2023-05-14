@@ -1,10 +1,10 @@
 import { useOutletContext, useParams } from 'react-router-dom';
-import Navlink from '@/components/molecules/Navlink/index.jsx';
-import PicturesAside from '@/views/FO/competition/PicturesAside/index.jsx';
+import Navlink from '@/components/molecules/Navlink';
+import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import style from './style.module.scss';
 
 export default function () {
-    const { competition } = useOutletContext();
+    const { competition, asidePictures, asideLabel  } = useOutletContext();
 
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
@@ -27,7 +27,7 @@ export default function () {
                         {competition.endowments}
                     </p>
                 </div>
-                <PicturesAside requestType={'last-pictures-obtained-votes'} />
+                <PicturesAside pictures={asidePictures} asideLabel={asideLabel } />
             </div>
         </div>
     );

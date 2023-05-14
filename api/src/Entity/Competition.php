@@ -15,26 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource (normalizationContext: ['groups' => ['competition', 'file']])]
 // custom operation
-#[ApiResource(
-    operations: [
-        new Get(
-            name: CompetitionController::LAST_PICTURES_POSTED,
-            uriTemplate: '/competitions/{id}/last-pictures-posted',
-            controller: CompetitionController::class
-        ),
-        new Get(
-            name: CompetitionController::LAST_PICTURES_OBTAINED_VOTES,
-            uriTemplate: '/competitions/{id}/last-pictures-obtained-votes',
-            controller: CompetitionController::class
-        ),
-        new Get(
-            name: CompetitionController::PICTURES_OBTAINED_PRICE,
-            uriTemplate: '/competitions/{id}/pictures-obtained-price',
-            controller: CompetitionController::class
-        )
-    ],
-
-)]
+#[ApiResource]
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
 {

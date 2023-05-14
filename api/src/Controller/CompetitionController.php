@@ -2,32 +2,29 @@
 
 namespace App\Controller;
 
-use App\Entity\Competition;
 use App\Repository\CompetitionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[AsController]
 class CompetitionController extends AbstractController
 {
-    const LAST_PICTURES_POSTED = 'lastPicturesPosted';
-    const LAST_PICTURES_OBTAINED_VOTES = 'lastPicturesObtainedVotes';
-    const PICTURES_OBTAINED_PRICE = 'picturesObtainedPrice';
-
     public function __construct(
         private CompetitionRepository $competitionRepository,
     ) {
     }
-
-    public function __invoke(Request $request, Competition $competition): array
+    
+    
+    #[Route('/competitions/{id}/pictures', name: 'competition_pictures', methods: ['GET'])]
+    public function getPictures(int $id): Response
     {
-        return match ($operationName = $request->attributes->get('_api_operation_name')) {
-            self::LAST_PICTURES_POSTED => $this->competitionRepository->getLastPicturesPosted($competition),
-            self::LAST_PICTURES_OBTAINED_VOTES => $this->competitionRepository->getLastPicturesObtainedVotes($competition),
-            self::PICTURES_OBTAINED_PRICE => $this->competitionRepository->getPicturesObtainedPrice($competition),
-            default => throw new \RuntimeException(sprintf('Unknown operation "%s".', $operationName))
-        };
+        $competition = $this->competitionRepository->findOneBy(['id' => $id]);
+        // TODO: add if statement based on the competition status (ongoing, ended, etc.)
+        return $this->json(["aside" => $this->competitionRepository->getLastPicturesPosted($competition), "results" => $this->competitionRepository->getPicturesObtainedPrice($competition), "asideLabel" => "Dernières photos soumises"]);
+        // or
+        return $this->json(["aside" =>  $this->competitionRepository->getLastPicturesObtainedVotes($competition), "results" => $this->competitionRepository->getPicturesObtainedPrice($competition),  "asideLabel" => "Dernières photos ayant obtenu un vote"]);
     }
 
 }
