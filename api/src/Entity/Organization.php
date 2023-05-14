@@ -105,6 +105,12 @@ class Organization
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: OrganizationLink::class)]
     private Collection $organizationLinks;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $last_update_date = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?File $organization_visual = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -430,6 +436,30 @@ class Organization
                 $organizationLink->setOrganization(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastUpdateDate(): ?\DateTimeInterface
+    {
+        return $this->last_update_date;
+    }
+
+    public function setLastUpdateDate(?\DateTimeInterface $last_update_date): self
+    {
+        $this->last_update_date = $last_update_date;
+
+        return $this;
+    }
+
+    public function getOrganizationVisual(): ?File
+    {
+        return $this->organization_visual;
+    }
+
+    public function setOrganizationVisual(?File $organization_visual): self
+    {
+        $this->organization_visual = $organization_visual;
 
         return $this;
     }
