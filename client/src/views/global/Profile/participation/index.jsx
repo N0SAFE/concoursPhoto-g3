@@ -1,5 +1,4 @@
 import { useAuthContext } from '@/contexts/AuthContext.jsx';
-import Navlink from '@/components/molecules/Navlink/index.jsx';
 import Table from '@/components/molecules/Table';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
@@ -40,15 +39,6 @@ export default function CompetitionParticipation() {
 
         return () => setTimeout(() => controller.abort());
     }, []);
-
-    const profileRouteList = [
-        { content: 'Mon profil', to: '/me' },
-        { content: 'Mes préférences', to: '/preference' },
-        { content: 'Mes organisations', to: '/myorganization' },
-        { content: 'Concours créés par mon organisation', to: '/me' },
-        { content: 'Concours auxquels j’ai participé', to: '/participations' },
-        { content: 'Mes publicités', to: '/me' },
-    ];
 
     return (
         <div className={style.participationsContainer}>

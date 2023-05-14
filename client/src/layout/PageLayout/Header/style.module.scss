@@ -9,7 +9,7 @@ $logoWidth: 200px;
         width: $logoWidth;
 
         @include below(md) {
-            width: $logoWidth / 2;
+            width: calc($logoWidth / 2);
         }
     }
 }
