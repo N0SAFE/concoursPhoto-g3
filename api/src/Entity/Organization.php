@@ -9,8 +9,19 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 
-#[ApiResource(normalizationContext: ['groups' => ['organization', 'file']])]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(),
+        new Patch()
+    ],normalizationContext: ['groups' => ['organization', 'file']]
+)]
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 class Organization
 {
