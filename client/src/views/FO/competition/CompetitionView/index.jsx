@@ -47,7 +47,7 @@ export default function () {
         <div className={style.viewContainer}>
             <div>
                 <Navlink base="/competition/:id" list={competitionRouteList} />
-                <div className={style.description}dangerouslySetInnerHTML={{ __html : competition.description}}></div>
+                <div className={style.description} dangerouslySetInnerHTML={{ __html : competition.description}}></div>
                 <Editor
                     onInit={(evt, editor) => editorRef.current = editor}
                     initialValue={competition.description}
