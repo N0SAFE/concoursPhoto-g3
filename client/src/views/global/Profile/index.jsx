@@ -44,15 +44,6 @@ export default function Profile() {
     };
     const { deleteFile, uploadFile } = useFilesUploader();
 
-    const profileRouteList = [
-        { content: 'Mon profil', to: '/me' },
-        { content: 'Mes préférences', to: '/preference' },
-        { content: 'Mes organisations', to: '/myorganization' },
-        { content: 'Concours créés par mon organisation', to: '/me' },
-        { content: 'Concours auxquels j’ai participé', to: '/participations' },
-        { content: 'Mes publicités', to: '/me' },
-    ];
-
     const [locationPossibility, updateLocationPossibility] =
         useLocationPosibility(['cities'], {}, { updateOnStart: false });
 
@@ -173,8 +164,6 @@ export default function Profile() {
             setLocationPossibilityIsLoading(false);
         });
     }, [entity.postcode, entity.city]);
-
-    console.log(entity.picture_profil);
 
     return (
         <Loader active={gendersPossibility.isLoading}>

@@ -18,6 +18,16 @@
                     gap: $gapBetweenElement;
                     flex-wrap: wrap;
                 }
+
+                h1 {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+
+                    @include below(md) {
+                        white-space: normal;
+                    }
+                }
             }
 
             .viewOrganizer {
