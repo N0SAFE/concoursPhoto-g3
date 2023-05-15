@@ -43,7 +43,7 @@ export default function Card({
                         })}
                 </div>
             </div>
-            {(stats || finalDate) && (
+            {stats && (
                 <div className={style.cardFooter}>
                     <div className={style.cardFilter}>
                         {stats.map((stat, index) => {

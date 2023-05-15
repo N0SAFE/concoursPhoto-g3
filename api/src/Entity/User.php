@@ -179,6 +179,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class)]
     private Collection $userLinks;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: NotificationLink::class)]
+    private Collection $notificationLinks;
+
     public function __construct()
     {
         $this->Manage = new ArrayCollection();
@@ -187,6 +190,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->votes = new ArrayCollection();
         $this->roles = new ArrayCollection();
         $this->userLinks = new ArrayCollection();
+        $this->notificationLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -696,6 +700,36 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
             // set the owning side to null (unless already changed)
             if ($userLink->getUser() === $this) {
                 $userLink->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, NotificationLink>
+     */
+    public function getNotificationLinks(): Collection
+    {
+        return $this->notificationLinks;
+    }
+
+    public function addNotificationLink(NotificationLink $notificationLink): self
+    {
+        if (!$this->notificationLinks->contains($notificationLink)) {
+            $this->notificationLinks->add($notificationLink);
+            $notificationLink->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotificationLink(NotificationLink $notificationLink): self
+    {
+        if ($this->notificationLinks->removeElement($notificationLink)) {
+            // set the owning side to null (unless already changed)
+            if ($notificationLink->getUser() === $this) {
+                $notificationLink->setUser(null);
             }
         }
 

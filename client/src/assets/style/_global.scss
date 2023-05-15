@@ -13,6 +13,10 @@ body {
 
 .limited-content {
     padding: 0 100px;
+
+    @include below(md) {
+        padding: 0 50px;
+    }
 }
 
 .margin-title {

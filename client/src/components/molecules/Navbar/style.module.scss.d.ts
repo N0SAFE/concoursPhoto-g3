@@ -3,6 +3,7 @@ declare const classNames: {
     readonly navbarResponsive: 'navbarResponsive';
     readonly navbarStyle: 'navbarStyle';
     readonly icon: 'icon';
+    readonly navbarElement: 'navbarElement';
     readonly navbarShow: 'navbarShow';
 };
 export = classNames;
