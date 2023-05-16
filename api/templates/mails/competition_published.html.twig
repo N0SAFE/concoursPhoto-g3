@@ -1,0 +1,5 @@
+{{ mail }}
+{% for competition in competitions %}
+    Nom du concours : {{ competition.competition_name }}
+    Date de création : {{ competition.creation_date | date('d/m/Y') }}
+{% endfor %}

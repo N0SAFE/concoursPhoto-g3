@@ -38,6 +38,18 @@ services:
                   priority: 0,
               }
 
+    App\Listeners\NotificationListener:
+      tags:
+        - {
+          name: kernel.event_listener,
+          event: lexik_jwt_authentication.on_jwt_not_found,
+          method: onJWTNotFound,
+          priority: 0,
+        }
+
+    App\EventListener\NotificationSubscriber:
+      tags: [ kernel.view ]
+
     App\State\UserStateProcessor:
         bind:
             $processor: '@api_platform.doctrine.orm.state.persist_processor'

@@ -21,7 +21,6 @@ class NotificationLinkFixtures extends Fixture implements DependentFixtureInterf
         for ($i = 0; $i < self::NOTIFICATION_LINK_COUNT_REFERENCE; $i++) {
             $notification_link = new NotificationLink();
 
-            $notification_link->setState($faker->boolean());
             $notification_link->setUser($this->getReference(UserFixtures::USER_REFERENCE . rand(1, self::NOTIFICATION_LINK_COUNT_REFERENCE)));
             $notification_link->setNotification($this->getReference(NotificationTypeFixtures::NOTIFICATION_TYPE_REFERENCE . rand(1, self::NOTIFICATION_LINK_COUNT_REFERENCE)));
 
