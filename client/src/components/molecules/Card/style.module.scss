@@ -14,6 +14,12 @@ $borderRadius: 10px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            transform: scale(1.025);
+            z-index: 10;
+        }
 
         @include mobile() {
             width: calc($containerWidth / 2);
@@ -50,6 +56,7 @@ $borderRadius: 10px;
         display: flex;
         gap: 10px;
         margin: 15px 0;
+        flex-wrap: wrap;
     }
 
     &Footer {

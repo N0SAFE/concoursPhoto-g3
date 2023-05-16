@@ -6,8 +6,19 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\RentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(),
+        new Patch()
+    ]
+)]
 #[ORM\Entity(repositoryClass: RentRepository::class)]
 class Rent
 {

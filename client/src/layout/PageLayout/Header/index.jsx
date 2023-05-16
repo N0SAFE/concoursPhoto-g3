@@ -5,6 +5,8 @@ import Login from '@/components/organisms/auth/Login';
 import Register from '@/components/organisms/auth/Register';
 import useAuth from '@/hooks/useAuth';
 import { toast } from 'react-toastify';
+import style from './style.module.scss';
+import logoSite from '@/assets/logo-concoursPhoto.png';
 
 export default function Header(environment) {
     const { logout } = useAuth();
@@ -119,8 +121,8 @@ export default function Header(environment) {
 
     return (
         <>
-            <header>
-                <Navbar listLeft={listLeft} listRight={listRight} />
+            <header className={style.headerContainer}>
+                <Navbar icon={<img src={logoSite} className={style.logoSite} alt="logo de concoursPhoto" />} listLeft={listLeft} listRight={listRight} />
             </header>
         </>
     );

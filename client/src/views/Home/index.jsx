@@ -3,10 +3,94 @@ import FOCompetitionList from '@/components/organisms/FO/FOCompetitionList';
 import FOStats from '@/components/organisms/FO/FOStats';
 import FOPortalList from '@/components/organisms/FO/FOPortalList';
 import Loader from '@/components/atoms/Loader/index.jsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import useApiFetch from '@/hooks/useApiFetch.js';
+import { toast } from 'react-toastify';
 
 export default function Home() {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [stats, setStats] = useState({});
+    const apiFetch = useApiFetch();
+    const [competitions, setCompetitions] = useState([]);
+
+    const getStats = controller => {
+        return apiFetch('/stats', {
+            method: 'GET',
+            signal: controller?.signal,
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                setStats(data);
+            });
+    };
+
+    function getListCompetitions(controller) {
+        return apiFetch('/competitions', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            signal: controller?.signal,
+        })
+            .then(res => res.json())
+            .then(async data => {
+                if (data.code === 401) {
+                    throw new Error(data.message);
+                }
+                console.debug(data);
+                const _competitions = data['hydra:member'].map(function (c) {
+                    const { numOfPictures, numOfVotes } = c.pictures.reduce(
+                        ({ numOfPictures, set, numOfVotes }, p) => {
+                            if (!set.has(p.user.id)) {
+                                set.add(p.user.id);
+                                return {
+                                    numOfPictures: numOfPictures + 1,
+                                    set,
+                                    numOfVotes: numOfVotes + p.votes.length,
+                                };
+                            }
+                            return {
+                                numOfPictures,
+                                set,
+                                numOfVotes: numOfVotes + p.votes.length,
+                            };
+                        },
+                        { numOfPictures: 0, set: new Set(), numOfVotes: 0 }
+                    );
+                    c.numberOfUser = numOfPictures;
+                    c.numberOfVotes = numOfVotes;
+                    return c;
+                });
+                console.debug(_competitions);
+                setCompetitions(data['hydra:member']);
+                return data['hydra:member'];
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    useEffect(() => {
+        const controller = new AbortController();
+        const promise = Promise.all([
+            getListCompetitions(controller),
+            getStats(controller),
+        ]).then(function () {
+            setIsLoading(false);
+        });
+        
+        if (import.meta.env.MODE === 'development') {
+            toast.promise(promise, {
+                pending: 'Chargement de la page d\'accueil',
+                success: 'Page d\'accueil chargée',
+                error: 'Erreur lors du chargement de la page d\'accueil',
+            });
+        }
+
+        return () => setTimeout(() => controller.abort());
+    }, []);
+
     return (
         <Loader active={isLoading}>
             <div className={style.homeContainer}>
@@ -14,7 +98,7 @@ export default function Home() {
                     <div>
                         <h1>Le portail des concours photo</h1>
                     </div>
-                    <FOStats />
+                    <FOStats stats={stats} />
                 </div>
                 <FOPortalList
                     boxSingle={{
@@ -35,7 +119,7 @@ export default function Home() {
                 />
 
                 <h2>Derniers concours photo publiés</h2>
-                <FOCompetitionList />
+                <FOCompetitionList cardContentList={competitions} />
             </div>
         </Loader>
     );

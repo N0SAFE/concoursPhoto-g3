@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\CompetitionController;
 use App\Repository\CompetitionRepository;
@@ -13,9 +15,15 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource (normalizationContext: ['groups' => ['competition', 'file']])]
-// custom operation
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(),
+        new Patch(),
+    ],
+    normalizationContext: ['groups' => ['competition', 'file']]
+)]
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
 {
