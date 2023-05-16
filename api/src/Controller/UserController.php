@@ -16,7 +16,7 @@ class UserController extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request, User $user): array
+    public function __invoke(Request $request, User $user, int $notificationTypeId): array
     {
         return match ($operationName = $request->attributes->get('_api_operation_name')) {
             self::USER_COMPETITIONS => $this->userRepository->getCompetitionsParticipates($user),

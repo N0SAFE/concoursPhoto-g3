@@ -21,6 +21,9 @@ class NotificationType
     #[ORM\OneToMany(mappedBy: 'notification', targetEntity: NotificationLink::class)]
     private Collection $notificationLinks;
 
+    #[ORM\Column]
+    private ?int $notification_code = null;
+
     public function __construct()
     {
         $this->notificationLinks = new ArrayCollection();
@@ -69,6 +72,18 @@ class NotificationType
                 $notificationLink->setNotification(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNotificationCode(): ?int
+    {
+        return $this->notification_code;
+    }
+
+    public function setNotificationCode(int $notification_code): self
+    {
+        $this->notification_code = $notification_code;
 
         return $this;
     }

@@ -3,11 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use App\Controller\CompetitionController;
 use App\Repository\CompetitionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,7 +15,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(normalizationContext: ['groups' => ['competition', 'file']])]
 // custom operation
 #[ApiResource(
     operations: [
@@ -23,22 +22,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(),
         new Post(),
         new Patch(),
-        new Get(
-            name: CompetitionController::LAST_PICTURES_POSTED,
-            uriTemplate: '/competitions/{id}/last-pictures-posted',
-            controller: CompetitionController::class
-        ),
-        new Get(
-            name: CompetitionController::LAST_PICTURES_OBTAINED_VOTES,
-            uriTemplate: '/competitions/{id}/last-pictures-obtained-votes',
-            controller: CompetitionController::class
-        ),
-        new Get(
-            name: CompetitionController::PICTURES_OBTAINED_PRICE,
-            uriTemplate: '/competitions/{id}/pictures-obtained-price',
-            controller: CompetitionController::class
-        )
+        new Delete(),
     ],
+    normalizationContext: ['groups' => ['competition', 'file']]
 
 )]
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
