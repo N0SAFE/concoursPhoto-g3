@@ -106,18 +106,6 @@ class CompetitionRepository extends ServiceEntityRepository
         ;
     }
 
-    public function getPromotedCompetition() {
-        return $this->createQueryBuilder('c')
-            ->select('c', 'f.path')
-            ->join('c.pictures', 'p')
-            ->join('p.file', 'f')
-            ->where('c.is_promoted = :is_promoted')
-            ->setParameter('is_promoted', 1)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-
 //    /**
 //     * @return competition[] Returns an array of competition objects
 //     */

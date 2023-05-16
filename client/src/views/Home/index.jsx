@@ -49,8 +49,6 @@ export default function Home() {
         })
     }
 
-    console.log(promotedCompetitions.competition_visual);
-
     function getListCompetitions(controller) {
         const now = new Date();
         return apiFetch('/competitions?results_date[after]=' + format(now, "yyyy-MM-dd"), {

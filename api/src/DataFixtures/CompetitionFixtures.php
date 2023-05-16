@@ -50,8 +50,6 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 0; $i < self::COMPETITION_COUNT_REFERENCE; $i++) {
             $competition = new Competition();
 
-
-
             $resultsDate = $faker->dateTimeBetween("-1 year", "+1 year");
             $votingEndDate = $faker->dateTimeBetween("-1 year", $resultsDate);
             $votingStartDate = $faker->dateTimeBetween("-1 year", $votingEndDate);
