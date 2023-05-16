@@ -65,29 +65,4 @@ class NotificationLinkRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-
-    public function getAllUserByNotificationType(NotificationType $notificationType){
-        return $this->createQueryBuilder('n')
-            ->select('nl.label', 'nu.id', 'nu.firstname', 'nu.lastname', 'nu.email')
-            ->join('n.notification', 'nl')
-            ->join('n.user', 'nu')
-            ->where('nl.label = :label')
-            ->setParameter(':label', $notificationType->getLabel())
-            ->getQuery()
-            ->getResult()
-            ;
-    }
-
-
-    public function getAllCompetitionsPosted(NotificationLink $notificationLink): array {
-        return $this->createQueryBuilder('n')
-            ->select('nl.label', 'nu.id', 'nu.firstname', 'nu.lastname', 'nu.email')
-            ->join('n.notification', 'nl')
-            ->join('n.user', 'nu')
-            ->where('nl.label = :label')
-            ->setParameter(':label', $notificationLink->getNotification()->getLabel())
-            ->getQuery()
-            ->getResult()
-            ;
-    }
 }
