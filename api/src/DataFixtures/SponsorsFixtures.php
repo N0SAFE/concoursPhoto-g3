@@ -33,7 +33,8 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
             $sponsors->setOrganization($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, self::SPONSORS_COUNT_REFERENCE)));
             $sponsors->setCompetition($this->getReference(CompetitionFixtures::COMPETITION_REFERENCE . rand(1, self::SPONSORS_COUNT_REFERENCE)));
             $sponsors->setPrice($faker->randomFloat(3, 0, self::COUNT_REFERENCE));
-            $sponsors->setLogo((new FileFixtures)->createFile());
+            $sponsors->setLogo((new FileFixturesSposor)->createFileSponsor());
+            
 
             $manager->persist($sponsors);
         }

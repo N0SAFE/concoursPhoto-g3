@@ -12,7 +12,7 @@ class FileFixtures {
         "814-2160-2160.jpg",
         "904-2160-2160.jpg",
         "952-2160-2160.jpg",
-        "12839c32a07ad619a08ccaec9d21c241b732d40d.Capture d'écran 2023-03-22 154847.png"
+        "12839c32a07ad619a08ccaec9d21c241b732d40d.Capture d'écran 2023-03-22 154847.png",
     ];
 
     public function createFile() {
@@ -27,7 +27,7 @@ class FileFixtures {
 
         return $file;
     }
-    
+
     public function load(){
         
     }
