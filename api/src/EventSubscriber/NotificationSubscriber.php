@@ -4,7 +4,6 @@
 namespace App\EventSubscriber;
 
 use ApiPlatform\Symfony\EventListener\EventPriorities;
-use App\Controller\CompetitionController;
 use App\Repository\CompetitionRepository;
 use App\Repository\UserRepository;
 use App\Service\MailSender;
@@ -27,7 +26,7 @@ final class NotificationSubscriber implements EventSubscriberInterface
     public function sendMail(ViewEvent $event): void
     {
         match ($event->getRequest()->attributes->get('_api_operation_name')) {
-            CompetitionController::COMPETITION_CREATE => $this->onCompetitionCreate(),
+            "CompetitionCreate" => $this->onCompetitionCreate(),
             default => ""
         };
     }
