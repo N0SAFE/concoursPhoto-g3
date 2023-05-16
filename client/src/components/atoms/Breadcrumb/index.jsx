@@ -4,7 +4,7 @@ import style from './style.module.scss';
 export default function Breadcrumb({ items }) {
     return (
         <nav className={style.breadcrumbContainer}>
-            <ol className={style.breadcrumb}>
+            <ol>
                 {items.map((item, index) => (
                     <li key={index}>
                         {item.link ? (

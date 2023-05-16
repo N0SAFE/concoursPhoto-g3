@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
@@ -15,14 +16,16 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(normalizationContext: ['groups' => ['competition', 'file']])]
 // custom operation
 #[ApiResource(
     operations: [
         new GetCollection(),
         new Get(),
-        new Post(),
+        new Post(
+            name: CompetitionController::COMPETITION_CREATE
+        ),
         new Patch(),
+        new Delete(),
         new Get(
             name: CompetitionController::LAST_PICTURES_POSTED,
             uriTemplate: '/competitions/{id}/last-pictures-posted',
@@ -37,8 +40,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
             name: CompetitionController::PICTURES_OBTAINED_PRICE,
             uriTemplate: '/competitions/{id}/pictures-obtained-price',
             controller: CompetitionController::class
-        )
+        ),
     ],
+    normalizationContext: ['groups' => ['competition', 'file']]
 
 )]
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]

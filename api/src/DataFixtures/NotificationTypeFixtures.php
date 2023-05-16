@@ -26,6 +26,7 @@ class NotificationTypeFixtures extends Fixture
         for ($i = 0; $i <= count(self::NOTIFICATION_TYPE_ARRAY) - 1; $i++) {
             $notification_type = new NotificationType();
             $notification_type->setLabel(self::NOTIFICATION_TYPE_ARRAY[$i]);
+            $notification_type->setNotificationCode($i + 1);
             $manager->persist($notification_type);
             $this->addReference(sprintf('%s%d', self::NOTIFICATION_TYPE_REFERENCE, $i + 1), $notification_type);
         }

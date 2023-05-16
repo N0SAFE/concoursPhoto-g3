@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\NotificationLink;
+use App\Entity\NotificationType;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -63,4 +65,29 @@ class NotificationLinkRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function getAllUserByNotificationType(NotificationType $notificationType){
+        return $this->createQueryBuilder('n')
+            ->select('nl.label', 'nu.id', 'nu.firstname', 'nu.lastname', 'nu.email')
+            ->join('n.notification', 'nl')
+            ->join('n.user', 'nu')
+            ->where('nl.label = :label')
+            ->setParameter(':label', $notificationType->getLabel())
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+
+    public function getAllCompetitionsPosted(NotificationLink $notificationLink): array {
+        return $this->createQueryBuilder('n')
+            ->select('nl.label', 'nu.id', 'nu.firstname', 'nu.lastname', 'nu.email')
+            ->join('n.notification', 'nl')
+            ->join('n.user', 'nu')
+            ->where('nl.label = :label')
+            ->setParameter(':label', $notificationLink->getNotification()->getLabel())
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

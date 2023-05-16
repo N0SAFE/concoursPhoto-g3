@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserLinkRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserLinkRepository::class)]
 class UserLink
@@ -11,14 +12,18 @@ class UserLink
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read', 'user:current:read'])]
     private ?int $id = null;
 
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
     private ?User $user = null;
 
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
     private ?SocialNetworks $social_networks = null;
 
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $link = null;
 

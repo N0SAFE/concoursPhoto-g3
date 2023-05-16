@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Competition;
 use App\Repository\CompetitionRepository;
+use App\Repository\UserRepository;
+use App\Service\MailSender;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -11,12 +13,16 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 #[AsController]
 class CompetitionController extends AbstractController
 {
+    const CREATE = "create";
     const LAST_PICTURES_POSTED = 'lastPicturesPosted';
     const LAST_PICTURES_OBTAINED_VOTES = 'lastPicturesObtainedVotes';
     const PICTURES_OBTAINED_PRICE = 'picturesObtainedPrice';
+    const COMPETITION_CREATE = "competitionCreate";
 
     public function __construct(
         private CompetitionRepository $competitionRepository,
+        private UserRepository $userRepository,
+        private MailSender $mailSender
     ) {
     }
 
@@ -28,6 +34,17 @@ class CompetitionController extends AbstractController
             self::PICTURES_OBTAINED_PRICE => $this->competitionRepository->getPicturesObtainedPrice($competition),
             default => throw new \RuntimeException(sprintf('Unknown operation "%s".', $operationName))
         };
+    }
+
+    public function create(Competition $competition){
+        echo "ui";
+        $users = $this->userRepository->getAllUserByNotificationType(9);
+        if ($users) {
+            foreach ($users as $user) {
+                $this->mailSender->sendMail("admin@admin.com", $user->getEmail(), "Concours publié", "competition_published.html.twig");
+            }
+        }
+        return $competition;
     }
 
 }

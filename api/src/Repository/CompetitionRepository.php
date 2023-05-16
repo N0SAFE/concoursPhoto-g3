@@ -85,6 +85,27 @@ class CompetitionRepository extends ServiceEntityRepository
         ;
     }
 
+    public function getLastCompetitionPosted() {
+        return $this->createQueryBuilder('c')
+            ->select('c.competition_name', 'c.creation_date')
+            ->orderBy('c.creation_date', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function getAllUserByVotingDate(int $competitionId){
+        return $this->createQueryBuilder('u')
+            ->select('u', 'c.voting_start_date', 'c.id')
+            ->join('u.competitions', 'c')
+            ->where('c.voting_start_date >= :voting_start_date')
+            ->setParameter('voting_start_date', new \DateTime())
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return competition[] Returns an array of competition objects
 //     */
