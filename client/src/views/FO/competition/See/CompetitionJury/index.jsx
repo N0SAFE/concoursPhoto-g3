@@ -1,5 +1,5 @@
 import style from './style.module.scss';
-import PicturesAside from '@/views/FO/competition/PicturesAside/index.jsx';
+import PicturesAside from '@/views/FO/competition/See/PicturesAside/index.jsx';
 import Navlink from '@/components/molecules/Navlink/index.jsx';
 import { useOutletContext } from 'react-router-dom';
 

@@ -1,6 +1,6 @@
-import { useOutletContext } from 'react-router-dom';
-import PicturesAside from '@/views/FO/competition/PicturesAside/index.jsx';
+import { useParams, useOutletContext } from 'react-router-dom';
 import style from './style.module.scss';
+import PicturesAside from '@/views/FO/competition/See/PicturesAside/index.jsx';
 import Navlink from '@/components/molecules/Navlink/index.jsx';
 import React, { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
@@ -16,6 +16,7 @@ export default function () {
         console.log(editorRef.current.getContent());
       }
     };
+
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
         { content: 'Règlement', to: '/rules' },
@@ -24,13 +25,12 @@ export default function () {
         { content: 'Les photos', to: '/pictures' },
         { content: 'Résultats', to: '/results' },
     ];
-
     function updateCompetition() {
         const res = apiFetch(
             `/competitions/${competition.id}`,
             {
                 method: 'PATCH',
-                body: JSON.stringify({ rules:editorRef.current.getContent()}),
+                body: JSON.stringify({ description:editorRef.current.getContent()}),
                 headers: {
                     'Content-Type':
                         'application/merge-patch+json',
@@ -43,17 +43,14 @@ export default function () {
             error: 'Erreur lors de la mise à jour',
         })
     }
-
-
-
     return (
-        <div className={style.rulesContainer}>
+        <div className={style.viewContainer}>
             <div>
                 <Navlink base="/competition/:id" list={competitionRouteList} />
-                <div className={style.description} dangerouslySetInnerHTML={{ __html : competition.rules}} ></div>
+                <div className={style.description}dangerouslySetInnerHTML={{ __html : competition.description}}></div>
                 <Editor
                     onInit={(evt, editor) => editorRef.current = editor}
-                    initialValue={competition.rules}
+                    initialValue={competition.description}
                         init={{
                         height: 500,
                         menubar: false,
@@ -71,7 +68,7 @@ export default function () {
                 />
                 <button style={{ borderRadius: "10%" }} onClick={updateCompetition}>Editer</button>
             </div>
-            <PicturesAside requestType={'last-pictures-obtained-votes'} />
+            <PicturesAside requestType={'last-pictures-posted'} />
         </div>
     );
 }

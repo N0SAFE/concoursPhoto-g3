@@ -46,14 +46,14 @@ export default function Header(environment) {
             ],
         });
     } else {
-        listLeft.push({ type: 'classic', title: 'Accueil', to: '/BO' });
+        listLeft.push({ type: 'classic', title: 'Accueil', to: '/' });
         listLeft.push({ type: 'classic', title: 'Concours photo', to: '/' });
         listLeft.push({ type: 'classic', title: 'Photographes', to: '/' });
         listLeft.push({ type: 'classic', title: 'Organisateurs', to: '/' });
         listLeft.push({
             type: 'classic',
             title: 'Créer votre concours',
-            to: '/',
+            to: '/CreateCompetition',
         });
     }
 

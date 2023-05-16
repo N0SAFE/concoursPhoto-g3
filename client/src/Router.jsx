@@ -22,16 +22,19 @@ import { useModal } from './contexts/ModalContext/index.jsx';
 import { toast } from 'react-toastify';
 import Myorganization from '@/views/global/Profile/myorganization/index.jsx';
 import IndexNotif from '@/views/global/Profile/notif';
-import CompetitionView from '@/views/FO/competition/CompetitionView';
+import CompetitionView from '@/views/FO/competition/See/CompetitionView/index.jsx';
 import CompetitionLayout from '@/layout/CompetitionLayout';
-import CompetitionRules from '@/views/FO/competition/CompetitionRules';
-import CompetitionEndowments from '@/views/FO/competition/CompetitionEndowments';
-import CompetitionJury from '@/views/FO/competition/CompetitionJury';
-import CompetitionPictures from '@/views/FO/competition/CompetitionPictures';
-import CompetitionResults from '@/views/FO/competition/CompetitionResults';
+import CompetitionRules from '@/views/FO/competition/See/CompetitionRules/index.jsx';
+import CompetitionEndowments from '@/views/FO/competition/See/CompetitionEndowments';
+import CompetitionJury from '@/views/FO/competition/See/CompetitionJury';
+import CompetitionPictures from '@/views/FO/competition/See/CompetitionPictures';
+import CompetitionResults from '@/views/FO/competition/See/CompetitionResults/index.jsx';
 import PageLayout from '@/layout/PageLayout';
 import ProfileLayout from './layout/ProfileLayout';
 import CompetitionParticipation from '@/views/global/Profile/participation';
+import CreateCompetitions from './views/FO/competition/Create/index.jsx';
+import CreateOrganization from './views/FO/organization/index.jsx';
+
 
 function Router() {
     const { setModalContent, showModal } = useModal();
@@ -103,6 +106,8 @@ function Router() {
                         />
                     </Route>
                 </Route>
+                <Route path='/createcompetition' element={<CreateCompetitions />} />
+                <Route path='/createorganization' element={<CreateOrganization />} />
                 <Route path="/competition/:id" element={<CompetitionLayout />}>
                     <Route path="" element={<CompetitionView />} />
                     <Route path="rules" element={<CompetitionRules />} />

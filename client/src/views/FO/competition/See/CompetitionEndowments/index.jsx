@@ -1,6 +1,6 @@
 import { useOutletContext, useParams } from 'react-router-dom';
 import Navlink from '@/components/molecules/Navlink/index.jsx';
-import PicturesAside from '@/views/FO/competition/PicturesAside/index.jsx';
+import PicturesAside from '@/views/FO/competition/See/PicturesAside/index.jsx';
 import style from './style.module.scss';
 
 export default function () {
