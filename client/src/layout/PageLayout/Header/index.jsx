@@ -46,7 +46,7 @@ export default function Header(environment) {
             ],
         });
     } else {
-        listLeft.push({ type: 'classic', title: 'Accueil', to: '/BO' });
+        listLeft.push({ type: 'classic', title: 'Accueil', to: '/' });
         listLeft.push({ type: 'classic', title: 'Concours photo', to: '/' });
         listLeft.push({ type: 'classic', title: 'Photographes', to: '/' });
         listLeft.push({ type: 'classic', title: 'Organisateurs', to: '/' });
@@ -87,13 +87,13 @@ export default function Header(environment) {
             });
         }
     } else {
-        listRight.push({
-            type: 'modal',
-            component: <Register />,
-            title: "S'inscrire",
-            icon: 'user-plus',
-        });
         if (isLogged) {
+            listRight.push({
+                type: 'button',
+                title: "Mon compte",
+                icon: 'user-plus',
+                to: '/profile/me',
+            });
             listRight.push({
                 type: 'button',
                 action: function () {
@@ -110,6 +110,12 @@ export default function Header(environment) {
                 icon: 'sign-out',
             });
         } else {
+            listRight.push({
+                type: 'modal',
+                component: <Register />,
+                title: "S'inscrire",
+                icon: 'user-plus',
+            });
             listRight.push({
                 type: 'modal',
                 component: <Login />,
