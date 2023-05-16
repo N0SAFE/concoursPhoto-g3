@@ -137,50 +137,37 @@ export default function CompetitionLayout() {
                                 </h1>
                             </div>
                             <div>
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={
-                                        <Dropdown
-                                            title="Thème(s) :"
-                                            links={entity.theme?.map(theme => ({
-                                                title: theme.label,
-                                            }))}
-                                            iconColor={'#000'}
-                                        />
-                                    }
-                                />
+                            
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`Pays : ${entity.country_criteria}`}
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={
-                                        <Dropdown
-                                            title="Région(s) :"
-                                            links={entity.region_criteria?.map(
-                                                region => ({
-                                                    title: region.nom,
-                                                })
-                                            )}
-                                            iconColor={'#000'}
-                                        />
-                                    }
+                                    title={`departement : ${entity.department_criteria?.map(
+                                        department => (
+                                            department.nom
+                                        )
+                                    )}`}
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={
-                                        <Dropdown
-                                            title="Catégorie(s) :"
-                                            links={entity.participant_category?.map(
-                                                category => ({
-                                                    title: category.label,
-                                                })
-                                            )}
-                                            iconColor={'#000'}
-                                        />
-                                    }
+                                    title={`Région(s) : ${entity.region_criteria?.map(
+                                    region => (
+                                        region.nom
+                                    )
+    
+                                    )}`} />
+                                <Chip
+                                    backgroundColor={'#F5F5F5'}
+                                    title={`Thème : ${entity.theme?.map(
+                                        theme => (
+                                            theme.label
+                                            
+                                        )
+                                    )}`}
                                 />
+                                        
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`Âge : de ${entity.min_age_criteria} à ${entity.max_age_criteria} ans`}
