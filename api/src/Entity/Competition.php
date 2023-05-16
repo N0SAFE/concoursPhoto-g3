@@ -8,7 +8,6 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use App\Controller\CompetitionController;
 use App\Repository\CompetitionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,26 +20,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new GetCollection(),
         new Get(),
-        new Post(
-            name: CompetitionController::COMPETITION_CREATE
-        ),
+        new Post(),
         new Patch(),
         new Delete(),
-        new Get(
-            name: CompetitionController::LAST_PICTURES_POSTED,
-            uriTemplate: '/competitions/{id}/last-pictures-posted',
-            controller: CompetitionController::class
-        ),
-        new Get(
-            name: CompetitionController::LAST_PICTURES_OBTAINED_VOTES,
-            uriTemplate: '/competitions/{id}/last-pictures-obtained-votes',
-            controller: CompetitionController::class
-        ),
-        new Get(
-            name: CompetitionController::PICTURES_OBTAINED_PRICE,
-            uriTemplate: '/competitions/{id}/pictures-obtained-price',
-            controller: CompetitionController::class
-        ),
     ],
     normalizationContext: ['groups' => ['competition', 'file']]
 
