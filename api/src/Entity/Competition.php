@@ -164,6 +164,10 @@ class Competition
     #[Groups(['competition', 'user:current:read'])]
     private ?File $competition_visual = null;
 
+    #[ORM\Column(nullable: true)]
+    #[Groups(['competition', 'competition:read', 'user:current:read'])]
+    private ?bool $is_promoted = null;
+
     public function __construct()
     {
         $this->theme = new ArrayCollection();
@@ -588,6 +592,18 @@ class Competition
     public function setCompetitionVisual(?File $competition_visual): self
     {
         $this->competition_visual = $competition_visual;
+
+        return $this;
+    }
+
+    public function isIsPromoted(): ?bool
+    {
+        return $this->is_promoted;
+    }
+
+    public function setIsPromoted(?bool $is_promoted): self
+    {
+        $this->is_promoted = $is_promoted;
 
         return $this;
     }

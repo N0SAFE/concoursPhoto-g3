@@ -1,5 +1,6 @@
 import style from './style.module.scss';
 import Slider from '@/components/molecules/Slider';
+import useApiPath from "@/hooks/useApiPath.js";
 
 export default function FOPortalList({
     boxSingle = [],
@@ -9,6 +10,7 @@ export default function FOPortalList({
     boxDown = [],
     boxDownContents = [],
 }) {
+    const apiPath = useApiPath()
     return (
         <div className={style.portalContainer}>
             <div className={style.boxSingle}>
@@ -16,10 +18,7 @@ export default function FOPortalList({
                     <Slider
                         slides={boxSingleContents.map(content => {
                             return {
-                                imagePath:
-                                    import.meta.env.VITE_API_URL +
-                                    '/' +
-                                    content,
+                                imagePath: apiPath(content),
                                 imageAlt: content,
                             };
                         })}
@@ -28,7 +27,7 @@ export default function FOPortalList({
                 {boxSingle.type === 'picture' && (
                     <img
                         src={
-                            import.meta.env.VITE_API_URL + '/' + boxSingle.path
+                            apiPath(boxSingle.path)
                         }
                         alt={boxSingle.alt}
                     />
@@ -40,10 +39,7 @@ export default function FOPortalList({
                         <Slider
                             slides={boxUpContents.map(content => {
                                 return {
-                                    imagePath:
-                                        import.meta.env.VITE_API_URL +
-                                        '/' +
-                                        content,
+                                    imagePath: apiPath(content),
                                     imageAlt: content,
                                 };
                             })}
@@ -52,7 +48,7 @@ export default function FOPortalList({
                     {boxUp.type === 'picture' && (
                         <img
                             src={
-                                import.meta.env.VITE_API_URL + '/' + boxUp.path
+                                apiPath(boxUp.path)
                             }
                             alt={boxUp.alt}
                         />
@@ -61,10 +57,7 @@ export default function FOPortalList({
                         <Slider
                             slides={boxDownContents.map(content => {
                                 return {
-                                    imagePath:
-                                        import.meta.env.VITE_API_URL +
-                                        '/' +
-                                        content,
+                                    imagePath: apiPath(content),
                                     imageAlt: content,
                                 };
                             })}
@@ -73,9 +66,7 @@ export default function FOPortalList({
                     {boxDown.type === 'picture' && (
                         <img
                             src={
-                                import.meta.env.VITE_API_URL +
-                                '/' +
-                                boxDown.path
+                                apiPath(boxDown.path)
                             }
                             alt={boxDown.alt}
                         />

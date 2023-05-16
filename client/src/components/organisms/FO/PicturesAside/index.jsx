@@ -1,7 +1,4 @@
 import style from './style.module.scss';
-import useApiFetch from '@/hooks/useApiFetch.js';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import Button from '@/components/atoms/Button/index.jsx';
 import useApiPath from '@/hooks/useApiPath.js';
 
