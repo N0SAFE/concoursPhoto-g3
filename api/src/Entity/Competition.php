@@ -20,7 +20,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new GetCollection(),
         new Get(),
-        new Post(),
+        new Post(
+            name: "CompetitionCreate"
+        ),
         new Patch(),
         new Delete(),
     ],
