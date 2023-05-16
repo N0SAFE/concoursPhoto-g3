@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Repository\CompetitionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,10 +19,20 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+// filter using a class
+#[ApiFilter(DateFilter::class, properties: [
+    "results_date"
+])]
+#[ApiFilter(PropertyFilter::class)]
+#[ApiFilter(SearchFilter::class)]
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Get(),
+        new Get(
+            filters: [
+                'state' => 'App\Filter\CompetitionStateFilter',
+            ],
+        ),
         new Post(
             name: "CompetitionCreate"
         ),
