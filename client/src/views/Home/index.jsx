@@ -6,6 +6,7 @@ import Loader from '@/components/atoms/Loader/index.jsx';
 import { useEffect, useState } from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
+import {format} from "date-fns"
 
 export default function Home() {
     const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +27,8 @@ export default function Home() {
     };
 
     function getListCompetitions(controller) {
-        return apiFetch('/competitions', {
+        const now = new Date();
+        return apiFetch('/competitions?results_date[after]=' + format(now, "yyyy-MM-dd"), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
