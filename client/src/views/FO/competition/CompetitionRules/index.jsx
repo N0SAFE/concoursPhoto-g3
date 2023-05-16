@@ -1,14 +1,14 @@
 import { useOutletContext } from 'react-router-dom';
-import PicturesAside from '@/views/FO/competition/PicturesAside/index.jsx';
+import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import style from './style.module.scss';
-import Navlink from '@/components/molecules/Navlink/index.jsx';
+import Navlink from '@/components/molecules/Navlink';
 import React, { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition } = useOutletContext();
+    const { competition, asidePictures, asideLabel  } = useOutletContext();
     const apiFetch = useApiFetch();
     const editorRef = useRef(null);
     const log = () => {
@@ -71,7 +71,7 @@ export default function () {
                 />
                 <button style={{ borderRadius: "10%" }} onClick={updateCompetition}>Editer</button>
             </div>
-            <PicturesAside requestType={'last-pictures-obtained-votes'} />
+            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
         </div>
     );
 }

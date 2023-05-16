@@ -1,7 +1,7 @@
 import { useOutletContext } from 'react-router-dom';
 import style from './style.module.scss';
-import Chip from '@/components/atoms/Chip/index.jsx';
-import Navlink from '@/components/molecules/Navlink/index.jsx';
+import Chip from '@/components/atoms/Chip';
+import Navlink from '@/components/molecules/Navlink';
 
 export default function () {
     const { competition } = useOutletContext();

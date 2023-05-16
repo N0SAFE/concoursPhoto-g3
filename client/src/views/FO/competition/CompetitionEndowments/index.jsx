@@ -1,6 +1,6 @@
 import { useOutletContext, useParams } from 'react-router-dom';
-import Navlink from '@/components/molecules/Navlink/index.jsx';
-import PicturesAside from '@/views/FO/competition/PicturesAside/index.jsx';
+import Navlink from '@/components/molecules/Navlink';
+import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import style from './style.module.scss';
 import React, { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
@@ -9,14 +9,8 @@ import { toast } from 'react-toastify';
 
 
 export default function () {
-    const { competition } = useOutletContext();
-    const apiFetch = useApiFetch();
-    const editorRef = useRef(null);
-    const log = () => {
-      if (editorRef.current) {
-        console.log(editorRef.current.getContent());
-      }
-    };
+    const { competition, asidePictures, asideLabel  } = useOutletContext();
+
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
         { content: 'Règlement', to: '/rules' },
@@ -74,8 +68,7 @@ export default function () {
                     />
                     <button style={{ borderRadius: "10%" }} onClick={updateCompetition}>Editer</button>
                 </div>
-                
-                <PicturesAside requestType={'last-pictures-obtained-votes'} />
+                <PicturesAside pictures={asidePictures} asideLabel={asideLabel } />
             </div>
         </div>
     );
