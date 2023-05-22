@@ -13,18 +13,18 @@ export default function FOCompetitionList({cardContentList}) {
                             imagePath={competition.competition_visual.path}
                             filters={[
                                 competition.organization?.users.map(
-                                    user => user.firstname + ' ' + user.lastname
+                                    user => user.firstname + ' ' + user.lastname || null
                                 ),
                                 competition?.theme.map(item => item.label),
                                 competition.state ? 'En cours' : 'Terminé',
-                            ]}
+                            ].filter((i) => i !== null)}
                             stats={[
                                 {
-                                    name: competition.numberOfUser,
+                                    name: competition.numberOfParticipants,
                                     icon: 'user-plus',
                                 },
                                 {
-                                    name: competition.pictures.length,
+                                    name: competition.numberOfPictures,
                                     icon: 'camera',
                                 },
                                 {

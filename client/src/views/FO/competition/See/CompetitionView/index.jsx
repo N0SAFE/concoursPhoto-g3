@@ -8,7 +8,9 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition, asidePictures, asideLabel  } = useOutletContext();
+    const { competition, asideLabel  } = useOutletContext();
+    const asidePictures = competition.aside;
+    console.log(asidePictures)
     const apiFetch = useApiFetch();
     const editorRef = useRef(null);
     const log = () => {
@@ -71,4 +73,4 @@ export default function () {
             <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
         </div>
     );
-}
+}   

@@ -31,11 +31,9 @@ class ParticipantCategory
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('competition')]
     private ?string $label = null;
 
     #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'participant_category')]
-    #[Groups('competition')]
     private Collection $competitions;
 
     public function __construct()

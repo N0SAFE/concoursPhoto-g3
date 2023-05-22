@@ -1,21 +1,18 @@
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
+import Navlink from '@/components/molecules/Navlink';
 import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import style from './style.module.scss';
-import Navlink from '@/components/molecules/Navlink';
 import React, { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
-import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 
+
 export default function () {
-    const { competition, asidePictures, asideLabel  } = useOutletContext();
-    const apiFetch = useApiFetch();
+    const { competition, asideLabel  } = useOutletContext();
+    const asidePictures = competition.aside
+    
     const editorRef = useRef(null);
-    const log = () => {
-      if (editorRef.current) {
-        console.log(editorRef.current.getContent());
-      }
-    };
+
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
         { content: 'Règlement', to: '/rules' },
@@ -24,13 +21,12 @@ export default function () {
         { content: 'Les photos', to: '/pictures' },
         { content: 'Résultats', to: '/results' },
     ];
-
     function updateCompetition() {
         const res = apiFetch(
             `/competitions/${competition.id}`,
             {
                 method: 'PATCH',
-                body: JSON.stringify({ rules:editorRef.current.getContent()}),
+                body: JSON.stringify({ endowments:editorRef.current.getContent()}),
                 headers: {
                     'Content-Type':
                         'application/merge-patch+json',
@@ -43,17 +39,20 @@ export default function () {
             error: 'Erreur lors de la mise à jour',
         })
     }
-
-
-
     return (
-        <div className={style.rulesContainer}>
-            <div>
-                <Navlink base="/competition/:id" list={competitionRouteList} />
-                <div className={style.description} dangerouslySetInnerHTML={{ __html : competition.rules}} ></div>
-                <Editor
+        <div>
+            <div className={style.endowmentsContainer}>
+                <div>
+                    <Navlink
+                        base="/competition/:id"
+                        list={competitionRouteList}
+                    />
+                    <div className={style.description} dangerouslySetInnerHTML={{ __html : competition.endowments}}>
+                        
+                    </div>
+                    <Editor
                     onInit={(evt, editor) => editorRef.current = editor}
-                    initialValue={competition.rules}
+                    initialValue={competition.endowments}
                         init={{
                         height: 500,
                         menubar: false,
@@ -68,10 +67,11 @@ export default function () {
             'removeformat | help' + ' | emoticons' + ' insertdatetime | code | preview',
           content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         }}
-                />
-                <button style={{ borderRadius: "10%" }} onClick={updateCompetition}>Editer</button>
+                    />
+                    <button style={{ borderRadius: "10%" }} onClick={updateCompetition}>Editer</button>
+                </div>
+                <PicturesAside pictures={asidePictures} asideLabel={asideLabel } />
             </div>
-            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
         </div>
     );
 }
