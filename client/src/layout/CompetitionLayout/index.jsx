@@ -103,20 +103,26 @@ export default function CompetitionLayout() {
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={`departement : ${entity.department_criteria?.map(
-                                        department => department.nom
+                                    title={`Département(s) : ${entity.department_criteria?.map(
+                                        department => (
+                                            ' ' + department.nom
+                                        )
                                     )}`}
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`Région(s) : ${entity.region_criteria?.map(
-                                        region => region.nom
-                                    )}`}
-                                />
+                                    region => (
+                                        ' ' + region.nom
+                                    )
+    
+                                    )}`} />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={`Thème : ${entity.theme?.map(
-                                        theme => theme.label
+                                    title={`Thème(s) : ${entity.theme?.map(
+                                        theme => (
+                                            ' ' + theme.label
+                                        )
                                     )}`}
                                 />
 

@@ -3,11 +3,13 @@ import FOCompetitionList from '@/components/organisms/FO/FOCompetitionList';
 import FOStats from '@/components/organisms/FO/FOStats';
 import FOPortalList from '@/components/organisms/FO/FOPortalList';
 import Loader from '@/components/atoms/Loader/index.jsx';
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import {format} from "date-fns"
 import useApiPath from '@/hooks/useApiPath.js';
+import Icon from "@/components/atoms/Icon/index.jsx";
+import {useRef} from "react";
 
 export default function Home() {
     const apiPath = useApiPath();
@@ -16,6 +18,8 @@ export default function Home() {
     const apiFetch = useApiFetch();
     const [competitions, setCompetitions] = useState([]);
     const [promotedCompetitions, setPromotedCompetitions] = useState([]);
+    const listRef = useRef();
+    const [shouldUseGridRef, setShouldUseGridRef] = useState(true);
 
     const getStats = controller => {
         return apiFetch('/stats', {
@@ -46,7 +50,7 @@ export default function Home() {
                 console.debug(data);
                 setPromotedCompetitions(data['hydra:member']);
                 return data['hydra:member'];
-        })
+            })
     }
 
     function getListCompetitions(controller) {
@@ -83,7 +87,7 @@ export default function Home() {
         ]).then(function () {
             setIsLoading(false);
         });
-        
+
         if (import.meta.env.MODE === 'development') {
             toast.promise(promise, {
                 pending: 'Chargement de la page d\'accueil',
@@ -95,6 +99,23 @@ export default function Home() {
         return () => setTimeout(() => controller.abort());
     }, []);
 
+    const handleGrid = (e) => {
+        e.preventDefault();
+        const listElement = listRef.current;
+
+        listElement.classList.remove(style.homeDispositionList);
+        listElement.classList.add(style.homeDispositionGrid);
+
+    };
+
+    const handleList = (e) => {
+        e.preventDefault();
+        const listElement = listRef.current;
+
+        listElement.classList.remove(style.homeDispositionGrid);
+        listElement.classList.add(style.homeDispositionList)
+    };
+
     return (
         <Loader active={isLoading}>
             <div className={style.homeContainer}>
@@ -102,7 +123,7 @@ export default function Home() {
                     <div>
                         <h1>Le portail des concours photo</h1>
                     </div>
-                    <FOStats stats={stats} />
+                    <FOStats stats={stats}/>
                 </div>
                 <FOPortalList
                     boxSingle={{
@@ -124,9 +145,21 @@ export default function Home() {
                         alt: "Photo de la page d'accueil",
                     }}
                 />
-
-                <h2>Derniers concours photo publiés</h2>
-                <FOCompetitionList cardContentList={competitions} />
+                <div className={style.homeDisposition}>
+                    <div>
+                        <h2>Derniers concours photo publiés</h2>
+                    </div>
+                    <div>
+                        <div>
+                            <Icon className={style.homeIcon} icon="grid" size={30} onClick={e => handleGrid(e)}/>
+                            <Icon className={style.homeIcon} icon="list" size={30} onClick={e => handleList(e)}/>
+                            <Icon icon="map" size={30}/>
+                        </div>
+                    </div>
+                </div>
+                <div ref={listRef}>
+                    <FOCompetitionList cardContentList={competitions}/>
+                </div>
             </div>
         </Loader>
     );
