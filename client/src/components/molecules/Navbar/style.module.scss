@@ -47,7 +47,11 @@
                 }
             }
 
-            @include below(md) {
+            @include below(xxl) {
+                gap: $gapBetweenElement;
+            }
+
+            @include below(xl) {
                 display: none;
             }
         }
@@ -56,7 +60,7 @@
     &Responsive {
         display: none;
 
-        @include below(md) {
+        @include below(xl) {
             display: flex !important;
 
             & > div {
@@ -68,11 +72,15 @@
                 transition: 0.25s ease-in-out;
                 max-width: 0;
                 position: fixed;
-                top: 60px;
+                top: 100px;
                 left: 0;
                 height: 100vh;
                 display: flex;
                 flex-direction: column;
+
+                @include below(md) {
+                    top: 60px;
+                }
 
                 .navbarStyle {
                     &:hover {

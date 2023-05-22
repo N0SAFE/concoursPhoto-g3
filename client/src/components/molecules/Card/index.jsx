@@ -28,45 +28,47 @@ export default function Card({
                     alt={title}
                 />
             </div>
-            <div className={style.cardBody}>
-                <h3>{title}</h3>
-                <div className={style.cardFilter}>
-                    {filters &&
-                        filters.map((filter, index) => {
-                            return (
-                                <Chip
-                                    key={index}
-                                    title={filter}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                            );
-                        })}
-                </div>
-            </div>
-            {stats && (
-                <div className={style.cardFooter}>
+            <div className={style.cardDisposition}>
+                <div className={style.cardBody}>
+                    <h3>{title}</h3>
                     <div className={style.cardFilter}>
-                        {stats.map((stat, index) => {
-                            return (
-                                <Chip
-                                    icon={stat.icon}
-                                    key={index}
-                                    title={stat.name}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                            );
-                        })}
-                    </div>
-                    <div>
-                        {finalDate && (
-                            <div className={style.date}>
-                                <p>Jusqu'au {finalDate}</p>
-                                <Icon icon="time" size="20" />
-                            </div>
-                        )}
+                        {filters &&
+                            filters.map((filter, index) => {
+                                return (
+                                    <Chip
+                                        key={index}
+                                        title={filter}
+                                        backgroundColor={'#F5F5F5'}
+                                    />
+                                );
+                            })}
                     </div>
                 </div>
-            )}
+                {stats && (
+                    <div className={style.cardFooter}>
+                        <div className={style.cardFilter}>
+                            {stats.map((stat, index) => {
+                                return (
+                                    <Chip
+                                        icon={stat.icon}
+                                        key={index}
+                                        title={stat.name}
+                                        backgroundColor={'#F5F5F5'}
+                                    />
+                                );
+                            })}
+                        </div>
+                        <div>
+                            {finalDate && (
+                                <div className={style.date}>
+                                    <p>Jusqu'au {finalDate}</p>
+                                    <Icon icon="time" size="20" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

@@ -1,34 +1,111 @@
-.homeContainer {
-    @extend .margin-title;
-}
+.home {
+    &Container {
+        @extend .margin-title;
+    }
 
-.homeBanner {
-    display: flex;
-    align-items: center;
+    &Banner {
+        display: flex;
+        align-items: center;
 
-    & > div {
-        width: 50%;
+        & > div {
+            width: 50%;
 
-        &:last-child {
-            justify-content: end;
+            &:last-child {
+                justify-content: end;
+            }
+        }
+
+        @include below(xl) {
+            flex-direction: column;
+
+            h1 {
+                font-size: 25px;
+            }
+
+            & > div {
+                display: flex;
+                justify-content: center;
+
+                &:last-child {
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    width: 100%;
+                    margin-bottom: 15px;
+                }
+            }
         }
     }
 
-    @include below(xl) {
-        flex-direction: column;
+    &Icon {
+        cursor: pointer;
+    }
 
-        h1 {
-            font-size: 25px;
+    &Disposition {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        & > div:last-child > div {
+            & > svg {
+                // adapt icon size compared with competition title
+                transform: translateY(3px);
+
+                &:hover {
+                    color: $text-color-primary;
+                    background-color: $background-color-darkgrey;
+                }
+            }
         }
 
-        & > div {
-            display: flex;
-            justify-content: center;
+        &Grid {
+            cursor: pointer;
 
-            &:last-child {
+            & > div > div > div {
                 display: flex;
-                justify-content: center;
-                flex-wrap: wrap;
+                flex-direction: column;
+            }
+        }
+
+        &List {
+            cursor: pointer;
+
+            & > div > div > div {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+
+                & > div:first-child {
+                    width: auto;
+                    aspect-ratio: inherit;
+
+                    & > img {
+                        width: 500px;
+                    }
+                }
+
+                // reset disposition to grid
+                @include below(md) {
+                    display: flex;
+                    flex-direction: column;
+                    width: calc((100% - 30px) / 2);
+
+                    & > div:first-child {
+                        width: 100%;
+
+                        & > img {
+                            width: 100%;
+                        }
+                    }
+
+                    & > div:last-child {
+                        flex-wrap: inherit;
+                    }
+                }
+
+                @include small-mobile() {
+                    width: 100%;
+                }
             }
         }
     }
