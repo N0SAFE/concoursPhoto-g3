@@ -19,8 +19,36 @@ export default function CompetitionLayout() {
     const { getCityByCode, getDepartmentByCode, getRegionByCode } =
         useLocation();
     const [entity, setEntity] = useState({});
+    const [results = [], setResults] = useState([]);
+    const [asidePictures = [], setAsidePictures] = useState([]);
+    const [asideLabel = '', setAsideLabel] = useState('');
     const { id: competitionId } = useParams();
     const navigate = useNavigate();
+
+    const getPicture = controller => {
+        return apiFetch(`/competitions/${competitionId}/pictures`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            signal: controller?.signal,
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.debug(data);
+                if (data.code === 401) {
+                    throw new Error(data.message);
+                }
+                console.log(data)
+                setAsidePictures(data.aside);
+                setResults(data.results);
+                setAsideLabel(data.asideLabel);
+                return data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
 
     const getCompetitions = controller => {
         return apiFetch('/competitions/' + competitionId, {
@@ -71,7 +99,10 @@ export default function CompetitionLayout() {
 
     useEffect(() => {
         const controller = new AbortController();
-        const promise = getCompetitions(controller);
+        const promise = Promise.all([
+            getCompetitions(controller),
+            getPicture(controller),
+        ]);
         promise.then(function () {
             setIsLoading(false);
         });
@@ -106,50 +137,37 @@ export default function CompetitionLayout() {
                                 </h1>
                             </div>
                             <div>
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={
-                                        <Dropdown
-                                            title="Thème(s) :"
-                                            links={entity.theme?.map(theme => ({
-                                                title: theme.label,
-                                            }))}
-                                            iconColor={'#000'}
-                                        />
-                                    }
-                                />
+                            
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`Pays : ${entity.country_criteria}`}
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={
-                                        <Dropdown
-                                            title="Région(s) :"
-                                            links={entity.region_criteria?.map(
-                                                region => ({
-                                                    title: region.nom,
-                                                })
-                                            )}
-                                            iconColor={'#000'}
-                                        />
-                                    }
+                                    title={`departement : ${entity.department_criteria?.map(
+                                        department => (
+                                            department.nom
+                                        )
+                                    )}`}
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={
-                                        <Dropdown
-                                            title="Catégorie(s) :"
-                                            links={entity.participant_category?.map(
-                                                category => ({
-                                                    title: category.label,
-                                                })
-                                            )}
-                                            iconColor={'#000'}
-                                        />
-                                    }
+                                    title={`Région(s) : ${entity.region_criteria?.map(
+                                    region => (
+                                        region.nom
+                                    )
+    
+                                    )}`} />
+                                <Chip
+                                    backgroundColor={'#F5F5F5'}
+                                    title={`Thème : ${entity.theme?.map(
+                                        theme => (
+                                            theme.label
+                                            
+                                        )
+                                    )}`}
                                 />
+                                        
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`Âge : de ${entity.min_age_criteria} à ${entity.max_age_criteria} ans`}
@@ -238,7 +256,7 @@ export default function CompetitionLayout() {
                         image => image.logo.path
                     )}
                 />
-                <Outlet context={{ competition: entity }} />
+                <Outlet context={{ competition: entity, results, asidePictures, asideLabel }} />
                 <Button
                     name={'Retour'}
                     borderRadius={'30px'}

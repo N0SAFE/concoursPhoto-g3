@@ -33,7 +33,7 @@ export default function FOCompetitionList({cardContentList}) {
                                 },
                             ]}
                             finalDate={new Date(
-                                competition.submission_end_date
+                                competition.results_date
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'long',

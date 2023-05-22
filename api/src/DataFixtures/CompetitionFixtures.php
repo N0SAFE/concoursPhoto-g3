@@ -50,25 +50,34 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 0; $i < self::COMPETITION_COUNT_REFERENCE; $i++) {
             $competition = new Competition();
 
+            $resultsDate = $faker->dateTimeBetween("-1 year", "+1 year");
+            $votingEndDate = $faker->dateTimeBetween("-1 year", $resultsDate);
+            $votingStartDate = $faker->dateTimeBetween("-1 year", $votingEndDate);
+            $submissionEndDate = $faker->dateTimeBetween("-1 year", $votingStartDate);
+            $submissionStartDate = $faker->dateTimeBetween("-1 year", $submissionEndDate);
+            $publicationDate = $faker->dateTimeBetween("-1 year", $submissionStartDate);
+            $creationDate = $faker->dateTimeBetween("-1 year", $publicationDate);
+
             $competition->setState($faker->boolean());
             $competition->setCompetitionName($faker->text());
             $competition->setCompetitionVisual((new FileFixtures)->createFile());
             $competition->setDescription($faker->text());
             $competition->setRules($faker->text());
             $competition->setEndowments($this->getRandomElements(self::ENDOWMENTS_ARRAY, 1));
-            $competition->setCreationDate($faker->dateTime());
-            $competition->setPublicationDate($faker->dateTime());
-            $competition->setSubmissionStartDate($faker->dateTime());
-            $competition->setSubmissionEndDate($faker->dateTime());
-            $competition->setVotingStartDate($faker->dateTime());
-            $competition->setVotingEndDate($faker->dateTime());
-            $competition->setResultsDate($faker->dateTime());
+            $competition->setCreationDate($creationDate);
+            $competition->setPublicationDate($publicationDate);
+            $competition->setSubmissionStartDate($submissionStartDate);
+            $competition->setSubmissionEndDate($submissionEndDate);
+            $competition->setVotingStartDate($votingStartDate);
+            $competition->setVotingEndDate($votingEndDate);
+            $competition->setResultsDate($resultsDate);
             $competition->setWeightingOfJuryVotes($faker->randomFloat(3, 0, self::COUNT_REFERENCE));
             $competition->setNumberOfMaxVotes(random_int(0, self::COUNT_REFERENCE));
             $competition->setNumberOfPrices(random_int(0, self::COUNT_REFERENCE));
             $competition->setMinAgeCriteria(random_int(0, self::COUNT_REFERENCE));
             $competition->setMaxAgeCriteria(random_int(0, self::COUNT_REFERENCE));
             $competition->setCountryCriteria(["FRANCE"]);
+            $competition->setIsPromoted($faker->boolean());
 
             $cities = [];
             $cityNumber = rand(1, 3);

@@ -6,12 +6,16 @@ import Loader from '@/components/atoms/Loader/index.jsx';
 import { useEffect, useState } from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
+import {format} from "date-fns"
+import useApiPath from '@/hooks/useApiPath.js';
 
 export default function Home() {
+    const apiPath = useApiPath();
     const [isLoading, setIsLoading] = useState(true);
     const [stats, setStats] = useState({});
     const apiFetch = useApiFetch();
     const [competitions, setCompetitions] = useState([]);
+    const [promotedCompetitions, setPromotedCompetitions] = useState([]);
 
     const getStats = controller => {
         return apiFetch('/stats', {
@@ -25,8 +29,29 @@ export default function Home() {
             });
     };
 
+    function getPromotedCompetitions(controller) {
+        const now = new Date();
+        return apiFetch('/competitions?is_promoted=1&results_date[after]=' +  format(now, "yyyy-MM-dd") + '&properties[]=competition_visual', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            signal: controller?.signal,
+        })
+            .then(res => res.json())
+            .then(async data => {
+                if (data.code === 401) {
+                    throw new Error(data.message);
+                }
+                console.debug(data);
+                setPromotedCompetitions(data['hydra:member']);
+                return data['hydra:member'];
+        })
+    }
+
     function getListCompetitions(controller) {
-        return apiFetch('/competitions', {
+        const now = new Date();
+        return apiFetch('/competitions?results_date[after]=' + format(now, "yyyy-MM-dd"), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,6 +101,7 @@ export default function Home() {
         const promise = Promise.all([
             getListCompetitions(controller),
             getStats(controller),
+            getPromotedCompetitions(controller)
         ]).then(function () {
             setIsLoading(false);
         });
@@ -102,10 +128,13 @@ export default function Home() {
                 </div>
                 <FOPortalList
                     boxSingle={{
-                        type: 'picture',
+                        type: 'slider',
                         path: '/fixtures-upload/952-2160-2160.jpg',
                         alt: "Photo de la page d'accueil",
                     }}
+                    boxSingleContents={promotedCompetitions.map((competition) => {
+                        return competition.competition_visual.path
+                    })}
                     boxUp={{
                         type: 'picture',
                         path: '/fixtures-upload/952-2160-2160.jpg',

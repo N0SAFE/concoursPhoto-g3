@@ -76,6 +76,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     // A FUSIONNER AVEC LA REQUETE AU DESSUS MAIS J'AI PAS TROUVE COMMENT FAIRE
 
 //        return $this->createQueryBuilder('u')
+
 //            ->select('c.competition_name', 'c.id')
 //            ->join('u.votes', 'v')
 //            ->join('v.picture', 'p')
@@ -86,8 +87,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 //            ->getQuery()
 //            ->getResult()
 //            ;
-
 //    /**
+
+    public function getAllUserByNotificationType(int $code){
+        return $this->createQueryBuilder('u')
+            ->select('u')
+            ->join('u.notificationLinks', 'ul')
+            ->join('ul.notification', 'un')
+            ->where('un.notification_code = :notification_code')
+            ->setParameter(':notification_code', $code)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //     * @return User[] Returns an array of User objects
 //     */
 //    public function findByExampleField($value): array

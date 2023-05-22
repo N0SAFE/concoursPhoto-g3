@@ -12,6 +12,7 @@
                 flex: 0 66%;
                 display: flex;
                 gap: $gapBetweenElement;
+                width: 66%;
 
                 & > div:last-child {
                     display: flex;
@@ -20,13 +21,15 @@
                 }
 
                 h1 {
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-                    white-space: nowrap;
+                    @extend .break-long-words;
 
                     @include below(md) {
                         white-space: normal;
                     }
+                }
+
+                @include below(md) {
+                    width: 100%;
                 }
             }
 

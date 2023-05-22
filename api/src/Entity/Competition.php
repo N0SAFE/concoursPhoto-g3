@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use App\Controller\CompetitionController;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Repository\CompetitionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,30 +19,27 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(normalizationContext: ['groups' => ['competition', 'file']])]
-// custom operation
+// filter using a class
+#[ApiFilter(DateFilter::class, properties: [
+    "results_date"
+])]
+#[ApiFilter(PropertyFilter::class)]
+#[ApiFilter(SearchFilter::class)]
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Get(),
-        new Post(),
+        new Get(
+            filters: [
+                'state' => 'App\Filter\CompetitionStateFilter',
+            ],
+        ),
+        new Post(
+            name: "CompetitionCreate"
+        ),
         new Patch(),
-        new Get(
-            name: CompetitionController::LAST_PICTURES_POSTED,
-            uriTemplate: '/competitions/{id}/last-pictures-posted',
-            controller: CompetitionController::class
-        ),
-        new Get(
-            name: CompetitionController::LAST_PICTURES_OBTAINED_VOTES,
-            uriTemplate: '/competitions/{id}/last-pictures-obtained-votes',
-            controller: CompetitionController::class
-        ),
-        new Get(
-            name: CompetitionController::PICTURES_OBTAINED_PRICE,
-            uriTemplate: '/competitions/{id}/pictures-obtained-price',
-            controller: CompetitionController::class
-        )
+        new Delete(),
     ],
+    normalizationContext: ['groups' => ['competition', 'file']]
 
 )]
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
@@ -162,6 +163,10 @@ class Competition
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[Groups(['competition', 'user:current:read'])]
     private ?File $competition_visual = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['competition', 'competition:read', 'user:current:read'])]
+    private ?bool $is_promoted = null;
 
     public function __construct()
     {
@@ -587,6 +592,18 @@ class Competition
     public function setCompetitionVisual(?File $competition_visual): self
     {
         $this->competition_visual = $competition_visual;
+
+        return $this;
+    }
+
+    public function isIsPromoted(): ?bool
+    {
+        return $this->is_promoted;
+    }
+
+    public function setIsPromoted(?bool $is_promoted): self
+    {
+        $this->is_promoted = $is_promoted;
 
         return $this;
     }

@@ -20,7 +20,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 #[ApiResource(
     operations: [
         new GetCollection(),
@@ -176,6 +175,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $department = null;
 
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class)]
     private Collection $userLinks;
 

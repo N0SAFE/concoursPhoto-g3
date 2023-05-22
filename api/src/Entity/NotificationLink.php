@@ -13,9 +13,6 @@ class NotificationLink
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?bool $state = null;
-
     #[ORM\ManyToOne(inversedBy: 'notificationLinks')]
     private ?User $user = null;
 
@@ -25,18 +22,6 @@ class NotificationLink
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function isState(): ?bool
-    {
-        return $this->state;
-    }
-
-    public function setState(?bool $state): self
-    {
-        $this->state = $state;
-
-        return $this;
     }
 
     public function getUser(): ?User
