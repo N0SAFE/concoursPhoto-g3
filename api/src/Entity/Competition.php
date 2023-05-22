@@ -161,7 +161,10 @@ class Competition
     #[Groups(['competition', 'competition:read', 'user:current:read'])]
     private ?bool $is_promoted = null;
 
-    public function __construct()
+    #[Groups(['competition_aside'])]
+    private Collection $aside;
+
+    public function __construct(private CompetitionRepository $competitionRepository)
     {
         $this->theme = new ArrayCollection();
         $this->participant_category = new ArrayCollection();
@@ -170,59 +173,120 @@ class Competition
         $this->pictures = new ArrayCollection();
     }
 
+    public function getAside(): Collection
+    {
+        return $this->aside;
+    }
+
+    public function setAside(Collection $aside): self
+    {
+        $this->aside = $aside;
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     #[Groups(['competition'])]
-    public function getNumberOfPictures(): int {
+    public function getNumberOfPictures(): int
+    {
         return $this->pictures->count();
     }
-    
+
     #[Groups(['competition'])]
-    public function getNumberOfParticipants(): int {
-        $pictures=$this->getPictures();
-        $userDistinct=[];
-        foreach($pictures as $picture){
-            $userDistinct[$picture->getUser()->getId()]=$picture->getUser();
+    public function getNumberOfParticipants(): int
+    {
+        $pictures = $this->getPictures();
+        $userDistinct = [];
+        foreach ($pictures as $picture) {
+            $userDistinct[$picture->getUser()->getId()] = $picture->getUser();
         }
         return count($userDistinct);
     }
-    
+
     #[Groups(['competition'])]
-    public function getNumberOfVotes(): int {
+    public function getNumberOfVotes(): int
+    {
         $pictures = $this->getPictures();
         $numOfVotes = 0;
-        foreach($pictures as $picture){
+        foreach ($pictures as $picture) {
             $numOfVotes += $picture->getVotes()->count();
         }
         return $numOfVotes;
     }
-    
+
     #[Groups(['competition'])]
-    public function getState(): int {
+    public function getState(): int
+    {
         $now = new \DateTime();
-        if($now < $this->getSubmissionStartDate()){
+        if ($now < $this->getSubmissionStartDate()) {
             // return 'a venir';
             return 1;
-        }elseif($now > $this->getSubmissionStartDate() && $now < $this->getSubmissionEndDate()){
+        } elseif ($now > $this->getSubmissionStartDate() && $now < $this->getSubmissionEndDate()) {
             // return 'en phase de participation';
             return 2;
-        }elseif($now > $this->getSubmissionEndDate() && $now < $this->getVotingStartDate()){
+        } elseif ($now > $this->getSubmissionEndDate() && $now < $this->getVotingStartDate()) {
             // return 'En attente';
             return 3;
-        }elseif($now > $this->getVotingStartDate() && $now < $this->getVotingEndDate()){
+        } elseif ($now > $this->getVotingStartDate() && $now < $this->getVotingEndDate()) {
             // return 'en phase de vote';
             return 4;
-        }elseif($now > $this->getVotingEndDate() && $now < $this->getResultsDate()){
+        } elseif ($now > $this->getVotingEndDate() && $now < $this->getResultsDate()) {
             // return "en phase d'attribution";
             return 5;
-        }elseif($now > $this->getResultsDate()){
+        } elseif ($now > $this->getResultsDate()) {
             // return 'Terminé';
             return 6;
         }
     }
+
+    // #[Groups(['competition'])]
+    // public function getAsidePictures(): array {
+
+    //     $lastPicturesPosted = $this->pictures->toArray();
+    //     usort($lastPicturesPosted, function($a, $b){
+    //         // sort by id
+    //         return $a->getId() <=> $b->getId();
+    //     });
+    //     $lastPicturesPosted = array_slice($lastPicturesPosted, 0, 8);
+
+    //     $picturesObtainedPrice = $this->pictures->filter(function(Picture $picture){
+    //         return $picture->isPriceWon() !== null;
+    //     })->toArray();
+    //     usort($picturesObtainedPrice, function($a, $b){
+    //         // sort by id
+    //         return $a->getId() <=> $b->getId();
+    //     });
+    //     $picturesObtainedPrice = array_slice($picturesObtainedPrice, 0, 8);
+
+    //     $lastPicturesObtainedVotes = $this->pictures->filter(function(Picture $picture){
+    //         return $picture->getVotes()->count() > 0;
+    //     })->toArray();
+    //     usort($lastPicturesObtainedVotes, function(Picture $a, Picture $b){
+    //         // sort by lastVote 
+    //         $lastVoteA = $a->getVotes()->reduce(function(Vote $voteA, Vote $voteB){
+    //             return $voteA->getVoteDate() > $voteB->getVoteDate() ? $voteA : $voteB;
+    //         });
+
+    //         $lastVoteB = $b->getVotes()->reduce(function(Vote $voteA, Vote $voteB){
+    //             return $voteA->getVoteDate() > $voteB->getVoteDate() ? $voteA : $voteB;
+    //         });
+
+    //         return $lastVoteA->getVoteDate() <=> $lastVoteB->getVoteDate();
+    //     });
+    //     $lastPicturesObtainedVotes = array_slice($lastPicturesObtainedVotes, 0, 8);
+
+
+    //     if($this->getState() === 2 || $this->getState() === 3){
+    //         return ["aside" => $lastPicturesPosted, "asideLabel" => "Dernières photos soumises"];
+    //     }elseif($this->getState() === 4 || $this->getState() === 5){
+    //         return ["aside" => $lastPicturesObtainedVotes,  "asideLabel" => "Dernières photos ayant obtenu un vote"];
+    //     }elseif($this->getState() === 6){
+    //         return ["aside" => $picturesObtainedPrice, "asideLabel" => "Dernières photos ayant obtenu un prix"];
+    //     }
+    // }
 
     public function getCompetitionName(): ?string
     {

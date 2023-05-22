@@ -1,14 +1,16 @@
 import { useParams, useOutletContext } from 'react-router-dom';
 import style from './style.module.scss';
 import PicturesAside from '@/components/organisms/FO/PicturesAside';
-import Navlink from '@/components/molecules/Navlink/index.jsx';
+import Navlink from '@/components/molecules/Navlink';
 import React, { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition } = useOutletContext();
+    const { competition, asideLabel  } = useOutletContext();
+    const asidePictures = competition.aside;
+    console.log(asidePictures)
     const apiFetch = useApiFetch();
     const editorRef = useRef(null);
     const log = () => {
@@ -47,7 +49,7 @@ export default function () {
         <div className={style.viewContainer}>
             <div>
                 <Navlink base="/competition/:id" list={competitionRouteList} />
-                <div className={style.description}dangerouslySetInnerHTML={{ __html : competition.description}}></div>
+                <div className={style.description} dangerouslySetInnerHTML={{ __html : competition.description}}></div>
                 <Editor
                     onInit={(evt, editor) => editorRef.current = editor}
                     initialValue={competition.description}
@@ -60,15 +62,15 @@ export default function () {
                         'insertdatetime', 'table', 'code', 'help', 'wordcount','emoticons','charmap', 'insertdatetime'
                             ],
                         toolbar: 'undo redo | blocks | ' +
-            'bold italic forecolor | alignleft aligncenter ' +
-            'alignright alignjustify | bullist numlist outdent indent | ' +
-            'removeformat | help' + ' | emoticons' + ' insertdatetime | code | preview',
-          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-        }}
+                            'bold italic forecolor | alignleft aligncenter ' +
+                            'alignright alignjustify | bullist numlist outdent indent | ' +
+                            'removeformat | help' + ' | emoticons' + ' insertdatetime | code | preview',
+                        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                        }}
                 />
                 <button style={{ borderRadius: "10%" }} onClick={updateCompetition}>Editer</button>
             </div>
-            <PicturesAside requestType={'last-pictures-posted'} />
+            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
         </div>
     );
-}
+}   

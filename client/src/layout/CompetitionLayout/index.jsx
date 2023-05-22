@@ -19,45 +19,22 @@ export default function CompetitionLayout() {
     const { getCityByCode, getDepartmentByCode, getRegionByCode } =
         useLocation();
     const [entity, setEntity] = useState({});
-    const [results = [], setResults] = useState([]);
-    const [asidePictures = [], setAsidePictures] = useState([]);
-    const [asideLabel = '', setAsideLabel] = useState('');
     const { id: competitionId } = useParams();
     const navigate = useNavigate();
 
-    const getPicture = controller => {
-        return apiFetch(`/competitions/${competitionId}/pictures`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            signal: controller?.signal,
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.debug(data);
-                if (data.code === 401) {
-                    throw new Error(data.message);
-                }
-                console.log(data)
-                setAsidePictures(data.aside);
-                setResults(data.results);
-                setAsideLabel(data.asideLabel);
-                return data;
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    };
-
     const getCompetitions = controller => {
-        return apiFetch('/competitions/' + competitionId + "?groups[]=competition&groups[]=file&groups[]=competition_visual&groups[]=competition_pictures", {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            signal: controller?.signal,
-        })
+        return apiFetch(
+            '/competitions/' +
+                competitionId +
+                '?groups[]=competition&groups[]=file&groups[]=competition_visual&groups[]=competition_pictures&groups[]=competition_aside',
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                signal: controller?.signal,
+            }
+        )
             .then(res => res.json())
             .then(async data => {
                 console.debug(data);
@@ -76,9 +53,6 @@ export default function CompetitionLayout() {
                         city_criteria: cities,
                         department_criteria: departments,
                         region_criteria: regions,
-                        numberOfParticipants: data.numberOfParticipants,
-                        numberOfVotes: data.numberOfVotes,
-                        numberOfPictures: data.numberOfPictures
                     };
                     setEntity(_competition);
                     return _competition;
@@ -88,10 +62,7 @@ export default function CompetitionLayout() {
 
     useEffect(() => {
         const controller = new AbortController();
-        const promise = Promise.all([
-            getCompetitions(controller),
-            getPicture(controller),
-        ]);
+        const promise = getCompetitions(controller);
         promise.then(function () {
             setIsLoading(false);
         });
@@ -126,7 +97,6 @@ export default function CompetitionLayout() {
                                 </h1>
                             </div>
                             <div>
-                            
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`Pays : ${entity.country_criteria}`}
@@ -134,29 +104,22 @@ export default function CompetitionLayout() {
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`departement : ${entity.department_criteria?.map(
-                                        department => (
-                                            department.nom
-                                        )
+                                        department => department.nom
                                     )}`}
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`Région(s) : ${entity.region_criteria?.map(
-                                    region => (
-                                        region.nom
-                                    )
-    
-                                    )}`} />
+                                        region => region.nom
+                                    )}`}
+                                />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`Thème : ${entity.theme?.map(
-                                        theme => (
-                                            theme.label
-                                            
-                                        )
+                                        theme => theme.label
                                     )}`}
                                 />
-                                        
+
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
                                     title={`Âge : de ${entity.min_age_criteria} à ${entity.max_age_criteria} ans`}
@@ -245,7 +208,7 @@ export default function CompetitionLayout() {
                         image => image.logo.path
                     )}
                 />
-                <Outlet context={{ competition: entity, results, asidePictures, asideLabel }} />
+                <Outlet context={{ competition: entity }} />
                 <Button
                     name={'Retour'}
                     borderRadius={'30px'}

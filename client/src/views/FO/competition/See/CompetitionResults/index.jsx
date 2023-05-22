@@ -1,10 +1,10 @@
 import { useOutletContext } from 'react-router-dom';
-import style from '@/views/FO/competition/See/CompetitionView/style.module.scss';
 import PicturesAside from '@/components/organisms/FO/PicturesAside';
-import Navlink from '@/components/molecules/Navlink/index.jsx';
+import Navlink from '@/components/molecules/Navlink';
 
 export default function () {
-    const { competition } = useOutletContext();
+    const { competition, asideLabel  } = useOutletContext();
+    const asidePictures = competition.aside
 
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
@@ -16,12 +16,12 @@ export default function () {
     ];
 
     return (
-        <div className={style.container}>
-            <div className={style.rulesContainer}>
+        <div >
+            <div >
                 <Navlink base="/competition/:id" list={competitionRouteList} />
                 mettre l'entity result ici
             </div>
-            <PicturesAside requestType={'pictures-obtained-price'} />
+            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
         </div>
     );
 }

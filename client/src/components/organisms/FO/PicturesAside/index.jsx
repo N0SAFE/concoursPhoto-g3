@@ -20,7 +20,7 @@ export default function PicturesAside({ pictures, asideLabel  }) {
                     {pictures.map(picture => {
                         return (
                             <img
-                                src={apiPath(picture.path)}
+                                src={apiPath(picture.file.path)}
                                 alt={picture.competition_name}
                             />
                         );

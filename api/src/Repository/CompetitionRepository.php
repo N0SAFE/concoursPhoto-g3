@@ -41,6 +41,7 @@ class CompetitionRepository extends ServiceEntityRepository
 
     // select the 8 last pictures posted (path of file, the name of competition and the submission dat) from competition order by submission date
     public function getLastPicturesPosted(Competition $competition): array {
+        echo "ui";
         return $this->createQueryBuilder('c')
             // select 8 pictures path related to file path from competition order by submission date
             ->select('f.path', 'p.submission_date', 'c.competition_name')
