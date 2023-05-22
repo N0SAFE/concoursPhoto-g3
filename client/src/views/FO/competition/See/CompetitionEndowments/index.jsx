@@ -10,6 +10,8 @@ import { toast } from 'react-toastify';
 export default function () {
     const { competition, asideLabel  } = useOutletContext();
     const asidePictures = competition.aside
+    
+    const editorRef = useRef(null);
 
     const competitionRouteList = [
         { content: 'Le concours', to: '' },

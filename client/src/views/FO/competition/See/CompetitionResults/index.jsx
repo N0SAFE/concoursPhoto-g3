@@ -1,4 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
+import style from './style.module.scss';
 import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import Navlink from '@/components/molecules/Navlink';
 
@@ -16,7 +17,7 @@ export default function () {
     ];
 
     return (
-        <div >
+        <div className={style.results}>
             <div >
                 <Navlink base="/competition/:id" list={competitionRouteList} />
                 mettre l'entity result ici

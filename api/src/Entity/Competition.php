@@ -20,7 +20,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-// filter using a class
 #[ApiFilter(DateFilter::class, properties: [
     "results_date"
 ])]
@@ -241,52 +240,6 @@ class Competition
             return 6;
         }
     }
-
-    // #[Groups(['competition'])]
-    // public function getAsidePictures(): array {
-
-    //     $lastPicturesPosted = $this->pictures->toArray();
-    //     usort($lastPicturesPosted, function($a, $b){
-    //         // sort by id
-    //         return $a->getId() <=> $b->getId();
-    //     });
-    //     $lastPicturesPosted = array_slice($lastPicturesPosted, 0, 8);
-
-    //     $picturesObtainedPrice = $this->pictures->filter(function(Picture $picture){
-    //         return $picture->isPriceWon() !== null;
-    //     })->toArray();
-    //     usort($picturesObtainedPrice, function($a, $b){
-    //         // sort by id
-    //         return $a->getId() <=> $b->getId();
-    //     });
-    //     $picturesObtainedPrice = array_slice($picturesObtainedPrice, 0, 8);
-
-    //     $lastPicturesObtainedVotes = $this->pictures->filter(function(Picture $picture){
-    //         return $picture->getVotes()->count() > 0;
-    //     })->toArray();
-    //     usort($lastPicturesObtainedVotes, function(Picture $a, Picture $b){
-    //         // sort by lastVote 
-    //         $lastVoteA = $a->getVotes()->reduce(function(Vote $voteA, Vote $voteB){
-    //             return $voteA->getVoteDate() > $voteB->getVoteDate() ? $voteA : $voteB;
-    //         });
-
-    //         $lastVoteB = $b->getVotes()->reduce(function(Vote $voteA, Vote $voteB){
-    //             return $voteA->getVoteDate() > $voteB->getVoteDate() ? $voteA : $voteB;
-    //         });
-
-    //         return $lastVoteA->getVoteDate() <=> $lastVoteB->getVoteDate();
-    //     });
-    //     $lastPicturesObtainedVotes = array_slice($lastPicturesObtainedVotes, 0, 8);
-
-
-    //     if($this->getState() === 2 || $this->getState() === 3){
-    //         return ["aside" => $lastPicturesPosted, "asideLabel" => "Dernières photos soumises"];
-    //     }elseif($this->getState() === 4 || $this->getState() === 5){
-    //         return ["aside" => $lastPicturesObtainedVotes,  "asideLabel" => "Dernières photos ayant obtenu un vote"];
-    //     }elseif($this->getState() === 6){
-    //         return ["aside" => $picturesObtainedPrice, "asideLabel" => "Dernières photos ayant obtenu un prix"];
-    //     }
-    // }
 
     public function getCompetitionName(): ?string
     {

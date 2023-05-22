@@ -5,7 +5,7 @@ import { useOutletContext } from 'react-router-dom';
 
 export default function () {
     const { competition, asideLabel } = useOutletContext();
-    const asidePictures = competition.aside
+    const asidePictures = competition.aside;
 
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
@@ -16,27 +16,32 @@ export default function () {
         { content: 'Résultats', to: '/results' },
     ];
 
+    console.log(competition.memberOfTheJuries);
+
     return (
         <div className={style.jury}>
             <div className={style.juryContainer}>
                 <Navlink base="/competition/:id" list={competitionRouteList} />
                 {competition.memberOfTheJuries &&
-                    competition.memberOfTheJuries.length > 0 && (
-                        <div>
-                            <h2>
-                                {competition.memberOfTheJuries.length} membre(s)
-                                du jury
-                            </h2>
-                            <ul>
-                                {competition.memberOfTheJuries.map(jury => (
-                                    <li key={jury.id}>
-                                        {jury.user.firstname}{' '}
-                                        {jury.user.lastname}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
+                competition.memberOfTheJuries.length > 0 ? (
+                    <div>
+                        <h2>
+                            {competition.memberOfTheJuries.length} membre(s) du
+                            jury
+                        </h2>
+                        <ul>
+                            {competition.memberOfTheJuries.map(jury => (
+                                <li key={jury.id}>
+                                    {jury.user.firstname} {jury.user.lastname}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ) : (
+                    <div>
+                        <h2>Pas de membre du jury</h2>
+                    </div>
+                )}
             </div>
             <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
         </div>
