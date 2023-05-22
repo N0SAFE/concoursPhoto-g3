@@ -51,7 +51,7 @@ export default function CompetitionLayout() {
     };
 
     const getCompetitions = controller => {
-        return apiFetch('/competitions/' + competitionId, {
+        return apiFetch('/competitions/' + competitionId + "?groups[]=competition&groups[]=file&groups[]=competition_visual&groups[]=competition_pictures", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,20 +76,9 @@ export default function CompetitionLayout() {
                         city_criteria: cities,
                         department_criteria: departments,
                         region_criteria: regions,
-                        numberOfUser: data.pictures.reduce(
-                            (set, p) => set.add(p.user.id),
-                            new Set()
-                        ).size,
-                        numberOfVotes: data.pictures.reduce(
-                            (sum, p) => sum + p.votes.length,
-                            0
-                        ),
-                        numberOfPhotograph: data.pictures.reduce((set, p) => {
-                            if (p.user.roles.includes('ROLE_PHOTOGRAPHER')) {
-                                set.add(p.user.id);
-                            }
-                            return set;
-                        }, new Set()).size,
+                        numberOfParticipants: data.numberOfParticipants,
+                        numberOfVotes: data.numberOfVotes,
+                        numberOfPictures: data.numberOfPictures
                     };
                     setEntity(_competition);
                     return _competition;
@@ -220,12 +209,12 @@ export default function CompetitionLayout() {
                             </div>
                             <div className={style.viewOrganizerStats}>
                                 <Chip
-                                    title={entity.numberOfUser}
+                                    title={entity.numberOfParticipants}
                                     icon={'user-plus'}
                                     backgroundColor={'#F5F5F5'}
                                 />
                                 <Chip
-                                    title={entity.pictures?.length}
+                                    title={entity.numberOfPictures}
                                     icon={'camera'}
                                     backgroundColor={'#F5F5F5'}
                                 />

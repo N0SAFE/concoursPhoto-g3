@@ -51,7 +51,7 @@ export default function Home() {
 
     function getListCompetitions(controller) {
         const now = new Date();
-        return apiFetch('/competitions?groups[]=competition&groups[]=file&groups[]=competition_visual&results_date[after]=' + format(now, "yyyy-MM-dd") + '&properties[]=competition_visual&properties[]=competition_name&properties[]=state&properties[]=numberOfVotes&properties[]=numberOfParticipants&properties[]=numberOfPictures&properties[]=results_date&properties[organization][]=users&properties[]=theme', {
+        return apiFetch('/competitions?groups[]=competition&groups[]=file&groups[]=competition_visual&results_date[after]=' + format(now, "yyyy-MM-dd") + '&properties[]=competition_visual&properties[]=competition_name&properties[]=state&properties[]=numberOfVotes&properties[]=numberOfParticipants&properties[]=numberOfPictures&properties[]=results_date&properties[organization][]=users&properties[]=theme&properties[]=id', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
