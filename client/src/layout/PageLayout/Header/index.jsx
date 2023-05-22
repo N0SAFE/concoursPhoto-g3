@@ -53,7 +53,7 @@ export default function Header(environment) {
         listLeft.push({
             type: 'classic',
             title: 'Créer votre concours',
-            to: '/',
+            to: '/CreateCompetition',
         });
     }
 
