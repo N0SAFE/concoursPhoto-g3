@@ -31,7 +31,7 @@ class MailProcessCommand extends Command
     {
         
         $this->mailSender->sendMail("test@test.fr", "test@test.fr", "test", "competition_published.html.twig", [
-            'mail' => "la bite", "competitions" => "la bite"]);
+            'mail' => "test", "competitions" => "test"]);
 
         return Command::SUCCESS;
     }
