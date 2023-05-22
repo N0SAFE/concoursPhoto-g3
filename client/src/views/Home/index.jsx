@@ -3,7 +3,7 @@ import FOCompetitionList from '@/components/organisms/FO/FOCompetitionList';
 import FOStats from '@/components/organisms/FO/FOStats';
 import FOPortalList from '@/components/organisms/FO/FOPortalList';
 import Loader from '@/components/atoms/Loader/index.jsx';
-import {forwardRef, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import {toast} from 'react-toastify';
 import {format} from "date-fns"
