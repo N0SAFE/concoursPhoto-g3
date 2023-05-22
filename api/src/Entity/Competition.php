@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Serializer\Filter\PropertyFilter;
+use ApiPlatform\Serializer\Filter\GroupFilter;
 use App\Repository\CompetitionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -25,21 +26,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 ])]
 #[ApiFilter(PropertyFilter::class)]
 #[ApiFilter(SearchFilter::class)]
+#[ApiFilter(GroupFilter::class)]
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Get(
-            filters: [
-                'state' => 'App\Filter\CompetitionStateFilter',
-            ],
-        ),
+        new Get(),
         new Post(
             name: "CompetitionCreate"
         ),
         new Patch(),
         new Delete(),
     ],
-    normalizationContext: ['groups' => ['competition', 'file']]
 
 )]
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
@@ -50,10 +47,6 @@ class Competition
     #[ORM\Column]
     #[Groups(['competition', 'user:read', 'user:current:read'])]
     private ?int $id = null;
-
-    #[ORM\Column]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['competition', 'organization', 'user:current:read'])]
@@ -139,7 +132,7 @@ class Competition
     #[Groups(['competition', 'user:current:read'])]
     private Collection $memberOfTheJuries;
 
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['competition_pictures'])]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Picture::class)]
     private Collection $pictures;
 
@@ -161,7 +154,7 @@ class Competition
     private array $city_criteria = [];
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['competition_visual', 'user:current:read'])]
     private ?File $competition_visual = null;
 
     #[ORM\Column(nullable: true)]
@@ -181,17 +174,54 @@ class Competition
     {
         return $this->id;
     }
-
-    public function isState(): ?bool
-    {
-        return $this->state;
+    
+    #[Groups(['competition'])]
+    public function getNumberOfPictures(): int {
+        return $this->pictures->count();
     }
-
-    public function setState(bool $state): self
-    {
-        $this->state = $state;
-
-        return $this;
+    
+    #[Groups(['competition'])]
+    public function getNumberOfParticipants(): int {
+        $pictures=$this->getPictures();
+        $userDistinct=[];
+        foreach($pictures as $picture){
+            $userDistinct[$picture->getUser()->getId()]=$picture->getUser();
+        }
+        return count($userDistinct);
+    }
+    
+    #[Groups(['competition'])]
+    public function getNumberOfVotes(): int {
+        $pictures = $this->getPictures();
+        $numOfVotes = 0;
+        foreach($pictures as $picture){
+            $numOfVotes += $picture->getVotes()->count();
+        }
+        return $numOfVotes;
+    }
+    
+    #[Groups(['competition'])]
+    public function getState(): int {
+        $now = new \DateTime();
+        if($now < $this->getSubmissionStartDate()){
+            // return 'a venir';
+            return 1;
+        }elseif($now > $this->getSubmissionStartDate() && $now < $this->getSubmissionEndDate()){
+            // return 'en phase de participation';
+            return 2;
+        }elseif($now > $this->getSubmissionEndDate() && $now < $this->getVotingStartDate()){
+            // return 'En attente';
+            return 3;
+        }elseif($now > $this->getVotingStartDate() && $now < $this->getVotingEndDate()){
+            // return 'en phase de vote';
+            return 4;
+        }elseif($now > $this->getVotingEndDate() && $now < $this->getResultsDate()){
+            // return "en phase d'attribution";
+            return 5;
+        }elseif($now > $this->getResultsDate()){
+            // return 'Terminé';
+            return 6;
+        }
     }
 
     public function getCompetitionName(): ?string
