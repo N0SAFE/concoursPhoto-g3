@@ -1,6 +1,6 @@
 import { useOutletContext } from 'react-router-dom';
 import style from '@/views/FO/competition/See/CompetitionView/style.module.scss';
-import PicturesAside from '@/views/FO/competition/See/PicturesAside/index.jsx';
+import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import Navlink from '@/components/molecules/Navlink/index.jsx';
 
 export default function () {

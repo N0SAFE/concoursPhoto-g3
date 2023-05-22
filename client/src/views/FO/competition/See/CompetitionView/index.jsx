@@ -1,6 +1,6 @@
 import { useParams, useOutletContext } from 'react-router-dom';
 import style from './style.module.scss';
-import PicturesAside from '@/views/FO/competition/See/PicturesAside/index.jsx';
+import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import Navlink from '@/components/molecules/Navlink/index.jsx';
 import React, { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';

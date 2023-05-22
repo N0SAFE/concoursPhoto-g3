@@ -1,5 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
-import PicturesAside from '@/views/FO/competition/See/PicturesAside/index.jsx';
+import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import style from './style.module.scss';
 import Navlink from '@/components/molecules/Navlink/index.jsx';
 import React, { useRef } from 'react';
