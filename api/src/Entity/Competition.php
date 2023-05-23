@@ -166,7 +166,7 @@ class Competition
     #[Groups(['competition_aside'])]
     private Collection $aside;
 
-    public function __construct(private CompetitionRepository $competitionRepository)
+    public function __construct()
     {
         $this->theme = new ArrayCollection();
         $this->participant_category = new ArrayCollection();
