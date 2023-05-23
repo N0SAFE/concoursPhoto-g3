@@ -168,6 +168,9 @@ class Competition
     #[Groups(['competition', 'competition:read', 'user:current:read'])]
     private ?bool $is_promoted = null;
 
+    #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'competitionAlreadyHandled')]
+    private Collection $notificationsSended;
+
     public function __construct()
     {
         $this->theme = new ArrayCollection();
@@ -175,6 +178,7 @@ class Competition
         $this->sponsors = new ArrayCollection();
         $this->memberOfTheJuries = new ArrayCollection();
         $this->pictures = new ArrayCollection();
+        $this->notificationsSended = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -604,6 +608,30 @@ class Competition
     public function setIsPromoted(?bool $is_promoted): self
     {
         $this->is_promoted = $is_promoted;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, NotificationType>
+     */
+    public function getNotificationsSended(): Collection
+    {
+        return $this->notificationsSended;
+    }
+
+    public function addNotificationsSended(NotificationType $notificationsSended): self
+    {
+        if (!$this->notificationsSended->contains($notificationsSended)) {
+            $this->notificationsSended->add($notificationsSended);
+        }
+
+        return $this;
+    }
+
+    public function removeNotificationsSended(NotificationType $notificationsSended): self
+    {
+        $this->notificationsSended->removeElement($notificationsSended);
 
         return $this;
     }
