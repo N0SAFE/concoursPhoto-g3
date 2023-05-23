@@ -7,7 +7,6 @@ $borderRadius: 10px;
         width: calc($containerWidth / 3);
         height: auto;
         border-radius: $borderRadius;
-        position: relative;
         box-shadow: 3px 5px 30px rgba(0, 0, 0, 0.1);
         overflow: hidden;
         cursor: pointer;
@@ -50,6 +49,13 @@ $borderRadius: 10px;
             object-fit: cover;
             aspect-ratio: 16/9;
         }
+    }
+
+    &Disposition {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     &Filter {

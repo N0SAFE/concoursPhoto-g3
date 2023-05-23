@@ -29,14 +29,14 @@ class Picture
     #[ORM\GeneratedValue]
     #[ORM\Column]
     
-    #[Groups(['competition', 'user:read'])]
+    #[Groups(['file', 'user:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('competition')]
+    #[Groups('file')]
     private ?string $picture_name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -51,20 +51,20 @@ class Picture
     #[ORM\Column]
     private ?int $price_rank = null;
 
-    #[Groups('competition')]
+    #[Groups('file')]
     #[ORM\OneToMany(mappedBy: 'picture', targetEntity: Vote::class)]
     private Collection $votes;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
-    #[Groups(['competition', 'user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read'])]
     private ?Competition $competition = null;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
-    #[Groups('competition')]
+    #[Groups('file')]
     private ?User $user = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups('competition')]
+    #[Groups('file')]
     private ?File $file = null;
 
     public function __construct()
@@ -215,3 +215,4 @@ class Picture
         return $this;
     }
 }
+	

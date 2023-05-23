@@ -14,7 +14,7 @@ export default function CompetitionsList() {
     const [competitions, setCompetitions] = useState([]);
 
     function getCompetitions(controller) {
-        return apiFetch('/competitions', {
+        return apiFetch('/competitions?groups[]=competition', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

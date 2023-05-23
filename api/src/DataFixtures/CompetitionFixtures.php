@@ -58,7 +58,6 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
             $publicationDate = $faker->dateTimeBetween("-1 year", $submissionStartDate);
             $creationDate = $faker->dateTimeBetween("-1 year", $publicationDate);
 
-            $competition->setState($faker->boolean());
             $competition->setCompetitionName($faker->text());
             $competition->setCompetitionVisual((new FileFixtures)->createFile());
             $competition->setDescription($faker->text());

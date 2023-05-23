@@ -110,7 +110,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setEmail("admin@admin.com");
         $user->setPassword($this->passwordHasher->hashPassword($user, 'test'));
         $user->setAddress($faker->address());
-        $user->setPhoneNumber($faker->phoneNumber());
+
+        $phoneNumber = preg_replace('/\s+/', '', str_replace(['+33', '(0)', ' '], ['0', '', ''], $faker->phoneNumber));
+        $user->setPhoneNumber($phoneNumber);
+
         $user->setDateOfBirth($faker->dateTime());
         $user->setCreationDate($faker->dateTime());
         $user->setFirstname($faker->firstName());
@@ -121,7 +124,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setRegion($city['codeRegion']);
         $user->setPostcode(str_replace(' ', '', $faker->postcode()));
         $user->setCountry($faker->countryCode());
-        $user->setPostcode(str_replace(' ', '', $faker->postcode()));
         $user->setPictureProfil((new FileFixtures)->createFile());
         $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
         $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
@@ -148,7 +150,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setEmail($faker->email());
             $user->setPassword($this->passwordHasher->hashPassword($user, 'test'));
             $user->setAddress($faker->address());
-            $user->setPhoneNumber($faker->phoneNumber());
+
+            $phoneNumber = preg_replace('/\s+/', '', str_replace(['+33', '(0)', ' '], ['0', '', ''], $faker->phoneNumber));
+            $user->setPhoneNumber($phoneNumber);
+
             $user->setDateOfBirth($faker->dateTime());
             $user->setState($faker->boolean());
             $user->setCreationDate($faker->dateTime());
