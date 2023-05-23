@@ -5,6 +5,7 @@ namespace App\EventSubscriber;
 
 use ApiPlatform\Symfony\EventListener\EventPriorities;
 use App\Repository\CompetitionRepository;
+use App\Repository\NotificationTypeRepository;
 use App\Repository\UserRepository;
 use App\Service\MailSender;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class NotificationSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private UserRepository $userRepository, private CompetitionRepository $competitionRepository, private MailSender $mailSender){
+    public function __construct(private UserRepository $userRepository, private CompetitionRepository $competitionRepository, private MailSender $mailSender, private NotificationTypeRepository $notificationTypeRepository){
     }
 
     public static function getSubscribedEvents()
@@ -32,7 +33,8 @@ final class NotificationSubscriber implements EventSubscriberInterface
     }
 
     public function onCompetitionCreate() {
-        $users = $this->userRepository->getAllUserByNotificationType(1);
+        $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 1]);
+        $users = $this->userRepository->findByNotificationType($notificationType);
         if ($users) {
             foreach ($users as $user) {
                 $this->mailSender->sendMail("concoursPhoto@no-reply.com", $user->getEmail(), "Nouveau concours publié", "competition_published.html.twig", [
