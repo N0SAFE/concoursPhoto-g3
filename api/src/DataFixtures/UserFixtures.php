@@ -16,7 +16,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher,
-    ){
+    ) {
         $this->faker = Factory::create('fr_FR');
     }
 
@@ -166,6 +166,14 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setPersonalStatut($this->getReference(PersonalStatutFixtures::PERSONAL_STATUT_REFERENCE . rand(1, count(PersonalStatutFixtures::PERSONAL_STATUT_ARRAY))));
             $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
 
+            foreach (NotificationTypeFixtures::NOTIFICATION_TYPE_ARRAY as $notificationType) {
+                if (rand(0, 3) == 3) {
+                    $user->addNotificationEnabled(
+                        $this->getReference(NotificationTypeFixtures::NOTIFICATION_TYPE_REFERENCE . $notificationType[1])
+                    );
+                }
+            }
+
             $manager->persist($user);
 
             $this->addReference(sprintf('%s%d', self::USER_REFERENCE, $i + 1), $user);
@@ -180,6 +188,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             GenderFixtures::class,
             PhotographerCategoryFixtures::class,
             PersonalStatutFixtures::class,
+            NotificationTypeFixtures::class,
         ];
     }
 }
