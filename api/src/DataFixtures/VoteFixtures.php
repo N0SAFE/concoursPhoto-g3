@@ -13,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class VoteFixtures extends Fixture implements DependentFixtureInterface
 {
 
-    const VOTE_COUNT_REFERENCE = PictureFixtures::PICTURE_COUNT_REFERENCE * 5;
+    const VOTE_COUNT_REFERENCE = PictureFixtures::PICTURE_COUNT_REFERENCE * 3;
 
     public function load(ObjectManager $manager): void
     {

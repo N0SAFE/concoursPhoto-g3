@@ -19,7 +19,7 @@ class PictureFixtures extends Fixture implements DependentFixtureInterface
 
 
     const PICTURE_REFERENCE = 'picture';
-    const PICTURE_COUNT_REFERENCE = 500;
+    const PICTURE_COUNT_REFERENCE = 20;
 
     public function load(ObjectManager $manager): void
     {
