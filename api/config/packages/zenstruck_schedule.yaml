@@ -1,6 +1,0 @@
-zenstruck_schedule:
-  timezone: 'Europe/Paris'
-
-  tasks:
-    -   task: mail:process
-        frequency: '* * * * *'

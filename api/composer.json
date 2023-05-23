@@ -47,8 +47,7 @@
         "symfony/web-link": "6.2.*",
         "symfony/yaml": "6.2.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-        "zenstruck/schedule-bundle": "^1.6"
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {
