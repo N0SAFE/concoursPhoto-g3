@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\NotificationType;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -89,13 +90,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 //            ;
 //    /**
 
-    public function getAllUserByNotificationType(int $code){
+    public function findByNotificationType(NotificationType $notificationType): array
+    {
         return $this->createQueryBuilder('u')
             ->select('u')
-            ->join('u.notificationLinks', 'ul')
-            ->join('ul.notification', 'un')
-            ->where('un.notification_code = :notification_code')
-            ->setParameter(':notification_code', $code)
+            ->join('u.notificationEnabled', 'un')
+            ->where('un.id = :notificationTypeId')
+            ->setParameter(':notificationTypeId', $notificationType->getId())
             ->getQuery()
             ->getResult()
             ;

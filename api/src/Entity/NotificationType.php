@@ -18,15 +18,19 @@ class NotificationType
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[ORM\OneToMany(mappedBy: 'notification', targetEntity: NotificationLink::class)]
-    private Collection $notificationLinks;
-
     #[ORM\Column]
     private ?int $notification_code = null;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'notificationEnabled')]
+    private Collection $subscribedUsers;
+
+    #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'notificationsSended')]
+    private Collection $competitionAlreadyHandled;
+
     public function __construct()
     {
-        $this->notificationLinks = new ArrayCollection();
+        $this->subscribedUsers = new ArrayCollection();
+        $this->competitionAlreadyHandled = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -46,36 +50,6 @@ class NotificationType
         return $this;
     }
 
-    /**
-     * @return Collection<int, NotificationLink>
-     */
-    public function getNotificationLinks(): Collection
-    {
-        return $this->notificationLinks;
-    }
-
-    public function addNotificationLink(NotificationLink $notificationLink): self
-    {
-        if (!$this->notificationLinks->contains($notificationLink)) {
-            $this->notificationLinks->add($notificationLink);
-            $notificationLink->setNotification($this);
-        }
-
-        return $this;
-    }
-
-    public function removeNotificationLink(NotificationLink $notificationLink): self
-    {
-        if ($this->notificationLinks->removeElement($notificationLink)) {
-            // set the owning side to null (unless already changed)
-            if ($notificationLink->getNotification() === $this) {
-                $notificationLink->setNotification(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getNotificationCode(): ?int
     {
         return $this->notification_code;
@@ -84,6 +58,60 @@ class NotificationType
     public function setNotificationCode(int $notification_code): self
     {
         $this->notification_code = $notification_code;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getSubscribedUsers(): Collection
+    {
+        return $this->subscribedUsers;
+    }
+
+    public function addSubscribedUser(User $subscribedUser): self
+    {
+        if (!$this->subscribedUsers->contains($subscribedUser)) {
+            $this->subscribedUsers->add($subscribedUser);
+            $subscribedUser->addNotificationEnabled($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscribedUser(User $subscribedUser): self
+    {
+        if ($this->subscribedUsers->removeElement($subscribedUser)) {
+            $subscribedUser->removeNotificationEnabled($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Competition>
+     */
+    public function getCompetitionAlreadyHandled(): Collection
+    {
+        return $this->competitionAlreadyHandled;
+    }
+
+    public function addCompetitionAlreadyHandled(Competition $competitionAlreadyHandled): self
+    {
+        if (!$this->competitionAlreadyHandled->contains($competitionAlreadyHandled)) {
+            $this->competitionAlreadyHandled->add($competitionAlreadyHandled);
+            $competitionAlreadyHandled->addNotificationsSended($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetitionAlreadyHandled(Competition $competitionAlreadyHandled): self
+    {
+        if ($this->competitionAlreadyHandled->removeElement($competitionAlreadyHandled)) {
+            $competitionAlreadyHandled->removeNotificationsSended($this);
+        }
 
         return $this;
     }

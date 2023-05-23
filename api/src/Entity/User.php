@@ -179,8 +179,8 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class)]
     private Collection $userLinks;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: NotificationLink::class)]
-    private Collection $notificationLinks;
+    #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'subscribedUsers')]
+    private Collection $notificationEnabled;
 
     public function __construct()
     {
@@ -190,7 +190,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->votes = new ArrayCollection();
         $this->roles = new ArrayCollection();
         $this->userLinks = new ArrayCollection();
-        $this->notificationLinks = new ArrayCollection();
+        $this->notificationEnabled = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -707,33 +707,26 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     }
 
     /**
-     * @return Collection<int, NotificationLink>
+     * @return Collection<int, NotificationType>
      */
-    public function getNotificationLinks(): Collection
+    public function getNotificationEnabled(): Collection
     {
-        return $this->notificationLinks;
+        return $this->notificationEnabled;
     }
 
-    public function addNotificationLink(NotificationLink $notificationLink): self
+    public function addNotificationEnabled(NotificationType $notificationEnabled): self
     {
-        if (!$this->notificationLinks->contains($notificationLink)) {
-            $this->notificationLinks->add($notificationLink);
-            $notificationLink->setUser($this);
+        if (!$this->notificationEnabled->contains($notificationEnabled)) {
+            $this->notificationEnabled->add($notificationEnabled);
         }
 
         return $this;
     }
 
-    public function removeNotificationLink(NotificationLink $notificationLink): self
+    public function removeNotificationEnabled(NotificationType $notificationEnabled): self
     {
-        if ($this->notificationLinks->removeElement($notificationLink)) {
-            // set the owning side to null (unless already changed)
-            if ($notificationLink->getUser() === $this) {
-                $notificationLink->setUser(null);
-            }
-        }
+        $this->notificationEnabled->removeElement($notificationEnabled);
 
         return $this;
     }
-
 }
