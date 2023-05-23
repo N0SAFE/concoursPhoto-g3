@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use Metaclass\FilterBundle\Filter\FilterLogic;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
@@ -24,8 +25,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
     "results_date"
 ])]
 #[ApiFilter(PropertyFilter::class)]
-#[ApiFilter(SearchFilter::class)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'pictures.user' => 'exact',
+    'pictures.votes.user' => 'exact'
+])]
 #[ApiFilter(GroupFilter::class)]
+#[ApiFilter(FilterLogic::class)]
 #[ApiResource(
     operations: [
         new GetCollection(),
