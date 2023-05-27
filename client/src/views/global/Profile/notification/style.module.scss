@@ -1,0 +1,16 @@
+.formContainer {
+    // override component Input
+    form {
+        align-items: inherit;
+        padding: inherit;
+
+        & > div > div > div {
+            flex-direction: inherit;
+        }
+    }
+
+    .notificationContainer {
+        background-color: #F5F5F5;
+        padding: 20px;
+    }
+}

@@ -2,11 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Serializer\Filter\GroupFilter;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Controller\UserController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -36,6 +40,9 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['user:read']]
     
 )]
+#[ApiFilter(PropertyFilter::class)]
+#[ApiFilter(SearchFilter::class)]
+#[ApiFilter(GroupFilter::class)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
@@ -180,6 +187,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private Collection $userLinks;
 
     #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'subscribedUsers')]
+    #[Groups(['user:read', 'user:current:read'])]
     private Collection $notificationEnabled;
 
     public function __construct()
@@ -729,4 +737,5 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
         return $this;
     }
+
 }
