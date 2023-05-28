@@ -78,27 +78,27 @@ export default function CompetitionLayout() {
 
     const state = (function () {
         if (entity.state === 1) {
-            return "A venir"
+            return 'A venir';
         } else if (entity.state === 2 || entity.state === 3) {
-            return "En phase de participation"
+            return 'En phase de participation';
         } else if (entity.state === 4) {
-            return "En phase de vote"
+            return 'En phase de vote';
         } else if (entity.state === 5) {
-            return "En phase d'attribution"
+            return "En phase d'attribution";
         } else {
-            return "Terminé"
+            return 'Terminé';
         }
     })();
 
     const asideLabel = (function () {
         if (entity.state === 2 || entity.state === 3) {
-            return "Dernières photos soumises"
+            return 'Dernières photos soumises';
         } else if (entity.state === 4 || entity.state === 5) {
-            return "Dernières photos ayant obtenu un vote"
+            return 'Dernières photos ayant obtenu un vote';
         } else if (entity.state === 6) {
-            return "Photos ayant obtenu  un prix"
+            return 'Photos ayant obtenu  un prix';
         } else {
-            return "Photo à venir"
+            return 'Photo à venir';
         }
     })();
 

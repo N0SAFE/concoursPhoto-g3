@@ -11,12 +11,15 @@ export default function CompetitionParticipation() {
     const [userCompetitions, setUserCompetitions] = useState([]);
 
     const getUserCompetitions = () => {
-        return apiFetch(`/competitions?&properties[]=${me.id}&or[pictures.user]=/users/${me.id}&or[pictures.votes.user]=/users/${me.id}&properties[]=competition_name&properties[]=submission_start_date&properties[]=submission_end_date&properties[]=state&properties[]=numberOfPictures&properties[]=results_date`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
+        return apiFetch(
+            `/competitions?&properties[]=${me.id}&or[pictures.user]=/users/${me.id}&or[pictures.votes.user]=/users/${me.id}&properties[]=competition_name&properties[]=submission_start_date&properties[]=submission_end_date&properties[]=state&properties[]=numberOfPictures&properties[]=results_date`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
             .then(res => res.json())
             .then(data => {
                 console.debug(data);
@@ -65,11 +68,27 @@ export default function CompetitionParticipation() {
                     if (property === 'state') {
                         return (
                             <Chip
-                                backgroundColor={entity.state === 1 ? "#00A3FF" : entity.state >= 2 && entity.state <= 5 ? "#00CE3A" : "#F1F1F1"}
-                                color={entity.state >= 1 && entity.state <= 5 ? "#fff" : "#000"}
-                                title={entity.state === 1 ? "A venir" : entity.state >= 2 && entity.state <= 5 ? "En cours" : "Terminé"}
+                                backgroundColor={
+                                    entity.state === 1
+                                        ? '#00A3FF'
+                                        : entity.state >= 2 && entity.state <= 5
+                                        ? '#00CE3A'
+                                        : '#F1F1F1'
+                                }
+                                color={
+                                    entity.state >= 1 && entity.state <= 5
+                                        ? '#fff'
+                                        : '#000'
+                                }
+                                title={
+                                    entity.state === 1
+                                        ? 'A venir'
+                                        : entity.state >= 2 && entity.state <= 5
+                                        ? 'En cours'
+                                        : 'Terminé'
+                                }
                             />
-                        )
+                        );
                     }
                     if (property === 'submission_start_date') {
                         return new Date(

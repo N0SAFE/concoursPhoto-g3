@@ -3,7 +3,7 @@ import Button from '@/components/atoms/Button/index.jsx';
 import useApiPath from '@/hooks/useApiPath.js';
 
 export default function PicturesAside({ pictures, asideLabel }) {
-    const apiPath = useApiPath()
+    const apiPath = useApiPath();
 
     return (
         <div className={style.asideContainer}>
