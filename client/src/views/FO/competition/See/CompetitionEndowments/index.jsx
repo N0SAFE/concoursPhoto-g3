@@ -70,7 +70,7 @@ export default function () {
                     />
                     <button style={{ borderRadius: "10%" }} onClick={updateCompetition}>Editer</button>
                 </div>
-                <PicturesAside pictures={asidePictures} asideLabel={asideLabel } />
+                <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
             </div>
         </div>
     );

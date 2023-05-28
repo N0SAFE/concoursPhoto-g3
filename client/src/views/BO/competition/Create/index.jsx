@@ -367,7 +367,7 @@ export default function CompetitionCreate() {
                     <Input
                         type="date"
                         name="resultsDate"
-                        label="Date de fin de vote"
+                        label="Date des résultats"
                         onChange={d => updateEntityState('resultsDate', d)}
                         defaultValue={entity.resultsDate}
                     />

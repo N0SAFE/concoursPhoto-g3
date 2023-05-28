@@ -2,12 +2,7 @@ import style from './style.module.scss';
 import Button from '@/components/atoms/Button/index.jsx';
 import useApiPath from '@/hooks/useApiPath.js';
 
-// requestType possibility :
-// last-pictures-posted
-// last-pictures-obtained-votes
-// pictures-obtained-price
-
-export default function PicturesAside({ pictures, asideLabel  }) {
+export default function PicturesAside({ pictures, asideLabel }) {
     const apiPath = useApiPath()
 
     return (
