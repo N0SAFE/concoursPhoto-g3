@@ -1,7 +1,7 @@
 import style from './style.module.scss';
 import Card from '@/components/molecules/Card';
 
-export default function FOCompetitionList({cardContentList}) {
+export default function FOCompetitionList({ cardContentList }) {
     return (
         <div className={style.lastCompetition}>
             <div>
@@ -13,11 +13,13 @@ export default function FOCompetitionList({cardContentList}) {
                             imagePath={competition.competition_visual.path}
                             filters={[
                                 competition.organization?.users.map(
-                                    user => user.firstname + ' ' + user.lastname || null
+                                    user =>
+                                        user.firstname + ' ' + user.lastname ||
+                                        null
                                 ),
                                 competition?.theme.map(item => item.label),
                                 competition.state ? 'En cours' : 'Terminé',
-                            ].filter((i) => i !== null)}
+                            ].filter(i => i !== null)}
                             stats={[
                                 {
                                     name: competition.numberOfParticipants,

@@ -72,25 +72,23 @@ export default function CompetitionsList() {
 
     return (
         <Loader active={isLoading}>
-                 <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '15px',
-                    }}
-                >
-                    <h1>Liste des concours</h1>
-                    <Button
-                        color="green"
-                        textColor="white"
-                        name="Créer un concours"
-                        borderRadius={'30px'}
-                        onClick={() => navigate('/BO/competition/create')}
-                    ></Button>
-                </div>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '15px',
+                }}
+            >
+                <h1>Liste des concours</h1>
+                <Button
+                    color="green"
+                    textColor="white"
+                    name="Créer un concours"
+                    borderRadius={'30px'}
+                    onClick={() => navigate('/BO/competition/create')}
+                ></Button>
+            </div>
             <div className={style.containerList}>
-           
-
                 <Table
                     entityList={competitions}
                     fields={[

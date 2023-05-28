@@ -13,6 +13,44 @@ function AuthProvider(props) {
     const { getCityByCode, getDepartmentByCode, getRegionByCode } =
         useLocation();
 
+    async function refreshUser(controller) {
+        try {
+            const whoami = await fetch(
+                new URL(import.meta.env.VITE_API_URL + '/whoami').href,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    signal: controller?.signal,
+                }
+            );
+            const data = await whoami.json().then(async d => {
+                return {
+                    ...d,
+                    city: await getCityByCode(d.citycode),
+                };
+            });
+            setMe(data);
+            setIsLogged(true);
+            console.group('AuthContext');
+            console.debug('isLogged: ', true);
+            console.debug('me: ', data);
+            console.groupEnd();
+            return { isLogged: true, me: data };
+        } catch (e) {
+            console.error(e);
+            setIsLogged(false);
+            setMe(null);
+            console.group('AuthContext');
+            console.debug('isLogged: ', false);
+            console.debug('me: ', null);
+            console.groupEnd();
+            return { isLogged: false, me: null };
+        }
+    }
+
     function checkLogged(controller) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -29,30 +67,9 @@ function AuthProvider(props) {
                     }
                 );
                 if (response.ok) {
-                    const whoami = await fetch(
-                        new URL(import.meta.env.VITE_API_URL + '/whoami').href,
-                        {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            credentials: 'include',
-                            signal: controller?.signal,
-                        }
-                    );
-                    const data = await whoami.json().then(async d => {
-                        return {
-                            ...d,
-                            city: await getCityByCode(d.citycode),
-                        };
+                    refreshUser(controller).then(function ({ isLogged, me }) {
+                        resolve({ isLogged, me });
                     });
-                    setMe(data);
-                    setIsLogged(true);
-                    console.group('AuthContext');
-                    console.debug('isLogged: ', true);
-                    console.debug('me: ', data);
-                    console.groupEnd();
-                    resolve({ isLogged: true, me: data });
                     return;
                 } else {
                     setIsLogged(false);
@@ -79,7 +96,9 @@ function AuthProvider(props) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isLogged, checkLogged, me }}>
+        <AuthContext.Provider
+            value={{ isLogged, checkLogged, me, refreshUser }}
+        >
             {isLoading ? <Loader active={true} /> : props.children}
         </AuthContext.Provider>
     );

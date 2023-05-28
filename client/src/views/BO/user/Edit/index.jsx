@@ -1,13 +1,13 @@
-import Input from "@/components/atoms/Input/index.jsx";
-import BOForm from "@/components/organisms/BO/Form";
-import useApiFetch from "@/hooks/useApiFetch.js";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import useLocationPosibility from "@/hooks/useLocationPosibility.js";
-import useLocation from "@/hooks/useLocation.js";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import Button from "@/components/atoms/Button";
+import Input from '@/components/atoms/Input/index.jsx';
+import BOForm from '@/components/organisms/BO/Form';
+import useApiFetch from '@/hooks/useApiFetch.js';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import useLocationPosibility from '@/hooks/useLocationPosibility.js';
+import useLocation from '@/hooks/useLocation.js';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import style from './style.module.scss';
 
@@ -409,7 +409,7 @@ export default function UserCreate() {
                     />
                 </div>
             </BOForm>
-            <Button name="Retour" onClick={() => navigate("/BO/user")} />
+            <Button name="Retour" onClick={() => navigate('/BO/user')} />
         </Loader>
     );
 }

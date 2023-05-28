@@ -165,7 +165,6 @@ export default function CompetitionCreate() {
 
     return (
         <Loader active={isLoading}>
-
             <BOCreate
                 title="Création d'un concours"
                 handleSubmit={function () {

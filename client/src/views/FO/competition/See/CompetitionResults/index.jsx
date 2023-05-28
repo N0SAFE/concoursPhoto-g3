@@ -4,8 +4,8 @@ import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import Navlink from '@/components/molecules/Navlink';
 
 export default function () {
-    const { competition, asideLabel  } = useOutletContext();
-    const asidePictures = competition.aside
+    const { competition, asideLabel } = useOutletContext();
+    const asidePictures = competition.aside;
 
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
@@ -18,7 +18,7 @@ export default function () {
 
     return (
         <div className={style.results}>
-            <div >
+            <div>
                 <Navlink base="/competition/:id" list={competitionRouteList} />
                 mettre l'entity result ici
             </div>

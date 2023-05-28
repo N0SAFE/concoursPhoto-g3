@@ -90,7 +90,7 @@ export default function Header(environment) {
         if (isLogged) {
             listRight.push({
                 type: 'button',
-                title: "Mon compte",
+                title: 'Mon compte',
                 icon: 'user-plus',
                 to: '/profile/me',
             });
@@ -128,7 +128,17 @@ export default function Header(environment) {
     return (
         <>
             <header className={style.headerContainer}>
-                <Navbar icon={<img src={logoSite} className={style.logoSite} alt="logo de concoursPhoto" />} listLeft={listLeft} listRight={listRight} />
+                <Navbar
+                    icon={
+                        <img
+                            src={logoSite}
+                            className={style.logoSite}
+                            alt="logo de concoursPhoto"
+                        />
+                    }
+                    listLeft={listLeft}
+                    listRight={listRight}
+                />
             </header>
         </>
     );

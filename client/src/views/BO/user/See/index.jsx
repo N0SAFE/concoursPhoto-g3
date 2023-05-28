@@ -56,80 +56,82 @@ export default function () {
     return (
         <Loader active={isLoading}>
             <div className={style.all}>
-            <BOSee
-                entity={entity}
-                properties={[
-                    {
-                        display: 'Nom',
-                        name: 'lastname',
-                    },
-                    {
-                        display: 'Prénom',
-                        name: 'firstname',
-                    },
-                    {
-                        display: 'Email',
-                        name: 'email',
-                    },
-                    {
-                        display: 'Téléphone',
-                        name: 'phone_number',
-                    },
-                    {
-                        display: 'Adresse',
-                        name: 'address',
-                    },
-                    {
-                        display: 'Code postal',
-                        name: 'postcode',
-                    },
-                    {
-                        display: 'Statut',
-                        name: 'personal_statut',
-                        customData({ entity, property }) {
-                            return entity?.personal_statut?.label;
+                <BOSee
+                    entity={entity}
+                    properties={[
+                        {
+                            display: 'Nom',
+                            name: 'lastname',
                         },
-                    },
-                    {
-                        display: 'Ville',
-                        name: 'city',
-                    },
-                    {
-                        display: 'Pays',
-                        name: 'country',
-                    },
-                    {
-                        display: 'Date de naissance',
-                        name: 'date_of_birth',
-                        customData({ entity, property }) {
-                            return new Date(
-                                entity?.date_of_birth
-                            ).toLocaleDateString('fr-FR', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                            });
+                        {
+                            display: 'Prénom',
+                            name: 'firstname',
                         },
-                    },
-                    {
-                        display: 'Genre',
-                        name: 'gender',
-                        customData({ entity, property }) {
-                            return entity?.gender?.label;
+                        {
+                            display: 'Email',
+                            name: 'email',
                         },
-                    },
-                    {
-                        display: 'Roles',
-                        name: 'roles',
-                        customData({ entity, property }) {
-                            return (
-                                '[' + (entity?.roles?.join(', ') || '') + ']'
-                            );
+                        {
+                            display: 'Téléphone',
+                            name: 'phone_number',
                         },
-                    },
-                ]}
+                        {
+                            display: 'Adresse',
+                            name: 'address',
+                        },
+                        {
+                            display: 'Code postal',
+                            name: 'postcode',
+                        },
+                        {
+                            display: 'Statut',
+                            name: 'personal_statut',
+                            customData({ entity, property }) {
+                                return entity?.personal_statut?.label;
+                            },
+                        },
+                        {
+                            display: 'Ville',
+                            name: 'city',
+                        },
+                        {
+                            display: 'Pays',
+                            name: 'country',
+                        },
+                        {
+                            display: 'Date de naissance',
+                            name: 'date_of_birth',
+                            customData({ entity, property }) {
+                                return new Date(
+                                    entity?.date_of_birth
+                                ).toLocaleDateString('fr-FR', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                });
+                            },
+                        },
+                        {
+                            display: 'Genre',
+                            name: 'gender',
+                            customData({ entity, property }) {
+                                return entity?.gender?.label;
+                            },
+                        },
+                        {
+                            display: 'Roles',
+                            name: 'roles',
+                            customData({ entity, property }) {
+                                return (
+                                    '[' +
+                                    (entity?.roles?.join(', ') || '') +
+                                    ']'
+                                );
+                            },
+                        },
+                    ]}
                 />
-                </div>
+            </div>
         </Loader>
     );
 }

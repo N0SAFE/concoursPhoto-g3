@@ -1,16 +1,16 @@
 .formContainer {
-    @extend .limited-content;
-
+    // override component Input
     form {
         align-items: inherit;
-    }
-    .registerSubmit {
-        display: flex;
-        margin-top: 2%;
+        padding: inherit;
 
-        & > button > div {
-            display: inherit;
-            align-items: inherit;
+        & > div > div > div {
+            flex-direction: inherit;
         }
+    }
+
+    .notificationContainer {
+        background-color: #f5f5f5;
+        padding: 20px;
     }
 }

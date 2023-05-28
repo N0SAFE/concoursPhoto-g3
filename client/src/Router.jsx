@@ -35,7 +35,6 @@ import CompetitionParticipation from '@/views/global/Profile/participation';
 import CreateCompetitions from './views/FO/competition/Create/index.jsx';
 import CreateOrganization from './views/FO/organization/index.jsx';
 
-
 function Router() {
     const { setModalContent, showModal } = useModal();
     return (
@@ -106,8 +105,14 @@ function Router() {
                         />
                     </Route>
                 </Route>
-                <Route path='/createcompetition' element={<CreateCompetitions />} />
-                <Route path='/createorganization' element={<CreateOrganization />} />
+                <Route
+                    path="/createcompetition"
+                    element={<CreateCompetitions />}
+                />
+                <Route
+                    path="/createorganization"
+                    element={<CreateOrganization />}
+                />
                 <Route path="/competition/:id" element={<CompetitionLayout />}>
                     <Route path="" element={<CompetitionView />} />
                     <Route path="rules" element={<CompetitionRules />} />
