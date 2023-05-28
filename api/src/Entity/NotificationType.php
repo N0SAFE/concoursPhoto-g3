@@ -2,28 +2,50 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use App\Repository\NotificationTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(),
+        new Get(),
+        new Patch(),
+        new Delete()
+    ],
+    normalizationContext: ['groups' => ['notification_type:read']]
+)]
 #[ORM\Entity(repositoryClass: NotificationTypeRepository::class)]
 class NotificationType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['notification_type:read', 'user:current:read'])]
     private ?int $id = null;
 
+    #[Groups(['notification_type:read', 'user:current:read'])]
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
+    #[Groups(['notification_type:read', 'user:current:read'])]
     #[ORM\Column]
     private ?int $notification_code = null;
 
+    #[Groups(['notification_type:read:subscribed_users'])]
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'notificationEnabled')]
     private Collection $subscribedUsers;
 
+    #[Groups(['notification_type:read:competition_already_handled'])]
     #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'notificationsSended')]
     private Collection $competitionAlreadyHandled;
 
