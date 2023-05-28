@@ -11,7 +11,7 @@ jobs:
             - name: Deploy pr
               uses: fjogeleit/http-request-action@v1
               with:
-                url: 'https://directus.n0safe.space/flows/trigger/7c07ca7d-3be0-4a25-b49c-b29d1f45e405'
+                url: '${{secrets.N0SAFE_SPACE_DIRECTUS_URL}}/flows/trigger/7c07ca7d-3be0-4a25-b49c-b29d1f45e405'
                 method: 'POST'
-                customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer nLuIN0yW9Pwwfq87fBGQ0oYlOCh3qT5J"}'
+                customHeaders: '{"Content-Type": "application/json", "Authorization": "${{secrets.N0SAFE_SPACE_DIRECTUS_AUTH}}"}'
                 data: '{"process": ["0124-ci-G3-pr-${{github.event.pull_request.number}}"]}'
