@@ -39,8 +39,8 @@ function AuthProvider(props) {
             console.debug('me: ', data);
             console.groupEnd();
             return { isLogged: true, me: data };
-        } catch(e) {
-            console.error(e)
+        } catch (e) {
+            console.error(e);
             setIsLogged(false);
             setMe(null);
             console.group('AuthContext');
@@ -96,7 +96,9 @@ function AuthProvider(props) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isLogged, checkLogged, me, refreshUser }}>
+        <AuthContext.Provider
+            value={{ isLogged, checkLogged, me, refreshUser }}
+        >
             {isLoading ? <Loader active={true} /> : props.children}
         </AuthContext.Provider>
     );

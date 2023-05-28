@@ -7,15 +7,13 @@ import useApiPath from '@/hooks/useApiPath.js';
 // last-pictures-obtained-votes
 // pictures-obtained-price
 
-export default function PicturesAside({ pictures, asideLabel  }) {
-    const apiPath = useApiPath()
+export default function PicturesAside({ pictures, asideLabel }) {
+    const apiPath = useApiPath();
 
     return (
         <div className={style.asideContainer}>
             <div>
-                <h2>
-                    {asideLabel}
-                </h2>
+                <h2>{asideLabel}</h2>
                 <div>
                     {pictures.map(picture => {
                         return (

@@ -73,24 +73,23 @@ export default function OrganizationList() {
 
     return (
         <Loader active={isLoading}>
-              <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '15px',
-                    }}
-                >
-                    <h1>Liste des organisations</h1>
-                    <Button
-                        color="green"
-                        textColor="white"
-                        name="Créer une organisation"
-                        borderRadius={'30px'}
-                        onClick={() => navigate('/BO/organization/create')}
-                    ></Button>
-                </div>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '15px',
+                }}
+            >
+                <h1>Liste des organisations</h1>
+                <Button
+                    color="green"
+                    textColor="white"
+                    name="Créer une organisation"
+                    borderRadius={'30px'}
+                    onClick={() => navigate('/BO/organization/create')}
+                ></Button>
+            </div>
             <div className={style.containerList}>
-              
                 <Table
                     entityList={Organizations}
                     fields={[

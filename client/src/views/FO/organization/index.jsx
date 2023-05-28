@@ -1,16 +1,15 @@
-import Input from "@/components/atoms/Input/index.jsx";
-import BOCreate from "@/components/organisms/BO/Form";
-import useApiFetch from "@/hooks/useApiFetch.js";
-import { useState, useEffect } from "react";
-import useLocationPosibility from "@/hooks/useLocationPosibility.js";
-import { toast } from "react-toastify";
-import useFilesUploader from "@/hooks/useFilesUploader.js";
-import Button from "@/components/atoms/Button";
+import Input from '@/components/atoms/Input/index.jsx';
+import BOCreate from '@/components/organisms/BO/Form';
+import useApiFetch from '@/hooks/useApiFetch.js';
+import { useState, useEffect } from 'react';
+import useLocationPosibility from '@/hooks/useLocationPosibility.js';
+import { toast } from 'react-toastify';
+import useFilesUploader from '@/hooks/useFilesUploader.js';
+import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import style from './style.module.scss';
-import { useAuthContext } from "@/contexts/AuthContext";
-
+import { useAuthContext } from '@/contexts/AuthContext';
 
 export default function CreateOrganization() {
     const [isLoading, setIsLoading] = useState(true);
@@ -161,7 +160,7 @@ export default function CreateOrganization() {
                                 logo: logoId,
                                 numberSiret: entity.numberSiret,
                                 intraCommunityVat: entity.intraCommunityVat,
-                                users : [me['@id']],
+                                users: [me['@id']],
                             };
                             console.debug('data', data);
                             const res = await apiFetch('/organizations', {
@@ -197,105 +196,125 @@ export default function CreateOrganization() {
                 }}
             >
                 <div className={style.formContainer}>
-                    <div style={{marginTop : "3%"}} className={style.formWrapper}>
-                    <div className={style.formColumn}>
-                    <Input
-                        type="text"
-                        name="organizerName"
-                        label="Nom de l'organisation"
-                        extra={{ required: true }}
-                        onChange={d => updateEntityState('organizerName', d)}
-                        defaultValue={entity.organizerName}
-                    />
-
-                    <Input
-                        type="text"
-                        name="description"
-                        label="Description"
-                        extra={{ required: true }}
-                        onChange={d => updateEntityState('description', d)}
-                        defaultValue={entity.description}
-                    />
-
-                    <Input
-                        type="text"
-                        name="phoneNumber"
-                        label="Numéro de téléphone"
-                        extra={{ required: true }}
-                        onChange={d => updateEntityState('phoneNumber', d)}
-                        defaultValue={entity.phoneNumber}
-                    />
-
-                    <Input
-                        type="file"
-                        name="logo"
-                        label="Logo"
-                        onChange={d => updateEntityState('logo', d)}
-                        extra={{ value: entity.logo, type: 'image' }}
-                    />
-                          
-                    <Input
-                        type="email"
-                        name="email"
-                        label="Email"
-                        extra={{ required: true }}
-                        onChange={d => updateEntityState('email', d)}
-                        defaultValue={entity.email}
-                    />
-                    </div>
-                    <div className={style.formColumn}>    
-                    <Input
-                        type="text"
-                        name="numberSiret"
-                        label="Numéro SIRET"
-                        extra={{ required: true }}
-                        onChange={d => updateEntityState('numberSiret', d)}
-                        defaultValue={entity.numberSiret}
+                    <div
+                        style={{ marginTop: '3%' }}
+                        className={style.formWrapper}
+                    >
+                        <div className={style.formColumn}>
+                            <Input
+                                type="text"
+                                name="organizerName"
+                                label="Nom de l'organisation"
+                                extra={{ required: true }}
+                                onChange={d =>
+                                    updateEntityState('organizerName', d)
+                                }
+                                defaultValue={entity.organizerName}
                             />
-                        
-                        
-                    <Input
-                        type="text"
-                        name="intraCommunityVat"
-                        label="Numéro TVA"
-                        extra={{ required: true }}
-                        onChange={d =>
-                            updateEntityState('intraCommunityVat', d)
-                        }
-                        defaultValue={entity.intraCommunityVat}
-                    />
-                    <Input
-                        type="text"
-                        name="address"
-                        label="Adresse"
-                        extra={{ required: true }}
-                        onChange={d => updateEntityState('address', d)}
-                        defaultValue={entity.address}
-                    />
 
-                    <Input
-                        type="text"
-                        name="websiteUrl"
-                        label="Site internet"
-                        extra={{ required: true }}
-                        onChange={d => updateEntityState('websiteUrl', d)}
-                        defaultValue={entity.websiteUrl}
-                    />
+                            <Input
+                                type="text"
+                                name="description"
+                                label="Description"
+                                extra={{ required: true }}
+                                onChange={d =>
+                                    updateEntityState('description', d)
+                                }
+                                defaultValue={entity.description}
+                            />
 
-                    <Input
-                        type="select"
-                        name="type"
-                        label="Type"
-                        defaultValue={entity.type}
-                        extra={{
-                            options: entityPossibility.types,
-                            required: true,
+                            <Input
+                                type="text"
+                                name="phoneNumber"
+                                label="Numéro de téléphone"
+                                extra={{ required: true }}
+                                onChange={d =>
+                                    updateEntityState('phoneNumber', d)
+                                }
+                                defaultValue={entity.phoneNumber}
+                            />
+
+                            <Input
+                                type="file"
+                                name="logo"
+                                label="Logo"
+                                onChange={d => updateEntityState('logo', d)}
+                                extra={{ value: entity.logo, type: 'image' }}
+                            />
+
+                            <Input
+                                type="email"
+                                name="email"
+                                label="Email"
+                                extra={{ required: true }}
+                                onChange={d => updateEntityState('email', d)}
+                                defaultValue={entity.email}
+                            />
+                        </div>
+                        <div className={style.formColumn}>
+                            <Input
+                                type="text"
+                                name="numberSiret"
+                                label="Numéro SIRET"
+                                extra={{ required: true }}
+                                onChange={d =>
+                                    updateEntityState('numberSiret', d)
+                                }
+                                defaultValue={entity.numberSiret}
+                            />
+
+                            <Input
+                                type="text"
+                                name="intraCommunityVat"
+                                label="Numéro TVA"
+                                extra={{ required: true }}
+                                onChange={d =>
+                                    updateEntityState('intraCommunityVat', d)
+                                }
+                                defaultValue={entity.intraCommunityVat}
+                            />
+                            <Input
+                                type="text"
+                                name="address"
+                                label="Adresse"
+                                extra={{ required: true }}
+                                onChange={d => updateEntityState('address', d)}
+                                defaultValue={entity.address}
+                            />
+
+                            <Input
+                                type="text"
+                                name="websiteUrl"
+                                label="Site internet"
+                                extra={{ required: true }}
+                                onChange={d =>
+                                    updateEntityState('websiteUrl', d)
+                                }
+                                defaultValue={entity.websiteUrl}
+                            />
+
+                            <Input
+                                type="select"
+                                name="type"
+                                label="Type"
+                                defaultValue={entity.type}
+                                extra={{
+                                    options: entityPossibility.types,
+                                    required: true,
+                                }}
+                                onChange={d =>
+                                    updateEntityState('organizationType', d)
+                                }
+                            />
+                        </div>
+                    </div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            gap: '30px',
+                            marginBottom: '2%',
                         }}
-                        onChange={d => updateEntityState('organizationType', d)}
-                    />
-                        </div>
-                        </div>
-                    <div style={{ display: 'flex', gap: '30px', marginBottom: "2%" }}>
+                    >
                         <Input
                             type="select"
                             name="city"
@@ -367,7 +386,10 @@ export default function CreateOrganization() {
                     </div>
                 </div>
             </BOCreate>
-            <Button name="Retour" onClick={() => navigate("/profile/myorganization")} />
+            <Button
+                name="Retour"
+                onClick={() => navigate('/profile/myorganization')}
+            />
         </Loader>
     );
 }

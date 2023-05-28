@@ -121,48 +121,47 @@ export default function UserList() {
 
     return (
         <Loader active={isLoading}>
-             <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '15px',
-                    }}
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '15px',
+                }}
+            >
+                <h1>Liste des utilisateurs</h1>
+                <Button
+                    color="green"
+                    textColor="white"
+                    name="Créer un utilisateur"
+                    borderRadius={'30px'}
+                    onClick={() => navigate('/BO/user/create')}
+                ></Button>
+            </div>
+            <div>
+                <label htmlFor="state-filter">Filtrer par état :</label>
+                <select
+                    id="state-filter"
+                    value={filterState}
+                    onChange={handleFilterChange}
                 >
-                    <h1>Liste des utilisateurs</h1>
-                    <Button
-                        color="green"
-                        textColor="white"
-                        name="Créer un utilisateur"
-                        borderRadius={'30px'}
-                        onClick={() => navigate('/BO/user/create')}
-                    ></Button>
-                </div>
-                <div>
-                    <label htmlFor="state-filter">Filtrer par état :</label>
-                    <select
-                        id="state-filter"
-                        value={filterState}
-                        onChange={handleFilterChange}
-                    >
-                        <option value="all">Tous</option>
-                        <option value="true">Actif</option>
-                        <option value="false">Inactif</option>
-                    </select>
-                    <label htmlFor="state-verifiedFilter">
-                        Filtrer par vérification :
-                    </label>
-                    <select
-                        id="state-verifiedFilter"
-                        value={filterVerified}
-                        onChange={handleFilterChange}
-                    >
-                        <option value="all">Tous</option>
-                        <option value="true">Vérifié</option>
-                        <option value="false">Non vérifié</option>
-                    </select>
-                </div>
+                    <option value="all">Tous</option>
+                    <option value="true">Actif</option>
+                    <option value="false">Inactif</option>
+                </select>
+                <label htmlFor="state-verifiedFilter">
+                    Filtrer par vérification :
+                </label>
+                <select
+                    id="state-verifiedFilter"
+                    value={filterVerified}
+                    onChange={handleFilterChange}
+                >
+                    <option value="all">Tous</option>
+                    <option value="true">Vérifié</option>
+                    <option value="false">Non vérifié</option>
+                </select>
+            </div>
             <div className={style.containerList}>
-               
                 <Table
                     entityList={userFiltering()}
                     fields={[

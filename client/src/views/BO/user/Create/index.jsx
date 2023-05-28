@@ -1,14 +1,13 @@
-import Input from "@/components/atoms/Input/index.jsx";
-import BOForm from "@/components/organisms/BO/Form";
-import useApiFetch from "@/hooks/useApiFetch.js";
-import useLocationPosibility from "@/hooks/useLocationPosibility.js";
-import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import Button from "@/components/atoms/Button";
+import Input from '@/components/atoms/Input/index.jsx';
+import BOForm from '@/components/organisms/BO/Form';
+import useApiFetch from '@/hooks/useApiFetch.js';
+import useLocationPosibility from '@/hooks/useLocationPosibility.js';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import style from './style.module.scss';
-
 
 export default function UserCreate() {
     const [isLoading, setIsLoading] = useState(true);
@@ -238,8 +237,12 @@ export default function UserCreate() {
                         type="select"
                         name="gender"
                         label="Genre"
-                        extra={{ value: entity.gender, options: entityPossibility.genders, required: true }}
-                        onChange={(d) => updateEntityState("gender", d)}
+                        extra={{
+                            value: entity.gender,
+                            options: entityPossibility.genders,
+                            required: true,
+                        }}
+                        onChange={d => updateEntityState('gender', d)}
                     />
                     <Input
                         type="select"
@@ -388,9 +391,8 @@ export default function UserCreate() {
                         defaultValue={entity.passwordConfirm}
                     />
                 </div>
-                
             </BOForm>
-            <Button name="Retour" onClick={() => navigate("/BO/user")} />
+            <Button name="Retour" onClick={() => navigate('/BO/user')} />
         </Loader>
     );
 }

@@ -1,6 +1,6 @@
 import style from './style.module.scss';
 import Slider from '@/components/molecules/Slider';
-import useApiPath from "@/hooks/useApiPath.js";
+import useApiPath from '@/hooks/useApiPath.js';
 
 export default function FOPortalList({
     boxSingle = [],
@@ -10,7 +10,7 @@ export default function FOPortalList({
     boxDown = [],
     boxDownContents = [],
 }) {
-    const apiPath = useApiPath()
+    const apiPath = useApiPath();
     return (
         <div className={style.portalContainer}>
             <div className={style.boxSingle}>
@@ -25,12 +25,7 @@ export default function FOPortalList({
                     />
                 )}
                 {boxSingle.type === 'picture' && (
-                    <img
-                        src={
-                            apiPath(boxSingle.path)
-                        }
-                        alt={boxSingle.alt}
-                    />
+                    <img src={apiPath(boxSingle.path)} alt={boxSingle.alt} />
                 )}
             </div>
             <div className={style.boxDuo}>
@@ -46,12 +41,7 @@ export default function FOPortalList({
                         />
                     )}
                     {boxUp.type === 'picture' && (
-                        <img
-                            src={
-                                apiPath(boxUp.path)
-                            }
-                            alt={boxUp.alt}
-                        />
+                        <img src={apiPath(boxUp.path)} alt={boxUp.alt} />
                     )}
                     {boxDown.type === 'slider' && (
                         <Slider
@@ -64,12 +54,7 @@ export default function FOPortalList({
                         />
                     )}
                     {boxDown.type === 'picture' && (
-                        <img
-                            src={
-                                apiPath(boxDown.path)
-                            }
-                            alt={boxDown.alt}
-                        />
+                        <img src={apiPath(boxDown.path)} alt={boxDown.alt} />
                     )}
                 </>
             </div>

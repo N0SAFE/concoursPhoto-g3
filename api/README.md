@@ -83,9 +83,9 @@ php bin/console doctrine:fixtures:load
 
 ## Configuration du SMTP (Mail)
 
-- Créer un compte sur [Mailtrap](https://mailtrap.io/) et récupérer les informations de connexion SMTP
+-   Créer un compte sur [Mailtrap](https://mailtrap.io/) et récupérer les informations de connexion SMTP
 
-- Ajouter les informations suivantes dans le fichier .env.local :
+-   Ajouter les informations suivantes dans le fichier .env.local :
 
 ```
 ###> symfony/mailer ###
@@ -99,3 +99,4 @@ MAILER_DSN=smtp://<username>:<password>@<host>:<port>
 
 ```
 npm run dev
+```

@@ -29,7 +29,10 @@ export default function ProfileLayout() {
         });
     const [meNotificationEnabled, setMeNotificationEnabled] = useState(
         new Map(
-            me.notificationEnabled.map(item => [item.notification_code, item['@id']])
+            me.notificationEnabled.map(item => [
+                item.notification_code,
+                item['@id'],
+            ])
         )
     );
 
@@ -69,7 +72,10 @@ export default function ProfileLayout() {
                     item['@id'],
                 ])
             );
-            setNotificationTypePossibility({map: _notificationTypes, isLoading: false});
+            setNotificationTypePossibility({
+                map: _notificationTypes,
+                isLoading: false,
+            });
         });
 
         return () => {
