@@ -11,7 +11,7 @@ export default function CompetitionParticipation() {
     const [userCompetitions, setUserCompetitions] = useState([]);
 
     const getUserCompetitions = () => {
-        return apiFetch(`/users/${me.id}/user-competitions`, {
+        return apiFetch(`/competitions?&properties[]=${me.id}&or[pictures.user]=/users/${me.id}&or[pictures.votes.user]=/users/${me.id}&properties[]=competition_name&properties[]=submission_start_date&properties[]=submission_end_date&properties[]=state&properties[]=numberOfPictures&properties[]=results_date`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -58,23 +58,18 @@ export default function CompetitionParticipation() {
                         display: 'Date de fin du concours',
                     },
                     { property: 'state', display: 'Statut' },
-                    { property: 'number_of_pictures', display: 'Mes photos' },
+                    { property: 'numberOfPictures', display: 'Mes photos' },
                     { property: 'results_date', display: 'Résultat' },
                 ]}
                 customAction={({ entity, property }) => {
                     if (property === 'state') {
-                        return entity.state ? (
+                        return (
                             <Chip
-                                backgroundColor={'#00CE3A'}
-                                color={'white'}
-                                title={'En cours'}
+                                backgroundColor={entity.state === 1 ? "#00A3FF" : entity.state >= 2 && entity.state <= 5 ? "#00CE3A" : "#F1F1F1"}
+                                color={entity.state >= 1 && entity.state <= 5 ? "#fff" : "#000"}
+                                title={entity.state === 1 ? "A venir" : entity.state >= 2 && entity.state <= 5 ? "En cours" : "Terminé"}
                             />
-                        ) : (
-                            <Chip
-                                backgroundColor={'#F1F1F1'}
-                                title={'Terminé'}
-                            />
-                        );
+                        )
                     }
                     if (property === 'submission_start_date') {
                         return new Date(

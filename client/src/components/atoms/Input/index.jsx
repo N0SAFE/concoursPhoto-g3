@@ -141,6 +141,7 @@ export default function Input({
     defaultValue,
     extra,
     label,
+    labelDisposition,
     className,
     onChange = function () {},
     error = '',
@@ -164,6 +165,7 @@ export default function Input({
                     <input
                         className={style.componentInput}
                         label={label}
+                        labelDisposition={labelDisposition}
                         type="checkbox"
                         {...extra}
                         name={name}
@@ -321,10 +323,22 @@ export default function Input({
     })();
     return (
         <div className={style.component}>
-            <label className={style.componentLabel} htmlFor={label}>
-                {label}
-            </label>
+            {labelDisposition === 'left' && (
+                <label className={style.componentLabel} htmlFor={label}>
+                    {label}
+                </label>
+            )}
+            {!labelDisposition && (
+                <label className={style.componentLabel} htmlFor={label}>
+                    {label}
+                </label>
+            )}
             {InputElement}
+            {labelDisposition === 'right' && (
+                <label className={style.componentLabel} htmlFor={label}>
+                    {label}
+                </label>
+            )}
             {error && <p className={style.componentError}>{error}</p>}
         </div>
     );

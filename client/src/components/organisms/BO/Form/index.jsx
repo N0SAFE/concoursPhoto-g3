@@ -19,7 +19,7 @@ export default function BOForm({
             }}
             className={className ?? style.form}
         >
-            <h2>{title}</h2>
+            {title ? <h2>{title}</h2> : null}
             {children}
             {!hasSubmit && (
                 <Button
