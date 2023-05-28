@@ -186,7 +186,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class)]
     private Collection $userLinks;
 
-    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'subscribedUsers')]
     #[Groups(['user:read', 'user:current:read'])]
     private Collection $notificationEnabled;

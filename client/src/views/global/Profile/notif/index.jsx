@@ -9,7 +9,7 @@ import { useAuthContext } from '@/contexts/AuthContext.jsx';
 import { toast } from 'react-toastify';
 
 export default function IndexNotif() {
-    const { me } = useAuthContext();
+    const { me, refreshUser } = useAuthContext();
     const apiFetch = useApiFetch();
     const { notificationTypePossibility, meNotificationEnabled } =
         useOutletContext();
@@ -63,9 +63,12 @@ export default function IndexNotif() {
                         toast.promise(promise, {
                             pending: 'Enregistrement...',
                             success: 'Enregistré !',
-                            error: 'Erreur lors de l\'enregistrement',
+                            error: "Erreur lors de l'enregistrement",
                         });
-                        refreshUser();
+                        5;
+                        promise.then(() => {
+                            refreshUser();
+                        });
                     }}
                 >
                     <div style={{ marginTop: '10px' }}>

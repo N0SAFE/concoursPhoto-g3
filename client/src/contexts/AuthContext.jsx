@@ -15,7 +15,6 @@ function AuthProvider(props) {
 
     async function refreshUser(controller) {
         try {
-            console.log("we're refreshing the user");
             const whoami = await fetch(
                 new URL(import.meta.env.VITE_API_URL + '/whoami').href,
                 {
