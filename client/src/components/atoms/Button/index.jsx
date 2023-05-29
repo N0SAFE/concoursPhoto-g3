@@ -10,6 +10,7 @@ export default function Button({
     textColor,
     padding,
     width,
+    height,
     borderRadius,
     icon,
     disabled,
@@ -34,6 +35,7 @@ export default function Button({
                     padding: padding,
                     width: width,
                     borderRadius: borderRadius,
+                    height: height,
                 }}
             >
                 <div>
