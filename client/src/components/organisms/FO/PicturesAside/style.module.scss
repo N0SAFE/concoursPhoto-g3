@@ -1,12 +1,10 @@
 .asideContainer {
     display: flex;
-    justify-content: center;
     gap: $gapBetweenElement;
     flex-wrap: wrap;
 
     & > div > div {
         display: flex;
-        justify-content: center;
         gap: $gapBetweenElement;
         flex-wrap: wrap;
 
