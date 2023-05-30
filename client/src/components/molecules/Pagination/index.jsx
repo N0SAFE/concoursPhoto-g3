@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@/components/atoms/Button/index.jsx';
 import BOForm from '@/components/organisms/BO/Form/index.jsx';
 
-export default function Pagination({handleChangeValue, optionsArray = [], valueSelected, possibilityNextPage, possibilityPreviousPage, nextPageUrl, previousPageUrl,}) {
+export default function Pagination({handleChangeValue, optionsArray = [], valueSelected, possibilityNextPage, possibilityPreviousPage, nextPageUrl, previousPageUrl}) {
     const navigate = useNavigate();
     const [pageNumber, setPageNumber] = useState('');
 
@@ -32,8 +32,8 @@ export default function Pagination({handleChangeValue, optionsArray = [], valueS
                 className={style.paginationSelect}
                 type="select"
                 onChange={handleChange}
-                defaultValue={valueSelected}
                 extra={{
+                    value: {value: parseInt(valueSelected), label: parseInt(valueSelected)},
                     options: optionsArray.map((option) => {
                         return { value: option, label: option };
                     }),
