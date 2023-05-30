@@ -3,7 +3,7 @@ import style from './style.module.scss';
 import Input from '@/components/atoms/Input/index.jsx';
 import { useNavigate } from 'react-router-dom';
 import Button from '@/components/atoms/Button/index.jsx';
-import BOForm from '@/components/organisms/BO/Form/index.jsx';
+import Form from '@/components/organisms/BO/Form/index.jsx';
 
 export default function Pagination({handleChangeValue, optionsArray = [], valueSelected, possibilityNextPage, possibilityPreviousPage, nextPageUrl, previousPageUrl}) {
     const navigate = useNavigate();
@@ -66,7 +66,7 @@ export default function Pagination({handleChangeValue, optionsArray = [], valueS
                 </div>
             </div>
             <div>
-                <BOForm hasSubmit={true} onSubmit={() => navigate(`/?page=${pageNumber}&itemsPerPage=9`)}>
+                <Form hasSubmit={true} onSubmit={() => navigate(`/?page=${pageNumber}&itemsPerPage=9`)}>
                     <Input
                         label="Aller à la page :"
                         className={style.paginationSelect}
@@ -83,7 +83,7 @@ export default function Pagination({handleChangeValue, optionsArray = [], valueS
                         type="submit"
                         onClick={handleSubmit}
                     />
-                </BOForm>
+                </Form>
             </div>
         </div>
     );
