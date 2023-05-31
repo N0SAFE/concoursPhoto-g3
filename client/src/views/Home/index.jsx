@@ -24,9 +24,15 @@ export default function Home() {
     const [paginationOptions, setPaginationOptions] = useState({});
     const [promotedCompetitions, setPromotedCompetitions] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams({});
-    const [page, setPage] = useState(searchParams.get('page') || DEFAULT_PAGE);
+    const [page, setPage] = useState(
+        isNaN(parseInt(searchParams.get('page')))
+            ? DEFAULT_PAGE
+            : parseInt(searchParams.get('page'))
+    );
     const [itemsPerPage, setItemsPerPage] = useState(
-        searchParams.get('itemsPerPage') || DEFAULT_ITEMS_PER_PAGE
+        isNaN(parseInt(searchParams.get('itemsPerPage')))
+            ? DEFAULT_ITEMS_PER_PAGE
+            : parseInt(searchParams.get('itemsPerPage'))
     );
     const [cardLoading, setCardLoading] = useState(false);
     const [cardDisposition, setCardDisposition] = useState('grid');
@@ -74,7 +80,7 @@ export default function Home() {
             page: page || DEFAULT_PAGE,
             itemsPerPage: itemsPerPage || DEFAULT_ITEMS_PER_PAGE,
         });
-        setCardLoading(true);   
+        setCardLoading(true);
         getListCompetitions().then(() => setCardLoading(false));
     }, [page, itemsPerPage]);
 
@@ -169,13 +175,14 @@ export default function Home() {
                     defaultItemPerPage={itemsPerPage}
                     renderItem={function (competition) {
                         const organizer = competition.organization?.users.map(
-                            user =>
-                                user.firstname +
-                                    ' ' +
-                                    user.lastname || null
-                        )
-                        const themes = competition?.theme.map(item => item.label)
-                        const state = competition.state ? 'En cours' : 'Terminé'
+                            user => user.firstname + ' ' + user.lastname || null
+                        );
+                        const themes = competition?.theme.map(
+                            item => item.label
+                        );
+                        const state = competition.state
+                            ? 'En cours'
+                            : 'Terminé';
                         return (
                             <Card
                                 idContent={competition.id}
@@ -268,9 +275,7 @@ export default function Home() {
                                                         alignItems: 'center',
                                                     }}
                                                 >
-                                                    <h3>
-                                                        not found
-                                                    </h3>
+                                                    <h3>not found</h3>
                                                 </div>
                                             ) : (
                                                 <div
@@ -283,7 +288,8 @@ export default function Home() {
                                                     }}
                                                 >
                                                     <h3>
-                                                        page {pageCurrent} not found
+                                                        page {pageCurrent} not
+                                                        found
                                                     </h3>
                                                 </div>
                                             )
