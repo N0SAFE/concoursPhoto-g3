@@ -12,7 +12,7 @@
         "build:client": "cd client && npm run build",
         "build:dev": "npm run build:client:dev",
         "build:client:dev": "cd client && npm run build:dev",
-        "init": "npm install --ignore-scripts && npm run install:new && cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:fixtures",
+        "init": "npm install --ignore-scripts && npm run install:new && concurrently --prefix-colors \"blue.bold,green.bold\" --names \"load database,build Frontend\" \"cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:fixtures\" \"npm run build\"",
         "init:prod": "npm install --ignore-scripts && npm run install:new && cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:migration",
         "install": "concurrently --prefix-colors \"blue.bold,green.bold\" --names \"install API,install Frontend\" \"npm run install:api\" \"npm run install:client\"",
         "install:new": "concurrently --prefix-colors \"blue.bold,green.bold\" --names \"install new API,install new Frontend\" \"npm run install:api:new\" \"npm run install:client\"",
