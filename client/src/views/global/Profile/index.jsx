@@ -1,4 +1,4 @@
-import BOForm from '@/components/organisms/BO/Form/index.jsx';
+import Form from '@/components/organisms/BO/Form/index.jsx';
 import Input from '@/components/atoms/Input/index.jsx';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
@@ -168,7 +168,7 @@ export default function Profile() {
     return (
         <Loader active={gendersPossibility.isLoading}>
             <div className={style.formContainer}>
-                <BOForm
+                <Form
                     handleSubmit={async function () {
                         const newLogoId = await (async () => {
                             if (updatedFile.picture_profil === null) {
@@ -564,7 +564,7 @@ export default function Profile() {
                             Mettre à jour
                         </Button>
                     </div>
-                </BOForm>
+                </Form>
             </div>
         </Loader>
     );

@@ -2,7 +2,7 @@ import React from 'react';
 import style from './style.module.scss';
 import Button from '@/components/atoms/Button';
 
-export default function BOForm({
+export default function Form({
     handleSubmit,
     children,
     title,

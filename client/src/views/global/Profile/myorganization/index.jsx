@@ -1,4 +1,4 @@
-import BOForm from '@/components/organisms/BO/Form/index.jsx';
+import Form from '@/components/organisms/BO/Form/index.jsx';
 import Input from '@/components/atoms/Input/index.jsx';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
@@ -143,7 +143,7 @@ export default function Myorganization() {
                 }}
             />
             <Hbar />
-            <BOForm
+            <Form
                 handleSubmit={function () {
                     const data = {
                         organizerName: organisation.organizer_name,
@@ -425,7 +425,7 @@ export default function Myorganization() {
                         Mettre à jour
                     </Button>
                 </div>
-            </BOForm>
+            </Form>
         </div>
     );
 }

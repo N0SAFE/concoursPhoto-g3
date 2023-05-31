@@ -1,5 +1,5 @@
 import Input from '@/components/atoms/Input';
-import BOForm from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -86,7 +86,7 @@ export default function UserRegister() {
                     d’abord votre compte.
                 </span>
             </div>
-            <BOForm
+            <Form
                 className={style.registerForm}
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
@@ -273,7 +273,7 @@ export default function UserRegister() {
                         </Link>
                     </p>
                 </div>
-            </BOForm>
+            </Form>
         </div>
     );
 }

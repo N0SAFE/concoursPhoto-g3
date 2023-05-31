@@ -1,5 +1,5 @@
 import Input from '@/components/atoms/Input/index.jsx';
-import BOForm from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -187,7 +187,7 @@ export default function OrganizationEdit() {
 
     return (
         <Loader active={isLoading}>
-            <BOForm
+            <Form
                 title="Modifier une organisation"
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
@@ -431,7 +431,7 @@ export default function OrganizationEdit() {
                         />
                     </div>
                 </div>
-            </BOForm>
+            </Form>
             <Button onClick={() => navigate('/BO/organization')}>Retour</Button>
         </Loader>
     );

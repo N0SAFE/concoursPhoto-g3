@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
-import BOForm from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import { useState } from 'react';
 import style from './style.module.scss';
 import { Link } from 'react-router-dom';
@@ -30,7 +30,7 @@ export default function Login() {
                     gratuit.
                 </span>
             </div>
-            <BOForm
+            <Form
                 handleSubmit={async function () {
                     const promise = login({
                         identifier: identifier,
@@ -97,7 +97,7 @@ export default function Login() {
                         </Link>
                     </p>
                 </div>
-            </BOForm>
+            </Form>
         </div>
     );
 }

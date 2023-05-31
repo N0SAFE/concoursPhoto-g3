@@ -1,5 +1,5 @@
 import Input from '@/components/atoms/Input/index.jsx';
-import BOForm from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -188,7 +188,7 @@ export default function UserCreate() {
 
     return (
         <Loader active={isLoading}>
-            <BOForm
+            <Form
                 title="Modifier un utilisateur"
                 handleSubmit={function () {
                     const data = {
@@ -408,7 +408,7 @@ export default function UserCreate() {
                         defaultValue={entity.passwordConfirm}
                     />
                 </div>
-            </BOForm>
+            </Form>
             <Button onClick={() => navigate('/BO/user')}>Retour</Button>
         </Loader>
     );
