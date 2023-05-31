@@ -1,4 +1,4 @@
-import BOForm from '@/components/organisms/BO/Form/index.jsx';
+import Form from '@/components/organisms/BO/Form/index.jsx';
 import Button from '@/components/atoms/Button';
 import style from './style.module.scss';
 import Loader from '@/components/atoms/Loader/index.jsx';
@@ -46,7 +46,7 @@ export default function IndexNotif() {
     return (
         <Loader active={notificationTypePossibility.isLoading}>
             <div className={style.formContainer}>
-                <BOForm
+                <Form
                     hasSubmit={true}
                     handleSubmit={function () {
                         const promise = apiFetch(me['@id'], {
@@ -209,7 +209,7 @@ export default function IndexNotif() {
                             width={'245px'}
                         />
                     </div>
-                </BOForm>
+                </Form>
             </div>
         </Loader>
     );
