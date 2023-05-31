@@ -82,6 +82,9 @@ export default function Home() {
         });
         setCardLoading(true);
         getListCompetitions().then(() => setCardLoading(false));
+        return () => {
+            setTimeout(() => controller?.abort());
+        };
     }, [page, itemsPerPage]);
 
     function getListCompetitions() {

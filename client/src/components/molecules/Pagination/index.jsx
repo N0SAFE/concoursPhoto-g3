@@ -114,8 +114,6 @@ export default function Pagination({
                         )}
                     </div>
                     {dots.map((dot, index) => {
-                        console.log('dot', dot);
-                        console.log(_pageCurrent);
                         return (
                             <div>
                                 <Button

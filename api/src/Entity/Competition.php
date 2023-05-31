@@ -40,8 +40,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Patch(),
         new Delete(),
-    ],
-    paginationClientItemsPerPage: true,
+    ]
 )]
 
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
