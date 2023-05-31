@@ -386,10 +386,9 @@ export default function CreateOrganization() {
                     </div>
                 </div>
             </BOCreate>
-            <Button
-                name="Retour"
-                onClick={() => navigate('/profile/myorganization')}
-            />
+            <Button onClick={() => navigate('/profile/myorganization')}>
+                Retour
+            </Button>
         </Loader>
     );
 }

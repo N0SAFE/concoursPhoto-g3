@@ -3,17 +3,19 @@ import Icon from '@/components/atoms/Icon';
 
 export default function Button({
     type,
-    name,
     key,
     onClick,
     color,
     textColor,
     padding,
     width,
+    height,
     borderRadius,
     icon,
     disabled,
     iconPosition,
+    children,
+    style: styleProp,
 }) {
     return (
         <div
@@ -34,6 +36,8 @@ export default function Button({
                     padding: padding,
                     width: width,
                     borderRadius: borderRadius,
+                    height: height,
+                    ...styleProp,
                 }}
             >
                 <div>
@@ -46,11 +50,11 @@ export default function Button({
                                         size={20}
                                         color={textColor}
                                     />
-                                    {name}
+                                    {children}
                                 </>
                             ) : (
                                 <>
-                                    {name}
+                                    {children}
                                     <Icon
                                         icon={icon}
                                         size={20}
@@ -60,7 +64,7 @@ export default function Button({
                             )}
                         </>
                     ) : (
-                        name
+                        children
                     )}
                 </div>
             </button>

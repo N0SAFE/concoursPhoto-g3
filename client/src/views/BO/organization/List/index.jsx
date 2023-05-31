@@ -84,10 +84,11 @@ export default function OrganizationList() {
                 <Button
                     color="green"
                     textColor="white"
-                    name="Créer une organisation"
                     borderRadius={'30px'}
                     onClick={() => navigate('/BO/organization/create')}
-                ></Button>
+                >
+                    Créer une organisation
+                </Button>
             </div>
             <div className={style.containerList}>
                 <Table

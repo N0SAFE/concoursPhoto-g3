@@ -10,6 +10,7 @@ export default function Card({
     filters = [],
     stats = [],
     finalDate,
+    orientation = 'horizontal',
 }) {
     const navigate = useNavigate();
 
@@ -19,7 +20,13 @@ export default function Card({
 
     return (
         <div
-            className={style.cardContainer}
+            className={
+                style.cardContainer +
+                ' ' +
+                (orientation === 'horizontal'
+                    ? style.cardContainerHorizontal
+                    : style.cardContainerVertical)
+            }
             onClick={() => handleClick(idContent)}
         >
             <div className={style.cardHeader}>
@@ -31,32 +38,37 @@ export default function Card({
             <div className={style.cardDisposition}>
                 <div className={style.cardBody}>
                     <h3>{title}</h3>
-                    <div className={style.cardFilter}>
-                        {filters &&
-                            filters.map((filter, index) => {
-                                return (
-                                    <Chip
-                                        key={index}
-                                        title={filter}
-                                        backgroundColor={'#F5F5F5'}
-                                    />
-                                );
-                            })}
+                    <div className={style.cardFilterContainer}>
+                        <div className={style.cardFilter}>
+                            {filters &&
+                                filters.map((filter, index) => {
+                                    return (
+                                        <Chip
+                                            key={index}
+                                            title={filter}
+                                            backgroundColor={'#F5F5F5'}
+                                        />
+                                    );
+                                })}
+                        </div>
+                        <div className={style.cardFilterFade}></div>
                     </div>
                 </div>
                 {stats && (
                     <div className={style.cardFooter}>
-                        <div className={style.cardFilter}>
-                            {stats.map((stat, index) => {
-                                return (
-                                    <Chip
-                                        icon={stat.icon}
-                                        key={index}
-                                        title={stat.name}
-                                        backgroundColor={'#F5F5F5'}
-                                    />
-                                );
-                            })}
+                        <div>
+                            <div className={style.cardFilter}>
+                                {stats.map((stat, index) => {
+                                    return (
+                                        <Chip
+                                            icon={stat.icon}
+                                            key={index}
+                                            title={stat.name}
+                                            backgroundColor={'#F5F5F5'}
+                                        />
+                                    );
+                                })}
+                            </div>
                         </div>
                         <div>
                             {finalDate && (

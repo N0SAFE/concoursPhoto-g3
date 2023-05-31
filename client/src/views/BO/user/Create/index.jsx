@@ -392,7 +392,7 @@ export default function UserCreate() {
                     />
                 </div>
             </Form>
-            <Button name="Retour" onClick={() => navigate('/BO/user')} />
+            <Button onClick={() => navigate('/BO/user')}>Retour</Button>
         </Loader>
     );
 }

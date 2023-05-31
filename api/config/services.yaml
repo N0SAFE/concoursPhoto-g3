@@ -47,9 +47,6 @@ services:
                   priority: 0,
               }
 
-    App\EventListener\NotificationSubscriber:
-        tags: [kernel.view]
-
     App\State\UserStateProcessor:
         bind:
             $processor: '@api_platform.doctrine.orm.state.persist_processor'

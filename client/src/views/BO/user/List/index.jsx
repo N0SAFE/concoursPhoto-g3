@@ -132,10 +132,11 @@ export default function UserList() {
                 <Button
                     color="green"
                     textColor="white"
-                    name="Créer un utilisateur"
                     borderRadius={'30px'}
                     onClick={() => navigate('/BO/user/create')}
-                ></Button>
+                >
+                    Créer un utilisateur
+                </Button>
             </div>
             <div>
                 <label htmlFor="state-filter">Filtrer par état :</label>

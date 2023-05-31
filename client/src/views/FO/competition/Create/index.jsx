@@ -6,7 +6,6 @@ import useLocation from '@/hooks/useLocation';
 import { toast } from 'react-toastify';
 import useFilesUpdater from '@/hooks/useFilesUploader.js';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import style from './style.module.scss';
 import { useAuthContext } from '@/contexts/AuthContext.jsx';

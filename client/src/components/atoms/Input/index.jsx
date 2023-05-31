@@ -182,6 +182,7 @@ export default function Input({
                         onChange={e => onChange(e)}
                         defaultValue={defaultValue}
                         className={className}
+                        menuPlacement={extra?.menuPlacement || 'auto'}
                     />
                 );
             case 'password':

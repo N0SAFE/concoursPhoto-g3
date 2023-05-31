@@ -40,7 +40,6 @@ export default function Navbar({ icon, listLeft = [], listRight = [] }) {
             } else if (item.type === 'modal') {
                 return (
                     <Button
-                        name={item.title}
                         borderRadius={'5px'}
                         padding={'5px 10px'}
                         icon={item.icon}
@@ -49,12 +48,13 @@ export default function Navbar({ icon, listLeft = [], listRight = [] }) {
                             setModalContent(item.component);
                             showModal();
                         }}
-                    />
+                    >
+                        {item.title}
+                    </Button>
                 );
             } else if (item.type === 'button') {
                 return (
                     <Button
-                        name={item.title}
                         borderRadius={'5px'}
                         padding={'5px 10px'}
                         icon={item.icon}
@@ -63,7 +63,9 @@ export default function Navbar({ icon, listLeft = [], listRight = [] }) {
                                 ? item.action()
                                 : navigate(item.to)
                         }
-                    />
+                    >
+                        {item.title}
+                    </Button>
                 );
             }
         });

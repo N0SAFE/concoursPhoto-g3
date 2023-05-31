@@ -83,10 +83,11 @@ export default function CompetitionsList() {
                 <Button
                     color="green"
                     textColor="white"
-                    name="Créer un concours"
                     borderRadius={'30px'}
                     onClick={() => navigate('/BO/competition/create')}
-                ></Button>
+                >
+                    Créer un concours
+                </Button>
             </div>
             <div className={style.containerList}>
                 <Table

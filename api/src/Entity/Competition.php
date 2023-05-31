@@ -40,9 +40,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Patch(),
         new Delete(),
-    ],
-
+    ]
 )]
+
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
 {

@@ -414,7 +414,6 @@ export default function Myorganization() {
                 <div className={style.registerSubmit}>
                     <Button
                         type="submit"
-                        name="Mettre à jour"
                         color={cityIsLoading ? 'grey' : 'black'}
                         textColor={'white'}
                         padding={'14px 30px'}
@@ -422,7 +421,9 @@ export default function Myorganization() {
                         borderRadius={'44px'}
                         width={'245px'}
                         disabled={cityIsLoading}
-                    />
+                    >
+                        Mettre à jour
+                    </Button>
                 </div>
             </Form>
         </div>
