@@ -432,10 +432,7 @@ export default function OrganizationEdit() {
                     </div>
                 </div>
             </BOForm>
-            <Button
-                name="Retour"
-                onClick={() => navigate('/BO/organization')}
-            />
+            <Button onClick={() => navigate('/BO/organization')}>Retour</Button>
         </Loader>
     );
 }

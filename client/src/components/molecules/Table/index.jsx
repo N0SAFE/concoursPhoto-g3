@@ -48,11 +48,12 @@ export default function Table({
                                         <Button
                                             color={color}
                                             textColor={textColor}
-                                            name={label}
                                             key={index}
                                             borderRadius={'30px'}
                                             onClick={() => action({ entity })}
-                                        />
+                                        >
+                                            {label}
+                                        </Button>
                                     );
                                 }
                             )}

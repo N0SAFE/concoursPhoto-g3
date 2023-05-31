@@ -46,9 +46,7 @@ services:
                   method: onJWTNotFound,
                   priority: 0,
               }
-
-    App\EventListener\NotificationSubscriber:
-        tags: [kernel.view]
+        
 
     App\State\UserStateProcessor:
         bind:

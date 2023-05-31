@@ -200,14 +200,15 @@ export default function IndexNotif() {
                     <div className={style.registerSubmit}>
                         <Button
                             type="submit"
-                            name="Mettre à jour"
                             color={'black'}
                             textColor={'white'}
                             padding={'14px 30px'}
                             border={false}
                             borderRadius={'44px'}
                             width={'245px'}
-                        />
+                        >
+                            Mettre à jour
+                        </Button>
                     </div>
                 </BOForm>
             </div>

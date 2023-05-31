@@ -9,13 +9,11 @@ export default function BOForm({
     className,
     hasSubmit = false,
 }) {
-    const refs = {};
-
     return (
         <form
             onSubmit={e => {
                 e.preventDefault();
-                handleSubmit(refs);
+                handleSubmit(e);
             }}
             className={className ?? style.form}
         >
@@ -24,13 +22,14 @@ export default function BOForm({
             {!hasSubmit && (
                 <Button
                     type="submit"
-                    name="Soumettre"
                     color={'grey'}
                     textColor={'white'}
                     padding={'5px'}
                     border={false}
                     borderRadius={'10px'}
-                />
+                >
+                    Soumettre
+                </Button>
             )}
         </form>
     );

@@ -21,13 +21,14 @@ export default function PicturesAside({ pictures, asideLabel }) {
                 </div>
             </div>
             <Button
-                name={'Voir les photos et voter'}
                 borderRadius={'30px'}
                 padding={'20px'}
                 color={'#A8A8A8'}
                 textColor={'#fff'}
                 onClick={() => navigate('/')}
-            />
+            >
+                Voir les photos et voter
+            </Button>
         </div>
     );
 }

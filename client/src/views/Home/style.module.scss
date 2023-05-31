@@ -1,6 +1,16 @@
+@import '../../components/molecules/Card/style.module.scss';
+
 .home {
     &Container {
         @extend .margin-title;
+    }
+
+    &LastCompetition {
+        & > div {
+            display: flex;
+            gap: $gapBetweenElement;
+            flex-wrap: wrap;
+        }
     }
 
     &Banner {
@@ -54,57 +64,6 @@
                 &:hover {
                     color: $text-color-primary;
                     background-color: $background-color-darkgrey;
-                }
-            }
-        }
-
-        &Grid {
-            cursor: pointer;
-
-            & > div > div > div {
-                display: flex;
-                flex-direction: column;
-            }
-        }
-
-        &List {
-            cursor: pointer;
-
-            & > div > div > div {
-                display: flex;
-                flex-direction: row;
-                width: 100%;
-
-                & > div:first-child {
-                    width: auto;
-                    aspect-ratio: inherit;
-
-                    & > img {
-                        width: 500px;
-                    }
-                }
-
-                // reset disposition to grid
-                @include below(md) {
-                    display: flex;
-                    flex-direction: column;
-                    width: calc((100% - 30px) / 2);
-
-                    & > div:first-child {
-                        width: 100%;
-
-                        & > img {
-                            width: 100%;
-                        }
-                    }
-
-                    & > div:last-child {
-                        flex-wrap: inherit;
-                    }
-                }
-
-                @include small-mobile() {
-                    width: 100%;
                 }
             }
         }

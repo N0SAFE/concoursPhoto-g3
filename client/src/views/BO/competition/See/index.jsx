@@ -74,7 +74,7 @@ export default function () {
 
     return (
         <>
-            <Button name="Retour" onClick={() => navigate('/BO/competition')} />
+            <Button onClick={() => navigate('/BO/competition')}>Retour</Button>
             <Loader active={isLoading}>
                 <div className={style.all}>
                     <BOSee

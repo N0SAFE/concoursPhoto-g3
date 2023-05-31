@@ -236,13 +236,14 @@ export default function CompetitionLayout() {
                 />
                 <Outlet context={{ competition: entity, asideLabel }} />
                 <Button
-                    name={'Retour'}
                     borderRadius={'30px'}
                     padding={'20px'}
                     icon={'arrow-thin-left'}
                     iconPosition={'left'}
                     onClick={() => navigate('/')}
-                />
+                >
+                    Retour
+                </Button>
             </div>
         </Loader>
     );

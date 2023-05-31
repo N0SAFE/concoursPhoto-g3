@@ -251,14 +251,15 @@ export default function UserRegister() {
                     <div className={style.registerSubmit}>
                         <Button
                             type="submit"
-                            name="Créer mon compte"
                             color={'black'}
                             textColor={'white'}
                             padding={'14px 30px'}
                             border={false}
                             borderRadius={'44px'}
                             width={'245px'}
-                        />
+                        >
+                            Créer mon compte
+                        </Button>
                     </div>
                     <p className={style.registerProposition}>
                         Vous avez déjà un compte ?{' '}

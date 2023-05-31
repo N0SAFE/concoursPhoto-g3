@@ -4,86 +4,194 @@ import Input from '@/components/atoms/Input/index.jsx';
 import { useNavigate } from 'react-router-dom';
 import Button from '@/components/atoms/Button/index.jsx';
 import BOForm from '@/components/organisms/BO/Form/index.jsx';
+import { render } from 'react-dom';
 
-export default function Pagination({handleChangeValue, optionsArray = [], valueSelected, possibilityNextPage, possibilityPreviousPage, nextPageUrl, previousPageUrl}) {
-    const navigate = useNavigate();
-    const [pageNumber, setPageNumber] = useState('');
+const DEFAULT_ITEMS_PER_PAGE = 9;
 
-    const handleChange = (selectedOption) => {
-        if (selectedOption && selectedOption.value) {
-            const value = selectedOption.value;
-            handleChangeValue(value);
-        }
-    };
+const caching = {};
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        navigate(`/?page=${pageNumber}&itemsPerPage=9`);
+export default function Pagination({
+    _useBetaCache = false,
+    items,
+    totalPageCount,
+    defaultCurrentPage = 1,
+    defaultItemPerPage = 9,
+    onPageChange = function () {},
+    onItemsPerPageChange = function () {},
+    renderItem = function (item) {
+        return item;
+    },
+    children = function (items) {
+        return items;
+    },
+    itemPerPageSelectorValue = Array.from(
+        { length: DEFAULT_ITEMS_PER_PAGE },
+        (_, index) => index + 1
+    ),
+}) {
+    const [_pageCurrent, _setPageCurrent] = useState(
+        parseInt(defaultCurrentPage)
+    );
+    const [_itemPerPage, _setItemsPerPage] = useState(
+        parseInt(defaultItemPerPage)
+    );
+
+    if (isNaN(_pageCurrent) || isNaN(_itemPerPage)) {
+        throw new Error(
+            'Pagination: pageCurrent and itemPerPage must must be a number'
+        );
     }
 
-    const handlePageNumberChange = (e) => {
-        setPageNumber(e);
-    };
+    const hasPreviousPage = _pageCurrent > 1;
+    const hasNextPage = _pageCurrent < totalPageCount;
+
+    const dotSize = 5;
+    const dots = [];
+    const start = Math.max(1, _pageCurrent - dotSize);
+    const end = Math.min(totalPageCount, _pageCurrent + dotSize);
+    for (let i = start; i <= end; i++) {
+        dots.push(i);
+    }
+
+    if (_pageCurrent !== 1 && items.length === 0) {
+        _setPageCurrent(1);
+        onPageChange(1);
+    }
 
     return (
-        <div className={style.paginationContainer}>
-            <Input
-                label="Afficher par :"
-                className={style.paginationSelect}
-                type="select"
-                onChange={handleChange}
-                extra={{
-                    value: {value: parseInt(valueSelected), label: parseInt(valueSelected)},
-                    options: optionsArray.map((option) => {
-                        return { value: option, label: option };
-                    }),
-                }}
-            />
-            <div className={style.pagination}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {children(items.map(renderItem), {
+                pageCurrent: _pageCurrent,
+                itemPerPage: _itemPerPage,
+                totalPageCount,
+                hasNextPage,
+                hasPreviousPage,
+                dots,
+            })}
+            <div className={style.paginationContainer}>
+                <Input
+                    label="Afficher par :"
+                    className={style.paginationSelect}
+                    type="select"
+                    onChange={({ value }) => {
+                        _setItemsPerPage(value);
+                        onItemsPerPageChange(value);
+                    }}
+                    extra={{
+                        value: {
+                            value: parseInt(_itemPerPage),
+                            label: parseInt(_itemPerPage),
+                        },
+                        options: itemPerPageSelectorValue.map(option => {
+                            return { value: option, label: option };
+                        }),
+                    }}
+                />
+                <div className={style.pagination}>
+                    <div>
+                        {hasPreviousPage ? (
+                            <Button
+                                width="40px"
+                                height="40px"
+                                borderRadius="50%"
+                                icon="cheveron-left"
+                                padding="15px 5px"
+                                onClick={() => {
+                                    const page = _pageCurrent - 1;
+                                    _setPageCurrent(page);
+                                    onPageChange(page);
+                                }}
+                            />
+                        ) : (
+                            <Button
+                                width="40px"
+                                height="40px"
+                                borderRadius="50%"
+                                icon="cheveron-left"
+                                padding="15px 5px"
+                                disabled
+                            />
+                        )}
+                    </div>
+                    {dots.map((dot, index) => {
+                        console.log('dot', dot);
+                        console.log(_pageCurrent);
+                        return (
+                            <div>
+                                <Button
+                                    width="40px"
+                                    height="40px"
+                                    borderRadius="50%"
+                                    padding="15px 5px"
+                                    onClick={() => {
+                                        if(dot === _pageCurrent) return;
+                                        _setPageCurrent(dot);
+                                        onPageChange(dot);
+                                    }}
+                                    style={{
+                                        backgroundColor:
+                                            _pageCurrent === dot && '#000',
+                                        color: _pageCurrent === dot && '#fff',
+                                    }}
+                                >
+                                    {dot}
+                                </Button>
+                            </div>
+                        );
+                    })}
+                    <div>
+                        {hasNextPage ? (
+                            <Button
+                                width="40px"
+                                height="40px"
+                                borderRadius="50%"
+                                icon="cheveron-right"
+                                padding="15px 5px"
+                                onClick={() => {
+                                    const page = _pageCurrent + 1;
+                                    _setPageCurrent(page);
+                                    onPageChange(page);
+                                }}
+                            />
+                        ) : (
+                            <Button
+                                width="40px"
+                                height="40px"
+                                borderRadius="50%"
+                                icon="cheveron-right"
+                                padding="15px 5px"
+                                disabled
+                            />
+                        )}
+                    </div>
+                </div>
                 <div>
-                    {possibilityPreviousPage && (
+                    <BOForm
+                        hasSubmit={true}
+                        handleSubmit={e => {
+                            const page = parseInt(e.target.page.value);
+                            onPageChange(page);
+                            _setPageCurrent(page);
+                        }}
+                    >
+                        <Input
+                            name="page"
+                            label="Aller à la page :"
+                            className={style.paginationSelect}
+                            type="text"
+                            value={_pageCurrent}
+                        />
                         <Button
                             width="40px"
                             height="40px"
                             borderRadius="50%"
-                            icon="cheveron-left"
                             padding="15px 5px"
-                            onClick={() => navigate(previousPageUrl)}
-                        />
-                    )}
+                            type="submit"
+                        >
+                            Go
+                        </Button>
+                    </BOForm>
                 </div>
-                <div>
-                    {possibilityNextPage && (
-                        <Button
-                            width="40px"
-                            height="40px"
-                            borderRadius="50%"
-                            icon="cheveron-right"
-                            padding="15px 5px"
-                            onClick={() => navigate(nextPageUrl)}
-                        />
-                    )}
-                </div>
-            </div>
-            <div>
-                <BOForm hasSubmit={true} onSubmit={() => navigate(`/?page=${pageNumber}&itemsPerPage=9`)}>
-                    <Input
-                        label="Aller à la page :"
-                        className={style.paginationSelect}
-                        type="text"
-                        value={pageNumber}
-                        onChange={handlePageNumberChange}
-                    />
-                    <Button
-                        name="Go"
-                        width="40px"
-                        height="40px"
-                        borderRadius="50%"
-                        padding="15px 5px"
-                        type="submit"
-                        onClick={handleSubmit}
-                    />
-                </BOForm>
             </div>
         </div>
     );

@@ -738,7 +738,7 @@ export default function CompetitionEdit() {
                     </div>
                 </div>
             </BOCreate>
-            <Button name="Retour" onClick={() => navigate('/BO/competition')} />
+            <Button onClick={() => navigate('/BO/competition')}>Retour</Button>
         </Loader>
     );
 }

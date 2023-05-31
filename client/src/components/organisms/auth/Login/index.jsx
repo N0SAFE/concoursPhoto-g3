@@ -75,14 +75,15 @@ export default function Login() {
                     <div className={style.loginSubmit}>
                         <Button
                             type="submit"
-                            name="Se connecter"
                             color={'black'}
                             textColor={'white'}
                             padding={'14px 30px'}
                             border={false}
                             borderRadius={'44px'}
                             width={'245px'}
-                        />
+                        >
+                            Se connecter
+                        </Button>
                     </div>
                     <p className={style.loginProposition}>
                         Vous avez oublié votre mot de passe ?{' '}

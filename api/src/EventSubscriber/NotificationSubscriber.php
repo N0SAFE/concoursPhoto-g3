@@ -1,5 +1,4 @@
 <?php
-// api/src/EventSubscriber/BookMailSubscriber.php
 
 namespace App\EventSubscriber;
 
