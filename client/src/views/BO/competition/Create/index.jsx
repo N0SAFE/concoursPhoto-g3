@@ -589,7 +589,7 @@ export default function CompetitionCreate() {
                     </div>
                 </div>
             </BOCreate>
-            <Button onClick={() => navigate('/BO/competition')} >Retour</Button>
+            <Button onClick={() => navigate('/BO/competition')}>Retour</Button>
         </Loader>
     );
 }

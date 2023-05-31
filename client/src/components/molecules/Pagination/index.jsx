@@ -124,7 +124,7 @@ export default function Pagination({
                                     borderRadius="50%"
                                     padding="15px 5px"
                                     onClick={() => {
-                                        if(dot === _pageCurrent) return;
+                                        if (dot === _pageCurrent) return;
                                         _setPageCurrent(dot);
                                         onPageChange(dot);
                                     }}

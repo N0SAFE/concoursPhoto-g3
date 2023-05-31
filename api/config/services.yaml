@@ -46,7 +46,6 @@ services:
                   method: onJWTNotFound,
                   priority: 0,
               }
-        
 
     App\State\UserStateProcessor:
         bind:
