@@ -30,11 +30,6 @@ export default function CompetitionEdit() {
         getRegionByCode,
     } = useLocation();
     const editorRef = useRef(null);
-    const log = () => {
-        if (editorRef.current) {
-            console.log(editorRef.current.getContent());
-        }
-    };
     const [locationPossibility, setLocationPossibility] = useState({
         regions: { isLoading: true, data: [] },
         departments: { isLoading: true, data: [] },

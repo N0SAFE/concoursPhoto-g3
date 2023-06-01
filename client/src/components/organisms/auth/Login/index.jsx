@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { useModal } from '@/contexts/ModalContext';
 import Register from '@/components/organisms/auth/Register';
 
-export default function Login() {
+export default function Login({forceRedirect}) {
     const { setModalContent, hideModal } = useModal();
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -36,6 +36,10 @@ export default function Login() {
                         identifier: identifier,
                         password: password,
                     }).then(function (me) {
+                        if(forceRedirect){
+                            navigate(forceRedirect)
+                            return 
+                        }
                         if (me.roles.includes('ROLE_ADMIN')) {
                             navigate('/BO');
                         } else {

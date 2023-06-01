@@ -12,11 +12,6 @@ export default function () {
     const asidePictures = competition.aside;
     const apiFetch = useApiFetch();
     const editorRef = useRef(null);
-    const log = () => {
-        if (editorRef.current) {
-            console.log(editorRef.current.getContent());
-        }
-    };
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
         { content: 'Règlement', to: '/rules' },

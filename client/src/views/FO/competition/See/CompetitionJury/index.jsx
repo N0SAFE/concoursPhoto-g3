@@ -16,8 +16,6 @@ export default function () {
         { content: 'Résultats', to: '/results' },
     ];
 
-    console.log(competition.memberOfTheJuries);
-
     return (
         <div className={style.jury}>
             <div className={style.juryContainer}>

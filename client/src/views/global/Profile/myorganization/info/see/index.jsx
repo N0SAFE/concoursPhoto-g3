@@ -9,8 +9,16 @@ import useLocationPosibility from '@/hooks/useLocationPosibility.js';
 import style from './style.module.scss';
 import Hbar from '@/components/atoms/Hbar/index.jsx';
 import useLocation from '@/hooks/useLocation.js';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 
 export default function Myorganization() {
+    const { idOrganisation, selectedOrganisation } = useOutletContext();
+    const navigate = useNavigate();
+
+    if (isNaN(idOrganisation)) {
+        return <div>the idOrganisation is not a number</div>;
+    }
+
     const { me } = useAuthContext();
     const [typePossibility, setTypePossibility] = useState({
         isLoading: true,
@@ -34,21 +42,8 @@ export default function Myorganization() {
     ].map(c => ({ label: c, value: c }));
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] =
         useState(false);
-    const [organisation, setOrganisation] = useState(
-        me.Manage.length > 0
-            ? {
-                  ...me.Manage[0],
-                  postcode: {
-                      label: me.Manage[0].postcode,
-                      value: me.Manage[0].postcode,
-                  },
-                  organizationType: {
-                      label: me.Manage[0].organization_type.label,
-                      value: me.Manage[0].organization_type['@id'],
-                  },
-              }
-            : null
-    );
+
+    const [organisation, setOrganisation] = useState(selectedOrganisation);
 
     const updateOrgnisation = (key, value) => {
         setOrganisation({ ...organisation, [key]: value });
@@ -72,17 +67,6 @@ export default function Myorganization() {
     const getCity = (controller, cityCode) => {
         return getCityByCode(cityCode, { controller });
     };
-
-    useEffect(() => {
-        const controller = new AbortController();
-        getCity(controller, organisation.citycode).then(data => {
-            updateOrgnisation('city', { label: data.nom, value: data.code });
-            setCityIsLoading(false);
-        });
-        getOrganizationTypePossibility().then(data =>
-            setTypePossibility({ list: data, isLoading: false })
-        );
-    }, []);
 
     useEffect(() => {
         updateLocationPossibility({
@@ -119,7 +103,21 @@ export default function Myorganization() {
             } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the organisation)
             setLocationPossibilityIsLoading(false);
         });
-    }, [organisation.postcode, organisation.city]);
+    }, [organisation?.postcode, organisation?.city]);
+
+    useEffect(() => {
+        const controller = new AbortController();
+        getCity(controller, organisation.citycode).then(data => {
+            updateOrgnisation('city', {
+                label: data.nom,
+                value: data.code,
+            });
+            setCityIsLoading(false);
+        });
+        getOrganizationTypePossibility().then(data =>
+            setTypePossibility({ list: data, isLoading: false })
+        );
+    }, []);
 
     return (
         <div className={style.formContainer}>
@@ -138,8 +136,9 @@ export default function Myorganization() {
                     },
                 }}
                 onChange={d => {
-                    const o = me.Manage.find(o => o.id === d.value);
-                    setOrganisation({ ...o, cityCode: o.city });
+                    if (d.value !== selectedOrganisation.id) {
+                        navigate('/profile/myorganization/info/' + d.value);
+                    }
                 }}
             />
             <Hbar />

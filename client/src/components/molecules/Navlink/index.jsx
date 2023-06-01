@@ -11,7 +11,12 @@ export default function ({ list, base }) {
     });
 
     if (activeTo) {
-        const l = list.find(item => item._to === activeTo);
+        const l = list.find(item => {
+            if (item.type === 'startwith') {
+                return activeTo.startsWith(item._to);
+            }
+            return item._to === activeTo;
+        });
         if (l) {
             l.active = true;
         }

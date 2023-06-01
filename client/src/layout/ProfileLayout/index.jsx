@@ -7,9 +7,9 @@ import style from './style.module.scss';
 import { useAuthContext } from '@/contexts/AuthContext.jsx';
 
 const profileRouteList = [
-    { content: 'Mon profil', to: '/me' },
+    { content: 'Mon profil', to: '/me', },
     { content: 'Mes préférences', to: '/preference' },
-    { content: 'Mes organisations', to: '/myorganization' },
+    { content: 'Mes organisations', to: '/myorganization', type: "startwith" },
     { content: 'Concours créés par mon organisation', to: '/me' },
     { content: 'Concours auxquels j’ai participé', to: '/participations' },
     { content: 'Mes publicités', to: '/me' },
