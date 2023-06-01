@@ -33,7 +33,7 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setState($faker->boolean());
             $organization->setOrganizerName($faker->text());
             $organization->setDescription($faker->text());
-            $organization->setLogo((new FileFixtures)->createFile());
+            $organization->setLogo((new FileFixtures)->createFileFromArray(FileFixtures::ORGANISATION_LOGO_ARRAY));
             $organization->setAddress($faker->address());
             $organization->setPostcode(str_replace(' ', '', $faker->postcode()));
             $organization->setCitycode(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
@@ -43,7 +43,7 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setCountry("FRANCE");
             $organization->setIntraCommunityVat($faker->creditCardNumber());
             $organization->setNumberSiret($faker->creditCardNumber());
-            $organization->setOrganizationVisual((new FileFixtures)->createFile());
+            $organization->setOrganizationVisual((new FileFixtures)->createFileFromArray(FileFixtures::ORGANISATION_VIUAL_ARRAY));
             $organization->setLastUpdateDate($faker->dateTime());
             $organization->setOrganizationType($this->getReference(OrganizationTypeFixtures::ORGANIZATION_TYPE_REFERENCE . rand(1, count(OrganizationTypeFixtures::ORGANIZATION_TYPE_ARRAY))));
 

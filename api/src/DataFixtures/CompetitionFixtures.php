@@ -16,8 +16,12 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
     }
 
     const COMPETITION_REFERENCE = 'competition';
-    const COMPETITION_COUNT_REFERENCE = 10;
-    const COUNT_REFERENCE = 100;
+    const COMPETITION_COUNT_REFERENCE = 60;
+    const MAX_WEIGHTING_OF_JURY_VOTES = 100;
+    const MAX_NUMBER_OF_MAX_VOTES = 10;
+    const MAX_NUMBER_OF_PRICES = 20;
+    const MIN_AGE_CRITERIA = 6;
+    const MAX_AGE_CRITERIA = 99;
 
     const CITY_ARRAY = [
         '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
@@ -49,6 +53,9 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
 
         for ($i = 0; $i < self::COMPETITION_COUNT_REFERENCE; $i++) {
             $competition = new Competition();
+            
+            $minAge = random_int(self::MIN_AGE_CRITERIA, self::MAX_AGE_CRITERIA);
+            $maxAge = random_int($minAge, self::MAX_AGE_CRITERIA);
 
             $resultsDate = $faker->dateTimeBetween("-1 year", "+1 year");
             $votingEndDate = $faker->dateTimeBetween("-1 year", $resultsDate);
@@ -59,7 +66,7 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
             $creationDate = $faker->dateTimeBetween("-1 year", $publicationDate);
 
             $competition->setCompetitionName($faker->text());
-            $competition->setCompetitionVisual((new FileFixtures)->createFile());
+            $competition->setCompetitionVisual((new FileFixtures)->createFileFromArray(FileFixtures::COMPETITION_LOGO_ARRAY));
             $competition->setDescription($faker->text());
             $competition->setRules($faker->text());
             $competition->setEndowments($this->getRandomElements(self::ENDOWMENTS_ARRAY, 1));
@@ -70,11 +77,11 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
             $competition->setVotingStartDate($votingStartDate);
             $competition->setVotingEndDate($votingEndDate);
             $competition->setResultsDate($resultsDate);
-            $competition->setWeightingOfJuryVotes($faker->randomFloat(3, 0, self::COUNT_REFERENCE));
-            $competition->setNumberOfMaxVotes(random_int(0, self::COUNT_REFERENCE));
-            $competition->setNumberOfPrices(random_int(0, self::COUNT_REFERENCE));
-            $competition->setMinAgeCriteria(random_int(0, self::COUNT_REFERENCE));
-            $competition->setMaxAgeCriteria(random_int(0, self::COUNT_REFERENCE));
+            $competition->setWeightingOfJuryVotes($faker->randomFloat(3, 0, self::MAX_WEIGHTING_OF_JURY_VOTES));
+            $competition->setNumberOfMaxVotes(random_int(0, self::MAX_NUMBER_OF_MAX_VOTES));
+            $competition->setNumberOfPrices(random_int(0, self::MAX_NUMBER_OF_PRICES));
+            $competition->setMinAgeCriteria($minAge);
+            $competition->setMaxAgeCriteria($maxAge);
             $competition->setCountryCriteria(["FRANCE"]);
             $competition->setIsPromoted($faker->boolean());
 
