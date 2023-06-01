@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, redirect } from 'react-router-dom';
 import Login from '@/components/organisms/auth/Login';
 import UserList from '@/views/BO/user/List';
 import UserEdit from '@/views/BO/user/Edit';
@@ -86,13 +86,16 @@ function Router() {
                     element={
                         <GuardedRoute
                             verify={({ isLogged }) => isLogged}
-                            fallback={
-                                <Navigate to="/auth/login" replace={true} />
-                            }
+                            fallback={() => {
+                                toast.info('Veuillez vous connecter');
+                                setModalContent(<Login forceRedirect="/profile" />);
+                                showModal();
+                            }}
                         />
                     }
                 >
                     <Route path="" element={<ProfileLayout />}>
+                        <Route path="" element={<Navigate to="me" />} />
                         <Route path="me" element={<Profile />} />
                         <Route path="preference" element={<IndexNotif />} />
                         <Route
