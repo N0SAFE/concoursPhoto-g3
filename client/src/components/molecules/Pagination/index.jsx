@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import style from './style.module.scss';
 import Input from '@/components/atoms/Input/index.jsx';
-import { useNavigate } from 'react-router-dom';
 import Button from '@/components/atoms/Button/index.jsx';
 import BOForm from '@/components/organisms/BO/Form/index.jsx';
-import { render } from 'react-dom';
 
 const DEFAULT_ITEMS_PER_PAGE = 9;
 
@@ -45,7 +43,8 @@ export default function Pagination({
     const hasPreviousPage = _pageCurrent > 1;
     const hasNextPage = _pageCurrent < totalPageCount;
 
-    const dotSize = 5;
+
+    const dotSize = 2;
     const dots = [];
     const start = Math.max(1, _pageCurrent - dotSize);
     const end = Math.min(totalPageCount, _pageCurrent + dotSize);
@@ -168,6 +167,8 @@ export default function Pagination({
                         hasSubmit={true}
                         handleSubmit={e => {
                             const page = parseInt(e.target.page.value);
+                            if (isNaN(page)) return;
+                            if (page < 1) return;
                             onPageChange(page);
                             _setPageCurrent(page);
                         }}
@@ -176,7 +177,7 @@ export default function Pagination({
                             name="page"
                             label="Aller à la page :"
                             className={style.paginationSelect}
-                            type="text"
+                            type="number"
                             value={_pageCurrent}
                         />
                         <Button

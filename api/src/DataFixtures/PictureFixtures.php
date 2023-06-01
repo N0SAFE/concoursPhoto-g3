@@ -31,7 +31,7 @@ class PictureFixtures extends Fixture implements DependentFixtureInterface
             $picture->setState($faker->boolean());
             $picture->setPictureName($faker->text());
             $picture->setSubmissionDate($faker->dateTime());
-            $picture->setFile((new FileFixtures)->createFile());
+            $picture->setFile((new FileFixtures)->createFileFromArray(FileFixtures::PICTURE_ARRAY));
             $picture->setNumberOfVotes(random_int(0, 100));
             $picture->setPriceWon($faker->randomFloat(3, 0, 100));
             $picture->setPriceRank(random_int(0, 100));

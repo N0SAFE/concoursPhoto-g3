@@ -25,12 +25,12 @@ export default function Home() {
     const [promotedCompetitions, setPromotedCompetitions] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams({});
     const [page, setPage] = useState(
-        isNaN(parseInt(searchParams.get('page')))
+        isNaN(parseInt(searchParams.get('page'))) || searchParams.get('page') < 1
             ? DEFAULT_PAGE
             : parseInt(searchParams.get('page'))
     );
     const [itemsPerPage, setItemsPerPage] = useState(
-        isNaN(parseInt(searchParams.get('itemsPerPage')))
+        isNaN(parseInt(searchParams.get('itemsPerPage'))) || searchParams.get('itemsPerPage') < 1
             ? DEFAULT_ITEMS_PER_PAGE
             : parseInt(searchParams.get('itemsPerPage'))
     );
