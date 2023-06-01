@@ -174,14 +174,11 @@ export default function Profile() {
                             if (updatedFile.picture_profil === null) {
                                 return null;
                             } else if (updatedFile.picture_profil.file) {
-                                console.log('uploading');
-                                console.log(updatedFile.picture_profil);
                                 return await uploadFile({
                                     file: updatedFile.picture_profil.file,
                                 }).then(r => r['@id']);
                             }
                         })();
-                        console.log(newLogoId);
                         const data = {
                             email: entity.email,
                             plainPassword: entity.password || undefined,

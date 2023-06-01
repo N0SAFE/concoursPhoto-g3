@@ -4,12 +4,28 @@ import { Outlet } from 'react-router-dom';
 
 export default function ({ fallback, verify = () => true }) {
     const auth = useAuthContext();
-    if (verify(auth)) {
-        return <Outlet />;
+    const ret = verify(auth);
+    const { state, context } = (() => {
+        if (typeof ret === 'boolean') {
+            return { state: ret };
+        } else {
+            if (typeof ret.state !== 'boolean') {
+                throw new Error(
+                    'the state property must be a boolean when an object is return from the verify function on a guarded route'
+                );
+            }
+            return ret;
+        }
+    })();
+
+    if (state) {
+        return <Outlet context={context} />;
     }
     const [Fallback, setFallback] = useState(null);
     useEffect(() => {
-        setFallback(fallback(auth));
+        if (typeof fallback === 'function') {
+            setFallback(fallback(auth, { context }));
+        }
     }, []);
 
     if (typeof fallback === 'function') {

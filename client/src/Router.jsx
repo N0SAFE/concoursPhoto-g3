@@ -1,4 +1,4 @@
-import { Route, Routes, redirect } from 'react-router-dom';
+import { Route, Routes, redirect, useParams } from 'react-router-dom';
 import Login from '@/components/organisms/auth/Login';
 import UserList from '@/views/BO/user/List';
 import UserEdit from '@/views/BO/user/Edit';
@@ -18,9 +18,9 @@ import OrganizationEdit from '@/views/BO/organization/Edit';
 import CompetitionSee from '@/views/BO/competition/See';
 import OrganizationSee from '@/views/BO/organization/See';
 import CompetitionEdit from '@/views/BO/competition/Edit';
-import { useModal } from './contexts/ModalContext/index.jsx';
+import { useModal } from '@/contexts/ModalContext/index.jsx';
 import { toast } from 'react-toastify';
-import Myorganization from '@/views/global/Profile/myorganization/index.jsx';
+import MyorganizationInfoSee from '@/views/global/Profile/myorganization/info/see/index.jsx';
 import IndexNotif from '@/views/global/Profile/notif';
 import CompetitionView from '@/views/FO/competition/See/CompetitionView/index.jsx';
 import CompetitionLayout from '@/layout/CompetitionLayout';
@@ -30,10 +30,11 @@ import CompetitionJury from '@/views/FO/competition/See/CompetitionJury';
 import CompetitionPictures from '@/views/FO/competition/See/CompetitionPictures';
 import CompetitionResults from '@/views/FO/competition/See/CompetitionResults/index.jsx';
 import PageLayout from '@/layout/PageLayout';
-import ProfileLayout from './layout/ProfileLayout';
+import ProfileLayout from '@/layout/ProfileLayout';
 import CompetitionParticipation from '@/views/global/Profile/participation';
-import CreateCompetitions from './views/FO/competition/Create/index.jsx';
-import CreateOrganization from './views/FO/organization/index.jsx';
+import CreateCompetitions from '@/views/FO/competition/Create/index.jsx';
+import CreateOrganization from '@/views/FO/organization/index.jsx';
+import MyorganizationLayout from '@/layout/ProfileLayout/MyorganizationLayout';
 
 function Router() {
     const { setModalContent, showModal } = useModal();
@@ -88,7 +89,9 @@ function Router() {
                             verify={({ isLogged }) => isLogged}
                             fallback={() => {
                                 toast.info('Veuillez vous connecter');
-                                setModalContent(<Login forceRedirect="/profile" />);
+                                setModalContent(
+                                    <Login forceRedirect="/profile" />
+                                );
                                 showModal();
                             }}
                         />
@@ -100,8 +103,85 @@ function Router() {
                         <Route path="preference" element={<IndexNotif />} />
                         <Route
                             path="myorganization"
-                            element={<Myorganization />}
-                        />
+                            element={<MyorganizationLayout />}
+                        >
+                            <Route path="info">
+                                <Route
+                                    path=":id"
+                                    element={
+                                        <GuardedRoute
+                                            verify={({ me }) => {
+                                                const { id: _idOrganisation } =
+                                                    useParams();
+                                                const idOrganisation =
+                                                    parseInt(_idOrganisation);
+                                                if (isNaN(idOrganisation)) {
+                                                    return false;
+                                                }
+                                                const _selectedOrganisation =
+                                                    me.Manage.find(org => {
+                                                        return (
+                                                            org.id ===
+                                                            idOrganisation
+                                                        );
+                                                    });
+                                                if (_selectedOrganisation) {
+                                                    const selectedOrganisation =
+                                                        {
+                                                            ..._selectedOrganisation,
+                                                            postcode: {
+                                                                label: _selectedOrganisation.postcode,
+                                                                value: _selectedOrganisation.postcode,
+                                                            },
+                                                            organizationType: {
+                                                                label: _selectedOrganisation
+                                                                    .organization_type
+                                                                    .label,
+                                                                value: _selectedOrganisation
+                                                                    .organization_type[
+                                                                    '@id'
+                                                                ],
+                                                            },
+                                                        };
+                                                    return {
+                                                        state: !!selectedOrganisation,
+                                                        context: {
+                                                            idOrganisation,
+                                                            selectedOrganisation,
+                                                        },
+                                                    };
+                                                }
+                                                return {
+                                                    state: false,
+                                                    context: {
+                                                        idOrganisation,
+                                                    },
+                                                };
+                                            }}
+                                            fallback={({ me }) => {
+                                                if (me.Manage.length > 0) {
+                                                    return (
+                                                        <Navigate
+                                                            to={
+                                                                '/profile/myorganization/info/' +
+                                                                me.Manage[0].id
+                                                            }
+                                                        />
+                                                    );
+                                                } else {
+                                                    return;
+                                                }
+                                            }}
+                                        />
+                                    }
+                                >
+                                    <Route
+                                        path=""
+                                        element={<MyorganizationInfoSee />}
+                                    />
+                                </Route>
+                            </Route>
+                        </Route>
                         <Route
                             path="participations"
                             element={<CompetitionParticipation />}
