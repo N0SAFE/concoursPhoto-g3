@@ -12,7 +12,6 @@ const myorganizationRouteList = [
 export default function () {
     const navigate = useNavigate()
     const context = useOutletContext();
-    console.log(context);
     return (
         <div style={{ display: 'flex', gap: '40px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', width: "200px", minWidth: "200px" }}>

@@ -41,7 +41,6 @@ export default function () {
     useEffect(() => {
         setIsPageLoading(true);
         getOrganization(page, itemsPerPage).then(r => {
-            console.log(r);
             setData({
                 member: r['hydra:member'],
                 paginationOptions: {
@@ -85,7 +84,6 @@ export default function () {
                         }}
                     >
                         {data => {
-                            console.log(data);
                             return (
                                 <div>
                                     <Loader

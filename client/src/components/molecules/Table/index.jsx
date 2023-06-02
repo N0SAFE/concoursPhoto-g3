@@ -24,8 +24,6 @@ export default function Table({
                     return (
                         <tr key={entity.id} onClick={() => onLineClick(entity)}>
                             {entityFields.map(function ({content, style}, index) {
-                                console.log(content);
-                                console.log(style);
                                 return <td style={style} key={index}>{content}</td>;
                             })}
                             {actions.length > 0 && (
