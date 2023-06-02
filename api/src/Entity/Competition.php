@@ -167,9 +167,6 @@ class Competition
 
     #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'competitionAlreadyHandled')]
     private Collection $notificationsSended;
-    
-    #[Groups(['competition_aside'])]
-    private Collection $aside;
 
     public function __construct()
     {
@@ -181,15 +178,63 @@ class Competition
         $this->notificationsSended = new ArrayCollection();
     }
 
+    #[Groups(['competition_aside'])]
     public function getAside(): Collection
     {
-        return $this->aside;
+        if ($this->getState() === 2 || $this->getState() === 3) {
+            $lastPicturesPosted = $this->getPictures()->toArray();
+            usort($lastPicturesPosted, function ($a, $b) {
+                return $a->getId() <=> $b->getId();
+            });
+            $lastPicturesPosted = array_slice($lastPicturesPosted, 0, 8);
+            return new ArrayCollection($lastPicturesPosted);
+        } elseif ($this->getState() === 4 || $this->getState() === 5) {
+            $lastPicturesObtainedVotes = $this->getPictures()->filter(function (Picture $picture) {
+                return $picture->getVotes()->count() > 0;
+            })->toArray();
+            usort($lastPicturesObtainedVotes, function (Picture $a, Picture $b) {
+                // sort by lastVote 
+                $lastVoteA = $a->getVotes()->toArray();
+                usort($lastVoteA, function (Vote $a, Vote $b) {
+                    return $a->getVoteDate() <=> $b->getVoteDate();
+                });
+                $lastVoteA = $lastVoteA[count($lastVoteA) - 1];
+
+                $lastVoteB = $b->getVotes()->toArray();
+                usort($lastVoteB, function (Vote $a, Vote $b) {
+                    return $a->getVoteDate() <=> $b->getVoteDate();
+                });
+                $lastVoteB = $lastVoteB[count($lastVoteB) - 1];
+
+                return $lastVoteA->getVoteDate() <=> $lastVoteB->getVoteDate();
+            });
+            $lastPicturesObtainedVotes = array_slice($lastPicturesObtainedVotes, 0, 8);
+            return new ArrayCollection($lastPicturesObtainedVotes);
+        } elseif ($this->getState() === 6) {
+            $picturesObtainedPrice = $this->getPictures()->filter(function (Picture $picture) {
+                return $picture->isPriceWon() !== null;
+            })->toArray();
+            usort($picturesObtainedPrice, function ($a, $b) {
+                // sort by id
+                return $a->getId() <=> $b->getId();
+            });
+            $picturesObtainedPrice = array_slice($picturesObtainedPrice, 0, 8);
+            return new ArrayCollection($picturesObtainedPrice);
+        }
     }
 
-    public function setAside(Collection $aside): self
+    #[Groups(['competition_aside'])]
+    public function getAsideLabel(): string
     {
-        $this->aside = $aside;
-        return $this;
+        if ($this->getState() === 2 || $this->getState() === 3) {
+            return 'Dernières photos soumises';
+        } elseif ($this->getState() === 4 || $this->getState() === 5) {
+            return 'Dernières photos ayant obtenu un vote';
+        } elseif ($this->getState() === 6) {
+            return 'Photos ayant obtenu un prix';
+        } else {
+            return "Photo à venir";
+        }
     }
 
     public function getId(): ?int
