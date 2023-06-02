@@ -3,63 +3,56 @@ import Button from '@/components/atoms/Button';
 
 export default function Table({
     fields,
-    entityList,
-    customAction = () => true,
-    useId = true,
+    list,
     actions = [],
+    children,
+    onLineClick = (entity) => {}
 }) {
     return (
         <table className={style.tableContainer}>
             <thead>
                 <tr>
-                    {fields.map(({ display }, index) => (
+                    {fields.map((display, index) => (
                         <th key={index}>{display}</th>
                     ))}
-                    <th>Actions</th>
+                    {actions.length > 0 && <th>Actions</th>}
                 </tr>
             </thead>
             <tbody>
-                {entityList.map((entity, index) => (
-                    <tr key={useId ? entity.id : index}>
-                        {fields.map(({ property }, index) => {
-                            if (typeof customAction !== 'function') {
-                                throw new Error(
-                                    'customAction must be a function'
-                                );
-                            }
-
-                            const customActionResponse = customAction({
-                                entity,
-                                property,
-                            });
-                            if (!customActionResponse) {
-                                return <td key={index}>{entity[property]}</td>;
-                            }
-
-                            return <td key={index}>{customActionResponse}</td>;
-                        })}
-                        <td>
-                            {actions.map(
-                                (
-                                    { action, label, color, textColor },
-                                    index
-                                ) => {
-                                    return (
-                                        <Button
-                                            color={color}
-                                            textColor={textColor}
-                                            key={index}
-                                            borderRadius={'30px'}
-                                            onClick={() => action({ entity })}
-                                        >
-                                            {label}
-                                        </Button>
-                                    );
-                                }
+                {list.map(function (entity) {
+                    const entityFields = children(entity);
+                    return (
+                        <tr key={entity.id} onClick={() => onLineClick(entity)}>
+                            {entityFields.map(function ({content, style}, index) {
+                                console.log(content);
+                                console.log(style);
+                                return <td style={style} key={index}>{content}</td>;
+                            })}
+                            {actions.length > 0 && (
+                                <td>
+                                    {actions.map(function (
+                                        { name, action, component },
+                                        index
+                                    ) {
+                                        if(typeof component === "function"){
+                                            return component(entity, action, index);
+                                        }else if(component){
+                                            return component;
+                                        }
+                                        return (
+                                            <Button
+                                                key={index}
+                                                onClick={() => callback(entity)}
+                                            >
+                                                {name}
+                                            </Button>
+                                        );
+                                    })}
+                                </td>
                             )}
-                        </td>
-                    </tr>
-                ))}
+                        </tr>
+                    );
+                })}
             </tbody>
         </table>
     );
