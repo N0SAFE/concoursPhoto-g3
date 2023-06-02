@@ -181,6 +181,8 @@ function Router() {
                                         element={<MyorganizationInfo />}
                                     />
                                     <Route path="admin" element={<div />} />
+                                    <Route path="competition" element={<div />} />
+                                    <Route path="pub" element={<div />} />
                                 </Route>
                             </Route>
                         </Route>
