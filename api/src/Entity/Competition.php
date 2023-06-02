@@ -128,10 +128,6 @@ class Competition
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     private ?Organization $organization = null;
 
-    #[Groups(['competition', 'user:current:read'])]
-    #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
-    private Collection $sponsors;
-
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
     #[Groups(['competition', 'user:current:read'])]
     private Collection $memberOfTheJuries;
@@ -168,14 +164,18 @@ class Competition
     #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'competitionAlreadyHandled')]
     private Collection $notificationsSended;
 
+    #[Groups(['competition', 'user:current:read'])]
+    #[ORM\ManyToMany(targetEntity: Sponsors::class, inversedBy: 'competitions')]
+    private Collection $sponsors;
+
     public function __construct()
     {
         $this->theme = new ArrayCollection();
         $this->participant_category = new ArrayCollection();
-        $this->sponsors = new ArrayCollection();
         $this->memberOfTheJuries = new ArrayCollection();
         $this->pictures = new ArrayCollection();
         $this->notificationsSended = new ArrayCollection();
+        $this->sponsors = new ArrayCollection();
     }
 
     #[Groups(['competition_aside'])]
@@ -573,36 +573,6 @@ class Competition
     }
 
     /**
-     * @return Collection<int, Sponsors>
-     */
-    public function getSponsors(): Collection
-    {
-        return $this->sponsors;
-    }
-
-    public function addSponsor(Sponsors $sponsor): self
-    {
-        if (!$this->sponsors->contains($sponsor)) {
-            $this->sponsors->add($sponsor);
-            $sponsor->setCompetition($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSponsor(Sponsors $sponsor): self
-    {
-        if ($this->sponsors->removeElement($sponsor)) {
-            // set the owning side to null (unless already changed)
-            if ($sponsor->getCompetition() === $this) {
-                $sponsor->setCompetition(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, MemberOfTheJury>
      */
     public function getMemberOfTheJuries(): Collection
@@ -754,6 +724,30 @@ class Competition
     public function removeNotificationsSended(NotificationType $notificationsSended): self
     {
         $this->notificationsSended->removeElement($notificationsSended);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sponsors>
+     */
+    public function getSponsors(): Collection
+    {
+        return $this->sponsors;
+    }
+
+    public function addSponsor(Sponsors $sponsor): self
+    {
+        if (!$this->sponsors->contains($sponsor)) {
+            $this->sponsors->add($sponsor);
+        }
+
+        return $this;
+    }
+
+    public function removeSponsor(Sponsors $sponsor): self
+    {
+        $this->sponsors->removeElement($sponsor);
 
         return $this;
     }
