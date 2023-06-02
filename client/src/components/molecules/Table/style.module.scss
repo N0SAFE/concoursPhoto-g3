@@ -5,7 +5,7 @@
     width: 100%;
 
     & td {
-        border-bottom: 1px solid #D9D9D9;
+        border-bottom: 1px solid $darkgrey;
         padding: 10px;
     }
 
@@ -23,7 +23,7 @@
 
     thead,
     tfoot {
-        background-color: $background-color-lightgrey;
+        background-color: $background-color-lightgrey-2;
         color: $background-color-secondary;
     }
 }

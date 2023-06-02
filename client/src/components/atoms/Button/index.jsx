@@ -20,7 +20,7 @@ export default function Button({
     return (
         <div
             className={`${disabled && style.componentButtonContainerDisabled} ${
-                style.componentButtonContainer
+                style.componentButton
             }`}
         >
             <button

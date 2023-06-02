@@ -6,7 +6,7 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 import { useAuthContext } from '@/contexts/AuthContext.jsx';
 import Button from '@/components/atoms/Button';
 import useLocationPosibility from '@/hooks/useLocationPosibility.js';
-import style from '../../style.module.scss';
+import style from './style.module.scss';
 import Hbar from '@/components/atoms/Hbar/index.jsx';
 import useLocation from '@/hooks/useLocation.js';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
@@ -189,19 +189,10 @@ export default function Myorganization() {
                 hasSubmit={true}
             >
                 <div
-                    className="container"
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: '50px',
-                    }}
+                    className={style.formInputContainer}
                 >
                     <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '100%',
-                        }}
+                       className={style.formInputContainerColumn}
                     >
                         <Input
                             type="text"
@@ -250,13 +241,8 @@ export default function Myorganization() {
                         />
                     </div>
                     <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '100%',
-                        }}
+                        className={style.formInputContainerColumn}
                     >
-                        {' '}
                         <Input
                             type="text"
                             name="address"

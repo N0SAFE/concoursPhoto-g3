@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Outlet, useLocation, useMatch } from 'react-router-dom';
 import style from './style.module.scss';
 
-export default function ({ list, base ,orientation='horizontal', style: _style }) {
+export default function ({ list, base ,orientation='horizontal', style: _style, className }) {
     const activeTo = location.pathname;
     list.forEach(item => {
         item.active = false;
@@ -24,7 +24,7 @@ export default function ({ list, base ,orientation='horizontal', style: _style }
 
     return (
         <>
-            <div className={style.navLinkContainer + " " + (orientation === "vertical" && style.vertical)} style={_style}>
+            <div className={style.navLinkContainer + " " + (orientation === "vertical" && style.vertical + " " + className)} style={_style}>
                 <div>
                     {list.map(({ content, _to, active }, index) => (
                         <li key={index} className={active ? style.active : ''}>

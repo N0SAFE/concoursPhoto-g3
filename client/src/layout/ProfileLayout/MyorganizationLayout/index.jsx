@@ -1,6 +1,7 @@
 import Button from '@/components/atoms/Button/index.jsx';
 import Navlink from '@/components/molecules/Navlink/index.jsx';
 import { Outlet, useNavigate, useOutletContext } from 'react-router-dom';
+import style from './style.module.scss';
 
 const myorganizationRouteList = [
     { content: 'Identité & coordonnées', to: '' },
@@ -13,19 +14,19 @@ export default function () {
     const navigate = useNavigate()
     const context = useOutletContext();
     return (
-        <div style={{ display: 'flex', gap: '40px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', width: "200px", minWidth: "200px" }}>
+        <div className={style.container}>
+            <div className={style.navlinkContainer}>
                 <Button onClick={() => navigate('/profile/myorganization')}>
                     Retour
                 </Button>
                 <Navlink
-                    style={{ marginTop: '20px' }}
+                    className={style.navlink}
                     base={'/profile/myorganization/' + context.idOrganisation}
                     list={myorganizationRouteList}
                     orientation="vertical"
                 />
             </div>
-            <div style={{flexGrow: "1"}}>
+            <div className={style.content}>
                 <Outlet context={context} />
             </div>
         </div>
