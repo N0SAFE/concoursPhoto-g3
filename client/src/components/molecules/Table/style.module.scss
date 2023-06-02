@@ -1,19 +1,29 @@
 .tableContainer {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 5px 0;
+
     width: 100%;
 
     & td {
-        border: 1px solid $background-color-secondary;
+        border-bottom: 1px solid $darkgrey;
         padding: 10px;
     }
 
     & th {
         border-top: 2px solid $text-color-third;
+        padding: 10px;
+        text-align: start;
+    }
+    
+    & tbody tr:hover {
+        transition: all 0.2s ease-in-out;
+        scale: 1.01;
+        cursor: pointer;
     }
 
     thead,
     tfoot {
-        background-color: $background-color-lightgrey;
+        background-color: $background-color-lightgrey-2;
         color: $background-color-secondary;
     }
 }

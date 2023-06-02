@@ -1,0 +1,82 @@
+.form {
+    &Container {
+        form {
+            align-items: inherit;
+
+            & > div:nth-child(2) {
+                margin-bottom: 30px;
+            }
+        }
+    }
+
+    &InputContainer {
+        display: flex;
+        flex-direction: row;
+        gap: 50px;
+        &Column {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+
+    &Wrapper {
+        display: flex;
+        gap: 50px;
+        flex-direction: row;
+
+        @include below(md) {
+            gap: 25px;
+            flex-direction: column;
+        }
+
+        &Column {
+            display: flex;
+            gap: 25px;
+            flex-direction: column;
+        }
+
+        // override Input component
+        & > div {
+            gap: $gapBetweenElement;
+        }
+    }
+
+    &Row {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        gap: $gapBetweenElement;
+
+        // override Input component
+        & > div {
+            gap: $gapBetweenElement;
+        }
+    }
+
+    &Column {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: $gapBetweenElement;
+
+        // override Input component
+        & > div {
+            gap: $gapBetweenElement;
+        }
+    }
+
+    &Submit {
+        display: flex;
+        margin-top: 2%;
+
+        & > button > div {
+            display: inherit;
+            align-items: inherit;
+        }
+    }
+
+    &Select {
+        @extend .select-style;
+    }
+}

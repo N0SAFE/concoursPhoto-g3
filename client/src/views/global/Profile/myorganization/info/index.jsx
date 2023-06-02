@@ -118,6 +118,10 @@ export default function Myorganization() {
             setTypePossibility({ list: data, isLoading: false })
         );
     }, []);
+    
+    useEffect(() => {
+        setOrganisation(selectedOrganisation);
+    }, [selectedOrganisation]);
 
     return (
         <div className={style.formContainer}>
@@ -137,7 +141,7 @@ export default function Myorganization() {
                 }}
                 onChange={d => {
                     if (d.value !== selectedOrganisation.id) {
-                        navigate('/profile/myorganization/info/' + d.value);
+                        navigate('/profile/myorganization/' + d.value);
                     }
                 }}
             />
@@ -185,19 +189,10 @@ export default function Myorganization() {
                 hasSubmit={true}
             >
                 <div
-                    className="container"
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: '50px',
-                    }}
+                    className={style.formInputContainer}
                 >
                     <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '100%',
-                        }}
+                       className={style.formInputContainerColumn}
                     >
                         <Input
                             type="text"
@@ -246,13 +241,8 @@ export default function Myorganization() {
                         />
                     </div>
                     <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '100%',
-                        }}
+                        className={style.formInputContainerColumn}
                     >
-                        {' '}
                         <Input
                             type="text"
                             name="address"
