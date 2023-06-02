@@ -11,7 +11,8 @@ use Faker\Factory;
 
 class SponsorsFixtures extends Fixture implements DependentFixtureInterface
 {
-    const SPONSORS_COUNT_REFERENCE = 10;
+    const SPONSORS_REFERENCE = 'sponsors';
+    const SPONSORS_COUNT_REFERENCE = FileFixtures::SPONSOR_LOGO_ARRAY_COUNT;
     const COUNT_REFERENCE = 1000;
 
     private $faker;
@@ -24,19 +25,20 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create('fr_FR');
 
-        for ($i = 1; $i < self::SPONSORS_COUNT_REFERENCE; $i++) {
+        for ($i = 0; $i < self::SPONSORS_COUNT_REFERENCE; $i++) {
             $sponsors = new Sponsors();
 
             $sponsors->setStartDate($faker->dateTime());
             $sponsors->setEndDate($faker->dateTime());
             $sponsors->setSponsorRank($faker->randomDigit());
             $sponsors->setOrganization($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, self::SPONSORS_COUNT_REFERENCE)));
-            $sponsors->setCompetition($this->getReference(CompetitionFixtures::COMPETITION_REFERENCE . rand(1, self::SPONSORS_COUNT_REFERENCE)));
             $sponsors->setPrice($faker->randomFloat(3, 0, self::COUNT_REFERENCE));
-            $sponsors->setLogo((new FileFixtures)->createFileFromArray(FileFixtures::SPONSOR_LOGO_ARRAY));
+            $sponsors->setLogo((new FileFixtures)->createFileFromString(FileFixtures::SPONSOR_LOGO_ARRAY[$i]));
             
 
             $manager->persist($sponsors);
+            
+            $this->addReference(sprintf('%s%d', self::SPONSORS_REFERENCE, $i + 1), $sponsors);
         }
 
         $manager->flush();
@@ -45,7 +47,6 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            CompetitionFixtures::class,
             OrganizationFixtures::class
         ];
     }

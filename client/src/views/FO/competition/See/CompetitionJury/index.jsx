@@ -4,8 +4,9 @@ import Navlink from '@/components/molecules/Navlink';
 import { useOutletContext } from 'react-router-dom';
 
 export default function () {
-    const { competition, asideLabel } = useOutletContext();
+    const { competition } = useOutletContext();
     const asidePictures = competition.aside;
+    const asideLabel = competition.asideLabel;
 
     const competitionRouteList = [
         { content: 'Le concours', to: '' },

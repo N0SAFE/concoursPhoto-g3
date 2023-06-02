@@ -114,7 +114,14 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
 
             $competition->setOrganization($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
             $competition->addParticipantCategory($this->getReference(ParticipantCategoryFixtures::PARTICIPANT_CATEGORY_REFERENCE . rand(1, count(ParticipantCategoryFixtures::PARTICIPANT_CATEGORY_ARRAY))));
-            $competition->addTheme($this->getReference(ThemeFixtures::THEME_REFERENCE . rand(1, count(ThemeFixtures::THEME_ARRAY))));
+            
+            for ($j = 0; $j < rand(1, 3); $j++) {
+                $competition->addTheme($this->getReference(ThemeFixtures::THEME_REFERENCE . rand(1, count(ThemeFixtures::THEME_ARRAY))));
+            }
+            
+            for ($j = 0; $j < rand(1, 3); $j++) {
+                $competition->addSponsor($this->getReference(SponsorsFixtures::SPONSORS_REFERENCE . rand(1, SponsorsFixtures::SPONSORS_COUNT_REFERENCE)));
+            }
 
             $manager->persist($competition);
 
@@ -129,7 +136,8 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
         return [
             OrganizationFixtures::class,
             ParticipantCategoryFixtures::class,
-            ThemeFixtures::class
+            ThemeFixtures::class,
+            SponsorsFixtures::class,
         ];
     }
 }

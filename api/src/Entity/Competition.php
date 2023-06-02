@@ -128,10 +128,6 @@ class Competition
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     private ?Organization $organization = null;
 
-    #[Groups(['competition', 'user:current:read'])]
-    #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
-    private Collection $sponsors;
-
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
     #[Groups(['competition', 'user:current:read'])]
     private Collection $memberOfTheJuries;
@@ -167,29 +163,78 @@ class Competition
 
     #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'competitionAlreadyHandled')]
     private Collection $notificationsSended;
-    
-    #[Groups(['competition_aside'])]
-    private Collection $aside;
+
+    #[Groups(['competition', 'user:current:read'])]
+    #[ORM\ManyToMany(targetEntity: Sponsors::class, inversedBy: 'competitions')]
+    private Collection $sponsors;
 
     public function __construct()
     {
         $this->theme = new ArrayCollection();
         $this->participant_category = new ArrayCollection();
-        $this->sponsors = new ArrayCollection();
         $this->memberOfTheJuries = new ArrayCollection();
         $this->pictures = new ArrayCollection();
         $this->notificationsSended = new ArrayCollection();
+        $this->sponsors = new ArrayCollection();
     }
 
+    #[Groups(['competition_aside'])]
     public function getAside(): Collection
     {
-        return $this->aside;
+        if ($this->getState() === 2 || $this->getState() === 3) {
+            $lastPicturesPosted = $this->getPictures()->toArray();
+            usort($lastPicturesPosted, function ($a, $b) {
+                return $a->getId() <=> $b->getId();
+            });
+            $lastPicturesPosted = array_slice($lastPicturesPosted, 0, 8);
+            return new ArrayCollection($lastPicturesPosted);
+        } elseif ($this->getState() === 4 || $this->getState() === 5) {
+            $lastPicturesObtainedVotes = $this->getPictures()->filter(function (Picture $picture) {
+                return $picture->getVotes()->count() > 0;
+            })->toArray();
+            usort($lastPicturesObtainedVotes, function (Picture $a, Picture $b) {
+                // sort by lastVote 
+                $lastVoteA = $a->getVotes()->toArray();
+                usort($lastVoteA, function (Vote $a, Vote $b) {
+                    return $a->getVoteDate() <=> $b->getVoteDate();
+                });
+                $lastVoteA = $lastVoteA[count($lastVoteA) - 1];
+
+                $lastVoteB = $b->getVotes()->toArray();
+                usort($lastVoteB, function (Vote $a, Vote $b) {
+                    return $a->getVoteDate() <=> $b->getVoteDate();
+                });
+                $lastVoteB = $lastVoteB[count($lastVoteB) - 1];
+
+                return $lastVoteA->getVoteDate() <=> $lastVoteB->getVoteDate();
+            });
+            $lastPicturesObtainedVotes = array_slice($lastPicturesObtainedVotes, 0, 8);
+            return new ArrayCollection($lastPicturesObtainedVotes);
+        } elseif ($this->getState() === 6) {
+            $picturesObtainedPrice = $this->getPictures()->filter(function (Picture $picture) {
+                return $picture->isPriceWon() !== null;
+            })->toArray();
+            usort($picturesObtainedPrice, function ($a, $b) {
+                // sort by id
+                return $a->getId() <=> $b->getId();
+            });
+            $picturesObtainedPrice = array_slice($picturesObtainedPrice, 0, 8);
+            return new ArrayCollection($picturesObtainedPrice);
+        }
     }
 
-    public function setAside(Collection $aside): self
+    #[Groups(['competition_aside'])]
+    public function getAsideLabel(): string
     {
-        $this->aside = $aside;
-        return $this;
+        if ($this->getState() === 2 || $this->getState() === 3) {
+            return 'Dernières photos soumises';
+        } elseif ($this->getState() === 4 || $this->getState() === 5) {
+            return 'Dernières photos ayant obtenu un vote';
+        } elseif ($this->getState() === 6) {
+            return 'Photos ayant obtenu un prix';
+        } else {
+            return "Photo à venir";
+        }
     }
 
     public function getId(): ?int
@@ -528,36 +573,6 @@ class Competition
     }
 
     /**
-     * @return Collection<int, Sponsors>
-     */
-    public function getSponsors(): Collection
-    {
-        return $this->sponsors;
-    }
-
-    public function addSponsor(Sponsors $sponsor): self
-    {
-        if (!$this->sponsors->contains($sponsor)) {
-            $this->sponsors->add($sponsor);
-            $sponsor->setCompetition($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSponsor(Sponsors $sponsor): self
-    {
-        if ($this->sponsors->removeElement($sponsor)) {
-            // set the owning side to null (unless already changed)
-            if ($sponsor->getCompetition() === $this) {
-                $sponsor->setCompetition(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, MemberOfTheJury>
      */
     public function getMemberOfTheJuries(): Collection
@@ -709,6 +724,30 @@ class Competition
     public function removeNotificationsSended(NotificationType $notificationsSended): self
     {
         $this->notificationsSended->removeElement($notificationsSended);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sponsors>
+     */
+    public function getSponsors(): Collection
+    {
+        return $this->sponsors;
+    }
+
+    public function addSponsor(Sponsors $sponsor): self
+    {
+        if (!$this->sponsors->contains($sponsor)) {
+            $this->sponsors->add($sponsor);
+        }
+
+        return $this;
+    }
+
+    public function removeSponsor(Sponsors $sponsor): self
+    {
+        $this->sponsors->removeElement($sponsor);
 
         return $this;
     }
