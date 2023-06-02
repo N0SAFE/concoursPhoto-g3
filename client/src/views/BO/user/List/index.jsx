@@ -216,7 +216,7 @@ export default function UserList() {
                                 entity.creation_date
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
-                                month: 'long',
+                                month: 'numeric',
                                 day: 'numeric',
                             });
                         }
@@ -225,7 +225,7 @@ export default function UserList() {
                                 entity.creation_date
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
-                                month: 'long',
+                                month: 'numeric',
                                 day: 'numeric',
                             });
                         }
