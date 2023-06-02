@@ -294,6 +294,31 @@ class Competition
             return 6;
         }
     }
+    
+    #[Groups(['competition'])]
+    public function getStateLabel(): string
+    {
+        $now = new \DateTime();
+        if ($now < $this->getSubmissionStartDate()) {
+            return 'a venir';
+            // return 1;
+        } elseif ($now > $this->getSubmissionStartDate() && $now < $this->getSubmissionEndDate()) {
+            return 'en phase de participation';
+            // return 2;
+        } elseif ($now > $this->getSubmissionEndDate() && $now < $this->getVotingStartDate()) {
+            return 'En attente';
+            // return 3;
+        } elseif ($now > $this->getVotingStartDate() && $now < $this->getVotingEndDate()) {
+            return 'en phase de vote';
+            // return 4;
+        } elseif ($now > $this->getVotingEndDate() && $now < $this->getResultsDate()) {
+            return "en phase d'attribution";
+            // return 5;
+        } elseif ($now > $this->getResultsDate()) {
+            return 'Terminé';
+            // return 6;
+        }
+    }
 
     public function getCompetitionName(): ?string
     {

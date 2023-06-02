@@ -76,20 +76,6 @@ export default function CompetitionLayout() {
         return () => setTimeout(() => controller.abort());
     }, []);
 
-    const state = (function () {
-        if (entity.state === 1) {
-            return 'A venir';
-        } else if (entity.state === 2 || entity.state === 3) {
-            return 'En phase de participation';
-        } else if (entity.state === 4) {
-            return 'En phase de vote';
-        } else if (entity.state === 5) {
-            return "En phase d'attribution";
-        } else {
-            return 'Terminé';
-        }
-    })();
-
     return (
         <Loader active={isLoading}>
             <div className={style.competitionContainer}>
@@ -164,7 +150,7 @@ export default function CompetitionLayout() {
                                 <div className={style.viewOrganizerTwo}>
                                     <div>
                                         <Chip
-                                            title={state}
+                                            title={entity.stateLabel}
                                             backgroundColor={'#000'}
                                             color={'#fff'}
                                         />

@@ -129,6 +129,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
         $user->setPersonalStatut($this->getReference(PersonalStatutFixtures::PERSONAL_STATUT_REFERENCE . rand(1, count(PersonalStatutFixtures::PERSONAL_STATUT_ARRAY))));
         $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
+        $managedOrganizationCount = rand(3, 5);
+        for ($j = 0; $j < $managedOrganizationCount; $j++) {
+            $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
+        }
 
         $manager->persist($user);
 
@@ -169,7 +173,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
             $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
             $user->setPersonalStatut($this->getReference(PersonalStatutFixtures::PERSONAL_STATUT_REFERENCE . rand(1, count(PersonalStatutFixtures::PERSONAL_STATUT_ARRAY))));
-            $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
+            $managedOrganizationCount = rand(0, 5);
+            for ($j = 0; $j < $managedOrganizationCount; $j++) {
+                $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
+            }
 
             foreach (NotificationTypeFixtures::NOTIFICATION_TYPE_ARRAY as $notificationType) {
                 if (rand(0, 3) == 3) {
