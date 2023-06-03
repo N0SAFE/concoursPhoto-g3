@@ -221,6 +221,8 @@ class Competition
             $picturesObtainedPrice = array_slice($picturesObtainedPrice, 0, 8);
             return new ArrayCollection($picturesObtainedPrice);
         }
+
+        return new ArrayCollection();
     }
 
     #[Groups(['competition_aside'])]
