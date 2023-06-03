@@ -3,11 +3,11 @@
 {% block main %}
     <p>
         Bonjour <b>{{ firstname }} {{ lastname }}</b>. <br>
-        Le concours "{{ competition_name }}" vient d'être publié !
+        Nous sommes le {{ competition_result_date | date('d/m/Y') }} et le concours "{{ competition_name }}" vient de se terminer, vous pouvez à présent aller consulter les résultats et voir si vous avez gagné !
     </p>
-    <a href="{{ base_url_client() }}/competition/{{ competition_id }}" target="_blank"
+    <a href="{{ base_url_client() }}/competition/{{ competition_id }}/results" target="_blank"
        style="padding: 10px; background-color: black; color: white; text-decoration: none; border-radius: 75px; display: flex;align-self: center; justify-content: center;">
-        Se rediriger vers la page du concours
+        Se rediriger vers les résultats du concours
     </a>
     <u>
         Il s'agit d'un message automatique, merci de ne pas y répondre.
