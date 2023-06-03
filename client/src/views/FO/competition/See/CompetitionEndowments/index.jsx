@@ -7,8 +7,9 @@ import { Editor } from '@tinymce/tinymce-react';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition, asideLabel } = useOutletContext();
+    const { competition } = useOutletContext();
     const asidePictures = competition.aside;
+    const asideLabel = competition.asideLabel;
 
     const editorRef = useRef(null);
 

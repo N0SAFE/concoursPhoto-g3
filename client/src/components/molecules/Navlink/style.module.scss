@@ -1,5 +1,32 @@
 .navLinkContainer {
     @extend .margin-title;
+    
+    &.vertical {
+        & > div {
+            flex-direction: column;
+            & > li {
+                &::after {
+                    content: '';
+                    height: 100%;
+                    border-left: 2px solid $text-color-darkgrey;
+                    border-bottom: inherit;
+                    width: 0;
+                    top: 0;
+                    left: 0;
+                }
+                
+                &.active::after {
+                    content: '';
+                    height: 100%;
+                    border-left: 2px solid $text-color-secondary;
+                    border-bottom: inherit;
+                    width: 0;
+                    top: 0;
+                    left: 0;
+                }
+            }
+        }
+    }
 
     & > div {
         display: flex;

@@ -14,7 +14,14 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
+use ApiPlatform\Serializer\Filter\GroupFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
+#[ApiFilter(PropertyFilter::class)]
+#[ApiFilter(SearchFilter::class)]
+#[ApiFilter(GroupFilter::class)]
 #[ApiResource(
     operations: [
         new GetCollection(),
@@ -120,6 +127,26 @@ class Organization
         $this->competitions = new ArrayCollection();
         $this->sponsors = new ArrayCollection();
         $this->organizationLinks = new ArrayCollection();
+    }
+    
+    #[Groups(['organization'])]
+    public function getCompetitionCount(): int {
+        return $this->competitions->count();
+    }
+    
+    #[Groups(['organization'])]
+    public function getRentCount(): int {
+        return $this->rents->count();
+    }
+    
+    #[Groups(['organization'])]
+    public function getSponsorCount(): int {
+        return $this->sponsors->count();
+    }
+    
+    #[Groups(['organization'])]
+    public function getUserCount(): int {
+        return $this->users->count();
     }
 
     public function getId(): ?int

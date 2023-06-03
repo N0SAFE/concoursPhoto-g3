@@ -45,7 +45,7 @@ async function main() {
         })();
 
         if (data.status === 'ok') {
-            console.log('healthcheck ok');
+            console.debug('healthcheck ok');
         } else {
             console.error('healthcheck failed');
             console.error(data);

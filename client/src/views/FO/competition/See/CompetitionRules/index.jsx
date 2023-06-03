@@ -8,8 +8,10 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition, asideLabel } = useOutletContext();
+    const { competition } = useOutletContext();
     const asidePictures = competition.aside;
+    const asideLabel = competition.asideLabel;
+    
     const apiFetch = useApiFetch();
     const editorRef = useRef(null);
     const competitionRouteList = [

@@ -16,6 +16,7 @@ export default function Pagination({
     defaultItemPerPage = 9,
     onPageChange = function () {},
     onItemsPerPageChange = function () {},
+    onChange = function () {},
     renderItem = function (item) {
         return item;
     },
@@ -75,6 +76,7 @@ export default function Pagination({
                     onChange={({ value }) => {
                         _setItemsPerPage(value);
                         onItemsPerPageChange(value);
+                        onChange();
                     }}
                     extra={{
                         value: {
@@ -99,6 +101,7 @@ export default function Pagination({
                                     const page = _pageCurrent - 1;
                                     _setPageCurrent(page);
                                     onPageChange(page);
+                                    onChange();
                                 }}
                             />
                         ) : (
@@ -124,6 +127,7 @@ export default function Pagination({
                                         if (dot === _pageCurrent) return;
                                         _setPageCurrent(dot);
                                         onPageChange(dot);
+                                        onChange();
                                     }}
                                     style={{
                                         backgroundColor:
@@ -148,6 +152,7 @@ export default function Pagination({
                                     const page = _pageCurrent + 1;
                                     _setPageCurrent(page);
                                     onPageChange(page);
+                                    onChange();
                                 }}
                             />
                         ) : (
@@ -171,6 +176,7 @@ export default function Pagination({
                             if (page < 1) return;
                             onPageChange(page);
                             _setPageCurrent(page);
+                            onChange();
                         }}
                     >
                         <Input

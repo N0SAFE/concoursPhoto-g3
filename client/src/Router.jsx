@@ -20,7 +20,9 @@ import OrganizationSee from '@/views/BO/organization/See';
 import CompetitionEdit from '@/views/BO/competition/Edit';
 import { useModal } from '@/contexts/ModalContext/index.jsx';
 import { toast } from 'react-toastify';
-import ProfileNotification from '@/views/global/Profile/notification';
+import MyorganizationInfo from '@/views/global/Profile/myorganization/info/index.jsx';
+import MyorganizationList from '@/views/global/Profile/myorganization/index.jsx';
+import ProfileNotification from '@/views/global/Profile/notification/index.jsx';
 import CompetitionView from '@/views/FO/competition/See/CompetitionView/index.jsx';
 import CompetitionLayout from '@/layout/CompetitionLayout';
 import CompetitionRules from '@/views/FO/competition/See/CompetitionRules/index.jsx';
@@ -100,84 +102,87 @@ function Router() {
                         <Route path="" element={<Navigate to="me" />} />
                         <Route path="me" element={<Profile />} />
                         <Route path="preference" element={<ProfileNotification />} />
-                        <Route
-                            path="myorganization"
-                            element={<MyorganizationLayout />}
-                        >
-                            <Route path="info">
-                                <Route
-                                    path=":id"
-                                    element={
-                                        <GuardedRoute
-                                            verify={({ me }) => {
-                                                const { id: _idOrganisation } =
-                                                    useParams();
-                                                const idOrganisation =
-                                                    parseInt(_idOrganisation);
-                                                if (isNaN(idOrganisation)) {
-                                                    return false;
-                                                }
-                                                const _selectedOrganisation =
-                                                    me.Manage.find(org => {
-                                                        return (
-                                                            org.id ===
-                                                            idOrganisation
-                                                        );
-                                                    });
-                                                if (_selectedOrganisation) {
-                                                    const selectedOrganisation =
-                                                        {
-                                                            ..._selectedOrganisation,
-                                                            postcode: {
-                                                                label: _selectedOrganisation.postcode,
-                                                                value: _selectedOrganisation.postcode,
-                                                            },
-                                                            organizationType: {
-                                                                label: _selectedOrganisation
-                                                                    .organization_type
-                                                                    .label,
-                                                                value: _selectedOrganisation
-                                                                    .organization_type[
-                                                                    '@id'
-                                                                ],
-                                                            },
-                                                        };
-                                                    return {
-                                                        state: !!selectedOrganisation,
-                                                        context: {
-                                                            idOrganisation,
-                                                            selectedOrganisation,
-                                                        },
-                                                    };
-                                                }
-                                                return {
-                                                    state: false,
-                                                    context: {
-                                                        idOrganisation,
+                        <Route path="myorganization">
+                            <Route path="" element={<MyorganizationList />} />
+                            <Route
+                                path=":id"
+                                element={
+                                    <GuardedRoute
+                                        verify={({ me }) => {
+                                            const { id: _idOrganisation } =
+                                                useParams();
+                                            const idOrganisation =
+                                                parseInt(_idOrganisation);
+                                            if (isNaN(idOrganisation)) {
+                                                return false;
+                                            }
+                                            const _selectedOrganisation =
+                                                me.Manage.find(org => {
+                                                    return (
+                                                        org.id ===
+                                                        idOrganisation
+                                                    );
+                                                });
+                                            if (_selectedOrganisation) {
+                                                const selectedOrganisation = {
+                                                    ..._selectedOrganisation,
+                                                    postcode: {
+                                                        label: _selectedOrganisation.postcode,
+                                                        value: _selectedOrganisation.postcode,
+                                                    },
+                                                    organizationType: {
+                                                        label: _selectedOrganisation
+                                                            .organization_type
+                                                            .label,
+                                                        value: _selectedOrganisation
+                                                            .organization_type[
+                                                            '@id'
+                                                        ],
                                                     },
                                                 };
-                                            }}
-                                            fallback={({ me }) => {
-                                                if (me.Manage.length > 0) {
-                                                    return (
-                                                        <Navigate
-                                                            to={
-                                                                '/profile/myorganization/info/' +
-                                                                me.Manage[0].id
-                                                            }
-                                                        />
-                                                    );
-                                                } else {
-                                                    return;
-                                                }
-                                            }}
-                                        />
-                                    }
+                                                return {
+                                                    state: !!selectedOrganisation,
+                                                    context: {
+                                                        idOrganisation,
+                                                        selectedOrganisation,
+                                                    },
+                                                };
+                                            }
+                                            return {
+                                                state: false,
+                                                context: {
+                                                    idOrganisation,
+                                                },
+                                            };
+                                        }}
+                                        fallback={({ me }) => {
+                                            if (me.Manage.length > 0) {
+                                                return (
+                                                    <Navigate
+                                                        to={
+                                                            '/profile/myorganization/info/' +
+                                                            me.Manage[0].id
+                                                        }
+                                                    />
+                                                );
+                                            } else {
+                                                return;
+                                            }
+                                        }}
+                                    />
+                                }
+                            >
+                                <Route
+                                    path=""
+                                    element={<MyorganizationLayout />}
                                 >
                                     <Route
                                         path=""
-                                        element={<MyorganizationInfoSee />}
+                                        element={<MyorganizationInfo />}
                                     />
+                                    <Route path="admin" element={<div />} />
+                                    <Route path="competition" element={<div />} />
+                                    <Route path="pub" element={<div />} />
                                 </Route>
                             </Route>
                         </Route>

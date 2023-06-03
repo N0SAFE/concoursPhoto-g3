@@ -59,6 +59,8 @@ class FileFixtures
         "adidas.png",
         "amazon.png",
     ];
+    
+    const SPONSOR_LOGO_ARRAY_COUNT = 5;
 
     const USER_LOGO_ARRAY = [
         "user-icon-in-trendy-flat-style-isolated-on-grey-background-user-symbol-for-your-web-site-design-logo-app-ui-illustration-eps10-free-vector.jpg",

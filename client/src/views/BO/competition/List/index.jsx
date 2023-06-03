@@ -91,104 +91,129 @@ export default function CompetitionsList() {
             </div>
             <div className={style.containerList}>
                 <Table
-                    entityList={competitions}
+                    list={competitions}
                     fields={[
-                        { property: 'id', display: 'ID' },
-                        { property: 'state', display: 'Statut' },
-                        { property: 'competition_name', display: 'Nom' },
-                        { property: 'description', display: 'Description' },
-                        { property: 'rules', display: 'Règlement' },
-                        { property: 'endowments', display: 'Dotation' },
-                        {
-                            property: 'creation_date',
-                            display: 'Date de création',
-                        },
-                        {
-                            property: 'publication_date',
-                            display: 'Date de publication',
-                        },
-                        {
-                            property: 'submission_start_date',
-                            display: 'Date de commencement',
-                        },
-                        {
-                            property: 'voting_start_date',
-                            display: 'Date de début de vote',
-                        },
+                        'ID',
+                        'Statut',
+                        'Nom',
+                        'Description',
+                        'Règlement',
+                        'Dotation',
+                        'Date de création',
+                        'Date de publication',
+                        'Date de commencement',
+                        'Date de début de vote',
                     ]}
-                    customAction={({ entity, property }) => {
-                        if (property === 'creation_date') {
-                            return new Date(
-                                entity.creation_date
-                            ).toLocaleDateString('fr-FR', {
-                                year: 'numeric',
-                                month: 'numeric',
-                                day: 'numeric',
-                            });
-                        }
-                        if (property === 'voting_start_date') {
-                            return new Date(
-                                entity.voting_start_date
-                            ).toLocaleDateString('fr-FR', {
-                                year: 'numeric',
-                                month: 'numeric',
-                                day: 'numeric',
-                            });
-                        }
-                        if (property === 'publication_date') {
-                            return new Date(
-                                entity.publication_date
-                            ).toLocaleDateString('fr-FR', {
-                                year: 'numeric',
-                                month: 'numeric',
-                                day: 'numeric',
-                            });
-                        }
-                        if (property === 'submission_start_date') {
-                            return new Date(
-                                entity.submission_start_date
-                            ).toLocaleDateString('fr-FR', {
-                                year: 'numeric',
-                                month: 'numeric',
-                                day: 'numeric',
-                            });
-                        }
-                        if (property === 'state') {
-                            return entity.state ? 'Validée' : 'En attente';
-                        }
-                        return entity[property];
-                    }}
                     actions={[
                         {
-                            label: 'Modifier',
-                            color: 'blue',
-                            textColor: 'white',
-                            action: ({ entity }) => {
-                                navigate('/BO/competition/edit/' + entity.id);
+                            name: 'Modifier',
+                            action: organization =>
+                                navigate(
+                                    '/BO/competition/edit/' + organization.id
+                                ),
+                            component: (organization, callback, index) => {
+                                return (
+                                    <Button
+                                        color="blue"
+                                        textColor="white"
+                                        borderRadius={'30px'}
+                                        onClick={() => callback(organization)}
+                                    >
+                                        Modifier
+                                    </Button>
+                                );
                             },
                         },
                         {
-                            label: 'Supprimer',
-                            color: 'red',
-                            textColor: 'white',
-                            action: ({ entity }) => {
+                            name: 'Supprimer',
+                            action: organization => {
                                 if (
                                     confirm(
-                                        'Êtes-vous sûr de vouloir supprimer ce concours ?'
+                                        'Êtes-vous sûr de vouloir supprimer cet utilisateur ?'
                                     )
                                 ) {
-                                    return handleDelete(entity.id);
+                                    return handleDelete(organization.id);
                                 }
+                            },
+                            component: (organization, callback, index) => {
+                                return (
+                                    <Button
+                                        color="red"
+                                        textColor="white"
+                                        borderRadius={'30px'}
+                                        onClick={() => {
+                                            callback(organization);
+                                        }}
+                                    >
+                                        Supprimer
+                                    </Button>
+                                );
                             },
                         },
                         {
-                            label: 'Voir',
-                            action: ({ entity }) => {
-                                navigate('/BO/competition/' + entity.id);
-                            },
+                            name: 'Voir',
+                            action: organization =>
+                                navigate('/BO/competition/' + organization.id),
+                            component: (organization, callback, index) => (
+                                <Button
+                                    borderRadius={'30px'}
+                                    onClick={() => callback(organization)}
+                                >
+                                    Voir
+                                </Button>
+                            ),
                         },
                     ]}
-                />
+                >
+                    {user => [
+                        { content: user.id },
+                        {
+                            content: user.stateLabel,
+                        },
+                        { content: user.competition_name },
+                        {
+                            content: user.description,
+                        },
+                        { content: user.rules },
+                        { content: user.endowments },
+                        {
+                            content: new Date(
+                                user.creation_date
+                            ).toLocaleDateString('fr-FR', {
+                                year: 'numeric',
+                                month: 'numeric',
+                                day: 'numeric',
+                            }),
+                        },
+                        {
+                            content: new Date(
+                                user.publication_date
+                            ).toLocaleDateString('fr-FR', {
+                                year: 'numeric',
+                                month: 'numeric',
+                                day: 'numeric',
+                            }),
+                        },
+                        {
+                            content: new Date(
+                                user.submission_start_date
+                            ).toLocaleDateString('fr-FR', {
+                                year: 'numeric',
+                                month: 'numeric',
+                                day: 'numeric',
+                            }),
+                        },
+                        {
+                            content: new Date(
+                                user.voting_start_date
+                            ).toLocaleDateString('fr-FR', {
+                                year: 'numeric',
+                                month: 'numeric',
+                                day: 'numeric',
+                            }),
+                        },
+                    ]}
+                </Table>
             </div>
         </Loader>
     );

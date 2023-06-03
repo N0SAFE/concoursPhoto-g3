@@ -76,32 +76,6 @@ export default function CompetitionLayout() {
         return () => setTimeout(() => controller.abort());
     }, []);
 
-    const state = (function () {
-        if (entity.state === 1) {
-            return 'A venir';
-        } else if (entity.state === 2 || entity.state === 3) {
-            return 'En phase de participation';
-        } else if (entity.state === 4) {
-            return 'En phase de vote';
-        } else if (entity.state === 5) {
-            return "En phase d'attribution";
-        } else {
-            return 'Terminé';
-        }
-    })();
-
-    const asideLabel = (function () {
-        if (entity.state === 2 || entity.state === 3) {
-            return 'Dernières photos soumises';
-        } else if (entity.state === 4 || entity.state === 5) {
-            return 'Dernières photos ayant obtenu un vote';
-        } else if (entity.state === 6) {
-            return 'Photos ayant obtenu  un prix';
-        } else {
-            return 'Photo à venir';
-        }
-    })();
-
     return (
         <Loader active={isLoading}>
             <div className={style.competitionContainer}>
@@ -176,7 +150,7 @@ export default function CompetitionLayout() {
                                 <div className={style.viewOrganizerTwo}>
                                     <div>
                                         <Chip
-                                            title={state}
+                                            title={entity.stateLabel}
                                             backgroundColor={'#000'}
                                             color={'#fff'}
                                         />
@@ -234,7 +208,7 @@ export default function CompetitionLayout() {
                         image => image.logo.path
                     )}
                 />
-                <Outlet context={{ competition: entity, asideLabel }} />
+                <Outlet context={{ competition: entity }} />
                 <Button
                     borderRadius={'30px'}
                     padding={'20px'}
