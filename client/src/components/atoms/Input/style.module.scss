@@ -46,4 +46,47 @@
             gap: $gapBetweenElement;
         }
     }
+
+    &Profile {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+
+        .buttonWrapper {
+            display: flex;
+            flex-direction: row;
+            gap: $gapBetweenElement;
+
+            & > div > button {
+                &:hover {
+                    cursor: pointer;
+                    background-color: $background-color-lightgrey-3;
+                }
+
+                & > div {
+                    font-weight: 600;
+                }
+            }
+        }
+
+
+        .imageWrapper {
+            height: 100%;
+            margin-right: 15px;
+
+            .image {
+                width: 112px;
+                height: 112px;
+                aspect-ratio: 16/9;
+                object-fit: cover;
+                border-radius: 50%;
+            }
+        }
+
+        @include below(md) {
+            display: flex;
+            flex-direction: column;
+            gap: $gapBetweenElement;
+        }
+    }
 }

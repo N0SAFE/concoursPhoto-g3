@@ -12,7 +12,6 @@ const profileRouteList = [
     { content: 'Mes organisations', to: '/myorganization', type: "startwith" },
     { content: 'Concours créés par mon organisation', to: '/me' },
     { content: 'Concours auxquels j’ai participé', to: '/participations' },
-    { content: 'Mes publicités', to: '/me' },
 ];
 
 export default function ProfileLayout() {
