@@ -7,7 +7,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Breadcrumb from '@/components/atoms/Breadcrumb';
 import Chip from '@/components/atoms/Chip/index.jsx';
-import Dropdown from '@/components/atoms/Dropdown/index.jsx';
 import Icon from '@/components/atoms/Icon/index.jsx';
 import { Outlet } from 'react-router-dom';
 import Loader from '@/components/atoms/Loader/index.jsx';
@@ -21,6 +20,19 @@ export default function CompetitionLayout() {
     const [entity, setEntity] = useState({});
     const { id: competitionId } = useParams();
     const navigate = useNavigate();
+
+    const incrementPageCount = () => {
+        apiFetch('/competitions/view/' + competitionId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(res => {
+            if (res.code === 401) {
+                toast.error(res.message);
+            }
+        });
+    }
 
     const getCompetitions = controller => {
         return apiFetch(
@@ -73,6 +85,9 @@ export default function CompetitionLayout() {
                 error: 'Erreur lors du chargement du concours',
             });
         }
+
+        incrementPageCount();
+
         return () => setTimeout(() => controller.abort());
     }, []);
 
@@ -171,22 +186,32 @@ export default function CompetitionLayout() {
                                 </div>
                             </div>
                             <div className={style.viewOrganizerStats}>
+                                {entity.state >= 2 && (
+                                    <>
+                                        <Chip
+                                            title={entity.numberOfParticipants}
+                                            icon={'user-plus'}
+                                            backgroundColor={'#F5F5F5'}
+                                        />
+                                        <Chip
+                                            title={entity.numberOfPictures}
+                                            icon={'camera'}
+                                            backgroundColor={'#F5F5F5'}
+                                        />
+                                    </>
+                                )}
+                                {entity.state >= 4 && (
+                                    <Chip
+                                        title={entity.numberOfVotes}
+                                        icon={'like'}
+                                        backgroundColor={'#F5F5F5'}
+                                    />
+                                )}
                                 <Chip
-                                    title={entity.numberOfParticipants}
-                                    icon={'user-plus'}
+                                    title={entity.consultation_count}
+                                    icon={'view-show'}
                                     backgroundColor={'#F5F5F5'}
                                 />
-                                <Chip
-                                    title={entity.numberOfPictures}
-                                    icon={'camera'}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                                <Chip
-                                    title={entity.numberOfVotes}
-                                    icon={'like'}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                                <Chip />
                             </div>
                         </div>
                     </div>

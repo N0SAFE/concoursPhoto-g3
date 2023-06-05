@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import Button from '@/components/atoms/Button';
-import { Link } from 'react-router-dom';
+import {Link, useOutletContext} from 'react-router-dom';
 import { useModal } from '@/contexts/ModalContext';
 import Login from '@/components/organisms/auth/Login';
 
@@ -14,7 +14,7 @@ export default function UserRegister() {
     const { hideModal, setModalContent } = useModal();
 
     const [entityPossibility, setEntityPossibility] = useState({
-        genders: [],
+        gender: [],
         statut: [],
     });
     const [gtc, setGtc] = useState(false);
@@ -64,8 +64,8 @@ export default function UserRegister() {
         const promise = Promise.all([
             getGendersPossibility(),
             getPersonalstatus(),
-        ]).then(([genders, statut]) =>
-            setEntityPossibility({ genders, statut })
+        ]).then(([gender, statut]) =>
+            setEntityPossibility({ gender, statut })
         );
         toast.promise(promise, {
             pending: 'Chargement des possibilités',
@@ -103,6 +103,7 @@ export default function UserRegister() {
                             lastname: entity.lastname,
                             roles: ['ROLE_MEMBER'],
                             personalStatut: entity.statut.value,
+                            gender: entity.gender.value,
                             dateOfBirth: entity.dateOfBirth.toISOString(),
                             creationDate: new Date().toISOString(),
                             registrationDate: new Date().toISOString(),
@@ -115,6 +116,7 @@ export default function UserRegister() {
                             data.lastname &&
                             data.dateOfBirth &&
                             data.personalStatut &&
+                            data.gender &&
                             data.email
                         ) {
                             if (!data.plainPassword) {
@@ -172,6 +174,16 @@ export default function UserRegister() {
                 hasSubmit={true}
             >
                 <div>
+                    <Input
+                        type="radioList"
+                        name="genre"
+                        onChange={d => updateEntity('gender', d)}
+                        extra={{
+                            value: entity.gender,
+                            options: entityPossibility.gender,
+                        }}
+                        defaultValue={entity.gender}
+                    />
                     <Input
                         type="text"
                         name="Prénom"

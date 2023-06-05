@@ -100,6 +100,7 @@ export default function () {
                 <PicturesAside
                     pictures={asidePictures}
                     asideLabel={asideLabel}
+                    idPage={competition.id}
                 />
             </div>
         </div>

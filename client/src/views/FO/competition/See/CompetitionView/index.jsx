@@ -95,7 +95,7 @@ export default function () {
                     Editer
                 </button>
             </div>
-            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
+            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} idPage={competition.id} />
         </div>
     );
 }

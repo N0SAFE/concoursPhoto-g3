@@ -25,10 +25,17 @@ export default function Login({forceRedirect}) {
                 <span>
                     Veuillez vous identifier pour pouvoir voter et participer.
                 </span>
-                <span>
-                    Si vous n'avez pas de compte, <a>inscrivez-vous</a>, c'est
+                <p className={style.loginProposition}>
+                    Si vous n'avez pas de compte, {" "}
+                    <Link
+                        onClick={e => {
+                            e.preventDefault();
+                            setModalContent(<Register />);
+                        }}
+                    >inscrivez-vous
+                    </Link>, c'est
                     gratuit.
-                </span>
+                </p>
             </div>
             <Form
                 handleSubmit={async function () {
@@ -89,7 +96,7 @@ export default function Login({forceRedirect}) {
                             Se connecter
                         </Button>
                     </div>
-                    <p className={style.loginProposition}>
+                    <p className={`${style.loginProposition} ${style.loginPropositionExtra}`}>
                         Vous avez oublié votre mot de passe ?{' '}
                         <Link
                             onClick={e => {

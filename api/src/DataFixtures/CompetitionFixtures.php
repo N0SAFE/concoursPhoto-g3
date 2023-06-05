@@ -84,6 +84,7 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
             $competition->setMaxAgeCriteria($maxAge);
             $competition->setCountryCriteria(["FRANCE"]);
             $competition->setIsPromoted($faker->boolean());
+            $competition->setConsultationCount(0);
 
             $cities = [];
             $cityNumber = rand(1, 3);

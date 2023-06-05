@@ -35,6 +35,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new GetCollection(),
         new Get(),
+        new Get(
+            name: "CompetitionView",
+            uriTemplate: "/competitions/view/{id}",
+        ),
         new Post(
             name: "CompetitionCreate"
         ),
@@ -168,6 +172,10 @@ class Competition
     #[ORM\ManyToMany(targetEntity: Sponsors::class, inversedBy: 'competitions')]
     private Collection $sponsors;
 
+    #[Groups(['competition'])]
+    #[ORM\Column(nullable: true)]
+    private ?int $consultation_count = null;
+
     public function __construct()
     {
         $this->theme = new ArrayCollection();
@@ -277,19 +285,19 @@ class Competition
     {
         $now = new \DateTime();
         if ($now < $this->getSubmissionStartDate()) {
-            // return 'a venir';
+            // return 'A venir';
             return 1;
         } elseif ($now > $this->getSubmissionStartDate() && $now < $this->getSubmissionEndDate()) {
-            // return 'en phase de participation';
+            // return 'En phase de participation';
             return 2;
         } elseif ($now > $this->getSubmissionEndDate() && $now < $this->getVotingStartDate()) {
             // return 'En attente';
             return 3;
         } elseif ($now > $this->getVotingStartDate() && $now < $this->getVotingEndDate()) {
-            // return 'en phase de vote';
+            // return 'En phase de vote';
             return 4;
         } elseif ($now > $this->getVotingEndDate() && $now < $this->getResultsDate()) {
-            // return "en phase d'attribution";
+            // return "En phase d'attribution";
             return 5;
         } elseif ($now > $this->getResultsDate()) {
             // return 'Terminé';
@@ -750,6 +758,18 @@ class Competition
     public function removeSponsor(Sponsors $sponsor): self
     {
         $this->sponsors->removeElement($sponsor);
+
+        return $this;
+    }
+
+    public function getConsultationCount(): ?int
+    {
+        return $this->consultation_count;
+    }
+
+    public function setConsultationCount(?int $consultation_count): self
+    {
+        $this->consultation_count = $consultation_count;
 
         return $this;
     }
