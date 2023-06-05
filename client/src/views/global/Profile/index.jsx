@@ -256,9 +256,8 @@ export default function Profile() {
                     hasSubmit={true}
                 >
                     <Input
-                        type="file"
+                        type="profile_image"
                         name="picture_profil"
-                        label="Logo"
                         onChange={d => updateFileState('picture_profil', d)}
                         extra={{
                             value: updatedFile.picture_profil,

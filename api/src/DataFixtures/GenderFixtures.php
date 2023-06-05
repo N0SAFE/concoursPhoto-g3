@@ -12,7 +12,7 @@ class GenderFixtures extends Fixture
     const GENDER_ARRAY = [
         'Homme',
         'Femme',
-        'Autre'
+        'Non binaire'
     ];
 
     public function load(ObjectManager $manager): void

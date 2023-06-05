@@ -8,12 +8,14 @@ export default function Chip({
     backgroundColor,
     color,
     iconColor,
+    onClick,
 }) {
     return (
         <div
             key={key}
             className={style.chipContainer}
             style={{ backgroundColor: backgroundColor }}
+            onClick={onClick}
         >
             {icon && (
                 <Icon icon={icon} size="20" style={{ color: iconColor }} />
