@@ -12,15 +12,19 @@ const modalContext = createContext({
 });
 
 function ModalProvider({ children }) {
+    const [closeCallbacks, setCloseCallbacks] = useState([]);
     const [active, setActive] = useState(false);
     const [modalContent, setModalContent] = useState(null);
 
-    const showModal = () => {
+    const showModal = (closeCallback) => {
         setActive(true);
+        setCloseCallbacks([...closeCallbacks, closeCallback])
     };
 
     const hideModal = () => {
         setActive(false);
+        closeCallbacks.forEach((callback) => callback());
+        setCloseCallbacks([]);
     };
 
     return (
@@ -32,6 +36,9 @@ function ModalProvider({ children }) {
                     hideModal,
                     modalContent,
                     setModalContent,
+                    onModalClose: function(callback){
+                        closeCallbacks.push(callback);
+                    }
                 }}
             >
                 <div>
