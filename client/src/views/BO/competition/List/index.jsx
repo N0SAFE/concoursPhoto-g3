@@ -181,7 +181,7 @@ export default function CompetitionsList() {
                                 user.creation_date
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
-                                month: 'long',
+                                month: 'numeric',
                                 day: 'numeric',
                             }),
                         },
@@ -190,7 +190,7 @@ export default function CompetitionsList() {
                                 user.publication_date
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
-                                month: 'long',
+                                month: 'numeric',
                                 day: 'numeric',
                             }),
                         },
@@ -199,7 +199,7 @@ export default function CompetitionsList() {
                                 user.submission_start_date
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
-                                month: 'long',
+                                month: 'numeric',
                                 day: 'numeric',
                             }),
                         },
@@ -208,7 +208,7 @@ export default function CompetitionsList() {
                                 user.voting_start_date
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
-                                month: 'long',
+                                month: 'numeric',
                                 day: 'numeric',
                             }),
                         },

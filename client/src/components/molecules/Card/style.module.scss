@@ -55,7 +55,6 @@ $borderRadius: 10px;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
 
         h3 {
             margin: 0 5px;
@@ -81,23 +80,12 @@ $borderRadius: 10px;
 
     &Disposition {
         width: 100%;
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         overflow: hidden;
         gap: 10px;
-
-        @include below(lg) {
-            height: 190px;
-        }
-
-        @include below(md) {
-            height: 180px;
-        }
-
-        @include below(sm) {
-            height: 170px;
-        }
     }
 
     &Filter {
