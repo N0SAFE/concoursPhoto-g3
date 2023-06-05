@@ -13,7 +13,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class NotificationSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private UserRepository $userRepository, private CompetitionRepository $competitionRepository, private MailSender $mailSender, private NotificationTypeRepository $notificationTypeRepository){
+    public function __construct(private UserRepository $userRepository, private CompetitionRepository $competitionRepository, private MailSender $mailSender, private NotificationTypeRepository $notificationTypeRepository)
+    {
     }
 
     public static function getSubscribedEvents()
@@ -31,7 +32,8 @@ final class NotificationSubscriber implements EventSubscriberInterface
         };
     }
 
-    public function onCompetitionCreate() {
+    public function onCompetitionCreate()
+    {
         $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 1]);
         $users = $this->userRepository->findByNotificationType($notificationType);
         if ($users) {

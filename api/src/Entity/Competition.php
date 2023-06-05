@@ -35,6 +35,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new GetCollection(),
         new Get(),
+        new Get(
+            name: "CompetitionView",
+            uriTemplate: "/competitions/view/{id}",
+        ),
         new Post(
             name: "CompetitionCreate"
         ),

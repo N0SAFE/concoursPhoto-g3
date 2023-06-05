@@ -23,14 +23,11 @@ export default function CompetitionLayout() {
     const navigate = useNavigate();
 
     const incrementPageCount = () => {
-        apiFetch('/competitions/' + competitionId, {
-            method: 'PUT',
+        apiFetch('/competitions/view/' + competitionId, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                consultation_count: entity.consultation_count,
-            }),
         }).then(res => {
             if (res.code === 401) {
                 toast.error(res.message);
