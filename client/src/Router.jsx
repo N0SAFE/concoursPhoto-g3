@@ -22,7 +22,7 @@ import { useModal } from '@/contexts/ModalContext/index.jsx';
 import { toast } from 'react-toastify';
 import MyorganizationInfo from '@/views/global/Profile/myorganization/info/index.jsx';
 import MyorganizationList from '@/views/global/Profile/myorganization/index.jsx';
-import ProfileNotification from '@/views/global/Profile/notification/index.jsx';
+import ProfileNotification from '@/views/global/Profile/notification';
 import CompetitionView from '@/views/FO/competition/See/CompetitionView/index.jsx';
 import CompetitionLayout from '@/layout/CompetitionLayout';
 import CompetitionRules from '@/views/FO/competition/See/CompetitionRules/index.jsx';

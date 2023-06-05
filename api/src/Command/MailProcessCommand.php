@@ -12,11 +12,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class MailProcessCommand extends Command
 {
     protected static $defaultName = 'mail:process';
-    protected static $defaultDescription = 'My scheduled task';
+    protected static $defaultDescription = 'Process the mail sending';
+
+    const NAME_FROM = "noreply@concoursPhoto.com";
 
     private MailSender $mailSender;
 
@@ -36,13 +39,32 @@ class MailProcessCommand extends Command
         $competitions = $this->competitionRepository->findAll();
 
         foreach ($competitions as $competition) {
+            if ($competition->getPublicationDate() >= new \DateTime()) {
+                $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 1]);
+                if (!$competition->getNotificationsSended()->contains($notificationType)) {
+                    $usersNotificationSubscribed = $this->userRepository->findByNotificationType($notificationType);
+                    foreach ($usersNotificationSubscribed as $user) {
+                        $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Le concours "%s" est publié', $competition->getCompetitionName()), "competition_published.html.twig", [
+                            'firstname' => $user->getFirstname(),
+                            'lastname' => $user->getLastname(),
+                            'competition_name' => $competition->getCompetitionName(),
+                            'competition_id' => $competition->getId(),
+                        ]);
+                    }
+                    $competition->addNotificationsSended($notificationType);
+                }
+            }
+
             if ($competition->getVotingStartDate() < new \DateTime()) {
                 $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 2]);
                 if (!$competition->getNotificationsSended()->contains($notificationType)) {
                     $usersNotificationSubscribed = $this->userRepository->findByNotificationType($notificationType);
                     foreach ($usersNotificationSubscribed as $user) {
-                        $this->mailSender->sendMail("test@test.com", $user->getEmail(), "test", "competition_published.html.twig", [
-                            'mail' => "test", "competitions" => "test"
+                        $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Le concours "%s" entre en phase de vote', $competition->getCompetitionName()), "competition_voting_step.html.twig", [
+                            'firstname' => $user->getFirstname(),
+                            'lastname' => $user->getLastname(),
+                            'competition_name' => $competition->getCompetitionName(),
+                            'competition_id' => $competition->getId(),
                         ]);
                     }
                     $competition->addNotificationsSended($notificationType);
@@ -55,8 +77,12 @@ class MailProcessCommand extends Command
                 if (!$competition->getNotificationsSended()->contains($notificationType)) {
                     $usersNotificationSubscribed = $this->userRepository->findByNotificationType($notificationType);
                     foreach ($usersNotificationSubscribed as $user) {
-                        $this->mailSender->sendMail("test@test.com", $user->getEmail(), "test", "competition_published.html.twig", [
-                            'mail' => "test", "competitions" => "test"
+                        $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('La phase de vote du concours "%s" va bientôt se terminer', $competition->getCompetitionName()), "competition_voting_alert.html.twig", [
+                            'firstname' => $user->getFirstname(),
+                            'lastname' => $user->getLastname(),
+                            'competition_name' => $competition->getCompetitionName(),
+                            'competition_id' => $competition->getId(),
+                            'competition_voting_end_date' => $competition->getVotingEndDate(),
                         ]);
                     }
                     $competition->addNotificationsSended($notificationType);
@@ -69,37 +95,76 @@ class MailProcessCommand extends Command
                 if (!$competition->getNotificationsSended()->contains($notificationType)) {
                     $usersNotificationSubscribed = $this->userRepository->findByNotificationType($notificationType);
                     foreach ($usersNotificationSubscribed as $user) {
-                        $this->mailSender->sendMail("test@test.com", $user->getEmail(), "test", "competition_published.html.twig", [
-                            'mail' => "test", "competitions" => "test"
+                        $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Le concours "%s" arrive à sa fin', $competition->getCompetitionName()), "competition_result_alert.html.twig", [
+                            'firstname' => $user->getFirstname(),
+                            'lastname' => $user->getLastname(),
+                            'competition_name' => $competition->getCompetitionName(),
+                            'competition_id' => $competition->getId(),
+                            'competition_result_date' => $competition->getResultsDate(),
                         ]);
                     }
                     $competition->addNotificationsSended($notificationType);
                 }
             }
 
-            if ($competition->getSubmissionStartDate() < new \DateTime()) {
-                $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 5]);
-                if (!$competition->getNotificationsSended()->contains($notificationType)) {
-                    $usersNotificationSubscribed = $this->userRepository->findByNotificationType($notificationType);
-                    foreach ($usersNotificationSubscribed as $user) {
-                        if (in_array($user->getRoles(), ["ROLE_PHOTOGRAPHER", "ROLE_ADMIN"])) {
-                            $this->mailSender->sendMail("test@test.com", $user->getEmail(), "test", "competition_published.html.twig", [
-                                'mail' => "test", "competitions" => "test"
-                            ]);
-                        }
-                    }
-                    $competition->addNotificationsSended($notificationType);
-                }
-            }
-
-            if ($competition->getSubmissionEndDate() < new \DateTime('-48 hours')) {
+            if ($competition->getPublicationDate() >= new \DateTime()) {
                 $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 6]);
                 if (!$competition->getNotificationsSended()->contains($notificationType)) {
                     $usersNotificationSubscribed = $this->userRepository->findByNotificationType($notificationType);
                     foreach ($usersNotificationSubscribed as $user) {
+
+                        $hasRole = in_array($user->getRoles(), ["ROLE_PHOTOGRAPHER", "ROLE_ADMIN"]);
+                        $hasRegion = in_array($user->getRegion(), $competition->getRegionCriteria());
+                        $hasDepartment = in_array($user->getDepartment(), $competition->getDepartmentCriteria());
+                        $hasCity = in_array($user->getCityCode(), $competition->getCityCriteria());
+
+                        $today = new \DateTime();
+                        $dateOfBirth = $user->getDateOfBirth();
+                        $age = $today->diff($dateOfBirth)->y;
+
+                        if($hasRole && ($hasRegion || $hasDepartment || $hasCity || ($age >= $competition->getMinAgeCriteria() && $age <= $competition->getMaxAgeCriteria()))) {
+                            $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Vos criètres semblent correspondre au concours "%s"', $competition->getCompetitionName()), "competition_criteria_alert.html.twig", [
+                                'firstname' => $user->getFirstname(),
+                                'lastname' => $user->getLastname(),
+                                'competition_name' => $competition->getCompetitionName(),
+                                'competition_id' => $competition->getId(),
+                            ]);
+                        }
+
+                        $competition->addNotificationsSended($notificationType);
+                    }
+                }
+
+            if ($competition->getSubmissionStartDate() < new \DateTime()) {
+                    $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 7]);
+                    if (!$competition->getNotificationsSended()->contains($notificationType)) {
+                        $usersNotificationSubscribed = $this->userRepository->findByNotificationType($notificationType);
+                        foreach ($usersNotificationSubscribed as $user) {
+                            if (in_array($user->getRoles(), ["ROLE_PHOTOGRAPHER", "ROLE_ADMIN"])) {
+                                $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Le concours "%s" entre en phase de soumission', $competition->getCompetitionName()), "competition_submission_step.html.twig", [
+                                    'firstname' => $user->getFirstname(),
+                                    'lastname' => $user->getLastname(),
+                                    'competition_name' => $competition->getCompetitionName(),
+                                    'competition_id' => $competition->getId(),
+                                ]);
+                            }
+                        }
+                        $competition->addNotificationsSended($notificationType);
+                    }
+            }
+
+            if ($competition->getSubmissionEndDate() < new \DateTime('-48 hours')) {
+                $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 8]);
+                if (!$competition->getNotificationsSended()->contains($notificationType)) {
+                    $usersNotificationSubscribed = $this->userRepository->findByNotificationType($notificationType);
+                    foreach ($usersNotificationSubscribed as $user) {
                         if (in_array($user->getRoles(), ["ROLE_PHOTOGRAPHER", "ROLE_ADMIN"])) {
-                            $this->mailSender->sendMail("test@test.com", $user->getEmail(), "test", "competition_published.html.twig", [
-                                'mail' => "test", "competitions" => "test"
+                            $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), "test", "competition_submission_alert.html.twig", [
+                                'firstname' => $user->getFirstname(),
+                                'lastname' => $user->getLastname(),
+                                'competition_name' => $competition->getCompetitionName(),
+                                'competition_id' => $competition->getId(),
+                                'competition_submission_end_date' => $competition->getSubmissionEndDate(),
                             ]);
                         }
                     }
@@ -108,15 +173,10 @@ class MailProcessCommand extends Command
             }
 
 
-
-            $this->em->persist($competition);
-            $this->em->flush();
+                $this->em->persist($competition);
+                $this->em->flush();
+            }
         }
-
-
-        // $this->mailSender->sendMail("test@test.fr", "test@test.fr", "test", "competition_published.html.twig", [
-        //     'mail' => "test", "competitions" => "test"
-        // ]);
 
         return Command::SUCCESS;
     }

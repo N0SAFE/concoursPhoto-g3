@@ -3,9 +3,9 @@
 {% block main %}
     <p>
         Bonjour <b>{{ firstname }} {{ lastname }}</b>. <br>
-        Le concours "{{ competition_name }}" vient d'être publié !
+        Vos critères de participations semblent correspondre au concours "{{ competition_name }}", vous pouvez à présent tenter votre chance !
     </p>
-    <a href="{{ base_url_client() }}/competition/{{ competition_id }}" target="_blank"
+    <a href="{{ base_url_client() }}/competition/{{ competition_id }}/pictures" target="_blank"
        style="padding: 10px; background-color: black; color: white; text-decoration: none; border-radius: 75px; display: flex;align-self: center; justify-content: center;">
         Se rediriger vers la page du concours
     </a>

@@ -103,13 +103,6 @@ export default function ProfileNotification() {
                                 onChange={() => toggleNotificationType(4)}
                                 defaultValue={containCode(4)}
                             />
-                            <Input
-                                type="checkbox"
-                                labelDisposition={"right"}
-                                label={"Être informé par email lorsqu’un nouveau concours est publié et que mon profil satisfait les critères de participation"}
-                                onChange={() => toggleNotificationType(5)}
-                                defaultValue={containCode(5)}
-                            />
                         </div>
                         <h2>Si vous êtes photographe</h2>
                         <div className={style.notificationGroup}>
