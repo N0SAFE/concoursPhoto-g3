@@ -3,23 +3,20 @@ import Input from '@/components/atoms/Input/index.jsx';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
-import { useAuthContext } from '@/contexts/AuthContext.jsx';
 import Button from '@/components/atoms/Button';
 import useLocationPosibility from '@/hooks/useLocationPosibility.js';
 import style from './style.module.scss';
-import Hbar from '@/components/atoms/Hbar/index.jsx';
 import useLocation from '@/hooks/useLocation.js';
-import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 
 export default function Myorganization() {
     const { idOrganisation, selectedOrganisation } = useOutletContext();
-    const navigate = useNavigate();
+    const [organisation, setOrganisation] = useState(selectedOrganisation);
 
     if (isNaN(idOrganisation)) {
         return <div>the idOrganisation is not a number</div>;
     }
 
-    const { me } = useAuthContext();
     const [typePossibility, setTypePossibility] = useState({
         isLoading: true,
         list: [],
@@ -29,10 +26,12 @@ export default function Myorganization() {
 
     const [locationPossibility, updateLocationPossibility] =
         useLocationPosibility(['cities'], {}, { updateOnStart: false });
+
     const citiesPossibility = locationPossibility.citiesPossibility.map(c => ({
         label: `${c.nom} [${c.codesPostaux.join(',')}]`,
         value: c.code,
     }));
+
     const postalCodesPossibility = [
         ...new Set(
             locationPossibility.citiesPossibility
@@ -40,14 +39,26 @@ export default function Myorganization() {
                 .flat()
         ),
     ].map(c => ({ label: c, value: c }));
+
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] =
         useState(false);
 
-    const [organisation, setOrganisation] = useState(selectedOrganisation);
+    const getCity = (controller, cityCode) => {
+        return getCityByCode(cityCode, { controller });
+    };
 
+    const updatesOrgnisation = (...args) => {
+        setOrganisation(
+            args.reduce(function (acc, [key, value]) {
+                return { ...acc, [key]: value };
+            }, organisation)
+        );
+    };
     const updateOrgnisation = (key, value) => {
+        console.log(key, value);
         setOrganisation({ ...organisation, [key]: value });
     };
+
     const [errors, setErrors] = useState({});
     const apiFetch = useApiFetch();
 
@@ -64,88 +75,48 @@ export default function Myorganization() {
             });
     };
 
-    const getCity = (controller, cityCode) => {
-        return getCityByCode(cityCode, { controller });
-    };
-
     useEffect(() => {
-        updateLocationPossibility({
-            args: {
-                codeCity: organisation.city?.value,
-                postcode: organisation.postcode?.value,
-            },
-        }).then(function (d) {
-            if (
-                d.length === 1 &&
-                d[0].id === 'cities' &&
-                d[0].data.length === 1
-            ) {
-                if (
-                    d[0].data[0].codesPostaux.length === 1 &&
-                    !organisation.postcode
-                ) {
-                    setOrganisation({
-                        ...organisation,
-                        postcode: {
-                            label: d[0].data[0].codesPostaux[0],
-                            value: d[0].data[0].codesPostaux[0],
-                        },
-                    });
-                } else if (!organisation.city) {
-                    setOrganisation({
-                        ...organisation,
-                        city: {
-                            label: d[0].data[0].nom,
-                            value: d[0].data[0].code,
-                        },
-                    });
-                }
-            } // this if statement set the value of the city and postcode if there is only one possibility for the given value (lagny le sec {code: 60341} as one postcode so the postcode will be set in the organisation)
-            setLocationPossibilityIsLoading(false);
-        });
-    }, [organisation?.postcode, organisation?.city]);
-
-    useEffect(() => {
+        setOrganisation(selectedOrganisation);
         const controller = new AbortController();
-        getCity(controller, organisation.citycode).then(data => {
-            updateOrgnisation('city', {
-                label: data.nom,
-                value: data.code,
+        if (selectedOrganisation.citycode) {
+            getCity(controller, selectedOrganisation.citycode).then(data => {
+                if (selectedOrganisation.postcode) {
+                    updatesOrgnisation(
+                        [
+                            '_city',
+                            {
+                                label: data.nom,
+                                value: data.code,
+                            },
+                        ],
+                        [
+                            '_postcode',
+                            {
+                                label: selectedOrganisation.postcode,
+                                value: selectedOrganisation.postcode,
+                            },
+                        ]
+                    );
+                } else {
+                    updatesOrgnisation([
+                        '_city',
+                        {
+                            label: data.nom,
+                            value: data.code,
+                        },
+                    ]);
+                }
+                setCityIsLoading(false);
             });
-            setCityIsLoading(false);
-        });
+        }
+
         getOrganizationTypePossibility().then(data =>
             setTypePossibility({ list: data, isLoading: false })
         );
-    }, []);
-    
-    useEffect(() => {
-        setOrganisation(selectedOrganisation);
     }, [selectedOrganisation]);
 
     return (
         <div className={style.formContainer}>
-            <Input
-                type="select"
-                name="organisation"
-                label="selectionner une organisation"
-                extra={{
-                    options: me.Manage.map(function ({ organizer_name, id }) {
-                        return { value: id, label: organizer_name };
-                    }),
-                    required: true,
-                    value: {
-                        label: organisation.organizer_name,
-                        value: organisation.id,
-                    },
-                }}
-                onChange={d => {
-                    if (d.value !== selectedOrganisation.id) {
-                        navigate('/profile/myorganization/' + d.value);
-                    }
-                }}
-            />
-            <Hbar />
             <Form
                 handleSubmit={function () {
                     const data = {
@@ -154,8 +125,8 @@ export default function Myorganization() {
                         numberPhone: organisation.number_phone,
                         websiteUrl: organisation.website_url,
                         address: organisation.address,
-                        city: organisation.city?.value,
-                        postcode: organisation.postcode?.value,
+                        city: organisation._city?.value,
+                        postcode: organisation._postcode?.value,
                         intraCommunityVat: organisation.intra_community_vat,
                         numberSiret: organisation.number_siret,
                         country: organisation.country,
@@ -188,12 +159,8 @@ export default function Myorganization() {
                 }}
                 hasSubmit={true}
             >
-                <div
-                    className={style.formInputContainer}
-                >
-                    <div
-                       className={style.formInputContainerColumn}
-                    >
+                <div className={style.formInputContainer}>
+                    <div className={style.formInputContainerColumn}>
                         <Input
                             type="text"
                             name="organizer_name"
@@ -240,9 +207,7 @@ export default function Myorganization() {
                             extra={{ value: organisation.website_url }}
                         />
                     </div>
-                    <div
-                        className={style.formInputContainerColumn}
-                    >
+                    <div className={style.formInputContainerColumn}>
                         <Input
                             type="text"
                             name="address"
@@ -258,7 +223,7 @@ export default function Myorganization() {
                                 extra={{
                                     isLoading:
                                         organisation.locationPossibilityIsLoading,
-                                    value: organisation.city,
+                                    value: organisation._city,
                                     isClearable: true,
                                     required: true,
                                     options: citiesPossibility,
@@ -269,7 +234,7 @@ export default function Myorganization() {
                                                 id: 'city',
                                                 args: {
                                                     codeCity:
-                                                        organisation.city
+                                                        organisation._city
                                                             ?.value,
                                                     city: '',
                                                 },
@@ -282,8 +247,30 @@ export default function Myorganization() {
                                             });
                                         }
                                     },
+                                    onMenuOpen: function () {
+                                        updateLocationPossibility({
+                                            id: 'city',
+                                            args: {
+                                                codeCity:
+                                                    organisation._city?.value,
+                                                postcode:
+                                                    organisation._postcode
+                                                        ?.value,
+                                            },
+                                        });
+                                    },
                                 }}
-                                onChange={d => updateOrgnisation('city', d)}
+                                onChange={d => {
+                                    updateOrgnisation('_city', d);
+                                    updateLocationPossibility({
+                                        id: 'city',
+                                        args: {
+                                            codeCity: d?.value,
+                                            postcode:
+                                                organisation._postcode?.value,
+                                        },
+                                    });
+                                }}
                             />
 
                             <Input
@@ -292,7 +279,7 @@ export default function Myorganization() {
                                 label="Code postal"
                                 extra={{
                                     isLoading: locationPossibilityIsLoading,
-                                    value: organisation.postcode,
+                                    value: organisation._postcode,
                                     isClearable: true,
                                     required: true,
                                     options: postalCodesPossibility,
@@ -303,7 +290,7 @@ export default function Myorganization() {
                                                 id: 'city',
                                                 args: {
                                                     postcode:
-                                                        organisation.postcode
+                                                        organisation._postcode
                                                             ?.value,
                                                 },
                                             });
@@ -318,8 +305,29 @@ export default function Myorganization() {
                                             });
                                         }
                                     },
+                                    onMenuOpen: function () {
+                                        updateLocationPossibility({
+                                            id: 'city',
+                                            args: {
+                                                codeCity:
+                                                    organisation._city?.value,
+                                                postcode:
+                                                    organisation._postcode
+                                                        ?.value,
+                                            },
+                                        });
+                                    },
                                 }}
-                                onChange={d => updateOrgnisation('postcode', d)}
+                                onChange={d => {
+                                    updateOrgnisation('_postcode', d);
+                                    updateLocationPossibility({
+                                        id: 'city',
+                                        args: {
+                                            codeCity: organisation._city?.value,
+                                            postcode: d?.value,
+                                        },
+                                    });
+                                }}
                             />
                         </div>
                         <Input

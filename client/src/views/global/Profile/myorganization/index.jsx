@@ -26,7 +26,7 @@ export default function () {
 
     const getOrganization = async (page, itemsPerPage) => {
         return await apiFetch(
-            `/organizations/?page=${page}&itemsPerPage=${itemsPerPage}&users[]=${me['@id']}`,
+            `/organizations?page=${page}&itemsPerPage=${itemsPerPage}&users[]=${me['@id']}`,
             {
                 method: 'GET',
                 params: {
@@ -55,7 +55,7 @@ export default function () {
 
     return (
         <div>
-            <Loader active={isLoading}>
+            <Loader active={isLoading} takeInnerContent={true} style={{borderRadius: "10px", minHeight: "600px"}}>
                 <p style={{fontWeight: 600}}>
                     Ce menu est destiné uniquement aux membres qui souhaitent
                     créer la fiche d’une ou plusieurs organisations qu’ils

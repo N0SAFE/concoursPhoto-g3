@@ -19,7 +19,7 @@ export default function Table({
                 </tr>
             </thead>
             <tbody>
-                {list.map(function (entity) {
+                {list?.map(function (entity) {
                     const entityFields = children(entity);
                     return (
                         <tr key={entity.id} onClick={() => onLineClick(entity)}>

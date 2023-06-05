@@ -36,9 +36,13 @@ import CompetitionParticipation from '@/views/global/Profile/participation';
 import CreateCompetitions from '@/views/FO/competition/Create/index.jsx';
 import CreateOrganization from '@/views/FO/organization/index.jsx';
 import MyorganizationLayout from '@/layout/ProfileLayout/MyorganizationLayout';
+import MyorganizationAdmin from './views/global/Profile/myorganization/admin/index.jsx';
+import useApiFetch from './hooks/useApiFetch.js';
+import { useEffect, useState } from 'react';
 
 function Router() {
     const { setModalContent, showModal } = useModal();
+    const apiFetch = useApiFetch();
     return (
         <Routes>
             <Route
@@ -116,43 +120,13 @@ function Router() {
                                             if (isNaN(idOrganisation)) {
                                                 return false;
                                             }
-                                            const _selectedOrganisation =
-                                                me.Manage.find(org => {
-                                                    return (
-                                                        org.id ===
-                                                        idOrganisation
-                                                    );
-                                                });
-                                            if (_selectedOrganisation) {
-                                                const selectedOrganisation = {
-                                                    ..._selectedOrganisation,
-                                                    postcode: {
-                                                        label: _selectedOrganisation.postcode,
-                                                        value: _selectedOrganisation.postcode,
-                                                    },
-                                                    organizationType: {
-                                                        label: _selectedOrganisation
-                                                            .organization_type
-                                                            .label,
-                                                        value: _selectedOrganisation
-                                                            .organization_type[
-                                                            '@id'
-                                                        ],
-                                                    },
-                                                };
-                                                return {
-                                                    state: !!selectedOrganisation,
-                                                    context: {
-                                                        idOrganisation,
-                                                        selectedOrganisation,
-                                                    },
-                                                };
-                                            }
                                             return {
-                                                state: false,
+                                                state: !!me.Manage.find(
+                                                    o => (o.id === idOrganisation)
+                                                ),
                                                 context: {
-                                                    idOrganisation,
-                                                },
+                                                    idOrganisation
+                                                }
                                             };
                                         }}
                                         fallback={({ me }) => {
@@ -160,13 +134,13 @@ function Router() {
                                                 return (
                                                     <Navigate
                                                         to={
-                                                            '/profile/myorganization/info/' +
+                                                            '/profile/myorganization/' +
                                                             me.Manage[0].id
                                                         }
                                                     />
                                                 );
                                             } else {
-                                                return;
+                                                return <NotFound />
                                             }
                                         }}
                                     />
@@ -180,8 +154,14 @@ function Router() {
                                         path=""
                                         element={<MyorganizationInfo />}
                                     />
-                                    <Route path="admin" element={<div />} />
-                                    <Route path="competition" element={<div />} />
+                                    <Route
+                                        path="admin"
+                                        element={<MyorganizationAdmin />}
+                                    />
+                                    <Route
+                                        path="competition"
+                                        element={<div />}
+                                    />
                                     <Route path="pub" element={<div />} />
                                 </Route>
                             </Route>

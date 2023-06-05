@@ -1,4 +1,3 @@
-import Loader from '@/components/atoms/Loader/index.jsx';
 import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';

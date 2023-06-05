@@ -17,16 +17,17 @@ export default function ({ fallback, verify = () => true }) {
             return ret;
         }
     })();
+    
+    const [Fallback, setFallback] = useState(null);
+    useEffect(() => {
+        if (typeof fallback === 'function' && !state) {
+            setFallback(fallback(auth, { context }));
+        }
+    }, []);
 
     if (state) {
         return <Outlet context={context} />;
     }
-    const [Fallback, setFallback] = useState(null);
-    useEffect(() => {
-        if (typeof fallback === 'function') {
-            setFallback(fallback(auth, { context }));
-        }
-    }, []);
 
     if (typeof fallback === 'function') {
         return <>{Fallback}</>;

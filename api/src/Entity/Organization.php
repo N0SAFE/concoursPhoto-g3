@@ -85,7 +85,7 @@ class Organization
     private ?OrganizationType $organization_type = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Manage')]
-    #[Groups('competition')]
+    #[Groups(['competition', 'organization:admin:read'])]
     private Collection $users;
 
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Rent::class)]
