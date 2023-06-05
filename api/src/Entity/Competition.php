@@ -229,6 +229,8 @@ class Competition
             $picturesObtainedPrice = array_slice($picturesObtainedPrice, 0, 8);
             return new ArrayCollection($picturesObtainedPrice);
         }
+
+        return new ArrayCollection();
     }
 
     #[Groups(['competition_aside'])]
@@ -308,19 +310,19 @@ class Competition
     {
         $now = new \DateTime();
         if ($now < $this->getSubmissionStartDate()) {
-            return 'a venir';
+            return 'À venir';
             // return 1;
         } elseif ($now > $this->getSubmissionStartDate() && $now < $this->getSubmissionEndDate()) {
-            return 'en phase de participation';
+            return 'En phase de participation';
             // return 2;
         } elseif ($now > $this->getSubmissionEndDate() && $now < $this->getVotingStartDate()) {
             return 'En attente';
             // return 3;
         } elseif ($now > $this->getVotingStartDate() && $now < $this->getVotingEndDate()) {
-            return 'en phase de vote';
+            return 'En phase de vote';
             // return 4;
         } elseif ($now > $this->getVotingEndDate() && $now < $this->getResultsDate()) {
-            return "en phase d'attribution";
+            return "En phase d'attribution";
             // return 5;
         } elseif ($now > $this->getResultsDate()) {
             return 'Terminé';

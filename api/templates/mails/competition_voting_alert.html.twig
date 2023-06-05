@@ -2,8 +2,7 @@
 
 {% block main %}
     <p>
-        Bonjour <b>{{ firstname }} {{ lastname }}</b>. <br>
-        Le concours "{{ competition_name }}" vient d'être publié !
+        Bonjour <b>{{ firstname }} {{ lastname }}</b>, dans 2 jours exactement (le {{ competition_voting_end_date | date('d/m/Y') }}), le concours "{{ competition_name }}" aura clôturée sa phase de vote, si vous n'avez pas encore voter, <b>c'est encore le moment !</b>
     </p>
     <a href="{{ base_url_client() }}/competition/{{ competition_id }}" target="_blank"
        style="padding: 10px; background-color: black; color: white; text-decoration: none; border-radius: 75px; display: flex;align-self: center; justify-content: center;">

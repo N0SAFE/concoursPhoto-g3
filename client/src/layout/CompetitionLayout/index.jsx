@@ -7,7 +7,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Breadcrumb from '@/components/atoms/Breadcrumb';
 import Chip from '@/components/atoms/Chip/index.jsx';
-import Dropdown from '@/components/atoms/Dropdown/index.jsx';
 import Icon from '@/components/atoms/Icon/index.jsx';
 import { Outlet } from 'react-router-dom';
 import Loader from '@/components/atoms/Loader/index.jsx';
