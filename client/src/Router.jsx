@@ -22,7 +22,7 @@ import { useModal } from '@/contexts/ModalContext/index.jsx';
 import { toast } from 'react-toastify';
 import MyorganizationInfo from '@/views/global/Profile/myorganization/info/index.jsx';
 import MyorganizationList from '@/views/global/Profile/myorganization/index.jsx';
-import IndexNotif from '@/views/global/Profile/notif';
+import ProfileNotification from '@/views/global/Profile/notification/index.jsx';
 import CompetitionView from '@/views/FO/competition/See/CompetitionView/index.jsx';
 import CompetitionLayout from '@/layout/CompetitionLayout';
 import CompetitionRules from '@/views/FO/competition/See/CompetitionRules/index.jsx';
@@ -101,7 +101,7 @@ function Router() {
                     <Route path="" element={<ProfileLayout />}>
                         <Route path="" element={<Navigate to="me" />} />
                         <Route path="me" element={<Profile />} />
-                        <Route path="preference" element={<IndexNotif />} />
+                        <Route path="preference" element={<ProfileNotification />} />
                         <Route path="myorganization">
                             <Route path="" element={<MyorganizationList />} />
                             <Route

@@ -39,7 +39,10 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setCitycode(self::CITY_ARRAY[rand(0, count(self::CITY_ARRAY) - 1)]);
             $organization->setWebsiteUrl($faker->url());
             $organization->setEmail($faker->email());
-            $organization->setNumberPhone($faker->phoneNumber());
+
+            $phoneNumber = preg_replace('/\s+/', '', str_replace(['+33', '(0)', ' '], ['0', '', ''], $faker->phoneNumber));
+            $organization->setNumberPhone($phoneNumber);
+
             $organization->setCountry("FRANCE");
             $organization->setIntraCommunityVat($faker->creditCardNumber());
             $organization->setNumberSiret($faker->creditCardNumber());

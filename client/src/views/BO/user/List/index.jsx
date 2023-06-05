@@ -256,7 +256,7 @@ export default function UserList() {
                                 user.date_of_birth
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
-                                month: 'long',
+                                month: 'numeric',
                                 day: 'numeric',
                             }),
                         },
@@ -265,7 +265,7 @@ export default function UserList() {
                                 user.creation_date
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
-                                month: 'long',
+                                month: 'numeric',
                                 day: 'numeric',
                             }),
                         },
