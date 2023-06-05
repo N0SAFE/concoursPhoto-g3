@@ -122,36 +122,13 @@ class MailProcessCommand extends Command
                         $dateOfBirth = $user->getDateOfBirth();
                         $age = $today->diff($dateOfBirth)->y;
 
-                        if ($hasRole) {
-                            if ($hasRegion) {
-                                $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Vos criètres semblent correspondre au concours "%s"', $competition->getCompetitionName()), "competition_criteria_alert.html.twig", [
-                                    'firstname' => $user->getFirstname(),
-                                    'lastname' => $user->getLastname(),
-                                    'competition_name' => $competition->getCompetitionName(),
-                                    'competition_id' => $competition->getId(),
-                                ]);
-                            } else if ($hasDepartment) {
-                                $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Vos criètres semblent correspondre au concours "%s"', $competition->getCompetitionName()), "competition_criteria_alert.html.twig", [
-                                    'firstname' => $user->getFirstname(),
-                                    'lastname' => $user->getLastname(),
-                                    'competition_name' => $competition->getCompetitionName(),
-                                    'competition_id' => $competition->getId(),
-                                ]);
-                            } else if ($hasCity) {
-                                $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Vos criètres semblent correspondre au concours "%s"', $competition->getCompetitionName()), "competition_criteria_alert.html.twig", [
-                                    'firstname' => $user->getFirstname(),
-                                    'lastname' => $user->getLastname(),
-                                    'competition_name' => $competition->getCompetitionName(),
-                                    'competition_id' => $competition->getId(),
-                                ]);
-                            } else if ($age >= $competition->getMinAgeCriteria() && $age <= $competition->getMaxAgeCriteria()) {
-                                $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Vos criètres semblent correspondre au concours "%s"', $competition->getCompetitionName()), "competition_criteria_alert.html.twig", [
-                                    'firstname' => $user->getFirstname(),
-                                    'lastname' => $user->getLastname(),
-                                    'competition_name' => $competition->getCompetitionName(),
-                                    'competition_id' => $competition->getId(),
-                                ]);
-                            }
+                        if($hasRole && ($hasRegion || $hasDepartment || $hasCity || ($age >= $competition->getMinAgeCriteria() && $age <= $competition->getMaxAgeCriteria()))) {
+                            $this->mailSender->sendMail(self::NAME_FROM, $user->getEmail(), sprintf('Vos criètres semblent correspondre au concours "%s"', $competition->getCompetitionName()), "competition_criteria_alert.html.twig", [
+                                'firstname' => $user->getFirstname(),
+                                'lastname' => $user->getLastname(),
+                                'competition_name' => $competition->getCompetitionName(),
+                                'competition_id' => $competition->getId(),
+                            ]);
                         }
 
                         $competition->addNotificationsSended($notificationType);
