@@ -48,12 +48,15 @@
     }
 
     &Proposition {
-        text-align: center;
         padding-bottom: 15px;
 
         & > a {
             text-decoration: underline;
             color: $background-color-secondary;
+        }
+
+        &Extra {
+            text-align: center;
         }
     }
 }

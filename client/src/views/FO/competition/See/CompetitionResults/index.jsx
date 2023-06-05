@@ -23,7 +23,7 @@ export default function () {
                 <Navlink base="/competition/:id" list={competitionRouteList} />
                 mettre l'entity result ici
             </div>
-            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
+            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} idPage={competition.id} />
         </div>
     );
 }

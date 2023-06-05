@@ -22,6 +22,22 @@ export default function CompetitionLayout() {
     const { id: competitionId } = useParams();
     const navigate = useNavigate();
 
+    const incrementPageCount = () => {
+        apiFetch('/competitions/' + competitionId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                consultation_count: entity.consultation_count,
+            }),
+        }).then(res => {
+            if (res.code === 401) {
+                toast.error(res.message);
+            }
+        });
+    }
+
     const getCompetitions = controller => {
         return apiFetch(
             '/competitions/' +
@@ -73,6 +89,9 @@ export default function CompetitionLayout() {
                 error: 'Erreur lors du chargement du concours',
             });
         }
+
+        incrementPageCount();
+
         return () => setTimeout(() => controller.abort());
     }, []);
 
@@ -171,22 +190,32 @@ export default function CompetitionLayout() {
                                 </div>
                             </div>
                             <div className={style.viewOrganizerStats}>
+                                {entity.state >= 2 && (
+                                    <>
+                                        <Chip
+                                            title={entity.numberOfParticipants}
+                                            icon={'user-plus'}
+                                            backgroundColor={'#F5F5F5'}
+                                        />
+                                        <Chip
+                                            title={entity.numberOfPictures}
+                                            icon={'camera'}
+                                            backgroundColor={'#F5F5F5'}
+                                        />
+                                    </>
+                                )}
+                                {entity.state >= 4 && (
+                                    <Chip
+                                        title={entity.numberOfVotes}
+                                        icon={'like'}
+                                        backgroundColor={'#F5F5F5'}
+                                    />
+                                )}
                                 <Chip
-                                    title={entity.numberOfParticipants}
-                                    icon={'user-plus'}
+                                    title={entity.consultation_count}
+                                    icon={'view-show'}
                                     backgroundColor={'#F5F5F5'}
                                 />
-                                <Chip
-                                    title={entity.numberOfPictures}
-                                    icon={'camera'}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                                <Chip
-                                    title={entity.numberOfVotes}
-                                    icon={'like'}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                                <Chip />
                             </div>
                         </div>
                     </div>

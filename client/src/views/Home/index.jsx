@@ -97,7 +97,7 @@ export default function Home() {
         const _controller = new AbortController();
         setController(_controller);
         return apiFetch(
-            `/competitions?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&groups[]=competition&groups[]=file&groups[]=competition_visual&results_date[after]=${actualDate}&properties[]=competition_visual&properties[]=competition_name&properties[]=state&properties[]=numberOfVotes&properties[]=numberOfParticipants&properties[]=numberOfPictures&properties[]=results_date&properties[organization][]=users&properties[]=theme&properties[]=id`,
+            `/competitions?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&groups[]=competition&groups[]=file&groups[]=competition_visual&results_date[after]=${actualDate}&properties[]=competition_visual&properties[]=competition_name&properties[]=state&properties[]=numberOfVotes&properties[]=numberOfParticipants&properties[]=numberOfPictures&properties[]=results_date&properties[organization][]=users&properties[]=theme&properties[]=id&properties[]=consultation_count`,
             {
                 method: 'GET',
                 headers: {
