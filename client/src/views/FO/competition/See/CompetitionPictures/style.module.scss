@@ -6,7 +6,7 @@
         gap: $gapBetweenElement;
         flex-wrap: wrap;
 
-        & > div {
+        &Items {
             width: calc((100% - 30px) / 3);
             height: auto;
 
@@ -21,9 +21,35 @@
         .picturesStats {
             display: flex;
             justify-content: space-between;
+            gap: 3px;
+
+            & > .picturesStatsTags {
+                width: 100%;
+                overflow-x: scroll;
+
+                &::-webkit-scrollbar {
+                    display: none;
+                }
+            }
+
+            & > .picturesActions {
+                flex-grow: 1;
+            }
 
             & > div {
                 display: flex;
+            }
+        }
+
+        @include below(md) {
+            & > div {
+                width: calc((100% - 20px) / 2);
+            }
+        }
+
+        @include below(sm) {
+            & > div {
+                width: 100%;
             }
         }
     }

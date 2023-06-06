@@ -31,6 +31,7 @@ export default function CreateCompetitions() {
         roles: [],
         gender: '',
         dateOfBirth: null,
+        creationDate: null,
     });
     const [locationPossibility, updateLocationPossibility] =
         useLocationPosibility(['cities'], {}, {updateOnStart: false});
@@ -176,7 +177,7 @@ export default function CreateCompetitions() {
                             firstname: entity.firstname,
                             lastname: entity.lastname,
                             roles: ['ROLE_MEMBER'],
-                            dateOfBirth: entity.dateOfBirth.toISOString(),
+                            dateOfBirth: entity.dateOfBirth.format(),
                             creationDate: new Date().toISOString(),
                             registrationDate: new Date().toISOString(),
                             country: 'FRANCE',

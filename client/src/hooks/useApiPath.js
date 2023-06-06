@@ -3,6 +3,6 @@ export default function useApiPath() {
         new URL(
             import.meta.env.VITE_API_URL +
                 '/' +
-                (path.startsWith('/') ? path.substring(1) : path)
+                (path?.startsWith('/') ? path?.substring(1) : path)
         ).toString();
 }

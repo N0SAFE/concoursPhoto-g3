@@ -2,11 +2,26 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\SocialNetworksRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(),
+        new Patch()
+    ],
+    normalizationContext: ['groups' => ['social_networks:write']],
+)]
 
 #[ORM\Entity(repositoryClass: SocialNetworksRepository::class)]
 class SocialNetworks
@@ -16,7 +31,7 @@ class SocialNetworks
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'social_networks:write'])]
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 

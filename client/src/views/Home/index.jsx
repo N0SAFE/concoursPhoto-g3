@@ -1,5 +1,4 @@
-import style, { homeDisposition } from './style.module.scss';
-import FOCompetitionList from '@/components/organisms/FO/FOCompetitionList';
+import style from './style.module.scss';
 import FOStats from '@/components/organisms/FO/FOStats';
 import FOPortalList from '@/components/organisms/FO/FOPortalList';
 import Loader from '@/components/atoms/Loader/index.jsx';
@@ -8,8 +7,7 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import Icon from '@/components/atoms/Icon/index.jsx';
-import { useRef } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import Card from '@/components/molecules/Card/index.jsx';
 

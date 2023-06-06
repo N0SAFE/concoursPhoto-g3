@@ -43,9 +43,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Patch(),
         new Delete(),
-    ]
+    ],
+    normalizationContext: [
+        'groups' => ['competition']
+    ],
 )]
-
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
 {
@@ -149,7 +151,6 @@ class Competition
 
     #[ORM\Column(type: 'json')]
     #[Groups(['competition', 'user:current:read'])]
-
     private array $department_criteria = [];
 
     #[ORM\Column(type: 'json')]
@@ -157,7 +158,7 @@ class Competition
     private array $city_criteria = [];
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['competition_visual', 'user:current:read'])]
+    #[Groups(['competition', 'user:current:read'])]
     private ?File $competition_visual = null;
 
     #[ORM\Column(nullable: true)]
@@ -303,7 +304,7 @@ class Competition
             return 6;
         }
     }
-    
+
     #[Groups(['competition'])]
     public function getStateLabel(): string
     {

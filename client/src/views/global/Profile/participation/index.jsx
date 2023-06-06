@@ -27,7 +27,7 @@ export default function CompetitionParticipation() {
                     throw new Error(data.message);
                 }
                 setUserCompetitions(data['hydra:member']);
-                return data;
+                return data['hydra:member'];
             })
             .catch(error => {
                 console.error(error);
@@ -45,81 +45,64 @@ export default function CompetitionParticipation() {
 
     return (
         <div className={style.participationsContainer}>
+            <p className={style.participationsCounter}>{userCompetitions.length} concours</p>
             <Table
-                entityList={userCompetitions}
+                list={userCompetitions}
                 fields={[
-                    {
-                        property: 'competition_name',
-                        display: 'Nom du concours',
-                    },
-                    {
-                        property: 'submission_start_date',
-                        display: 'Date de début du concours',
-                    },
-                    {
-                        property: 'submission_end_date',
-                        display: 'Date de fin du concours',
-                    },
-                    { property: 'state', display: 'Statut' },
-                    { property: 'numberOfPictures', display: 'Mes photos' },
-                    { property: 'results_date', display: 'Résultat' },
+                    'Nom du concours', 'Date de début du concours', 'Date de fin du concours', 'Statut', 'Mes photos', 'Résultat',
                 ]}
-                customAction={({ entity, property }) => {
-                    if (property === 'state') {
-                        return (
-                            <Chip
-                                backgroundColor={
-                                    entity.state === 1
-                                        ? '#00A3FF'
-                                        : entity.state >= 2 && entity.state <= 5
+            >
+                {function (competition) {
+                    return [
+                        {content: competition.competition_name},
+                        {content: new Date(
+                                competition.submission_start_date
+                        ).toLocaleDateString('fr-FR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        }), },
+                        {content: new Date(
+                                competition.submission_end_date
+                        ).toLocaleDateString('fr-FR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        }), },
+                        {content: <Chip
+                            backgroundColor={
+                                competition.state === 1
+                                    ? '#00A3FF'
+                                    : competition.state >= 2 && competition.state <= 5
                                         ? '#00CE3A'
                                         : '#F1F1F1'
-                                }
-                                color={
-                                    entity.state >= 1 && entity.state <= 5
-                                        ? '#fff'
-                                        : '#000'
-                                }
-                                title={
-                                    entity.state === 1
-                                        ? 'A venir'
-                                        : entity.state >= 2 && entity.state <= 5
+                            }
+                            color={
+                                competition.state >= 1 && competition.state <= 5
+                                    ? '#fff'
+                                    : '#000'
+                            }
+                            title={
+                                competition.state === 1
+                                    ? 'A venir'
+                                    : competition.state >= 2 && competition.state <= 5
                                         ? 'En cours'
                                         : 'Terminé'
-                                }
-                            />
-                        );
-                    }
-                    if (property === 'submission_start_date') {
-                        return new Date(
-                            entity.submission_start_date
-                        ).toLocaleDateString('fr-FR', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                        });
-                    }
-                    if (property === 'submission_end_date') {
-                        return new Date(
-                            entity.submission_end_date
-                        ).toLocaleDateString('fr-FR', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                        });
-                    }
-                    if (property === 'results_date') {
-                        return new Date(entity.results_date).toLocaleDateString(
+                            }
+                        />, },
+                        {content: competition.numberOfPictures,},
+                        {content: new Date(competition.results_date).toLocaleDateString(
                             'fr-FR',
                             {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
                             }
-                        );
-                    }
+                        ) }
+
+                    ]
                 }}
-            />
+            </Table>
         </div>
     );
 }

@@ -19,7 +19,8 @@ use ApiPlatform\Metadata\Post;
         new Get(),
         new Post(),
         new Patch()
-    ]
+    ],
+    normalizationContext: ['groups' => ['theme:read']],
 )]
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
 class Theme
@@ -27,10 +28,11 @@ class Theme
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['theme:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('competition')]
+    #[Groups(['competition', 'theme:read'])]
     private ?string $label = null;
 
     #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'theme')]
