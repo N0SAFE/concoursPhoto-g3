@@ -67,7 +67,7 @@ export default function () {
                     nom.
                 </p>
                 <div style={{display: "flex", gap: "20px", flexDirection: "column", marginTop: "30px"}}>
-                    <p style={{marginLeft: "10px"}}>
+                    <p style={{marginLeft: "15px"}}>
                         {data?.totalItems} organisations dont je suis l’un des
                         administrateurs
                     </p>

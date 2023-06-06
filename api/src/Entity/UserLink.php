@@ -2,28 +2,32 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserLinkRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    denormalizationContext: ['groups' => ['user_link:write']],
+)]
 #[ORM\Entity(repositoryClass: UserLinkRepository::class)]
 class UserLink
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user_link:write'])]
     private ?int $id = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user_link:write'])]
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
     private ?User $user = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user_link:write'])]
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
     private ?SocialNetworks $social_networks = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user_link:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $link = null;
 

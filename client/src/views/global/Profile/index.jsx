@@ -26,6 +26,10 @@ export default function Profile() {
         list: [],
         isLoading: true,
     });
+    const [socialNetworksPossibility, setSocialNetworksPossibility] = useState({
+        list: [],
+        isLoading: true,
+    });
 
     const { me } = useAuthContext();
     const { logout } = useAuth();
@@ -79,7 +83,10 @@ export default function Profile() {
         },
         photographerDescription: me.photographer_description,
         websiteUrl: me.website_url,
-        socialNetworks: me.socials_networks,
+        socialNetworks: {
+            label: me.userLinks.label,
+            value: me.userLinks['@id'],
+        },
     });
 
     const updateEntity = (key, value) => {
@@ -119,12 +126,28 @@ export default function Profile() {
             });
     };
 
+    const getSocialNetworks = () => {
+        return apiFetch('/social_networks', {
+            method: 'GET',
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member'].map(function (item) {
+                    return { label: item.label, value: item['@id'] };
+                });
+            });
+    }
+
     useEffect(() => {
         getPersonalstatus().then(data => {
             setStatusPossibility({ list: data, isLoading: false });
         });
         getCategoryPossibility().then(data => {
             setCategoriesPossibility({ list: data, isLoading: false });
+        });
+        getSocialNetworks().then(data => {
+            setSocialNetworksPossibility({ list: data, isLoading: false });
         });
     }, []);
 
@@ -486,66 +509,19 @@ export default function Profile() {
                             />
                         </div>
                     </div>
-                    <h2>Réseaux sociaux de l’organisation</h2>
-                    <div className={style.formWrapper}>
-                        <div className={style.formColumn}>
+                    <h2>Vos réseaux sociaux</h2>
+                    <div className={style.formSocialNetworks}>
+                        {socialNetworksPossibility.list.map(socialNetwork => (
                             <Input
                                 type="text"
                                 name="socialNetworks"
-                                label="Votre page Facebook"
+                                label={socialNetwork.label}
                                 onChange={d =>
                                     updateEntity('socialNetworks', d)
                                 }
-                                defaultValue={entity.socialNetworks}
+                                defaultValue={entity.userLinks.link}
                             />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre chaîne Youtube"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre page Instagram"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                        </div>
-                        <div className={style.formColumn}>
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre compte Twitter"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre page Linkedin"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre compte TikTok"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                        </div>
+                        ))}
                     </div>
                     <div className={style.formSubmit}>
                         <Button
