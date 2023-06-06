@@ -169,7 +169,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups(['user:read', 'user:current:read'])]
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Assert\NotBlank]
     private ?PersonalStatut $personal_statut = null;
 
     #[Groups(['user:read', 'user:current:read'])]
