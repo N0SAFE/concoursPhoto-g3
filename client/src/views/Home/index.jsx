@@ -7,7 +7,7 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import Icon from '@/components/atoms/Icon/index.jsx';
-import { useSearchParams } from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import Card from '@/components/molecules/Card/index.jsx';
 
