@@ -31,6 +31,7 @@ export default function CreateCompetitions() {
         roles: [],
         gender: '',
         dateOfBirth: null,
+        creationDate: null,
     });
     const [locationPossibility, updateLocationPossibility] =
         useLocationPosibility(['cities'], {}, {updateOnStart: false});

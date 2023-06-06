@@ -21,7 +21,9 @@ use App\State\UserStateProcessor;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
@@ -37,8 +39,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Patch(processor: UserStateProcessor::class),
         new Delete()
     ],
-    normalizationContext: ['groups' => ['user:read']]
-    
+    normalizationContext: ['groups' => ['user:read']],
+    denormalizationContext: ['groups' => ['user:write', 'user_link:write']]
 )]
 #[ApiFilter(PropertyFilter::class)]
 #[ApiFilter(SearchFilter::class,properties: ['roles'=>'partial'])]
@@ -52,56 +54,56 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column]
     private ?bool $state = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $creationDate = null;
 
-    #[Groups(['user:gender:read', 'user:current:read'])]
+    #[Groups(['user:gender:read', 'user:current:read', 'user:write'])]
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
-    #[Groups(['user:read', 'competition', 'user:current:read'])]
+    #[Groups(['user:read', 'competition', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $firstname = null;
 
-    #[Groups(['user:read', 'competition', 'user:current:read'])]
+    #[Groups(['user:read', 'competition', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $lastname = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank]
     private ?\DateTimeInterface $dateOfBirth = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $postcode = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $citycode = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
     private $email;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(10, minMessage: 'Le numéro de téléphone doit avoir au moins 10 caractères')]
     #[Assert\Regex(pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/', message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00')]
@@ -110,28 +112,28 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(type: 'string')]
     private $password;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[Assert\Length(min: 8, minMessage: 'Le mot de passe doit avoir au moins 8 caractères')]
     #[Assert\Regex(pattern: '/^(?=.*[A-Z])(?=.*\d).+$/', message: 'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre')]
     private ?string $plainPassword = null;
 
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'admins')]
-    #[Groups(['user:manage:read', 'user:current:read'])]
+    #[Groups(['user:manage:read', 'user:current:read', 'user:write'])]
     private Collection $Manage;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Groups(['user:photographerCategory:read', 'user:current:read'])]
+    #[Groups(['user:photographerCategory:read', 'user:current:read', 'user:write'])]
     private ?PhotographerCategory $photographerCategory = null;
 
-    #[Groups(['user:memberOfTheJuries:read', 'user:current:read'])]
+    #[Groups(['user:memberOfTheJuries:read', 'user:current:read', 'user:write'])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Picture::class)]
-    #[Groups(['user:pictures:read', 'user:current:read'])]
+    #[Groups(['user:pictures:read', 'user:current:read', 'user:write'])]
     private Collection $pictures;
 
-    #[Groups(['user:votes:read', 'user:current:read'])]
+    #[Groups(['user:votes:read', 'user:current:read', 'user:write'])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]
     private Collection $votes;
 
@@ -148,44 +150,47 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?\DateTimeInterface $lastConnectionDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     private ?string $photographerDescription = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     private ?string $websiteUrl = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     private ?string $pseudonym = null;
 
-    #[Groups(['user:read', 'user:current:read', 'competition'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column]
     private ?bool $isVerified = null;
 
-    #[Groups(['user:personalStatut:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[Assert\NotBlank]
     private ?PersonalStatut $personalStatut = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?File $pictureProfil = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $region = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $department = null;
 
-    #[Groups(['user:userLinks:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class)]
     private Collection $userLinks;
 
     #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'subscribedUsers')]
-    #[Groups(['user:notificationEnabled:read', 'user:current:read'])]
+    #[Groups(['user:notificationEnabled:read', 'user:current:read', 'user:write'])]
     private Collection $notificationEnabled;
 
     public function __construct()

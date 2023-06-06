@@ -34,7 +34,7 @@ export default function ProfileLayout() {
     );
 
     const getGendersPossibility = controller => {
-        return apiFetch('/genders', {
+        return apiFetch('/genders?groups[]=gender:read', {
             method: 'GET',
             signal: controller.signal,
         })

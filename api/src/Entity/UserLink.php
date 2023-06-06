@@ -19,6 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Patch()
     ],
     normalizationContext: ["groups" => ["userLink:read"]],
+    denormalizationContext: ["groups" => ["userLink:write"]],
 )]
 #[ORM\Entity(repositoryClass: UserLinkRepository::class)]
 class UserLink
@@ -29,15 +30,15 @@ class UserLink
     #[Groups(['userLink:read', 'user:current:read'])]
     private ?int $id = null;
 
-    #[Groups(['userLink:user:read', 'user:current:read'])]
+    #[Groups(['userLink:user:read', 'user:current:read', "userLink:write"])]
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
     private ?User $user = null;
 
-    #[Groups(['userLink:socialNetworks:read', 'user:current:read'])]
+    #[Groups(['userLink:socialNetworks:read', 'user:current:read', "userLink:write"])]
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
     private ?SocialNetworks $socialNetworks = null;
 
-    #[Groups(['userLink:read', 'user:current:read'])]
+    #[Groups(['userLink:read', 'user:current:read', "userLink:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $link = null;
 

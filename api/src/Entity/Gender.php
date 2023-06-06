@@ -20,7 +20,7 @@ use ApiPlatform\Metadata\Post;
         new Post(),
         new Patch()
     ],
-    normalizationContext: ["groups" => ["gender:read"]],
+    normalizationContext: ['groups' => ['gender:read']],
 )]
 #[ORM\Entity(repositoryClass: GenderRepository::class)]
 class Gender

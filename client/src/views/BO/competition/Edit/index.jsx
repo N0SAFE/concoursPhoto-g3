@@ -55,12 +55,12 @@ export default function CompetitionEdit() {
         themes: [],
     });
     const [updatedFile, setUpdatedFile] = useState({
-        visual: null,
+        competition_visual: null,
     });
     const [entity, setEntity] = useState({
         state: false,
         name: null,
-        visual: null,
+        competition_visual: null,
         description: null,
         rules: null,
         endowments: null,
@@ -261,6 +261,8 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
         return () => setTimeout(() => controller.abort());
     }, []);
 
+    console.log(updatedFile.competition_visual)
+
     return (
         <Loader active={isLoading}>
             <BOCreate
@@ -269,11 +271,11 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                     const promise = new Promise(async (resolve, reject) => {
                         try {
                             const newVisualId = await (async () => {
-                                if (updatedFile.visual === null) {
+                                if (updatedFile.competition_visual === null) {
                                     return null;
-                                } else if (updatedFile.visual.file) {
+                                } else if (updatedFile.competition_visual.file) {
                                     return await uploadFile({
-                                        file: updatedFile.visual.file,
+                                        file: updatedFile.competition_visual.file,
                                     }).then(r => r['@id']);
                                 }
                             })().catch(e => {
@@ -351,11 +353,11 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                                         throw new Error(data.description);
                                     }
                                     if (
-                                        updatedFile.visual === null &&
-                                        entity.visual
+                                        updatedFile.competition_visual === null &&
+                                        entity.competition_visual
                                     ) {
                                         await deleteFile({
-                                            path: entity.visual['@id'],
+                                            path: entity.competition_visual['@id'],
                                         });
                                     }
                                 })
@@ -402,8 +404,10 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                         type="file"
                         name="visual"
                         label="Visuel"
-                        onChange={d => updateFileState('visual', d)}
-                        extra={{ value: updatedFile.visual, type: 'image' }}
+                        onChange={d => {
+                            updateFileState('competition_visual', d)
+                        }}
+                        extra={{ value: updatedFile.competition_visual, type: 'image' }}
                     />
                     <label>Description</label>
                     <Editor
@@ -692,8 +696,7 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                             extra={{
                                 isMulti: true,
                                 required: true,
-                                options:
-                                    entityPossibility.participantCategories,
+                                options: entityPossibility.participantCategories,
                                 closeMenuOnSelect: false,
                                 menuPlacement: 'top',
                                 value: entity.participantCategories,

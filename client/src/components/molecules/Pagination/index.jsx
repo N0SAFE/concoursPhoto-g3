@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import style from './style.module.scss';
 import Input from '@/components/atoms/Input/index.jsx';
 import Button from '@/components/atoms/Button/index.jsx';
-import BOForm from '@/components/organisms/BO/Form/index.jsx';
+import Form from '@/components/organisms/BO/Form/index.jsx';
 
 const DEFAULT_ITEMS_PER_PAGE = 9;
 
 const caching = {};
 
 export default function Pagination({
+    classListInnerContainer = "",
     _useBetaCache = false,
     items,
     totalPageCount,
@@ -60,14 +61,16 @@ export default function Pagination({
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {children(items.map(renderItem), {
-                pageCurrent: _pageCurrent,
-                itemPerPage: _itemPerPage,
-                totalPageCount,
-                hasNextPage,
-                hasPreviousPage,
-                dots,
-            })}
+            <div className={classListInnerContainer}>
+                {children(items.map(renderItem), {
+                    pageCurrent: _pageCurrent,
+                    itemPerPage: _itemPerPage,
+                    totalPageCount,
+                    hasNextPage,
+                    hasPreviousPage,
+                    dots,
+                })}
+            </div>
             <div className={style.paginationContainer}>
                 <Input
                     label="Afficher par :"
@@ -168,7 +171,7 @@ export default function Pagination({
                     </div>
                 </div>
                 <div>
-                    <BOForm
+                    <Form
                         hasSubmit={true}
                         handleSubmit={e => {
                             const page = parseInt(e.target.page.value);
@@ -195,7 +198,7 @@ export default function Pagination({
                         >
                             Go
                         </Button>
-                    </BOForm>
+                    </Form>
                 </div>
             </div>
         </div>
