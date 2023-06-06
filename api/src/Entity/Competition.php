@@ -27,7 +27,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(PropertyFilter::class)]
 #[ApiFilter(SearchFilter::class, properties: [
     'pictures.user' => 'exact',
-    'pictures.votes.user' => 'exact'
 ])]
 #[ApiFilter(GroupFilter::class)]
 #[ApiFilter(FilterLogic::class)]

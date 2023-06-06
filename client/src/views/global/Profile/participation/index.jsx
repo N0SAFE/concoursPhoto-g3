@@ -12,7 +12,7 @@ export default function CompetitionParticipation() {
 
     const getUserCompetitions = () => {
         return apiFetch(
-            `/competitions?&properties[]=${me.id}&or[pictures.user]=/users/${me.id}&or[pictures.votes.user]=/users/${me.id}&properties[]=competition_name&properties[]=submission_start_date&properties[]=submission_end_date&properties[]=state&properties[]=numberOfPictures&properties[]=results_date`,
+            `/competitions?pictures.user=/users/${me.id}&properties[]=competition_name&properties[]=submission_start_date&properties[]=submission_end_date&properties[]=state&properties[]=numberOfPictures&properties[]=results_date`,
             {
                 method: 'GET',
                 headers: {
