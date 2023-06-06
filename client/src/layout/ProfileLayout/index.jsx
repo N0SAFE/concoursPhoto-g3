@@ -6,9 +6,9 @@ import style from './style.module.scss';
 import { useAuthContext } from '@/contexts/AuthContext.jsx';
 
 const profileRouteList = [
-    { content: 'Mon profil', to: '/me', },
+    { content: 'Mon profil', to: '/me' },
     { content: 'Mes préférences', to: '/preference' },
-    { content: 'Mes organisations', to: '/myorganization', type: "startwith" },
+    { content: 'Mes organisations', to: '/myorganization', type: 'startwith' },
     { content: 'Concours créés par mon organisation', to: '/me' },
     { content: 'Concours auxquels j’ai participé', to: '/participations' },
 ];
@@ -25,13 +25,12 @@ export default function ProfileLayout() {
             map: new Map(),
             isLoading: true,
         });
-    const [meNotificationEnabled, setMeNotificationEnabled] = useState(
-        new Map(
-            me.notificationEnabled.map(item => [
-                item.notification_code,
-                item['@id'],
-            ])
-        )
+        
+    const meNotificationEnabled = new Map(
+        me.notificationEnabled.map(item => [
+            item.notificationCode,
+            item['@id'],
+        ])
     );
 
     const getGendersPossibility = controller => {
@@ -66,7 +65,7 @@ export default function ProfileLayout() {
         getNotificationTypePossibility(controller).then(notificationTypes => {
             const _notificationTypes = new Map(
                 notificationTypes.map(item => [
-                    item.notification_code,
+                    item.notificationCode,
                     item['@id'],
                 ])
             );

@@ -25,6 +25,8 @@ class LoggerNormalizer implements NormalizerInterface, NormalizerAwareInterface
     {
         $context[self::ALREADY_CALLED] = true;
 
+        $normalizedData = $this->normalizer->normalize($object, $format, $context);
+
         $this->logger->info('Normalize {class} object', [
             'class' => is_object($object) ? get_class($object) : $object,
             'object' => $object,
@@ -34,9 +36,11 @@ class LoggerNormalizer implements NormalizerInterface, NormalizerAwareInterface
             'context' => $context,
         ]);
 
-        $data = $this->normalizer->normalize($object, $format, $context);
+        $this->logger->info('normalizedData {data}', [
+            'normalizedData' => $normalizedData,
+        ]);
 
-        return $data;
+        return $normalizedData;
     }
 
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool

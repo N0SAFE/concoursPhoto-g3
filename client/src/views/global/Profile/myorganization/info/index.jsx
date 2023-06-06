@@ -120,15 +120,15 @@ export default function Myorganization() {
             <Form
                 handleSubmit={function () {
                     const data = {
-                        organizerName: organisation.organizer_name,
+                        organizerName: organisation.organizerName,
                         email: organisation.email,
-                        numberPhone: organisation.number_phone,
-                        websiteUrl: organisation.website_url,
+                        numberPhone: organisation.numberPhone,
+                        websiteUrl: organisation.websiteUrl,
                         address: organisation.address,
                         city: organisation._city?.value,
                         postcode: organisation._postcode?.value,
-                        intraCommunityVat: organisation.intra_community_vat,
-                        numberSiret: organisation.number_siret,
+                        intraCommunityVat: organisation.intraCommunityVat,
+                        numberSiret: organisation.numberSiret,
                         country: organisation.country,
                         organizationType: organisation.organizationType.value,
                         description: organisation.description,
@@ -163,12 +163,12 @@ export default function Myorganization() {
                     <div className={style.formInputContainerColumn}>
                         <Input
                             type="text"
-                            name="organizer_name"
+                            name="organizerName"
                             label="Nom de l'organisation"
                             onChange={d =>
-                                updateOrgnisation('organizer_name', d)
+                                updateOrgnisation('organizerName', d)
                             }
-                            extra={{ value: organisation.organizer_name }}
+                            extra={{ value: organisation.organizerName }}
                         />
                         <Input
                             type="select"
@@ -194,17 +194,17 @@ export default function Myorganization() {
                         />
                         <Input
                             type="text"
-                            name="number_phone"
+                            name="numberPhone"
                             label="Numéro de téléphone"
-                            onChange={d => updateOrgnisation('number_phone', d)}
-                            extra={{ value: organisation.number_phone }}
+                            onChange={d => updateOrgnisation('numberPhone', d)}
+                            extra={{ value: organisation.numberPhone }}
                         />
                         <Input
                             type="text"
-                            name="website_url"
+                            name="websiteUrl"
                             label="Site web"
-                            onChange={d => updateOrgnisation('website_url', d)}
-                            extra={{ value: organisation.website_url }}
+                            onChange={d => updateOrgnisation('websiteUrl', d)}
+                            extra={{ value: organisation.websiteUrl }}
                         />
                     </div>
                     <div className={style.formInputContainerColumn}>
@@ -339,19 +339,19 @@ export default function Myorganization() {
                         />
                         <Input
                             type="text"
-                            name="intra_community_vat"
+                            name="intraCommunityVat"
                             label="Numéro de TVA"
                             onChange={d =>
-                                updateOrgnisation('intra_community_vat', d)
+                                updateOrgnisation('intraCommunityVat', d)
                             }
-                            defaultValue={organisation.intra_community_vat}
+                            defaultValue={organisation.intraCommunityVat}
                         />
                         <Input
                             type="text"
-                            name="number_siret"
+                            name="numberSiret"
                             label="Numéro de SIRET"
-                            onChange={d => updateOrgnisation('number_siret', d)}
-                            extra={{ value: organisation.number_siret }}
+                            onChange={d => updateOrgnisation('numberSiret', d)}
+                            extra={{ value: organisation.numberSiret }}
                         />
                     </div>
                 </div>

@@ -19,7 +19,8 @@ use ApiPlatform\Metadata\Post;
         new Get(),
         new Post(),
         new Patch()
-    ]
+    ],
+    normalizationContext: ["groups" => ["personalStatut:read"]],
 )]
 #[ORM\Entity(repositoryClass: PersonalStatutRepository::class)]
 class PersonalStatut
@@ -27,14 +28,15 @@ class PersonalStatut
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['personalStatut:read', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['personalStatut:read', 'user:current:read'])]
     private ?string $label = null;
 
-    #[ORM\OneToMany(mappedBy: 'personal_statut', targetEntity: User::class)]
+    #[Groups(['personalStatut:users:read', 'user:current:read'])]
+    #[ORM\OneToMany(mappedBy: 'personalStatut', targetEntity: User::class)]
     private Collection $users;
 
     public function __construct()

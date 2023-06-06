@@ -27,17 +27,17 @@ export default function () {
     
     function getOrganization(id ){
         setIsLoading(true);
-        apiFetch('/organizations/' + id + "?groups[]=organization:admin:read&groups[]=user:read", {
+        apiFetch('/organizations/' + id + "?groups[]=organization:admin:read&groups[]=user:read&groups[]=organization:organizationType:read&groups[]=organizationType:read", {
             method: 'GET',
         })
             .then(r => r.json())
             .then(res => {
                 const _organisation = {
                     ...res,
-                    organizationType: res.organization_type
+                    organizationType: res.organizationType
                         ? {
-                              label: res.organization_type.label,
-                              value: res.organization_type['@id'],
+                              label: res.organizationType.label,
+                              value: res.organizationType['@id'],
                           }
                         : null,
                 };
@@ -74,14 +74,14 @@ export default function () {
                         label="selectionner une organisation"
                         extra={{
                             options: me.Manage.map(function ({
-                                organizer_name,
+                                organizerName,
                                 id,
                             }) {
-                                return { value: id, label: organizer_name };
+                                return { value: id, label: organizerName };
                             }),
                             required: true,
                             value: {
-                                label: selectedOrganisation.organizer_name,
+                                label: selectedOrganisation.organizerName,
                                 value: selectedOrganisation.id,
                             },
                         }}

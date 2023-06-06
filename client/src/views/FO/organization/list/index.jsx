@@ -50,29 +50,6 @@ export default function ListOrganization() {
             });
     };
 
-    function getOrganization(controller) {
-        const now = new Date();
-        return apiFetch(
-            '/organizations?&properties[]=organizer_name&properties[]=organization_visual&groups[]=file&groups[]=organization',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                signal: controller?.signal,
-            }
-        )
-            .then(res => res.json())
-            .then(async data => {
-                if (data.code === 401) {
-                    throw new Error(data.message);
-                }
-                console.debug(data);
-                setOrganization(data['hydra:member']);
-                return data['hydra:member'];
-            });
-    }
-
     useEffect(() => {
         setSearchParams({
             page: page || DEFAULT_PAGE,
@@ -95,7 +72,7 @@ export default function ListOrganization() {
         const _controller = new AbortController();
         setController(_controller);
         return apiFetch(
-            `/organizations?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&properties[]=organizer_name&properties[]=organization_visual&properties[]=activeCompetitionCount&groups[]=file&groups[]=organization`,
+            `/organizations?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&properties[]=organizerName&properties[]=organizationVisual&properties[]=activeCompetitionCount&groups[]=file&groups[]=organization`,
             {
                 method: 'GET',
                 headers: {
@@ -141,8 +118,8 @@ export default function ListOrganization() {
                                 idContent={organization.id}
                                 onClick={e => { }
                                 }
-                                title={organization.organizer_name}
-                                imagePath={organization.organization_visual.path}
+                                title={organization.organizerName}
+                                imagePath={organization.organizationVisual.path}
                                 stats={[
                                     {
                                         name: organization.activeCompetitionCount + ' concours actifs',

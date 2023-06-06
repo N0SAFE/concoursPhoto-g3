@@ -20,7 +20,7 @@ use ApiPlatform\Metadata\Post;
         new Post(),
         new Patch()
     ],
-    normalizationContext: ['groups' => ['participant_category:read']],
+    normalizationContext: ["groups" => ["participantCategory:read"]],
 )]
 #[ORM\Entity(repositoryClass: ParticipantCategoryRepository::class)]
 class ParticipantCategory
@@ -28,15 +28,15 @@ class ParticipantCategory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['competition', 'participant_category:read'])]
+    #[Groups('participantCategory:read')]
     private ?int $id = null;
 
-    #[Groups(['competition', 'participant_category:read'])]
+    #[Groups('participantCategory:read')]
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[Groups(['competition', 'participant_category:competition:read'])]
-    #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'participant_category')]
+    #[Groups('participantCategory:competitions:read')]
+    #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'participantCategory')]
     private Collection $competitions;
 
     public function __construct()

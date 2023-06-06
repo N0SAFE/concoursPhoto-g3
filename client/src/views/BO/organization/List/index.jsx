@@ -14,7 +14,7 @@ export default function OrganizationList() {
     const navigate = useNavigate();
 
     function getOrganizations(controller) {
-        return apiFetch('/organizations', {
+        return apiFetch('/organizations?groups[]=organization:organizationType:read&groups[]=organizationType:read&groups[]=organization:competitions:read&groups[]=competition:read', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ export default function OrganizationList() {
                                     ? 'Validée'
                                     : 'En attente',
                         },
-                        { content: organization.organizer_name },
+                        { content: organization.organizerName },
                         {
                             content: organization.description,
                         },
@@ -187,16 +187,16 @@ export default function OrganizationList() {
                             content: organization.citycode,
                         },
                         {
-                            content: organization.number_phone,
+                            content: organization.numberPhone,
                         },
                         { content: organization.email },
-                        { content: organization.website_url },
-                        { content: organization.organization_type.label },
+                        { content: organization.websiteUrl },
+                        { content: organization.organizationType.label },
                         { content: organization.country },
                         {
                             content: organization.competitions
                                 .map(
-                                    competition => competition.competition_name
+                                    competition => competition.competitionName
                                 )
                                 .join(', '),
                         },

@@ -2,16 +2,18 @@ import { useOutletContext } from 'react-router-dom';
 import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import style from './style.module.scss';
 import Navlink from '@/components/molecules/Navlink';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition } = useOutletContext();
-    const asidePictures = competition.aside;
-    const asideLabel = competition.asideLabel;
-    
+    const { competition: _competition } = useOutletContext();
+    const asidePictures = _competition.aside;
+    const asideLabel = _competition.asideLabel;
+
+    const [competition, setCompetition] = useState(_competition);
+
     const apiFetch = useApiFetch();
     const editorRef = useRef(null);
     const competitionRouteList = [
@@ -47,8 +49,11 @@ export default function () {
                     dangerouslySetInnerHTML={{ __html: competition.rules }}
                 ></div>
                 <Editor
+                    onEditorChange={s => {
+                        setCompetition({ ...competition, rules: s });
+                    }}
                     onInit={(evt, editor) => (editorRef.current = editor)}
-                    initialValue={competition.rules}
+                    initialValue={_competition.rules}
                     init={{
                         height: 500,
                         menubar: false,
@@ -92,7 +97,11 @@ export default function () {
                     Editer
                 </button>
             </div>
-            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} idPage={competition.id} />
+            <PicturesAside
+                pictures={asidePictures}
+                asideLabel={asideLabel}
+                idPage={competition.id}
+            />
         </div>
     );
 }

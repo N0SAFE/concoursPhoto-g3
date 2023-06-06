@@ -55,12 +55,12 @@ export default function CompetitionEdit() {
         themes: [],
     });
     const [updatedFile, setUpdatedFile] = useState({
-        competition_visual: null,
+        competitionVisual: null,
     });
     const [entity, setEntity] = useState({
         state: false,
         name: null,
-        competition_visual: null,
+        competitionVisual: null,
         description: null,
         rules: null,
         endowments: null,
@@ -117,7 +117,7 @@ export default function CompetitionEdit() {
             .then(data => {
                 console.debug(data);
                 return data['hydra:member'].map(function (item) {
-                    return { label: item.organizer_name, value: item['@id'] };
+                    return { label: item.organizerName, value: item['@id'] };
                 });
             });
     };
@@ -137,7 +137,7 @@ export default function CompetitionEdit() {
     };
 
     const getCompetitions = controller => {
-        return apiFetch(`/competitions/${competitionId}?groups[]=competition_visual&groups[]=file`, {
+return apiFetch(`/competitions/${competitionId}?groups[]=competition:participantCategory:read&groups[]=participantCategory:read&groups[]=competition:organization:read&groups[]=organization:read&groups[]=competition:theme:read&groups[]=theme:read&groups[]=competition:competitionVisual:read&groups[]=file:read`, {
             method: 'GET',
             signal: controller?.signal,
         })
@@ -146,49 +146,49 @@ export default function CompetitionEdit() {
                 console.debug(data);
                 return await Promise.all([
                     Promise.all(
-                        data.city_criteria.map(c => c && getCityByCode(c))
+                        data.cityCriteria.map(c => c && getCityByCode(c))
                     ),
                     Promise.all(
-                        data.department_criteria.map(
+                        data.departmentCriteria.map(
                             d => d && getDepartmentByCode(d)
                         )
                     ),
                     Promise.all(
-                        data.region_criteria.map(r => r && getRegionByCode(r))
+                        data.regionCriteria.map(r => r && getRegionByCode(r))
                     ),
                 ]).then(([cities, departments, regions]) => {
                     const _competition = {
                         state: data.state,
-                        name: data.competition_name,
-                        competition_visual: data.competition_visual || null,
+                        name: data.competitionName,
+                        visual: data.competitionVisual || null,
                         description: data.description,
                         rules: data.rules,
                         endowments: data.endowments ? data.endowments : null,
-                        participantCategories: data.participant_category.map(
+                        participantCategories: data.participantCategory.map(
                             pc => ({ label: pc.label, value: pc['@id'] })
                         ),
                         organizer: {
-                            label: data.organization.organizer_name,
+                            label: data.organization.organizerName,
                             value: data.organization['@id'],
                         },
                         themes: data.theme.map(t => ({
                             label: t.label,
                             value: t['@id'],
                         })),
-                        creationDate: new Date(data.creation_date),
-                        publicationDate: new Date(data.publication_date),
+                        creationDate: new Date(data.creationDate),
+                        publicationDate: new Date(data.publicationDate),
                         submissionStartDate: new Date(
-                            data.submission_start_date
+                            data.submissionStartDate
                         ),
-                        submissionEndDate: new Date(data.submission_end_date),
-                        votingStartDate: new Date(data.voting_start_date),
-                        votingEndDate: new Date(data.voting_end_date),
-                        resultsDate: new Date(data.results_date),
-                        weightingOfJuryVotes: data.weighting_of_jury_votes,
-                        numberOfMaxVotes: data.number_of_max_votes,
-                        numberOfPrices: data.number_of_prices,
-                        minAgeCriteria: data.min_age_criteria,
-                        maxAgeCriteria: data.max_age_criteria,
+                        submissionEndDate: new Date(data.submissionEndDate),
+                        votingStartDate: new Date(data.votingStartDate),
+                        votingEndDate: new Date(data.votingEndDate),
+                        resultsDate: new Date(data.resultsDate),
+                        weightingOfJuryVotes: data.weightingOfJuryVotes,
+                        numberOfMaxVotes: data.numberOfMaxVotes,
+                        numberOfPrices: data.numberOfPrices,
+                        minAgeCriteria: data.minAgeCriteria,
+                        maxAgeCriteria: data.maxAgeCriteria,
                         cityCriteria: cities
                             .map(c => c && { label: c.nom, value: c.code })
                             .filter(c => c),
@@ -200,12 +200,12 @@ export default function CompetitionEdit() {
                             .filter(r => r),
                     };
                     const _updatedFile = {
-                        competition_visual: data?.competition_visual
+                        visual: data.competitionVisual
                             ? {
                                   to: apiPathComplete(
-                                      data?.competition_visual?.path
+                                      data.competitionVisual.path
                                   ),
-                                  name: data.competition_visual.default_name,
+                                  name: data.competitionVisual.defaultName,
                               }
                             : null,
                     };
@@ -261,7 +261,6 @@ export default function CompetitionEdit() {
         return () => setTimeout(() => controller.abort());
     }, []);
 
-    console.log(updatedFile.competition_visual)
 
     return (
         <Loader active={isLoading}>
@@ -271,11 +270,11 @@ export default function CompetitionEdit() {
                     const promise = new Promise(async (resolve, reject) => {
                         try {
                             const newVisualId = await (async () => {
-                                if (updatedFile.competition_visual === null) {
+                                if (updatedFile.competitionVisual === null) {
                                     return null;
-                                } else if (updatedFile.competition_visual.file) {
+                                } else if (updatedFile.competitionVisual.file) {
                                     return await uploadFile({
-                                        file: updatedFile.competition_visual.file,
+                                        file: updatedFile.competitionVisual.file,
                                     }).then(r => r['@id']);
                                 }
                             })().catch(e => {
@@ -353,11 +352,11 @@ export default function CompetitionEdit() {
                                         throw new Error(data.description);
                                     }
                                     if (
-                                        updatedFile.competition_visual === null &&
-                                        entity.competition_visual
+                                        updatedFile.competitionVisual === null &&
+                                        entity.competitionVisual
                                     ) {
                                         await deleteFile({
-                                            path: entity.competition_visual['@id'],
+                                            path: entity.competitionVisual['@id'],
                                         });
                                     }
                                 })
@@ -405,9 +404,9 @@ export default function CompetitionEdit() {
                         name="visual"
                         label="Visuel"
                         onChange={d => {
-                            updateFileState('competition_visual', d)
+                            updateFileState('competitionVisual', d)
                         }}
-                        extra={{ value: updatedFile.competition_visual, type: 'image' }}
+                        extra={{ value: updatedFile.competitionVisual, type: 'image' }}
                     />
                     <label>Description</label>
                     <Editor

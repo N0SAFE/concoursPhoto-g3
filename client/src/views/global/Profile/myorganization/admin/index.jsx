@@ -42,26 +42,26 @@ export default function MyorganizationAdmin() {
     return (
         <>
             <Table
-                list={selectedOrganisation?.users}
+                list={selectedOrganisation?.admins}
                 fields={['Nom', 'Prenom', 'Fonction/poste']}
-                onLineClick={function (user) {
+                onLineClick={function (admin) {
                     setSearchParams({
                         ...searchParams,
                         edit: true,
-                        id: user.id,
+                        id: admin.id,
                     });
                 }}
             >
-                {user => {
+                {admin => {
                     return [
                         {
-                            content: user.lastname,
+                            content: admin.lastname,
                         },
                         {
-                            content: user.firstname,
+                            content: admin.firstname,
                         },
                         {
-                            content: user.job,
+                            content: admin.job,
                         },
                     ];
                 }}

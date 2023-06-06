@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\SocialNetworksRepository;
@@ -20,25 +20,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(),
         new Patch()
     ],
-    normalizationContext: ['groups' => ['social_networks:write']],
+    normalizationContext: ["groups" => ["socialNetworks:read"]],
 )]
-
 #[ORM\Entity(repositoryClass: SocialNetworksRepository::class)]
 class SocialNetworks
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['socialNetworks:read'])]
     private ?int $id = null;
 
-    #[Groups(['user:read', 'user:current:read', 'social_networks:write'])]
+    #[Groups(['socialNetworks:read', 'user:current:read'])]
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[ORM\OneToMany(mappedBy: 'social_networks', targetEntity: UserLink::class)]
+    #[ORM\OneToMany(mappedBy: 'socialNetworks', targetEntity: UserLink::class)]
+    #[Groups("socialNetworks:userLinks:read")]
     private Collection $userLinks;
 
-    #[ORM\OneToMany(mappedBy: 'social_networks', targetEntity: OrganizationLink::class)]
+    #[ORM\OneToMany(mappedBy: 'socialNetworks', targetEntity: OrganizationLink::class)]
+    #[Groups("socialNetworks:organizationLinks:read")]
     private Collection $organizationLinks;
 
     public function __construct()

@@ -2,23 +2,42 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\OrganizationLinkRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(),
+        new Patch()
+    ],
+    normalizationContext: ["groups" => ["organizationLink:read"]],
+)]
 #[ORM\Entity(repositoryClass: OrganizationLinkRepository::class)]
 class OrganizationLink
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['organizationLink:read'])]
     private ?int $id = null;
 
+    #[Groups(['organizationLink:organization:read'])]
     #[ORM\ManyToOne(inversedBy: 'organizationLinks')]
     private ?Organization $organization = null;
 
+    #[Groups(['organizationLink:socialNetworks:read'])]
     #[ORM\ManyToOne(inversedBy: 'organizationLinks')]
-    private ?SocialNetworks $social_networks = null;
+    private ?SocialNetworks $socialNetworks = null;
 
+    #[Groups(['organizationLink:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $link = null;
 
@@ -41,12 +60,12 @@ class OrganizationLink
 
     public function getSocialNetworks(): ?SocialNetworks
     {
-        return $this->social_networks;
+        return $this->socialNetworks;
     }
 
-    public function setSocialNetworks(?SocialNetworks $social_networks): self
+    public function setSocialNetworks(?SocialNetworks $socialNetworks): self
     {
-        $this->social_networks = $social_networks;
+        $this->socialNetworks = $socialNetworks;
 
         return $this;
     }

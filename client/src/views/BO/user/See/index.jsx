@@ -16,7 +16,7 @@ export default function () {
     const { id: userId } = useParams();
 
     const getUser = controller => {
-        return apiFetch('/users/' + userId, {
+        return apiFetch('/users/' + userId + "?groups[]=user:personalStatut:read&groups[]=personalStatut:read&groups[]=user:gender:read&groups[]=gender:read", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export default function () {
                         },
                         {
                             display: 'Téléphone',
-                            name: 'phone_number',
+                            name: 'phoneNumber',
                         },
                         {
                             display: 'Adresse',
@@ -85,9 +85,9 @@ export default function () {
                         },
                         {
                             display: 'Statut',
-                            name: 'personal_statut',
+                            name: 'personalStatut',
                             customData({ entity, property }) {
-                                return entity?.personal_statut?.label;
+                                return entity?.personalStatut?.label;
                             },
                         },
                         {
@@ -100,10 +100,10 @@ export default function () {
                         },
                         {
                             display: 'Date de naissance',
-                            name: 'date_of_birth',
+                            name: 'dateOfBirth',
                             customData({ entity, property }) {
                                 return new Date(
-                                    entity?.date_of_birth
+                                    entity?.dateOfBirth
                                 ).toLocaleDateString('fr-FR', {
                                     year: 'numeric',
                                     month: 'long',

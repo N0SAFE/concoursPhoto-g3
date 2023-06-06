@@ -20,34 +20,35 @@ use Symfony\Component\Serializer\Annotation\Groups;
     new Post(controller: FileController::class, deserialize: false),
     new Get(),
     new Delete()
-])]
+], normalizationContext: ['groups' => ['file:read']], denormalizationContext: ['groups' => ['file:write']])]
 #[ORM\Entity(repositoryClass: FileRepository::class)]
 class File
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['file:read', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['file', 'user:current:read'])]
+    #[Groups(['file:read', 'user:current:read', 'file:write'])]
     private ?string $path = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['file'])]
+    #[Groups(['file:read', 'file:write'])]
     private ?string $size = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['file'])]
+    #[Groups(['file:read', 'file:write'])]
     private ?string $extension = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['file'])]
+    #[Groups(['file:read', 'file:write'])]
     private ?string $type = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['file', 'user:current:read'])]
-    private ?string $default_name = null;
+    #[Groups(['file:read', 'user:current:read', 'file:write'])]
+    private ?string $defaultName = null;
 
     public function getId(): ?int
     {
@@ -104,12 +105,12 @@ class File
 
     public function getDefaultName(): ?string
     {
-        return $this->default_name;
+        return $this->defaultName;
     }
 
-    public function setDefaultName(string $default_name): self
+    public function setDefaultName(string $defaultName): self
     {
-        $this->default_name = $default_name;
+        $this->defaultName = $defaultName;
 
         return $this;
     }

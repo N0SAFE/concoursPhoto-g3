@@ -18,26 +18,27 @@ use ApiPlatform\Metadata\Post;
         new Get(),
         new Post(),
         new Patch()
-    ]
+    ],
+    normalizationContext: ["groups" => ["vote:read"]],
 )]
 #[ORM\Entity(repositoryClass: VoteRepository::class)]
 class Vote
 {
-    #[Groups('competition')]
+    #[Groups('vote:read')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['vote:picture:read', 'user:current:read'])]
     #[ORM\ManyToOne(inversedBy: 'votes')]
     private ?Picture $picture = null;
 
-    #[Groups('competition')]
+    #[Groups('vote:read')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $vote_date = null;
+    private ?\DateTimeInterface $voteDate = null;
 
-    #[Groups('competition')]
+    #[Groups('vote:user:read')]
     #[ORM\ManyToOne(inversedBy: 'votes')]
     private ?User $user = null;
 
@@ -60,12 +61,12 @@ class Vote
 
     public function getVoteDate(): ?\DateTimeInterface
     {
-        return $this->vote_date;
+        return $this->voteDate;
     }
 
-    public function setVoteDate(\DateTimeInterface $vote_date): self
+    public function setVoteDate(\DateTimeInterface $voteDate): self
     {
-        $this->vote_date = $vote_date;
+        $this->voteDate = $voteDate;
 
         return $this;
     }
