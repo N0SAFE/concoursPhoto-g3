@@ -27,8 +27,8 @@ export default function CreateCompetitions() {
                       value: me.Manage[0].postcode,
                   },
                   organizationType: {
-                      label: me.Manage[0].organization_type.label,
-                      value: me.Manage[0].organization_type['@id'],
+                      label: me.Manage[0].organizationType.label,
+                      value: me.Manage[0].organizationType['@id'],
                   },
               }
             : null
@@ -114,7 +114,7 @@ export default function CreateCompetitions() {
             .then(data => {
                 console.debug(data);
                 return data['hydra:member'].map(function (item) {
-                    return { label: item.organizer_name, value: item['@id'] };
+                    return { label: item.organizerName, value: item['@id'] };
                 });
             });
     };
@@ -663,17 +663,17 @@ export default function CreateCompetitions() {
                                 label="selectionner une organisation"
                                 extra={{
                                     options: me.Manage.map(function ({
-                                        organizer_name,
+                                        organizerName,
                                         id,
                                     }) {
                                         return {
                                             value: id,
-                                            label: organizer_name,
+                                            label: organizerName,
                                         };
                                     }),
                                     required: true,
                                     value: {
-                                        label: organisation.organizer_name,
+                                        label: organisation.organizerName,
                                         value: organisation.id,
                                     },
                                 }}

@@ -137,7 +137,7 @@ export default function CompetitionEdit() {
     };
 
     const getCompetitions = controller => {
-        return apiFetch(`/competitions/${competitionId}`, {
+return apiFetch(`/competitions/${competitionId}?groups[]=competition:participantCategory:read&groups[]=participantCategory:read&groups[]=competition:organization:read&groups[]=organization:read&groups[]=competition:theme:read&groups[]=theme:read&groups[]=competition:competitionVisual:read&groups[]=file:read`, {
             method: 'GET',
             signal: controller?.signal,
         })
@@ -146,49 +146,49 @@ export default function CompetitionEdit() {
                 console.debug(data);
                 return await Promise.all([
                     Promise.all(
-                        data.city_criteria.map(c => c && getCityByCode(c))
+                        data.cityCriteria.map(c => c && getCityByCode(c))
                     ),
                     Promise.all(
-                        data.department_criteria.map(
+                        data.departmentCriteria.map(
                             d => d && getDepartmentByCode(d)
                         )
                     ),
                     Promise.all(
-                        data.region_criteria.map(r => r && getRegionByCode(r))
+                        data.regionCriteria.map(r => r && getRegionByCode(r))
                     ),
                 ]).then(([cities, departments, regions]) => {
                     const _competition = {
                         state: data.state,
-                        name: data.competition_name,
-                        visual: data.competition_visual || null,
+                        name: data.competitionName,
+                        visual: data.competitionVisual || null,
                         description: data.description,
                         rules: data.rules,
                         endowments: data.endowments ? data.endowments : null,
-                        participantCategories: data.participant_category.map(
+                        participantCategories: data.participantCategory.map(
                             pc => ({ label: pc.label, value: pc['@id'] })
                         ),
                         organizer: {
-                            label: data.organization.organizer_name,
+                            label: data.organization.organizerName,
                             value: data.organization['@id'],
                         },
                         themes: data.theme.map(t => ({
                             label: t.label,
                             value: t['@id'],
                         })),
-                        creationDate: new Date(data.creation_date),
-                        publicationDate: new Date(data.publication_date),
+                        creationDate: new Date(data.creationDate),
+                        publicationDate: new Date(data.publicationDate),
                         submissionStartDate: new Date(
-                            data.submission_start_date
+                            data.submission_startDate
                         ),
-                        submissionEndDate: new Date(data.submission_end_date),
-                        votingStartDate: new Date(data.voting_start_date),
-                        votingEndDate: new Date(data.voting_end_date),
-                        resultsDate: new Date(data.results_date),
-                        weightingOfJuryVotes: data.weighting_of_jury_votes,
-                        numberOfMaxVotes: data.number_of_max_votes,
-                        numberOfPrices: data.number_of_prices,
-                        minAgeCriteria: data.min_age_criteria,
-                        maxAgeCriteria: data.max_age_criteria,
+                        submissionEndDate: new Date(data.submissionEndDate),
+                        votingStartDate: new Date(data.votingStartDate),
+                        votingEndDate: new Date(data.votingEndDate),
+                        resultsDate: new Date(data.resultsDate),
+                        weightingOfJuryVotes: data.weightingOfJuryVotes,
+                        numberOfMaxVotes: data.numberOfMaxVotes,
+                        numberOfPrices: data.numberOfPrices,
+                        minAgeCriteria: data.minAgeCriteria,
+                        maxAgeCriteria: data.maxAgeCriteria,
                         cityCriteria: cities
                             .map(c => c && { label: c.nom, value: c.code })
                             .filter(c => c),
@@ -200,12 +200,12 @@ export default function CompetitionEdit() {
                             .filter(r => r),
                     };
                     const _updatedFile = {
-                        visual: data.competition_visual
+                        visual: data.competitionVisual
                             ? {
                                   to: apiPathComplete(
-                                      data.competition_visual.path
+                                      data.competitionVisual.path
                                   ),
-                                  name: data.competition_visual.default_name,
+                                  name: data.competitionVisual.defaultName,
                               }
                             : null,
                     };

@@ -34,7 +34,7 @@ export default function UserList() {
             };
         }
 
-        return apiFetch('/users', {
+        return apiFetch('/users?groups[]=user:gender:read&groups[]=gender:read', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ export default function UserList() {
             if (filterVerified !== 'all') {
                 if (
                     filterState &&
-                    user.is_verified !== (filterVerified === 'true')
+                    user.isVerified !== (filterVerified === 'true')
                 ) {
                     return false;
                 }
@@ -253,7 +253,7 @@ export default function UserList() {
                         { content: user.lastname },
                         {
                             content: new Date(
-                                user.date_of_birth
+                                user.dateOfBirth
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',
@@ -262,7 +262,7 @@ export default function UserList() {
                         },
                         {
                             content: new Date(
-                                user.creation_date
+                                user.creationDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',
@@ -274,9 +274,9 @@ export default function UserList() {
                         { content: user.postcode },
                         { content: user.citycode },
                         { content: user.country },
-                        { content: user.phone_number },
+                        { content: user.phoneNumber },
                         {
-                            content: user.is_verified
+                            content: user.isVerified
                                 ? 'Vérifié'
                                 : 'Non vérifié',
                         },

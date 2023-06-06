@@ -58,9 +58,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $creation_date = null;
+    private ?\DateTimeInterface $creationDate = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:gender:read', 'user:current:read'])]
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
@@ -77,7 +77,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank]
-    private ?\DateTimeInterface $date_of_birth = null;
+    private ?\DateTimeInterface $dateOfBirth = null;
 
     #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
@@ -105,7 +105,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(10, minMessage: 'Le numéro de téléphone doit avoir au moins 10 caractères')]
     #[Assert\Regex(pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/', message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00')]
-    private ?string $phone_number = null;
+    private ?string $phoneNumber = null;
 
     #[ORM\Column(type: 'string')]
     private $password;
@@ -115,45 +115,45 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[Assert\Regex(pattern: '/^(?=.*[A-Z])(?=.*\d).+$/', message: 'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre')]
     private ?string $plainPassword = null;
 
-    #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'admins')]
     #[Groups(['user:manage:read', 'user:current:read'])]
     private Collection $Manage;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Groups(['user:read', 'user:current:read'])]
-    private ?PhotographerCategory $photographer_category = null;
+    #[Groups(['user:photographerCategory:read', 'user:current:read'])]
+    private ?PhotographerCategory $photographerCategory = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:memberOfTheJuries:read', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Picture::class)]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:pictures:read', 'user:current:read'])]
     private Collection $pictures;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:votes:read', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]
     private Collection $votes;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $registration_date = null;
+    private ?\DateTimeInterface $registrationDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $delete_date = null;
+    private ?\DateTimeInterface $deleteDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $update_date = null;
+    private ?\DateTimeInterface $updateDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $last_connection_date = null;
+    private ?\DateTimeInterface $lastConnectionDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:read', 'user:current:read'])]
-    private ?string $photographer_description = null;
+    private ?string $photographerDescription = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:read', 'user:current:read'])]
-    private ?string $website_url = null;
+    private ?string $websiteUrl = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:read', 'user:current:read'])]
@@ -165,29 +165,31 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column]
-    private ?bool $is_verified = null;
+    private ?bool $isVerified = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:personalStatut:read', 'user:current:read'])]
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[Assert\NotBlank]
-    private ?PersonalStatut $personal_statut = null;
+    private ?PersonalStatut $personalStatut = null;
+
+    #[Groups(['user:pictureProfil:read', 'user:current:read'])]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?File $pictureProfil = null;
 
     #[Groups(['user:read', 'user:current:read'])]
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?File $picture_profil = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $region = null;
 
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $department = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:userLinks:read', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class)]
     private Collection $userLinks;
 
     #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'subscribedUsers')]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:notificationEnabled:read', 'user:current:read'])]
     private Collection $notificationEnabled;
 
     public function __construct()
@@ -220,12 +222,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getCreationDate(): ?\DateTimeInterface
     {
-        return $this->creation_date;
+        return $this->creationDate;
     }
 
-    public function setCreationDate(\DateTimeInterface $creation_date): self
+    public function setCreationDate(\DateTimeInterface $creationDate): self
     {
-        $this->creation_date = $creation_date;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
@@ -268,12 +270,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getDateOfBirth(): ?\DateTimeInterface
     {
-        return $this->date_of_birth;
+        return $this->dateOfBirth;
     }
 
-    public function setDateOfBirth(\DateTimeInterface $date_of_birth): self
+    public function setDateOfBirth(\DateTimeInterface $dateOfBirth): self
     {
-        $this->date_of_birth = $date_of_birth;
+        $this->dateOfBirth = $dateOfBirth;
 
         return $this;
     }
@@ -340,12 +342,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getPhoneNumber(): ?string
     {
-        return $this->phone_number;
+        return $this->phoneNumber;
     }
 
-    public function setPhoneNumber(string $phone_number): self
+    public function setPhoneNumber(string $phoneNumber): self
     {
-        $this->phone_number = $phone_number;
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }
@@ -421,12 +423,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getPhotographerCategory(): ?PhotographerCategory
     {
-        return $this->photographer_category;
+        return $this->photographerCategory;
     }
 
-    public function setPhotographerCategory(?PhotographerCategory $photographer_category): self
+    public function setPhotographerCategory(?PhotographerCategory $photographerCategory): self
     {
-        $this->photographer_category = $photographer_category;
+        $this->photographerCategory = $photographerCategory;
 
         return $this;
     }
@@ -523,72 +525,72 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getRegistrationDate(): ?\DateTimeInterface
     {
-        return $this->registration_date;
+        return $this->registrationDate;
     }
 
-    public function setRegistrationDate(\DateTimeInterface $registration_date): self
+    public function setRegistrationDate(\DateTimeInterface $registrationDate): self
     {
-        $this->registration_date = $registration_date;
+        $this->registrationDate = $registrationDate;
 
         return $this;
     }
 
     public function getDeleteDate(): ?\DateTimeInterface
     {
-        return $this->delete_date;
+        return $this->deleteDate;
     }
 
-    public function setDeleteDate(\DateTimeInterface $delete_date): self
+    public function setDeleteDate(\DateTimeInterface $deleteDate): self
     {
-        $this->delete_date = $delete_date;
+        $this->deleteDate = $deleteDate;
 
         return $this;
     }
 
     public function getUpdateDate(): ?\DateTimeInterface
     {
-        return $this->update_date;
+        return $this->updateDate;
     }
 
-    public function setUpdateDate(\DateTimeInterface $update_date): self
+    public function setUpdateDate(\DateTimeInterface $updateDate): self
     {
-        $this->update_date = $update_date;
+        $this->updateDate = $updateDate;
 
         return $this;
     }
 
     public function getLastConnectionDate(): ?\DateTimeInterface
     {
-        return $this->last_connection_date;
+        return $this->lastConnectionDate;
     }
 
-    public function setLastConnectionDate(\DateTimeInterface $last_connection_date): self
+    public function setLastConnectionDate(\DateTimeInterface $lastConnectionDate): self
     {
-        $this->last_connection_date = $last_connection_date;
+        $this->lastConnectionDate = $lastConnectionDate;
 
         return $this;
     }
 
     public function getPhotographerDescription(): ?string
     {
-        return $this->photographer_description;
+        return $this->photographerDescription;
     }
 
-    public function setPhotographerDescription(string $photographer_description): self
+    public function setPhotographerDescription(string $photographerDescription): self
     {
-        $this->photographer_description = $photographer_description;
+        $this->photographerDescription = $photographerDescription;
 
         return $this;
     }
 
     public function getWebsiteUrl(): ?string
     {
-        return $this->website_url;
+        return $this->websiteUrl;
     }
 
-    public function setWebsiteUrl(string $website_url): self
+    public function setWebsiteUrl(string $websiteUrl): self
     {
-        $this->website_url = $website_url;
+        $this->websiteUrl = $websiteUrl;
 
         return $this;
     }
@@ -626,36 +628,36 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function isIsVerified(): ?bool
     {
-        return $this->is_verified;
+        return $this->isVerified;
     }
 
-    public function setIsVerified(bool $is_verified): self
+    public function setIsVerified(bool $isVerified): self
     {
-        $this->is_verified = $is_verified;
+        $this->isVerified = $isVerified;
 
         return $this;
     }
 
     public function getPersonalStatut(): ?PersonalStatut
     {
-        return $this->personal_statut;
+        return $this->personalStatut;
     }
 
-    public function setPersonalStatut(?PersonalStatut $personal_statut): self
+    public function setPersonalStatut(?PersonalStatut $personalStatut): self
     {
-        $this->personal_statut = $personal_statut;
+        $this->personalStatut = $personalStatut;
 
         return $this;
     }
 
     public function getPictureProfil(): ?File
     {
-        return $this->picture_profil;
+        return $this->pictureProfil;
     }
 
-    public function setPictureProfil(?File $picture_profil): self
+    public function setPictureProfil(?File $pictureProfil): self
     {
-        $this->picture_profil = $picture_profil;
+        $this->pictureProfil = $pictureProfil;
 
         return $this;
     }

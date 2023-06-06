@@ -26,7 +26,7 @@ export default function () {
 
     const getOrganization = async (page, itemsPerPage) => {
         return await apiFetch(
-            `/organizations?page=${page}&itemsPerPage=${itemsPerPage}&users[]=${me['@id']}`,
+            `/organizations?page=${page}&itemsPerPage=${itemsPerPage}&admins[]=${me['@id']}&groups[]=organization:admins:read&groups[]=user:read`,
             {
                 method: 'GET',
                 params: {
@@ -111,7 +111,7 @@ export default function () {
                                             {organization => [
                                                 {
                                                     content:
-                                                        organization.organizer_name,
+                                                        organization.organizerName,
                                                     style: { flewGrow: 2 },
                                                 },
                                                 {
@@ -143,7 +143,7 @@ export default function () {
                                                 },
                                                 {
                                                     content:
-                                                        organization.userCount,
+                                                        organization.adminCount,
                                                 },
                                             ]}
                                         </Table>

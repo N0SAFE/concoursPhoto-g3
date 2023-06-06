@@ -18,7 +18,7 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
     }
 
     const ORGANIZATION_REFERENCE = 'organization';
-    const ORGANIZATION_COUNT_REFERENCE = 10;
+    const ORGANIZATION_COUNT_REFERENCE = 30;
     const CITY_ARRAY = [
         '60341', '01032', '46201', '24008', '02347', '06055', '34343', '66025', '80829', '51578',
     ];

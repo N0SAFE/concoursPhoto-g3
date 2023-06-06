@@ -17,7 +17,7 @@ export default function () {
     const { id: organizationId } = useParams();
 
     const getOrganizations = controller => {
-        return apiFetch('/organizations/' + organizationId, {
+        return apiFetch('/organizations/' + organizationId + "?groups[]=organization:organizationType:read&groups[]=organizationType:read&groups[]=organization:competitions:read&groups[]=competition:read&groups[]=organization:logo:read&groups[]=file:read", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export default function () {
                     properties={[
                         {
                             display: 'Nom',
-                            name: 'organizer_name',
+                            name: 'organizerName',
                         },
                         {
                             display: 'Ville',
@@ -80,7 +80,7 @@ export default function () {
                         },
                         {
                             display: 'Téléphone',
-                            name: 'number_phone',
+                            name: 'numberPhone',
                         },
                         {
                             display: 'Email',
@@ -88,15 +88,15 @@ export default function () {
                         },
                         {
                             display: 'Numero de SIRET',
-                            name: 'number_siret',
+                            name: 'numberSiret',
                         },
                         {
                             display: 'Numéro de TVA',
-                            name: 'intra_community_vat',
+                            name: 'intraCommunityVat',
                         },
                         {
                             display: 'Site web',
-                            name: 'website_url',
+                            name: 'websiteUrl',
                         },
                         {
                             display: 'Description',
@@ -110,7 +110,7 @@ export default function () {
                                 return entity?.logo?.path
                                     ? {
                                           to: toApiPath(entity?.logo?.path),
-                                          name: entity?.logo?.default_name,
+                                          name: entity?.logo?.defaultName,
                                       }
                                     : null;
                             },
@@ -119,7 +119,7 @@ export default function () {
                             display: "Type d'organisation",
                             name: 'type_organization',
                             customData: ({ entity }) => {
-                                return entity?.organization_type?.label;
+                                return entity?.organizationType?.label;
                             },
                         },
                         {
@@ -129,7 +129,7 @@ export default function () {
                                 return entity?.competitions
                                     ?.map(
                                         competition =>
-                                            competition.competition_name
+                                            competition.competitionName
                                     )
                                     .join(', ');
                             },

@@ -2,15 +2,17 @@ import { useParams, useOutletContext } from 'react-router-dom';
 import style from './style.module.scss';
 import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import Navlink from '@/components/molecules/Navlink';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition} = useOutletContext();
-    const asidePictures = competition.aside;
-    const asideLabel = competition.asideLabel;
+    const { competition: _competition} = useOutletContext();
+    const asidePictures = _competition.aside;
+    const asideLabel = _competition.asideLabel;
+    
+    const [competition, setCompetition] = useState(_competition);
     
     const apiFetch = useApiFetch();
     const editorRef = useRef(null);
@@ -39,6 +41,7 @@ export default function () {
             error: 'Erreur lors de la mise à jour',
         });
     }
+    
     return (
         <div className={style.viewContainer}>
             <div>
@@ -50,8 +53,11 @@ export default function () {
                     }}
                 ></div>
                 <Editor
+                    onEditorChange={(s) => { 
+                        setCompetition({ ...competition, description: s });
+                    }}
                     onInit={(evt, editor) => (editorRef.current = editor)}
-                    initialValue={competition.description}
+                    initialValue={_competition.description}
                     init={{
                         height: 500,
                         menubar: false,

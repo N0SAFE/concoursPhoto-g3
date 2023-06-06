@@ -32,10 +32,10 @@ export default function Profile() {
     const { setModalContent, showModal } = useModal();
     const apiPathComplete = useApiPath();
     const [updatedFile, setUpdatedFile] = useState({
-        picture_profil: me.picture_profil
+        pictureProfil: me.pictureProfil
             ? {
-                  to: apiPathComplete(me.picture_profil.path),
-                  name: me.picture_profil.default_name,
+                  to: apiPathComplete(me.pictureProfil.path),
+                  name: me.pictureProfil.defaultName,
               }
             : null,
     });
@@ -69,17 +69,17 @@ export default function Profile() {
         postcode: { label: me.postcode, value: me.postcode },
         gender: { label: me.gender.label, value: me.gender['@id'] },
         statut: {
-            label: me.personal_statut.label,
-            value: me.personal_statut['@id'],
+            label: me.personalStatut.label,
+            value: me.personalStatut['@id'],
         },
-        dateOfBirth: new Date(me.date_of_birth),
+        dateOfBirth: new Date(me.dateOfBirth),
         category: {
-            label: me.photographer_category.label,
-            value: me.photographer_category['@id'],
+            label: me.photographerCategory.label,
+            value: me.photographerCategory['@id'],
         },
-        photographerDescription: me.photographer_description,
-        websiteUrl: me.website_url,
-        socialNetworks: me.socials_networks,
+        photographerDescription: me.photographerDescription,
+        websiteUrl: me.websiteUrl,
+        socialNetworks: me.socialsNetworks,
     });
 
     const updateEntity = (key, value) => {
@@ -171,11 +171,11 @@ export default function Profile() {
                 <Form
                     handleSubmit={async function () {
                         const newLogoId = await (async () => {
-                            if (updatedFile.picture_profil === null) {
+                            if (updatedFile.pictureProfil === null) {
                                 return null;
-                            } else if (updatedFile.picture_profil.file) {
+                            } else if (updatedFile.pictureProfil.file) {
                                 return await uploadFile({
-                                    file: updatedFile.picture_profil.file,
+                                    file: updatedFile.pictureProfil.file,
                                 }).then(r => r['@id']);
                             }
                         })();
@@ -229,11 +229,11 @@ export default function Profile() {
                                     });
                                 }
                                 if (
-                                    updatedFile.picture_profil === null &&
-                                    entity.picture_profil
+                                    updatedFile.pictureProfil === null &&
+                                    entity.pictureProfil
                                 ) {
                                     deleteFile({
-                                        path: entity.picture_profil['@id'],
+                                        path: entity.pictureProfil['@id'],
                                     });
                                 }
                             });
@@ -257,10 +257,10 @@ export default function Profile() {
                 >
                     <Input
                         type="profile_image"
-                        name="picture_profil"
-                        onChange={d => updateFileState('picture_profil', d)}
+                        name="pictureProfil"
+                        onChange={d => updateFileState('pictureProfil', d)}
                         extra={{
-                            value: updatedFile.picture_profil,
+                            value: updatedFile.pictureProfil,
                             type: 'image',
                         }}
                     />
@@ -452,7 +452,6 @@ export default function Profile() {
                     <h2>Si vous êtes photographe</h2>
                     <div className={style.formWrapperColumn}>
                         <div className={style.formColumn}>
-                            {' '}
                             <Input
                                 type="textarea"
                                 extra={{ rows: 16 }}

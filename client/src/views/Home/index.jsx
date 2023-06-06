@@ -53,9 +53,9 @@ export default function Home() {
     function getPromotedCompetitions(controller) {
         const now = new Date();
         return apiFetch(
-            '/competitions?is_promoted=1&groups[]=competition&groups[]=file&groups[]=competition_visual&results_date[after]=' +
+            '/competitions?isPromoted=1&groups[]=competition:read&groups[]=file:read&groups[]=competition:competitionVisual:read&resultsDate[after]=' +
                 format(now, 'yyyy-MM-dd') +
-                '&properties[]=competition_visual',
+                '&properties[]=competitionVisual',
             {
                 method: 'GET',
                 headers: {
@@ -97,7 +97,7 @@ export default function Home() {
         const _controller = new AbortController();
         setController(_controller);
         return apiFetch(
-            `/competitions?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&groups[]=competition&groups[]=file&groups[]=competition_visual&results_date[after]=${actualDate}&properties[]=competition_visual&properties[]=competition_name&properties[]=state&properties[]=numberOfVotes&properties[]=numberOfParticipants&properties[]=numberOfPictures&properties[]=results_date&properties[organization][]=users&properties[]=theme&properties[]=id&properties[]=consultation_count`,
+            `/competitions?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&groups[]=competition:read&groups[]=file:read&groups[]=competition:competitionVisual:read&groups[]=competition:theme:read&groups[]=theme:read&groups[]=competition:organization:read&groups[]=organization:admins:read&groups[]=user:read&resultsDate[after]=${actualDate}&properties[]=competitionVisual&properties[]=competitionName&properties[]=state&properties[]=numberOfVotes&properties[]=numberOfParticipants&properties[]=numberOfPictures&properties[]=results_date&properties[organization][]=admins&properties[]=theme&properties[]=id&properties[]=consultationCount`,
             {
                 method: 'GET',
                 headers: {
@@ -158,7 +158,8 @@ export default function Home() {
                         alt: "Photo de la page d'accueil",
                     }}
                     boxSingleContents={promotedCompetitions.map(competition => {
-                        return competition.competition_visual.path;
+                        console.log(competition)
+                        return competition.competitionVisual.path;
                     })}
                     boxUp={{
                         type: 'picture',
@@ -177,7 +178,7 @@ export default function Home() {
                     defaultCurrentPage={page}
                     defaultItemPerPage={itemsPerPage}
                     renderItem={function (competition) {
-                        const organizer = competition.organization?.users.map(
+                        const organizer = competition.organization?.admins.map(
                             user => user.firstname + ' ' + user.lastname || null
                         );
                         const themes = competition?.theme.map(
@@ -189,8 +190,8 @@ export default function Home() {
                         return (
                             <Card
                                 idContent={competition.id}
-                                title={competition.competition_name}
-                                imagePath={competition.competition_visual.path}
+                                title={competition.competitionName}
+                                imagePath={competition.competitionVisual.path}
                                 filters={[
                                     ...organizer,
                                     ...themes,
@@ -211,7 +212,7 @@ export default function Home() {
                                     },
                                 ]}
                                 finalDate={new Date(
-                                    competition.results_date
+                                    competition.resultsDate
                                 ).toLocaleDateString('fr-FR', {
                                     year: 'numeric',
                                     month: 'long',

@@ -29,10 +29,12 @@ export default function ProfileNotification() {
     }
 
     function toggleNotificationType(code) {
+        console.log(notificationTypesSelected);
         if (notificationTypesSelected.has(code)) {
             notificationTypesSelected.delete(code);
             setNotificationTypesSelected(new Map(notificationTypesSelected));
         } else {
+            console.log(notificationTypePossibility);
             setNotificationTypesSelected(
                 new Map(
                     notificationTypesSelected.set(
@@ -50,6 +52,7 @@ export default function ProfileNotification() {
                 <BOForm
                     hasSubmit={true}
                     handleSubmit={function () {
+                        console.log(notificationTypesSelected.values());
                         const promise = apiFetch(me['@id'], {
                             method: 'PATCH',
                             body: JSON.stringify({
