@@ -1,4 +1,4 @@
-import BOForm from '@/components/organisms/BO/Form/index.jsx';
+import Form from '@/components/organisms/BO/Form/index.jsx';
 import Input from '@/components/atoms/Input/index.jsx';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
@@ -168,20 +168,17 @@ export default function Profile() {
     return (
         <Loader active={gendersPossibility.isLoading}>
             <div className={style.formContainer}>
-                <BOForm
+                <Form
                     handleSubmit={async function () {
                         const newLogoId = await (async () => {
                             if (updatedFile.picture_profil === null) {
                                 return null;
                             } else if (updatedFile.picture_profil.file) {
-                                console.log('uploading');
-                                console.log(updatedFile.picture_profil);
                                 return await uploadFile({
                                     file: updatedFile.picture_profil.file,
                                 }).then(r => r['@id']);
                             }
                         })();
-                        console.log(newLogoId);
                         const data = {
                             email: entity.email,
                             plainPassword: entity.password || undefined,
@@ -259,9 +256,8 @@ export default function Profile() {
                     hasSubmit={true}
                 >
                     <Input
-                        type="file"
+                        type="profile_image"
                         name="picture_profil"
-                        label="Logo"
                         onChange={d => updateFileState('picture_profil', d)}
                         extra={{
                             value: updatedFile.picture_profil,
@@ -554,16 +550,17 @@ export default function Profile() {
                     <div className={style.formSubmit}>
                         <Button
                             type="submit"
-                            name="Mettre à jour"
                             color={'black'}
                             textColor={'white'}
                             padding={'14px 30px'}
                             border={false}
                             borderRadius={'44px'}
                             width={'245px'}
-                        />
+                        >
+                            Mettre à jour
+                        </Button>
                     </div>
-                </BOForm>
+                </Form>
             </div>
         </Loader>
     );

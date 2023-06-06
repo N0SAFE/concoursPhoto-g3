@@ -116,7 +116,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?string $plainPassword = null;
 
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:manage:read', 'user:current:read'])]
     private Collection $Manage;
 
     #[ORM\ManyToOne(inversedBy: 'users')]

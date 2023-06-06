@@ -11,9 +11,20 @@
     padding: 0;
 }
 
+.takeInnerContainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
 .lds-roller {
     display: inline-block;
-    position: relative;
+    position: absolute;
     width: 80px;
     height: 80px;
 }

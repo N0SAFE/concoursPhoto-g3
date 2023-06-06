@@ -7,7 +7,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Breadcrumb from '@/components/atoms/Breadcrumb';
 import Chip from '@/components/atoms/Chip/index.jsx';
-import Dropdown from '@/components/atoms/Dropdown/index.jsx';
 import Icon from '@/components/atoms/Icon/index.jsx';
 import { Outlet } from 'react-router-dom';
 import Loader from '@/components/atoms/Loader/index.jsx';
@@ -21,6 +20,19 @@ export default function CompetitionLayout() {
     const [entity, setEntity] = useState({});
     const { id: competitionId } = useParams();
     const navigate = useNavigate();
+
+    const incrementPageCount = () => {
+        apiFetch('/competitions/view/' + competitionId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(res => {
+            if (res.code === 401) {
+                toast.error(res.message);
+            }
+        });
+    }
 
     const getCompetitions = controller => {
         return apiFetch(
@@ -73,34 +85,11 @@ export default function CompetitionLayout() {
                 error: 'Erreur lors du chargement du concours',
             });
         }
+
+        incrementPageCount();
+
         return () => setTimeout(() => controller.abort());
     }, []);
-
-    const state = (function () {
-        if (entity.state === 1) {
-            return 'A venir';
-        } else if (entity.state === 2 || entity.state === 3) {
-            return 'En phase de participation';
-        } else if (entity.state === 4) {
-            return 'En phase de vote';
-        } else if (entity.state === 5) {
-            return "En phase d'attribution";
-        } else {
-            return 'Terminé';
-        }
-    })();
-
-    const asideLabel = (function () {
-        if (entity.state === 2 || entity.state === 3) {
-            return 'Dernières photos soumises';
-        } else if (entity.state === 4 || entity.state === 5) {
-            return 'Dernières photos ayant obtenu un vote';
-        } else if (entity.state === 6) {
-            return 'Photos ayant obtenu  un prix';
-        } else {
-            return 'Photo à venir';
-        }
-    })();
 
     return (
         <Loader active={isLoading}>
@@ -176,7 +165,7 @@ export default function CompetitionLayout() {
                                 <div className={style.viewOrganizerTwo}>
                                     <div>
                                         <Chip
-                                            title={state}
+                                            title={entity.stateLabel}
                                             backgroundColor={'#000'}
                                             color={'#fff'}
                                         />
@@ -197,22 +186,32 @@ export default function CompetitionLayout() {
                                 </div>
                             </div>
                             <div className={style.viewOrganizerStats}>
+                                {entity.state >= 2 && (
+                                    <>
+                                        <Chip
+                                            title={entity.numberOfParticipants}
+                                            icon={'user-plus'}
+                                            backgroundColor={'#F5F5F5'}
+                                        />
+                                        <Chip
+                                            title={entity.numberOfPictures}
+                                            icon={'camera'}
+                                            backgroundColor={'#F5F5F5'}
+                                        />
+                                    </>
+                                )}
+                                {entity.state >= 4 && (
+                                    <Chip
+                                        title={entity.numberOfVotes}
+                                        icon={'like'}
+                                        backgroundColor={'#F5F5F5'}
+                                    />
+                                )}
                                 <Chip
-                                    title={entity.numberOfParticipants}
-                                    icon={'user-plus'}
+                                    title={entity.consultation_count}
+                                    icon={'view-show'}
                                     backgroundColor={'#F5F5F5'}
                                 />
-                                <Chip
-                                    title={entity.numberOfPictures}
-                                    icon={'camera'}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                                <Chip
-                                    title={entity.numberOfVotes}
-                                    icon={'like'}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                                <Chip />
                             </div>
                         </div>
                     </div>
@@ -234,15 +233,16 @@ export default function CompetitionLayout() {
                         image => image.logo.path
                     )}
                 />
-                <Outlet context={{ competition: entity, asideLabel }} />
+                <Outlet context={{ competition: entity }} />
                 <Button
-                    name={'Retour'}
                     borderRadius={'30px'}
                     padding={'20px'}
                     icon={'arrow-thin-left'}
                     iconPosition={'left'}
                     onClick={() => navigate('/')}
-                />
+                >
+                    Retour
+                </Button>
             </div>
         </Loader>
     );

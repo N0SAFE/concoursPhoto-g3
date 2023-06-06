@@ -1,9 +1,11 @@
 import style from './style.module.scss';
 import Button from '@/components/atoms/Button/index.jsx';
 import useApiPath from '@/hooks/useApiPath.js';
+import {useNavigate} from "react-router-dom";
 
-export default function PicturesAside({ pictures, asideLabel }) {
+export default function PicturesAside({ pictures, asideLabel, idPage }) {
     const apiPath = useApiPath();
+    const navigate = useNavigate();
 
     return (
         <div className={style.asideContainer}>
@@ -21,13 +23,14 @@ export default function PicturesAside({ pictures, asideLabel }) {
                 </div>
             </div>
             <Button
-                name={'Voir les photos et voter'}
                 borderRadius={'30px'}
                 padding={'20px'}
                 color={'#A8A8A8'}
                 textColor={'#fff'}
-                onClick={() => navigate('/')}
-            />
+                onClick={() => navigate(`/competition/${idPage}/pictures`)}
+            >
+                Voir les photos et voter
+            </Button>
         </div>
     );
 }

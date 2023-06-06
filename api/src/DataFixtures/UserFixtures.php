@@ -21,7 +21,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     }
 
     const USER_REFERENCE = 'user';
-    const USER_COUNT_REFERENCE = 10;
+    const USER_COUNT_REFERENCE = 60;
     const ROLE_ARRAY = [
         'ROLE_MEMBER',
         'ROLE_PHOTOGRAPHER',
@@ -124,11 +124,15 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setRegion($city['codeRegion']);
         $user->setPostcode(str_replace(' ', '', $faker->postcode()));
         $user->setCountry($faker->countryCode());
-        $user->setPictureProfil((new FileFixtures)->createFile());
+        $user->setPictureProfil((new FileFixtures)->createFileFromString("77668394.jfif"));
         $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
         $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
         $user->setPersonalStatut($this->getReference(PersonalStatutFixtures::PERSONAL_STATUT_REFERENCE . rand(1, count(PersonalStatutFixtures::PERSONAL_STATUT_ARRAY))));
         $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
+        $managedOrganizationCount = rand(3, 5);
+        for ($j = 0; $j < $managedOrganizationCount; $j++) {
+            $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
+        }
 
         $manager->persist($user);
 
@@ -165,11 +169,14 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setRegion($city['codeRegion']);
             $user->setCountry("FRANCE");
             $user->setPostcode(str_replace(' ', '', $faker->postcode()));
-            $user->setPictureProfil((new FileFixtures)->createFile());
+            $user->setPictureProfil((new FileFixtures)->createFileFromArray(FileFixtures::USER_LOGO_ARRAY));
             $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
             $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
             $user->setPersonalStatut($this->getReference(PersonalStatutFixtures::PERSONAL_STATUT_REFERENCE . rand(1, count(PersonalStatutFixtures::PERSONAL_STATUT_ARRAY))));
-            $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
+            $managedOrganizationCount = rand(0, 5);
+            for ($j = 0; $j < $managedOrganizationCount; $j++) {
+                $user->addManage($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, OrganizationFixtures::ORGANIZATION_COUNT_REFERENCE)));
+            }
 
             foreach (NotificationTypeFixtures::NOTIFICATION_TYPE_ARRAY as $notificationType) {
                 if (rand(0, 3) == 3) {

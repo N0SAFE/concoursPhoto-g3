@@ -1,5 +1,20 @@
-{{ mail }}
-{% for competition in competitions %}
-    Nom du concours : {{ competition.competition_name }}
-    Date de création : {{ competition.creation_date | date('d/m/Y') }}
-{% endfor %}
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <p>
+        Bonjour <b>{{ firstname }} {{ lastname }}</b>. <br>
+        Le concours "{{ competition_name }}" vient d'être publié !
+    </p>
+    <a href="{{ base_url_client() }}/competition/{{ competition_id }}" target="_blank"
+       style="padding: 10px; background-color: black; color: white; text-decoration: none; border-radius: 75px; display: flex;align-self: center; justify-content: center;">
+        Se rediriger vers la page du concours
+    </a>
+    <u>
+        Il s'agit d'un message automatique, merci de ne pas y répondre.
+    </u>
+    <p>
+        Cordialement,
+        <br>
+        L'équipe de <b>ConcoursPhotos.com</b>
+    </p>
+{% endblock %}

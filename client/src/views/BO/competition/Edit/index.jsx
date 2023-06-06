@@ -30,11 +30,6 @@ export default function CompetitionEdit() {
         getRegionByCode,
     } = useLocation();
     const editorRef = useRef(null);
-    const log = () => {
-        if (editorRef.current) {
-            console.log(editorRef.current.getContent());
-        }
-    };
     const [locationPossibility, setLocationPossibility] = useState({
         regions: { isLoading: true, data: [] },
         departments: { isLoading: true, data: [] },
@@ -738,7 +733,7 @@ export default function CompetitionEdit() {
                     </div>
                 </div>
             </BOCreate>
-            <Button name="Retour" onClick={() => navigate('/BO/competition')} />
+            <Button onClick={() => navigate('/BO/competition')}>Retour</Button>
         </Loader>
     );
 }

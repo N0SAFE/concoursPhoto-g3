@@ -1,0 +1,50 @@
+.pagination {
+    display: flex;
+
+    &Container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        flex-wrap: wrap;
+
+        @include below(sm) {
+            flex-direction: column;
+        }
+
+        & > div {
+            flex-direction: inherit;
+            align-items: center;
+            width: inherit;
+
+            @include below(sm) {
+                flex-direction: row;
+            }
+
+            &:first-child {
+                gap: 15px;
+            }
+
+            & > form {
+                display: flex;
+                flex-direction: row;
+                padding: inherit;
+
+                // override component Input type text
+                & > div {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+
+                    & > input {
+                        width: 25px;
+                    }
+                }
+            }
+        }
+    }
+
+    &Select {
+        @extend .select-style;
+    }
+}

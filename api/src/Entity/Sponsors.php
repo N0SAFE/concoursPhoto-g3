@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SponsorsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -31,9 +33,6 @@ class Sponsors
     #[ORM\ManyToOne(inversedBy: 'sponsors')]
     private ?Organization $organization = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sponsors')]
-    private ?Competition $competition = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $start_date = null;
 
@@ -50,6 +49,14 @@ class Sponsors
     #[Groups(['competition', 'user:current:read'])]
     private ?File $logo = null;
 
+    #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'sponsors')]
+    private Collection $competitions;
+
+    public function __construct()
+    {
+        $this->competitions = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,18 +70,6 @@ class Sponsors
     public function setOrganization(?Organization $organization): self
     {
         $this->organization = $organization;
-
-        return $this;
-    }
-
-    public function getCompetition(): ?Competition
-    {
-        return $this->competition;
-    }
-
-    public function setCompetition(?Competition $competition): self
-    {
-        $this->competition = $competition;
 
         return $this;
     }
@@ -135,6 +130,33 @@ class Sponsors
     public function setLogo(?File $logo): self
     {
         $this->logo = $logo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Competition>
+     */
+    public function getCompetitions(): Collection
+    {
+        return $this->competitions;
+    }
+
+    public function addCompetition(Competition $competition): self
+    {
+        if (!$this->competitions->contains($competition)) {
+            $this->competitions->add($competition);
+            $competition->addSponsor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetition(Competition $competition): self
+    {
+        if ($this->competitions->removeElement($competition)) {
+            $competition->removeSponsor($this);
+        }
 
         return $this;
     }

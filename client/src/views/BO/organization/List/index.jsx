@@ -9,7 +9,7 @@ import Table from '@/components/molecules/Table';
 
 export default function OrganizationList() {
     const [isLoading, setIsLoading] = useState(true);
-    const [Organizations, setOrganizations] = useState([]);
+    const [organizations, setOrganizations] = useState([]);
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
 
@@ -84,87 +84,124 @@ export default function OrganizationList() {
                 <Button
                     color="green"
                     textColor="white"
-                    name="Créer une organisation"
                     borderRadius={'30px'}
                     onClick={() => navigate('/BO/organization/create')}
-                ></Button>
+                >
+                    Créer une organisation
+                </Button>
             </div>
             <div className={style.containerList}>
                 <Table
-                    entityList={Organizations}
+                    list={organizations}
                     fields={[
-                        { property: 'id', display: 'ID' },
-                        { property: 'state', display: 'Statut' },
+                        'ID',
+                        'Statut',
+                        'Nom',
+                        'Description',
+                        'Address',
+                        'Code postal',
+                        'Ville',
+                        'Téléphone',
+                        'Adresse mails',
+                        'Site web',
+                        "Type d'organisation",
+                        'Pays',
+                        'Nom des concours',
+                    ]}
+                    actions={[
                         {
-                            property: 'organizer_name',
-                            display: "Nom de l'organisation",
+                            name: 'Modifier',
+                            action: organization =>
+                                navigate(
+                                    '/BO/organization/edit/' + organization.id
+                                ),
+                            component: (organization, callback, index) => {
+                                return (
+                                    <Button
+                                        color="blue"
+                                        textColor="white"
+                                        borderRadius={'30px'}
+                                        onClick={() => callback(organization)}
+                                    >
+                                        Modifier
+                                    </Button>
+                                );
+                            },
                         },
-                        { property: 'description', display: 'Description' },
-                        { property: 'address', display: 'Addresse' },
-                        { property: 'postcode', display: 'Code postal' },
-                        { property: 'citycode', display: 'Ville' },
-                        { property: 'number_phone', display: 'Téléphone' },
-                        { property: 'email', display: 'Adresse mails' },
-                        { property: 'website_url', display: 'Site web' },
                         {
-                            property: 'organization_type',
-                            display: "Type d'organisation",
+                            name: 'Supprimer',
+                            action: organization => {
+                                if (
+                                    confirm(
+                                        'Êtes-vous sûr de vouloir supprimer cet utilisateur ?'
+                                    )
+                                ) {
+                                    return handleDelete(organization.id);
+                                }
+                            },
+                            component: (organization, callback, index) => {
+                                return (
+                                    <Button
+                                        color="red"
+                                        textColor="white"
+                                        borderRadius={'30px'}
+                                        onClick={() => {
+                                            callback(organization);
+                                        }}
+                                    >
+                                        Supprimer
+                                    </Button>
+                                );
+                            },
                         },
-                        { property: 'country', display: 'Pays' },
                         {
-                            property: 'competitions',
-                            display: 'Nom du concours',
+                            name: 'Voir',
+                            action: organization =>
+                                navigate('/BO/organization/' + organization.id),
+                            component: (organization, callback, index) => (
+                                <Button
+                                    borderRadius={'30px'}
+                                    onClick={() => callback(organization)}
+                                >
+                                    Voir
+                                </Button>
+                            ),
                         },
                     ]}
-                    customAction={({ entity, property }) => {
-                        if (property === 'organization_type') {
-                            return entity.organization_type.label;
-                        }
-                        if (property === 'competitions') {
-                            return entity.competitions
+                >
+                    {organization => [
+                        { content: organization.id },
+                        {
+                            content:
+                                organization.state === 'validated'
+                                    ? 'Validée'
+                                    : 'En attente',
+                        },
+                        { content: organization.organizer_name },
+                        {
+                            content: organization.description,
+                        },
+                        { content: organization.address },
+                        { content: organization.postcode },
+                        {
+                            content: organization.citycode,
+                        },
+                        {
+                            content: organization.number_phone,
+                        },
+                        { content: organization.email },
+                        { content: organization.website_url },
+                        { content: organization.organization_type.label },
+                        { content: organization.country },
+                        {
+                            content: organization.competitions
                                 .map(
                                     competition => competition.competition_name
                                 )
-                                .join(', ');
-                        }
-                        if (property === 'state') {
-                            return entity.state === 'validated'
-                                ? 'Validée'
-                                : 'En attente';
-                        }
-                        return entity[property];
-                    }}
-                    actions={[
-                        {
-                            label: 'Modifier',
-                            color: 'blue',
-                            textColor: 'white',
-                            action: ({ entity }) => {
-                                navigate('/BO/organization/edit/' + entity.id);
-                            },
-                        },
-                        {
-                            label: 'Supprimer',
-                            color: 'red',
-                            textColor: 'white',
-                            action: ({ entity }) => {
-                                if (
-                                    confirm(
-                                        'Êtes-vous sûr de vouloir supprimer cette organisation ?'
-                                    )
-                                ) {
-                                    return handleDelete(entity.id);
-                                }
-                            },
-                        },
-                        {
-                            label: 'Voir',
-                            action: ({ entity }) => {
-                                navigate('/BO/organization/' + entity.id);
-                            },
+                                .join(', '),
                         },
                     ]}
-                />
+                </Table>
             </div>
         </Loader>
     );

@@ -2,40 +2,67 @@ $paddingBorder: 15px;
 $containerWidth: calc((100% - ($gapBetweenElement) * 2));
 $borderRadius: 10px;
 
-.card {
-    &Container {
-        width: calc($containerWidth / 3);
-        height: auto;
-        border-radius: $borderRadius;
-        box-shadow: 3px 5px 30px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        transition: all 0.3s ease-in-out;
+.cardContainer {
+    width: calc($containerWidth / 3);
+    height: auto;
+    border-radius: $borderRadius;
+    box-shadow: 3px 5px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease-in-out;
 
-        &:hover {
-            transform: scale(1.025);
-            z-index: 10;
-        }
-
-        @include mobile() {
-            width: calc($containerWidth / 2);
-        }
-
-        @include small-mobile() {
-            width: 100%;
-        }
+    &:hover {
+        transform: scale(1.025);
+        z-index: 1;
     }
 
+    @include mobile() {
+        width: calc($containerWidth / 2);
+    }
+
+    @include small-mobile() {
+        width: 100%;
+    }
+}
+
+.cardContainerHorizontal {
+    & > div:first-child {
+        width: auto;
+        aspect-ratio: inherit;
+
+        & > img {
+            width: 500px;
+        }
+    }
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.cardContainerVertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.card {
     &Body {
         border-radius: 10px 10px 0 0;
         background-color: $background-color-primary;
         padding: 10px $paddingBorder;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
 
         h3 {
             margin: 0 5px;
+            -webkit-line-clamp: 2;
+
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     }
 
@@ -57,13 +84,41 @@ $borderRadius: 10px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        overflow: hidden;
+        gap: 10px;
     }
 
     &Filter {
         display: flex;
         gap: 10px;
-        margin: 15px 0;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        position: relative;
+        padding-right: 30px;
+
+        // hide the scroll
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        &Container {
+            position: relative;
+            margin: 20px 0 0 0;
+        }
+
+        &Fade {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 100%;
+            background-image: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 1)
+            );
+        }
     }
 
     &Footer {
@@ -72,6 +127,7 @@ $borderRadius: 10px;
         align-items: center;
         padding: 5px $paddingBorder;
         flex-wrap: wrap;
+        height: fit-content;
 
         span {
             background: $background-color-lightgrey;

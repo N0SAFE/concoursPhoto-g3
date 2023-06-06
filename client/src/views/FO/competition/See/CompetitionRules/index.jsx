@@ -8,15 +8,12 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition, asideLabel } = useOutletContext();
+    const { competition } = useOutletContext();
     const asidePictures = competition.aside;
+    const asideLabel = competition.asideLabel;
+    
     const apiFetch = useApiFetch();
     const editorRef = useRef(null);
-    const log = () => {
-        if (editorRef.current) {
-            console.log(editorRef.current.getContent());
-        }
-    };
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
         { content: 'Règlement', to: '/rules' },
@@ -95,7 +92,7 @@ export default function () {
                     Editer
                 </button>
             </div>
-            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
+            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} idPage={competition.id} />
         </div>
     );
 }

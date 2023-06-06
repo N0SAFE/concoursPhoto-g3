@@ -1,5 +1,4 @@
 <?php
-// api/src/EventSubscriber/BookMailSubscriber.php
 
 namespace App\EventSubscriber;
 
@@ -14,7 +13,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class NotificationSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private UserRepository $userRepository, private CompetitionRepository $competitionRepository, private MailSender $mailSender, private NotificationTypeRepository $notificationTypeRepository){
+    public function __construct(private UserRepository $userRepository, private CompetitionRepository $competitionRepository, private MailSender $mailSender, private NotificationTypeRepository $notificationTypeRepository)
+    {
     }
 
     public static function getSubscribedEvents()
@@ -32,21 +32,10 @@ final class NotificationSubscriber implements EventSubscriberInterface
         };
     }
 
+    // @TODO à revoir car il ne sert plus à grand chose mais si on veut se baser dessus par exemple pour les notifs sur les inscriptions
     public function onCompetitionCreate() {
-        $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 1]);
-        $users = $this->userRepository->findByNotificationType($notificationType);
-        if ($users) {
-            foreach ($users as $user) {
-                $this->mailSender->sendMail("concoursPhoto@no-reply.com", $user->getEmail(), "Nouveau concours publié", "competition_published.html.twig", [
-                    'mail' => $user->getEmail(),
-                    'competitions' => $this->competitionRepository->getLastCompetitionPosted()
-                ]);
-            }
-        }
-    }
-
-//    public function onCompetitionResult() {
-//        $users = $this->userRepository->getAllUserByVotingDate(2);
+//        $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 1]);
+//        $users = $this->userRepository->findByNotificationType($notificationType);
 //        if ($users) {
 //
 //        }

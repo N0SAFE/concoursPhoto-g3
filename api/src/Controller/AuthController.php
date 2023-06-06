@@ -11,7 +11,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Serializer\SerializerContextBuilderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Entity\User;
 

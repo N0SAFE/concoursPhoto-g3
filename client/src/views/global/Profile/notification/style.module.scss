@@ -1,0 +1,26 @@
+.notification {
+    &Container {
+        display: flex;
+
+        & > form {
+            padding: 0;
+
+            & > div > div {
+                display: flex;
+                flex-direction: column;
+                gap: $gapBetweenElement;
+                padding: 15px;
+            }
+        }
+    }
+
+    &Group {
+        background-color: $background-color-lightgrey;
+
+        & > div {
+            display: flex;
+            flex-direction: row;
+            gap: $gapBetweenElement;
+        }
+    }
+}

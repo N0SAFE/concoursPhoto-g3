@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, redirect, useParams } from 'react-router-dom';
 import Login from '@/components/organisms/auth/Login';
 import UserList from '@/views/BO/user/List';
 import UserEdit from '@/views/BO/user/Edit';
@@ -18,10 +18,11 @@ import OrganizationEdit from '@/views/BO/organization/Edit';
 import CompetitionSee from '@/views/BO/competition/See';
 import OrganizationSee from '@/views/BO/organization/See';
 import CompetitionEdit from '@/views/BO/competition/Edit';
-import { useModal } from './contexts/ModalContext/index.jsx';
+import { useModal } from '@/contexts/ModalContext/index.jsx';
 import { toast } from 'react-toastify';
-import Myorganization from '@/views/global/Profile/myorganization/index.jsx';
-import IndexNotif from '@/views/global/Profile/notif';
+import MyorganizationInfo from '@/views/global/Profile/myorganization/info/index.jsx';
+import MyorganizationList from '@/views/global/Profile/myorganization/index.jsx';
+import ProfileNotification from '@/views/global/Profile/notification';
 import CompetitionView from '@/views/FO/competition/See/CompetitionView/index.jsx';
 import CompetitionLayout from '@/layout/CompetitionLayout';
 import CompetitionRules from '@/views/FO/competition/See/CompetitionRules/index.jsx';
@@ -30,13 +31,18 @@ import CompetitionJury from '@/views/FO/competition/See/CompetitionJury';
 import CompetitionPictures from '@/views/FO/competition/See/CompetitionPictures';
 import CompetitionResults from '@/views/FO/competition/See/CompetitionResults/index.jsx';
 import PageLayout from '@/layout/PageLayout';
-import ProfileLayout from './layout/ProfileLayout';
+import ProfileLayout from '@/layout/ProfileLayout';
 import CompetitionParticipation from '@/views/global/Profile/participation';
-import CreateCompetitions from './views/FO/competition/Create/index.jsx';
-import CreateOrganization from './views/FO/organization/index.jsx';
+import CreateCompetitions from '@/views/FO/competition/Create/index.jsx';
+import CreateOrganization from '@/views/FO/organization/index.jsx';
+import MyorganizationLayout from '@/layout/ProfileLayout/MyorganizationLayout';
+import MyorganizationAdmin from './views/global/Profile/myorganization/admin/index.jsx';
+import useApiFetch from './hooks/useApiFetch.js';
+import { useEffect, useState } from 'react';
 
 function Router() {
     const { setModalContent, showModal } = useModal();
+    const apiFetch = useApiFetch();
     return (
         <Routes>
             <Route
@@ -86,19 +92,80 @@ function Router() {
                     element={
                         <GuardedRoute
                             verify={({ isLogged }) => isLogged}
-                            fallback={
-                                <Navigate to="/auth/login" replace={true} />
-                            }
+                            fallback={() => {
+                                toast.info('Veuillez vous connecter');
+                                setModalContent(
+                                    <Login forceRedirect="/profile" />
+                                );
+                                showModal();
+                            }}
                         />
                     }
                 >
                     <Route path="" element={<ProfileLayout />}>
+                        <Route path="" element={<Navigate to="me" />} />
                         <Route path="me" element={<Profile />} />
-                        <Route path="preference" element={<IndexNotif />} />
-                        <Route
-                            path="myorganization"
-                            element={<Myorganization />}
-                        />
+                        <Route path="preference" element={<ProfileNotification />} />
+                        <Route path="myorganization">
+                            <Route path="" element={<MyorganizationList />} />
+                            <Route
+                                path=":id"
+                                element={
+                                    <GuardedRoute
+                                        verify={({ me }) => {
+                                            const { id: _idOrganisation } =
+                                                useParams();
+                                            const idOrganisation =
+                                                parseInt(_idOrganisation);
+                                            if (isNaN(idOrganisation)) {
+                                                return false;
+                                            }
+                                            return {
+                                                state: !!me.Manage.find(
+                                                    o => (o.id === idOrganisation)
+                                                ),
+                                                context: {
+                                                    idOrganisation
+                                                }
+                                            };
+                                        }}
+                                        fallback={({ me }) => {
+                                            if (me.Manage.length > 0) {
+                                                return (
+                                                    <Navigate
+                                                        to={
+                                                            '/profile/myorganization/' +
+                                                            me.Manage[0].id
+                                                        }
+                                                    />
+                                                );
+                                            } else {
+                                                return <NotFound />
+                                            }
+                                        }}
+                                    />
+                                }
+                            >
+                                <Route
+                                    path=""
+                                    element={<MyorganizationLayout />}
+                                >
+                                    <Route
+                                        path=""
+                                        element={<MyorganizationInfo />}
+                                    />
+                                    <Route
+                                        path="admin"
+                                        element={<MyorganizationAdmin />}
+                                    />
+                                    <Route
+                                        path="competition"
+                                        element={<div />}
+                                    />
+                                    <Route path="pub" element={<div />} />
+                                </Route>
+                            </Route>
+                        </Route>
                         <Route
                             path="participations"
                             element={<CompetitionParticipation />}

@@ -4,8 +4,9 @@ import Navlink from '@/components/molecules/Navlink';
 import { useOutletContext } from 'react-router-dom';
 
 export default function () {
-    const { competition, asideLabel } = useOutletContext();
+    const { competition } = useOutletContext();
     const asidePictures = competition.aside;
+    const asideLabel = competition.asideLabel;
 
     const competitionRouteList = [
         { content: 'Le concours', to: '' },
@@ -15,8 +16,6 @@ export default function () {
         { content: 'Les photos', to: '/pictures' },
         { content: 'Résultats', to: '/results' },
     ];
-
-    console.log(competition.memberOfTheJuries);
 
     return (
         <div className={style.jury}>
@@ -43,7 +42,7 @@ export default function () {
                     </div>
                 )}
             </div>
-            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} />
+            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} idPage={competition.id} />
         </div>
     );
 }
