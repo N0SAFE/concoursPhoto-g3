@@ -69,7 +69,6 @@ export default function ProfileLayout() {
                     item['@id'],
                 ])
             );
-            console.log(_notificationTypes);
             setNotificationTypePossibility({
                 map: _notificationTypes,
                 isLoading: false,

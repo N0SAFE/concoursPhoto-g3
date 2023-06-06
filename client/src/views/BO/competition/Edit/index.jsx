@@ -261,7 +261,6 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
         return () => setTimeout(() => controller.abort());
     }, []);
 
-    console.log(updatedFile.competitionVisual)
 
     return (
         <Loader active={isLoading}>
