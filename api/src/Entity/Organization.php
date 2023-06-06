@@ -118,6 +118,7 @@ class Organization
     private ?\DateTimeInterface $last_update_date = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups(['organization'])]
     private ?File $organization_visual = null;
 
     public function __construct()
@@ -132,6 +133,16 @@ class Organization
     #[Groups(['organization'])]
     public function getCompetitionCount(): int {
         return $this->competitions->count();
+    }
+    #[Groups(['organization'])]
+    public function getActiveCompetitionCount(): int {
+        $count = 0;
+        foreach($this->competitions as $competition) {
+            if($competition->getState() != 6 ) {
+                $count++;
+            }
+        }
+        return $count;
     }
     
     #[Groups(['organization'])]

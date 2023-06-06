@@ -49,7 +49,7 @@ export default function Header(environment) {
         listLeft.push({ type: 'classic', title: 'Accueil', to: '/' });
         listLeft.push({ type: 'classic', title: 'Concours photo', to: '/' });
         listLeft.push({ type: 'classic', title: 'Photographes', to: '/photographer' });
-        listLeft.push({ type: 'classic', title: 'Organisateurs', to: '/' });
+        listLeft.push({ type: 'classic', title: 'Organisateurs', to: '/organization' });
         listLeft.push({
             type: 'classic',
             title: 'Créer votre concours',

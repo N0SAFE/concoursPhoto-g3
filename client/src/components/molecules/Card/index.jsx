@@ -11,12 +11,9 @@ export default function Card({
     stats = [],
     finalDate,
     orientation = 'horizontal',
+    onClick = () => {},
 }) {
     const navigate = useNavigate();
-
-    const handleClick = idContent => {
-        navigate('/competition/' + idContent);
-    };
 
     return (
         <div
@@ -27,7 +24,7 @@ export default function Card({
                     ? style.cardContainerHorizontal
                     : style.cardContainerVertical)
             }
-            onClick={() => handleClick(idContent)}
+            onClick={() => onClick(idContent)}
         >
             <div className={style.cardHeader}>
                 <img

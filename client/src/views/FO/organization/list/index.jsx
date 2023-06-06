@@ -16,14 +16,13 @@ import Card from '@/components/molecules/Card/index.jsx';
 const DEFAULT_PAGE = 1;
 const DEFAULT_ITEMS_PER_PAGE = 9;
 
-export default function Home() {
+export default function ListOrganization() {
     const [isLoading, setIsLoading] = useState(true);
-    const navigate = useNavigate();
     const [stats, setStats] = useState({});
     const apiFetch = useApiFetch();
-    const [competitions, setCompetitions] = useState([]);
+    const [organization, setOrganization] = useState([]);
+    const [totalitems, setTotalItems] = useState(0);
     const [paginationOptions, setPaginationOptions] = useState({});
-    const [promotedCompetitions, setPromotedCompetitions] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams({});
     const [page, setPage] = useState(
         isNaN(parseInt(searchParams.get('page'))) || searchParams.get('page') < 1
@@ -51,12 +50,10 @@ export default function Home() {
             });
     };
 
-    function getPromotedCompetitions(controller) {
+    function getOrganization(controller) {
         const now = new Date();
         return apiFetch(
-            '/competitions?is_promoted=1&groups[]=competition&groups[]=file&groups[]=competition_visual&results_date[after]=' +
-                format(now, 'yyyy-MM-dd') +
-                '&properties[]=competition_visual',
+            '/organizations?&properties[]=organizer_name&properties[]=organization_visual&groups[]=file&groups[]=organization',
             {
                 method: 'GET',
                 headers: {
@@ -71,7 +68,7 @@ export default function Home() {
                     throw new Error(data.message);
                 }
                 console.debug(data);
-                setPromotedCompetitions(data['hydra:member']);
+                setOrganization(data['hydra:member']);
                 return data['hydra:member'];
             });
     }
@@ -82,13 +79,13 @@ export default function Home() {
             itemsPerPage: itemsPerPage || DEFAULT_ITEMS_PER_PAGE,
         });
         setCardLoading(true);
-        getListCompetitions().then(() => setCardLoading(false));
+        getListOraganization().then(() => { setCardLoading(false); setIsLoading(false);});
         return () => {
             setTimeout(() => controller?.abort());
         };
     }, [page, itemsPerPage]);
 
-    function getListCompetitions() {
+    function getListOraganization() {
         const now = new Date();
         const pageToLoad = page === null ? DEFAULT_PAGE : page;
         const itemsPerPageToLoad =
@@ -98,7 +95,7 @@ export default function Home() {
         const _controller = new AbortController();
         setController(_controller);
         return apiFetch(
-            `/competitions?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&groups[]=competition&groups[]=file&groups[]=competition_visual&results_date[after]=${actualDate}&properties[]=competition_visual&properties[]=competition_name&properties[]=state&properties[]=numberOfVotes&properties[]=numberOfParticipants&properties[]=numberOfPictures&properties[]=results_date&properties[organization][]=users&properties[]=theme&properties[]=id&properties[]=consultation_count`,
+            `/organizations?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&properties[]=organizer_name&properties[]=organization_visual&properties[]=activeCompetitionCount&groups[]=file&groups[]=organization`,
             {
                 method: 'GET',
                 headers: {
@@ -113,8 +110,9 @@ export default function Home() {
                     throw new Error(data.message);
                 }
                 console.debug(data);
-                setCompetitions(data['hydra:member']);
+                setOrganization(data['hydra:member']);
                 setPaginationOptions(data['hydra:pagination']);
+                setTotalItems(data['hydra:totalItems']);
                 return data['hydra:member'];
             })
             .catch(error => {
@@ -123,103 +121,34 @@ export default function Home() {
             });
     }
 
-    useEffect(() => {
-        const controller = new AbortController();
-        const promise = Promise.all([
-            getStats(controller),
-            getPromotedCompetitions(controller),
-        ]).then(function () {
-            setIsLoading(false);
-        });
-
-        if (import.meta.env.MODE === 'development') {
-            toast.promise(promise, {
-                pending: "Chargement de la page d'accueil",
-                success: "Page d'accueil chargée",
-                error: "Erreur lors du chargement de la page d'accueil",
-            });
-        }
-
-        return () => setTimeout(() => controller.abort());
-    }, []);
-
     return (
         <Loader active={isLoading}>
             <div className={style.homeContainer}>
                 <div className={style.homeBanner}>
                     <div>
-                        <h1>Le portail des concours photo</h1>
+                        <h1>Rechercher un organisateur de concours</h1>
                     </div>
-                    <FOStats stats={stats} />
                 </div>
-                <FOPortalList
-                    boxSingle={{
-                        type: 'slider',
-                        path: '/fixtures-upload/952-2160-2160.jpg',
-                        alt: "Photo de la page d'accueil",
-                    }}
-                    boxSingleContents={promotedCompetitions.map(competition => {
-                        return competition.competition_visual.path;
-                    })}
-                    boxUp={{
-                        type: 'picture',
-                        path: '/fixtures-upload/952-2160-2160.jpg',
-                        alt: "Photo de la page d'accueil",
-                    }}
-                    boxDown={{
-                        type: 'picture',
-                        path: '/fixtures-upload/952-2160-2160.jpg',
-                        alt: "Photo de la page d'accueil",
-                    }}
-                />
                 <Pagination
-                    items={competitions}
+                    items={organization}
                     totalPageCount={paginationOptions['Max-Page']}
                     defaultCurrentPage={page}
                     defaultItemPerPage={itemsPerPage}
-                    renderItem={function (competition) {
-                        const organizer = competition.organization?.users.map(
-                            user => user.firstname + ' ' + user.lastname || null
-                        );
-                        const themes = competition?.theme.map(
-                            item => item.label
-                        );
-                        const state = competition.state
-                            ? 'En cours'
-                            : 'Terminé';
+                    isLoading={cardLoading}
+                    renderItem={function (organization) {
                         return (
                             <Card
-                                onClick={() => { navigate(`/competition/${competition.id}`) }
+                                idContent={organization.id}
+                                onClick={e => { }
                                 }
-                                idContent={competition.id}
-                                title={competition.competition_name}
-                                imagePath={competition.competition_visual.path}
-                                filters={[
-                                    ...organizer,
-                                    ...themes,
-                                    competition.state ? 'En cours' : 'Terminé',
-                                ].filter(i => i !== null)}
+                                title={organization.organizer_name}
+                                imagePath={organization.organization_visual.path}
                                 stats={[
                                     {
-                                        name: competition.numberOfParticipants,
-                                        icon: 'user-plus',
-                                    },
-                                    {
-                                        name: competition.numberOfPictures,
-                                        icon: 'camera',
-                                    },
-                                    {
-                                        name: competition.numberOfVotes,
-                                        icon: 'like',
+                                        name: organization.activeCompetitionCount + ' concours actifs',
+                                        icon: 'shutter',
                                     },
                                 ]}
-                                finalDate={new Date(
-                                    competition.results_date
-                                ).toLocaleDateString('fr-FR', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                })}
                                 orientation={
                                     cardDisposition === 'grid'
                                         ? 'vertical'
@@ -240,7 +169,7 @@ export default function Home() {
                             <div>
                                 <div className={style.homeDisposition}>
                                     <div>
-                                        <h2>Derniers concours photo publiés</h2>
+                                        <h2>{totalitems } résultats</h2>
                                     </div>
                                     <div>
                                         <div>
