@@ -1,23 +1,18 @@
 import Input from '@/components/atoms/Input';
 import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch';
-import { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import useFilesUpdater from '@/hooks/useFilesUploader.js';
-import { Link, useNavigate } from 'react-router-dom';
-import Loader from '@/components/atoms/Loader/index.jsx';
+import {useState, useEffect} from 'react';
+import {toast} from 'react-toastify';
 import style from './style.module.scss';
 import Button from '@/components/atoms/Button';
-import { Link } from 'react-router-dom';
-import { useModal } from '@/contexts/ModalContext';
-import { useNavigate } from 'react-router-dom';
-import Login from '@/components/organisms/auth/Login';
+import {useModal} from '@/contexts/ModalContext';
+import {useNavigate} from 'react-router-dom';
 import useLocationPosibility from '@/hooks/useLocationPosibility.js';
 
 export default function CreateCompetitions() {
     const apiFetch = useApiFetch();
     const [gtc, setGtc] = useState(false);
-    const { hideModal, setModalContent } = useModal();
+    const {hideModal, setModalContent} = useModal();
     const navigate = useNavigate();
 
     const [entityPossibility, setEntityPossibility] = useState({
@@ -38,26 +33,26 @@ export default function CreateCompetitions() {
         dateOfBirth: null,
     });
     const [locationPossibility, updateLocationPossibility] =
-    useLocationPosibility(['cities'], {}, { updateOnStart: false });
+        useLocationPosibility(['cities'], {}, {updateOnStart: false});
     const citiesPossibility = locationPossibility.citiesPossibility.map(c => ({
-    label: `${c.nom} [${c.codesPostaux.join(',')}]`,
-    value: c.code,
+        label: `${c.nom} [${c.codesPostaux.join(',')}]`,
+        value: c.code,
     }));
     const postalCodesPossibility = [
-    ...new Set(
-        locationPossibility.citiesPossibility
-            .map(c => c.codesPostaux)
-            .flat()
-    ),
-    ].map(c => ({ label: c, value: c }));
+        ...new Set(
+            locationPossibility.citiesPossibility
+                .map(c => c.codesPostaux)
+                .flat()
+        ),
+    ].map(c => ({label: c, value: c}));
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] =
-    useState(false);
+        useState(false);
 
     const updateEntity = (key, value) => {
-        setEntity({ ...entity, [key]: value });
+        setEntity({...entity, [key]: value});
     };
     const updateEntityState = (key, value) => {
-        setEntity({ ...entity, [key]: value });
+        setEntity({...entity, [key]: value});
     };
 
     const [errors, setErrors] = useState({});
@@ -69,7 +64,7 @@ export default function CreateCompetitions() {
             .then(r => r.json())
             .then(data => {
                 return data['hydra:member'].map(function (item) {
-                    return { label: item.label, value: item['@id'] };
+                    return {label: item.label, value: item['@id']};
                 });
             });
     };
@@ -78,7 +73,7 @@ export default function CreateCompetitions() {
         const promise = Promise.all([
             getGendersPossibility(),
         ]).then(([genders]) =>
-            setEntityPossibility({ genders })
+            setEntityPossibility({genders})
         );
         toast.promise(promise, {
             pending: 'Chargement des possibilités',
@@ -127,36 +122,40 @@ export default function CreateCompetitions() {
 
     return (
         <div>
-             <h1>Créez votre concours</h1>
-            <div  style={{marginBottom: "2%"}} className={style.formWrapper}>
+            <h1>Créez votre concours</h1>
+            <div style={{marginBottom: "2%"}} className={style.formWrapper}>
                 <div className={style.formColumn}>
-               
-                <h2 style={{marginTop: "15px"}}>Qui peut créer un concours photo ?</h2>
-                <p>La création d’un concours est ouvert aux organisations suivantes :
-                    <li style={{marginTop: "10px"}}> Mairies</li>  
-                    <li> Offices de tourisme</li>
-                    <li> Agglomérations</li>
-                    <li> Départements</li>
-                    <li> Régions</li>
-                    <li> Collectivités territoriales</li>
-                    <li> Organisations gouvernementales</li>
-                    <li> Organismes de droit public</li>
-                    <li> Entreprises privées</li>
-                    <li> Associations, ONG</li>
+
+                    <h2 style={{marginTop: "15px"}}>Qui peut créer un concours photo ?</h2>
+                    <p>La création d’un concours est ouvert aux organisations suivantes :
+                        <li style={{marginTop: "10px"}}> Mairies</li>
+                        <li> Offices de tourisme</li>
+                        <li> Agglomérations</li>
+                        <li> Départements</li>
+                        <li> Régions</li>
+                        <li> Collectivités territoriales</li>
+                        <li> Organisations gouvernementales</li>
+                        <li> Organismes de droit public</li>
+                        <li> Entreprises privées</li>
+                        <li> Associations, ONG</li>
                     </p>
                 </div>
                 <div className={style.formColumn}>
                     <h2>Combien ça coûte</h2>
-                    <p>Le prix est établi pour chaque concours publié et il depend de plusieurs critères : 
-                        <li style={{marginTop: "10px"}}> Nature de votre organisation (privée, publique, association/ONG)</li>
+                    <p>Le prix est établi pour chaque concours publié et il depend de plusieurs critères :
+                        <li style={{marginTop: "10px"}}> Nature de votre organisation (privée, publique,
+                            association/ONG)</li>
                         <li> Taille de votre organisation (moyens budgétaires)</li>
                         <li> Objet du concours photo, étendue, audience visée.</li>
 
-                        <p style={{marginTop: "10px"}}>Pour recevoir un devis, veuillez renseigner le formulaire de demande de création suivant qui va créer automatiquement
-                            un compte membre et une fiche organisme associée. Votre demande sera étudiée et vous recevrez un devis. Après avoir encaissé le paiement,
+                        <p style={{marginTop: "10px"}}>Pour recevoir un devis, veuillez renseigner le formulaire de
+                            demande de création suivant qui va créer automatiquement
+                            un compte membre et une fiche organisme associée. Votre demande sera étudiée et vous
+                            recevrez un devis. Après avoir encaissé le paiement,
                             vous pourrez paramétrer et publier votre concours.</p>
-                    
-                            <p style={{marginTop: "10px"}}>Si vous avez déjà créé un compte membre, veuillez vous connecter puis rendez-vous dans 
+
+                        <p style={{marginTop: "10px"}}>Si vous avez déjà créé un compte membre, veuillez vous connecter
+                            puis rendez-vous dans
                             “Mon profil / Mes organisations / Concours”</p>
                     </p>
                 </div>
@@ -186,261 +185,261 @@ export default function CreateCompetitions() {
                             postcode: entity.postcode.value,
                             isVerified: false,
                             plainPassword: entity.password || undefined,
-                    };
-                    if (
-                        data.firstname &&
-                        data.lastname &&
-                        data.dateOfBirth &&
-                        data.email
-                    ) {
-                        if (!data.plainPassword) {
-                            reject('Le mot de passe est obligatoire');
-                            return;
-                        } else if (data.plainPassword.length < 8) {
-                            reject(
-                                'Le mot de passe doit faire minimum 8 caractères !'
-                            );
-                            return;
-                        } else if (
-                            !data.plainPassword.match(
-                                /^(?=.*[A-Z])(?=.*\d).+$/
-                            )
+                        };
+                        if (
+                            data.firstname &&
+                            data.lastname &&
+                            data.dateOfBirth &&
+                            data.email
                         ) {
-                            reject(
-                                'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre !'
-                            );
-                            return;
+                            if (!data.plainPassword) {
+                                reject('Le mot de passe est obligatoire');
+                                return;
+                            } else if (data.plainPassword.length < 8) {
+                                reject(
+                                    'Le mot de passe doit faire minimum 8 caractères !'
+                                );
+                                return;
+                            } else if (
+                                !data.plainPassword.match(
+                                    /^(?=.*[A-Z])(?=.*\d).+$/
+                                )
+                            ) {
+                                reject(
+                                    'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre !'
+                                );
+                                return;
+                            }
+                            try {
+                                await apiFetch('/users', {
+                                    method: 'POST',
+                                    body: JSON.stringify(data),
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                })
+                                    .then(r => r.json())
+                                    .then(data => {
+                                        if (data['@type'] === 'hydra:Error') {
+                                            reject(data);
+                                            return;
+                                        }
+                                        resolve(data);
+                                    });
+                            } catch (e) {
+                                reject(e);
+                            }
+                        } else {
+                            reject('Veuillez remplir tous les champs');
                         }
-                        try {
-                            await apiFetch('/users', {
-                                method: 'POST',
-                                body: JSON.stringify(data),
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                            })
-                                .then(r => r.json())
-                                .then(data => {
-                                    if (data['@type'] === 'hydra:Error') {
-                                        reject(data);
-                                        return;
-                                    }
-                                    resolve(data);
-                                });
-                        } catch (e) {
-                            reject(e);
-                        }
-                    } else {
-                        reject('Veuillez remplir tous les champs');
-                    }
-                });
-                promise.then(hideModal);
-                toast.promise(promise, {
-                    pending: 'Création du compte',
-                    success: 'Compte créé',
-                    error: {
-                        render({ data }) {
-                            return data;
+                    });
+                    promise.then(hideModal);
+                    toast.promise(promise, {
+                        pending: 'Création du compte',
+                        success: 'Compte créé',
+                        error: {
+                            render({data}) {
+                                return data;
+                            },
                         },
-                    },
-                });
-            }}
-            hasSubmit={true}
-        >
-                  
-        
+                    });
+                }}
+                hasSubmit={true}
+            >
+
+
                 <div className={style.formWrapper}>
                     <div className={style.formColumn}>
                         <Input
-                        type="text"
-                        name="lastname"
-                        label="Nom*"
-                        extra={{ required: true }}
-                        onChange={d => updateEntity('lastname', d)}
-                        defaultValue={entity.lastname}
-                    />
-                    <Input
-                        type="text"
-                        name="Prénom"
-                        label="Prénom*"
-                        extra={{ required: true }}
-                        onChange={d => updateEntity('firstname', d)}
-                        defaultValue={entity.firstname}
-                    />
-                    <Input
-                        type="email"
-                        name="email"
-                        label="Adresse mail*"
-                        extra={{ required: true }}
-                        onChange={d => updateEntity('email', d)}
-                        defaultValue={entity.email}
-                    />
-                    <Input
-                        type="password"
-                        name="password"
-                        label="Mot de passe*"
-                        extra={{
-                            required: true,
-                            placeholder:
-                                '8 caractères min dont 1 chiffre et 1 lettre majuscule',
-                        }}
-                        onChange={d => updateEntity('password', d)}
-                        defaultValue={entity.password}
-                    />
-                    </div>
-                    <div className={style.formColumn}>
-                    <Input
-                        type="tel"
-                        name="phoneNumber"
-                        label="Numéro de téléphone"
-                        extra={{ required: true }}
-                        onChange={d => updateEntityState('phoneNumber', d)}
-                        defaultValue={entity.phoneNumber}
-                    />
-                    <Input
-                        type="date"
-                        name="dateOfBirth"
-                        label="Date de naissance*"
-                        extra={{ required: true }}
-                        onChange={d => updateEntity('dateOfBirth', d)}
-                        defaultValue={entity.dateOfBirth}
-                    />
-                    <div style={{ display: 'flex', gap: '30px' }}>
-                        <Input
-                            type="select"
-                            name="city"
-                            label="Ville"
-                            extra={{
-                                isLoading: locationPossibilityIsLoading,
-                                value: entity.city,
-                                isClearable: true,
-                                required: true,
-                                options: citiesPossibility,
-                                multiple: false,
-                                onInputChange: (cityName, { action }) => {
-                                    if (action === 'menu-close') {
-                                        updateLocationPossibility({
-                                            id: 'city',
-                                            args: {
-                                                codeCity: entity.city?.value,
-                                                city: '',
-                                            },
-                                        });
-                                    }
-                                    if (action === 'input-change') {
-                                        setLocationPossibilityIsLoading(true);
-                                        updateLocationPossibility({
-                                            id: 'city',
-                                            args: { city: cityName },
-                                        }).then(function () {
-                                            setLocationPossibilityIsLoading(
-                                                false
-                                            );
-                                        });
-                                    }
-                                },
-                            }}
-                            onChange={d => updateEntityState('city', d)}
+                            type="text"
+                            name="lastname"
+                            label="Nom*"
+                            extra={{required: true}}
+                            onChange={d => updateEntity('lastname', d)}
+                            defaultValue={entity.lastname}
                         />
                         <Input
-                            type="select"
-                            name="postalCode"
-                            label="Code postal"
+                            type="text"
+                            name="Prénom"
+                            label="Prénom*"
+                            extra={{required: true}}
+                            onChange={d => updateEntity('firstname', d)}
+                            defaultValue={entity.firstname}
+                        />
+                        <Input
+                            type="email"
+                            name="email"
+                            label="Adresse mail*"
+                            extra={{required: true}}
+                            onChange={d => updateEntity('email', d)}
+                            defaultValue={entity.email}
+                        />
+                        <Input
+                            type="password"
+                            name="password"
+                            label="Mot de passe*"
                             extra={{
-                                isLoading: locationPossibilityIsLoading,
-                                value: entity.postcode,
-                                isClearable: true,
                                 required: true,
-                                options: postalCodesPossibility,
-                                multiple: false,
-                                onInputChange: (_postcode, { action }) => {
-                                    if (action === 'menu-close') {
-                                        updateLocationPossibility({
-                                            id: 'city',
-                                            args: {
-                                                postcode:
+                                placeholder:
+                                    '8 caractères min dont 1 chiffre et 1 lettre majuscule',
+                            }}
+                            onChange={d => updateEntity('password', d)}
+                            defaultValue={entity.password}
+                        />
+                    </div>
+                    <div className={style.formColumn}>
+                        <Input
+                            type="tel"
+                            name="phoneNumber"
+                            label="Numéro de téléphone"
+                            extra={{required: true}}
+                            onChange={d => updateEntityState('phoneNumber', d)}
+                            defaultValue={entity.phoneNumber}
+                        />
+                        <Input
+                            type="date"
+                            name="dateOfBirth"
+                            label="Date de naissance*"
+                            extra={{required: true}}
+                            onChange={d => updateEntity('dateOfBirth', d)}
+                            defaultValue={entity.dateOfBirth}
+                        />
+                        <div style={{display: 'flex', gap: '30px'}}>
+                            <Input
+                                type="select"
+                                name="city"
+                                label="Ville"
+                                extra={{
+                                    isLoading: locationPossibilityIsLoading,
+                                    value: entity.city,
+                                    isClearable: true,
+                                    required: true,
+                                    options: citiesPossibility,
+                                    multiple: false,
+                                    onInputChange: (cityName, {action}) => {
+                                        if (action === 'menu-close') {
+                                            updateLocationPossibility({
+                                                id: 'city',
+                                                args: {
+                                                    codeCity: entity.city?.value,
+                                                    city: '',
+                                                },
+                                            });
+                                        }
+                                        if (action === 'input-change') {
+                                            setLocationPossibilityIsLoading(true);
+                                            updateLocationPossibility({
+                                                id: 'city',
+                                                args: {city: cityName},
+                                            }).then(function () {
+                                                setLocationPossibilityIsLoading(
+                                                    false
+                                                );
+                                            });
+                                        }
+                                    },
+                                }}
+                                onChange={d => updateEntityState('city', d)}
+                            />
+                            <Input
+                                type="select"
+                                name="postalCode"
+                                label="Code postal"
+                                extra={{
+                                    isLoading: locationPossibilityIsLoading,
+                                    value: entity.postcode,
+                                    isClearable: true,
+                                    required: true,
+                                    options: postalCodesPossibility,
+                                    multiple: false,
+                                    onInputChange: (_postcode, {action}) => {
+                                        if (action === 'menu-close') {
+                                            updateLocationPossibility({
+                                                id: 'city',
+                                                args: {
+                                                    postcode:
                                                     entity.postcode?.value,
-                                            },
-                                        });
-                                    }
-                                    if (
-                                        action === 'input-change' &&
-                                        _postcode.length === 5
-                                    ) {
-                                        setLocationPossibilityIsLoading(true);
-                                        updateLocationPossibility({
-                                            id: 'city',
-                                            args: { postcode: _postcode },
-                                        }).then(function () {
-                                            setLocationPossibilityIsLoading(
-                                                false
-                                            );
-                                        });
-                                    }
-                                },
-                            }}
-                            onChange={d => updateEntityState('postcode', d)}
+                                                },
+                                            });
+                                        }
+                                        if (
+                                            action === 'input-change' &&
+                                            _postcode.length === 5
+                                        ) {
+                                            setLocationPossibilityIsLoading(true);
+                                            updateLocationPossibility({
+                                                id: 'city',
+                                                args: {postcode: _postcode},
+                                            }).then(function () {
+                                                setLocationPossibilityIsLoading(
+                                                    false
+                                                );
+                                            });
+                                        }
+                                    },
+                                }}
+                                onChange={d => updateEntityState('postcode', d)}
+                            />
+                        </div>
+                    </div>
+
+                </div>
+
+                <h2 style={{marginTop: "2%"}}>A propos du concours que vous souhaitez publier</h2>
+                <div style={{marginBottom: "1%"}} className={style.formWrapper}>
+                    <div className={style.formColumn}>
+                        <Input
+                            type="select"
+                            name="zone"
+                            label="Quelle est l’étendue/zone de visibilité du concours ? *"
+                        />
+                        <Input
+                            type="text"
+                            name="Combien y-a-t-il de prix à gagner ? *"
+                            label="Combien y-a-t-il de prix à gagner ? *"
                         />
                     </div>
-                    </div>
-                  
-                </div>
-                
-                    <h2 style={{ marginTop: "2%"}}>A propos du concours que vous souhaitez publier</h2>
-                    <div style={{ marginBottom: "1%"}} className={style.formWrapper}>
                     <div className={style.formColumn}>
-                    <Input
-                        type="select"
-                        name="zone"
-                        label="Quelle est l’étendue/zone de visibilité du concours ? *"
-                    />
-                    <Input
-                        type="text"
-                        name="Combien y-a-t-il de prix à gagner ? *"
-                        label="Combien y-a-t-il de prix à gagner ? *"
-                    />
-                    </div>
-                    <div className={style.formColumn}>
-                    <Input
-                        type="text"
-                        name="Combien y-a-t-il de sponsors ? *"
-                        label="Combien y-a-t-il de sponsors ? *"
-                    />
-                    <Input
-                        type="text"
-                        name="Quelle est la valeur totale des dotations/prix à gagner ? *"
-                        label="Quelle est la valeur totale des dotations/prix à gagner ? *"
-                    />
+                        <Input
+                            type="text"
+                            name="Combien y-a-t-il de sponsors ? *"
+                            label="Combien y-a-t-il de sponsors ? *"
+                        />
+                        <Input
+                            type="text"
+                            name="Quelle est la valeur totale des dotations/prix à gagner ? *"
+                            label="Quelle est la valeur totale des dotations/prix à gagner ? *"
+                        />
                     </div>
                 </div>
                 <Input
                     type="textarea"
                     name="Quelle est le thème et la nature du concours ? *"
                     label="Quelle est le thème et la nature du concours ? *"
-                    extra={{ rows: 16 }}
-                    
+                    extra={{rows: 16}}
+
                 />
                 <Input
-                            type="checkbox"
-                            onChange={setGtc}
-                            defaultValue={gtc}
-                        />
-                        <p>
-                            En validant ce formulaire, j’accepte qu’un compte membre soit créé pour traiter ma demande.
-                        </p>
+                    type="checkbox"
+                    onChange={setGtc}
+                    defaultValue={gtc}
+                />
+                <p>
+                    En validant ce formulaire, j’accepte qu’un compte membre soit créé pour traiter ma demande.
+                </p>
                 <div className={style.registerSubmit}>
-                        <Button
-                            type="submit"
-                            name="Envoyer la demande"
-                            color={'black'}
-                            textColor={'white'}
-                            padding={'14px 30px'}
-                            border={false}
-                            borderRadius={'44px'}
-                            width={'245px'}
-                        />
-            </div>
-        </Form>
+                    <Button
+                        type="submit"
+                        name="Envoyer la demande"
+                        color={'black'}
+                        textColor={'white'}
+                        padding={'14px 30px'}
+                        border={false}
+                        borderRadius={'44px'}
+                        width={'245px'}
+                    />
+                </div>
+            </Form>
         </div>
     );
 }

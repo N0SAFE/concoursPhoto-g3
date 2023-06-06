@@ -39,5 +39,5 @@ final class NotificationSubscriber implements EventSubscriberInterface
 //        if ($users) {
 //
 //        }
-//    }
+    }
 }
