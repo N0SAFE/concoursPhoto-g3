@@ -437,7 +437,7 @@ export default function CreateCompetitions() {
                         border={false}
                         borderRadius={'44px'}
                         width={'245px'}
-                    />
+                    >Envoyer la demande</Button>
                 </div>
             </Form>
         </div>
