@@ -23,7 +23,7 @@ export default function () {
 
     const getPictures = async (page, itemsPerPage) => {
         setIsPageLoading(true);
-        return await apiFetch(`/pictures?groups[]=file&page=${page}&itemsPerPage=${itemsPerPage}&properties[]=users&properties[]=consultation_count&groups[]=user:read&competition=/competitions/${competition.id}`,
+        return await apiFetch(`/pictures?groups[]=file&page=${page}&itemsPerPage=${itemsPerPage}&properties[]=users&properties[]=consultationCount&groups[]=user:read&competition=/competitions/${competition.id}`,
             {
                 method: 'GET',
                 params: {
@@ -95,7 +95,7 @@ export default function () {
                                                 <div>
                                                     <img
                                                         src={apiPath(picture.file.path)}
-                                                        alt={picture.picture_name}
+                                                        alt={picture.pictureName}
                                                     />
                                                 </div>
                                                 <div className={style.picturesStats}>
@@ -108,7 +108,7 @@ export default function () {
                                                     </div>
                                                     <div className={style.picturesActions}>
                                                         <Chip
-                                                            title={competition.consultation_count}
+                                                            title={competition.consultationCount}
                                                             backgroundColor={'#F5F5F5'}
                                                             icon={'shutter'}
                                                         />

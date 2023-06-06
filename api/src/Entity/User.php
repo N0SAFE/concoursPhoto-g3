@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete()
     ],
     normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:write', 'user_link:write']]
+    denormalizationContext: ['groups' => ['user:write', 'userLink:write']]
 )]
 #[ApiFilter(PropertyFilter::class)]
 #[ApiFilter(SearchFilter::class,properties: ['roles'=>'partial'])]

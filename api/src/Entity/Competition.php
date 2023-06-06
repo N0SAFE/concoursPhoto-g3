@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiFilter(DateFilter::class, properties: [
-    "results_date"
+    "resultsDate"
 ])]
 #[ApiFilter(PropertyFilter::class)]
 #[ApiFilter(SearchFilter::class, properties: [
@@ -151,14 +151,15 @@ class Competition
     #[Groups(['competition:read', 'user:current:read'])]
     private array $regionCriteria = [];
 
+    #[ORM\Column(type: 'json')]
     #[Groups(['competition:read', 'user:current:read'])]
     private array $departmentCriteria = [];
-
 
     #[ORM\Column(type: 'json')]
     #[Groups(['competition:read', 'user:current:read'])]
     private array $cityCriteria = [];
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[Groups(['competition:competitionVisual:read', 'user:current:read'])]
     private ?File $competitionVisual = null;
 
@@ -621,7 +622,7 @@ class Competition
         return $this->pictures;
     }
 
-    public function addPicture(Picture $picture): self
+    public function addPictures(Picture $picture): self
     {
         if (!$this->pictures->contains($picture)) {
             $this->pictures->add($picture);
@@ -631,7 +632,7 @@ class Competition
         return $this;
     }
 
-    public function removePicture(Picture $picture): self
+    public function removePictures(Picture $picture): self
     {
         if ($this->pictures->removeElement($picture)) {
             // set the owning side to null (unless already changed)

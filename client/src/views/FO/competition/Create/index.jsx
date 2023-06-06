@@ -79,7 +79,7 @@ export default function CreateCompetitions() {
             .then(data => {
                 console.debug(data);
                 return data['hydra:member'].map(function (item) {
-                    return { label: item.organizer_name, value: item['@id'] };
+                    return { label: item.organizerName, value: item['@id'] };
                 });
             });
     };

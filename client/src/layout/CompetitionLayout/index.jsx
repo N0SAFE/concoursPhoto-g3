@@ -208,7 +208,7 @@ export default function CompetitionLayout() {
                                     />
                                 )}
                                 <Chip
-                                    title={entity.consultation_count}
+                                    title={entity.consultationCount}
                                     icon={'view-show'}
                                     backgroundColor={'#F5F5F5'}
                                 />

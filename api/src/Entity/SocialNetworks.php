@@ -35,11 +35,11 @@ class SocialNetworks
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[ORM\OneToMany(mappedBy: 'social_networks', targetEntity: UserLink::class)]
+    #[ORM\OneToMany(mappedBy: 'socialNetworks', targetEntity: UserLink::class)]
     #[Groups("socialNetworks:userLinks:read")]
     private Collection $userLinks;
 
-    #[ORM\OneToMany(mappedBy: 'social_networks', targetEntity: OrganizationLink::class)]
+    #[ORM\OneToMany(mappedBy: 'socialNetworks', targetEntity: OrganizationLink::class)]
     #[Groups("socialNetworks:organizationLinks:read")]
     private Collection $organizationLinks;
 

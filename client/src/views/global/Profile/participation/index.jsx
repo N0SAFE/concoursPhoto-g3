@@ -12,7 +12,7 @@ export default function CompetitionParticipation() {
 
     const getUserCompetitions = () => {
         return apiFetch(
-            `/competitions?pictures.user=/users/${me.id}&properties[]=competition_name&properties[]=submission_start_date&properties[]=submission_end_date&properties[]=state&properties[]=numberOfPictures&properties[]=results_date`,
+            `/competitions?pictures.user=/users/${me.id}&properties[]=competitionName&properties[]=submissionStartDate&properties[]=submissionEndDate&properties[]=state&properties[]=numberOfPictures&properties[]=resultsDate`,
             {
                 method: 'GET',
                 headers: {
@@ -54,16 +54,16 @@ export default function CompetitionParticipation() {
             >
                 {function (competition) {
                     return [
-                        {content: competition.competition_name},
+                        {content: competition.competitionName},
                         {content: new Date(
-                                competition.submission_start_date
+                                competition.submissionStartDate
                         ).toLocaleDateString('fr-FR', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
                         }), },
                         {content: new Date(
-                                competition.submission_end_date
+                                competition.submissionEndDate
                         ).toLocaleDateString('fr-FR', {
                             year: 'numeric',
                             month: 'long',
@@ -91,7 +91,7 @@ export default function CompetitionParticipation() {
                             }
                         />, },
                         {content: competition.numberOfPictures,},
-                        {content: new Date(competition.results_date).toLocaleDateString(
+                        {content: new Date(competition.resultsDate).toLocaleDateString(
                             'fr-FR',
                             {
                                 year: 'numeric',

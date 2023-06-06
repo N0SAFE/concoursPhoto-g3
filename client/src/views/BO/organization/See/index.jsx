@@ -117,7 +117,7 @@ export default function () {
                         },
                         {
                             display: "Type d'organisation",
-                            name: 'type_organization',
+                            name: 'organizationType',
                             customData: ({ entity }) => {
                                 return entity?.organizationType?.label;
                             },

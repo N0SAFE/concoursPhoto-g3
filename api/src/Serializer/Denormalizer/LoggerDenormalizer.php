@@ -27,6 +27,8 @@ class LoggerDenormalizer implements ContextAwareDenormalizerInterface, Denormali
     {
         $context[self::ALREADY_CALLED] = true;
 
+        $denormalizedData = $this->denormalizer->denormalize($data, $class, $format, $context);
+
         $this->logger->info('Denormalize {class} object', [
             'class' => is_object($data) ? get_class($data) : $data,
             'object' => $data,
@@ -35,9 +37,7 @@ class LoggerDenormalizer implements ContextAwareDenormalizerInterface, Denormali
         $this->logger->info('context {context}', [
             'context' => $context,
         ]);
-
-        $denormalizedData = $this->denormalizer->denormalize($data, $class, $format, $context);
-
+        
         $this->logger->info('denormalizedData {denormalizedData}', [
             'denormalizedData' => $denormalizedData,
         ]);

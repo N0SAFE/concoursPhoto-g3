@@ -54,7 +54,7 @@ export default function UserList() {
             if (filterVerified !== 'all') {
                 if (
                     filterState &&
-                    user.is_verified !== (filterVerified === 'true')
+                    user.isVerified !== (filterVerified === 'true')
                 ) {
                     return false;
                 }

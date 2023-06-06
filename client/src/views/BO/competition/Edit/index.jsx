@@ -55,12 +55,12 @@ export default function CompetitionEdit() {
         themes: [],
     });
     const [updatedFile, setUpdatedFile] = useState({
-        competition_visual: null,
+        competitionVisual: null,
     });
     const [entity, setEntity] = useState({
         state: false,
         name: null,
-        competition_visual: null,
+        competitionVisual: null,
         description: null,
         rules: null,
         endowments: null,
@@ -117,7 +117,7 @@ export default function CompetitionEdit() {
             .then(data => {
                 console.debug(data);
                 return data['hydra:member'].map(function (item) {
-                    return { label: item.organizer_name, value: item['@id'] };
+                    return { label: item.organizerName, value: item['@id'] };
                 });
             });
     };
@@ -178,7 +178,7 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                         creationDate: new Date(data.creationDate),
                         publicationDate: new Date(data.publicationDate),
                         submissionStartDate: new Date(
-                            data.submission_startDate
+                            data.submissionStartDate
                         ),
                         submissionEndDate: new Date(data.submissionEndDate),
                         votingStartDate: new Date(data.votingStartDate),
@@ -261,7 +261,7 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
         return () => setTimeout(() => controller.abort());
     }, []);
 
-    console.log(updatedFile.competition_visual)
+    console.log(updatedFile.competitionVisual)
 
     return (
         <Loader active={isLoading}>
@@ -271,11 +271,11 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                     const promise = new Promise(async (resolve, reject) => {
                         try {
                             const newVisualId = await (async () => {
-                                if (updatedFile.competition_visual === null) {
+                                if (updatedFile.competitionVisual === null) {
                                     return null;
-                                } else if (updatedFile.competition_visual.file) {
+                                } else if (updatedFile.competitionVisual.file) {
                                     return await uploadFile({
-                                        file: updatedFile.competition_visual.file,
+                                        file: updatedFile.competitionVisual.file,
                                     }).then(r => r['@id']);
                                 }
                             })().catch(e => {
@@ -353,11 +353,11 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                                         throw new Error(data.description);
                                     }
                                     if (
-                                        updatedFile.competition_visual === null &&
-                                        entity.competition_visual
+                                        updatedFile.competitionVisual === null &&
+                                        entity.competitionVisual
                                     ) {
                                         await deleteFile({
-                                            path: entity.competition_visual['@id'],
+                                            path: entity.competitionVisual['@id'],
                                         });
                                     }
                                 })
@@ -405,9 +405,9 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                         name="visual"
                         label="Visuel"
                         onChange={d => {
-                            updateFileState('competition_visual', d)
+                            updateFileState('competitionVisual', d)
                         }}
-                        extra={{ value: updatedFile.competition_visual, type: 'image' }}
+                        extra={{ value: updatedFile.competitionVisual, type: 'image' }}
                     />
                     <label>Description</label>
                     <Editor

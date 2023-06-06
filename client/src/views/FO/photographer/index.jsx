@@ -15,7 +15,7 @@ export default function PhotographerList() {
 
     const getUserPhotographer = () => {
         return apiFetch(
-            `/users?groups[]=user:read&roles=ROLE_PHOTOGRAPHER&properties[]=firstname&properties[]=lastname&properties[]=picture_profil&groups[]=file`,
+            `/users?groups[]=user:read&roles=ROLE_PHOTOGRAPHER&properties[]=firstname&properties[]=lastname&properties[]=pictureProfil&groups[]=file`,
             {
                 method: 'GET',
                 headers: {
@@ -53,7 +53,7 @@ console.log(userPhotographer)
             {user => {
                     return [
                         {
-                            content: <img src={apipath(user.picture_profil.path)} style={{ width: "100px", height: "100px", borderRadius: "50%" }} />,
+                            content: <img src={apipath(user.pictureProfil.path)} style={{ width: "100px", height: "100px", borderRadius: "50%" }} />,
                     },
                     {
                         content: user.lastname,

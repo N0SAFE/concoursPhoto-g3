@@ -30,7 +30,7 @@ export default function UserList() {
         }
         if (filterVerified) {
             params.params = {
-                is_verified: filterVerified,
+                isVerified: filterVerified,
             };
         }
 
