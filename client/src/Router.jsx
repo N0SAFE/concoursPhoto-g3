@@ -39,6 +39,8 @@ import MyorganizationLayout from '@/layout/ProfileLayout/MyorganizationLayout';
 import MyorganizationAdmin from './views/global/Profile/myorganization/admin/index.jsx';
 import useApiFetch from './hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
+import PhotographerList from './views/FO/photographer/index.jsx';
+import ListOrganization from './views/FO/organization/list/index.jsx';
 
 function Router() {
     const { setModalContent, showModal } = useModal();
@@ -72,6 +74,7 @@ function Router() {
                         <Route path="edit/:id" element={<UserEdit />} />
                         <Route path="create" element={<UserCreate />} />
                     </Route>
+                    
                     <Route path="organization">
                         <Route path="" element={<OrganizationList />} />
                         <Route path=":id" element={<OrganizationSee />} />
@@ -176,6 +179,12 @@ function Router() {
                     path="/createcompetition"
                     element={<CreateCompetitions />}
                 />
+                <Route path="organization">
+                    <Route path="" element={<ListOrganization />} />
+                </Route>
+                <Route path="photographer">
+                        <Route path="" element={<PhotographerList />} />
+                    </Route>
                 <Route
                     path="/createorganization"
                     element={<CreateOrganization />}

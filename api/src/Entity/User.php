@@ -41,7 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     
 )]
 #[ApiFilter(PropertyFilter::class)]
-#[ApiFilter(SearchFilter::class)]
+#[ApiFilter(SearchFilter::class,properties: ['roles'=>'partial'])]
 #[ApiFilter(GroupFilter::class)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
@@ -171,10 +171,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[Assert\NotBlank]
     private ?PersonalStatut $personalStatut = null;
-
-    #[Groups(['user:pictureProfil:read', 'user:current:read'])]
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?File $pictureProfil = null;
 
     #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]

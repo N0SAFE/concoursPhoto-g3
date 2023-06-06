@@ -139,6 +139,17 @@ class Organization
     }
     
     #[Groups(['organization:read'])]
+    public function getActiveCompetitionCount(): int {
+        $count = 0;
+        foreach($this->competitions as $competition) {
+            if($competition->getState() != 6 ) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+    
+    #[Groups(['organization:read'])]
     public function getRentCount(): int {
         return $this->rents->count();
     }
