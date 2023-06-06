@@ -5,9 +5,11 @@ import { useEffect, useState } from 'react';
 import style from './style.module.scss';
 import Chip from '@/components/atoms/Chip/index.jsx';
 import useApiPath from '@/hooks/useApiPath';
+import Loader from '@/components/atoms/Loader/index.jsx';
 
 export default function PhotographerList() {
     const apipath = useApiPath();
+    const [isLoading, setIsLoading] = useState(true);
     const apiFetch = useApiFetch();
     const [userPhotographer, setUserPhotogarpher] = useState([]);
 
@@ -28,6 +30,7 @@ export default function PhotographerList() {
                     throw new Error(data.message);
                 }
                 setUserPhotogarpher(data['hydra:member']);
+                setIsLoading(false);
                 return data;
             })
             .catch(error => {
@@ -39,6 +42,7 @@ export default function PhotographerList() {
     }, []);
 console.log(userPhotographer)
     return (
+        <Loader active={isLoading}>
         <>
             <h1 style={{ textAlign: "center", marginBottom: "3%" }}>Liste des photographes</h1>
             <p style={{ fontWeight: "bold", marginBottom: "1%" }}>{userPhotographer.length} photographes</p>
@@ -64,8 +68,11 @@ console.log(userPhotographer)
         </Table>
         <div
             style={{ width: '100%', display: 'flex', flexDirection: 'row' }}
-        >
-        </div>
-    </>
-);
+                >
+                    
+                </div>
+
+            </>
+        </Loader>
+            );
 }
