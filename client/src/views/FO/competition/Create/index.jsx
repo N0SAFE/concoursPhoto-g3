@@ -1,5 +1,5 @@
 import Input from '@/components/atoms/Input';
-import BOForm from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -161,7 +161,7 @@ export default function CreateCompetitions() {
                     </p>
                 </div>
             </div>
-            <BOForm
+            <Form
                 title="Vous êtes ?"
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
@@ -440,7 +440,7 @@ export default function CreateCompetitions() {
                             width={'245px'}
                         />
             </div>
-        </BOForm>
+        </Form>
         </div>
     );
 }
