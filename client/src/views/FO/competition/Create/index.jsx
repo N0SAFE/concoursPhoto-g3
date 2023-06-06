@@ -177,7 +177,7 @@ export default function CreateCompetitions() {
                             firstname: entity.firstname,
                             lastname: entity.lastname,
                             roles: ['ROLE_MEMBER'],
-                            dateOfBirth: entity.dateOfBirth.format(),
+                            dateOfBirth: entity.dateOfBirth.toISOString(),
                             creationDate: new Date().toISOString(),
                             registrationDate: new Date().toISOString(),
                             country: 'FRANCE',

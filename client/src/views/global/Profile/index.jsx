@@ -188,9 +188,6 @@ export default function Profile() {
         });
     }, [entity.postcode, entity.city]);
 
-    console.log(socialNetworksPossibility);
-    console.log(categoriesPossibility);
-
     return (
         <Loader active={gendersPossibility.isLoading}>
             <div className={style.formContainer}>
@@ -512,7 +509,7 @@ export default function Profile() {
                             />
                         </div>
                     </div>
-                    <h2>Réseaux sociaux de l’organisation</h2>
+                    <h2>Vos réseaux sociaux</h2>
                     <div className={style.formSocialNetworks}>
                         {socialNetworksPossibility.list.map(socialNetwork => (
                             <Input

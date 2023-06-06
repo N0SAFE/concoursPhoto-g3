@@ -57,7 +57,14 @@
     }
 
     &SocialNetworks {
-        column-count: 2;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: $gapBetweenElement;
+        grid-column-gap: 50px;
+
+        @include below(md) {
+            grid-template-columns: repeat(1, 1fr);
+        }
     }
 
     &Submit {
