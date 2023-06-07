@@ -59,7 +59,11 @@ export default function CompetitionParticipation() {
             <p className={style.participationsCounter}>
                 {userCompetitions.length} concours
             </p>
-            <Loader active={isLoading} takeInnerContent={true} style={{borderRadius: "10px"}}>
+            <Loader
+                active={isLoading}
+                takeInnerContent={true}
+                style={{ borderRadius: '10px' }}
+            >
                 <Table
                     list={userCompetitions}
                     fields={[
@@ -109,15 +113,14 @@ export default function CompetitionParticipation() {
                                                 ? '#fff'
                                                 : '#000'
                                         }
-                                        title={
-                                            competition.state === 1
-                                                ? 'A venir'
-                                                : competition.state >= 2 &&
-                                                  competition.state <= 5
-                                                ? 'En cours'
-                                                : 'Terminé'
-                                        }
-                                    />
+                                    >
+                                        {competition.state === 1
+                                            ? 'A venir'
+                                            : competition.state >= 2 &&
+                                              competition.state <= 5
+                                            ? 'En cours'
+                                            : 'Terminé'}
+                                    </Chip>
                                 ),
                             },
                             { content: competition.numberOfPictures },

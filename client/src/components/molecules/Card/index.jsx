@@ -42,9 +42,8 @@ export default function Card({
                                     return (
                                         <Chip
                                             key={index}
-                                            title={filter}
                                             backgroundColor={'#F5F5F5'}
-                                        />
+                                        >{filter}</Chip>
                                     );
                                 })}
                         </div>

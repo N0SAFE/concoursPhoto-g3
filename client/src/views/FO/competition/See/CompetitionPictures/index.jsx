@@ -141,9 +141,17 @@ export default function () {
                                                             backgroundColor={
                                                                 '#F5F5F5'
                                                             }
-                                                            title={`${picture.user.firstname} ${picture.user.lastname}`}
                                                             icon={'user-plus'}
-                                                        />
+                                                        >
+                                                            {
+                                                                picture.user
+                                                                    .firstname
+                                                            }{' '}
+                                                            {
+                                                                picture.user
+                                                                    .lastname
+                                                            }
+                                                        </Chip>
                                                     </div>
                                                     <div
                                                         className={
@@ -151,23 +159,19 @@ export default function () {
                                                         }
                                                     >
                                                         <Chip
-                                                            title={
-                                                                competition.consultationCount
-                                                            }
                                                             backgroundColor={
                                                                 '#F5F5F5'
                                                             }
                                                             icon={'shutter'}
-                                                        />
+                                                        >{competition.consultationCount}</Chip>
                                                         <Chip
                                                             iconColor={'white'}
                                                             color={'white'}
                                                             backgroundColor={
                                                                 '#A8A8A8'
                                                             }
-                                                            title={'Voter'}
                                                             icon={'like'}
-                                                        />
+                                                        >Voter</Chip>
                                                     </div>
                                                 </div>
                                             </div>
