@@ -16,6 +16,7 @@ import useFilesUploader from '@/hooks/useFilesUploader.js';
 import useApiPath from '@/hooks/useApiPath.js';
 
 export default function Profile() {
+    const {refreshUser} = useAuthContext()
     const { gendersPossibility } = useOutletContext(); // to avoid the loading when we change the page
     const [statusPossibility, setStatusPossibility] = useState({
         list: [],
@@ -83,8 +84,16 @@ export default function Profile() {
         },
         photographerDescription: me.photographerDescription,
         websiteUrl: me.websiteUrl,
-        socialNetworks: me.socialsNetworks,
+        userLinks: new Map(me.userLinks.map(l => {
+            return [l?.socialNetworks?.['@id'], {
+                user: l.user,
+                socialNetworks: l?.socialNetworks?.['@id'],
+                link: l.link,
+            }];
+        })),
     });
+    
+    console.debug(entity);
 
     const updateEntity = (key, value) => {
         setEntity({ ...entity, [key]: value });
@@ -130,9 +139,7 @@ export default function Profile() {
             .then(r => r.json())
             .then(data => {
                 console.debug(data);
-                return data['hydra:member'].map(function (item) {
-                    return { label: item.label, value: item['@id'] };
-                });
+                return data['hydra:member']
             });
     }
 
@@ -186,7 +193,7 @@ export default function Profile() {
     }, [entity.postcode, entity.city]);
 
     return (
-        <Loader active={gendersPossibility.isLoading}>
+        <Loader active={gendersPossibility.isLoading || socialNetworksPossibility.isLoading}>
             <div className={style.formContainer}>
                 <Form
                     handleSubmit={async function () {
@@ -215,7 +222,9 @@ export default function Profile() {
                                 entity.photographerDescription,
                             photographerCategory: entity.category.value,
                             websiteUrl: entity.websiteUrl,
-                            socialsNetworks: entity.socialNetworks,
+                            userLinks: Array.from(entity.userLinks).map(([key, value]) => {
+                                return value
+                            }).filter(l => l.link !== ""),
                             country: entity.country,
                             pictureProfil: newLogoId,
                         };
@@ -247,6 +256,8 @@ export default function Profile() {
                                         showModal();
                                         navigate('/');
                                     });
+                                }else {
+                                    refreshUser();
                                 }
                                 if (
                                     updatedFile.pictureProfil === null &&
@@ -507,17 +518,23 @@ export default function Profile() {
                     </div>
                     <h2>Vos réseaux sociaux</h2>
                     <div className={style.formSocialNetworks}>
-                        {socialNetworksPossibility.list.map(socialNetwork => (
-                            <Input
+                        {socialNetworksPossibility.list.map(socialNetwork => {
+                            // socialNetwork.id === 'facebook' || ....
+                            return (<Input
                                 type="text"
-                                name="socialNetworks"
+                                name="userLinks"
                                 label={socialNetwork.label}
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.userLinks.link}
-                            />
-                        ))}
+                                onChange={d =>{
+                                    const map = entity.userLinks
+                                    map.set(socialNetwork['@id'], {
+                                        link: d,
+                                        socialNetworks: socialNetwork['@id'],
+                                    })
+                                    updateEntity('userLinks', map)
+                                }}
+                                defaultValue={entity.userLinks.get(socialNetwork['@id'])?.link}
+                            />)
+                            })}
                     </div>
                     <div className={style.formSubmit}>
                         <Button
