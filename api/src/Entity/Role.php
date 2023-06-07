@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     operations: [
@@ -18,7 +19,8 @@ use ApiPlatform\Metadata\Post;
         new Get(),
         new Post(),
         new Patch()
-    ]
+    ],
+    normalizationContext: ["groups" => ["role:read"]],
 )]
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
 class Role
@@ -26,9 +28,11 @@ class Role
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['role:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['role:read'])]
     private ?string $label = null;
 
     public function getId(): ?int

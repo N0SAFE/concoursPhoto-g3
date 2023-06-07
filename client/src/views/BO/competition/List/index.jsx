@@ -14,7 +14,7 @@ export default function CompetitionsList() {
     const [competitions, setCompetitions] = useState([]);
 
     function getCompetitions(controller) {
-        return apiFetch('/competitions?groups[]=competition', {
+        return apiFetch('/competitions', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ export default function CompetitionsList() {
                         {
                             content: user.stateLabel,
                         },
-                        { content: user.competition_name },
+                        { content: user.competitionName },
                         {
                             content: user.description,
                         },
@@ -178,7 +178,7 @@ export default function CompetitionsList() {
                         { content: user.endowments },
                         {
                             content: new Date(
-                                user.creation_date
+                                user.creationDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',
@@ -187,7 +187,7 @@ export default function CompetitionsList() {
                         },
                         {
                             content: new Date(
-                                user.publication_date
+                                user.publicationDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',
@@ -196,7 +196,7 @@ export default function CompetitionsList() {
                         },
                         {
                             content: new Date(
-                                user.submission_start_date
+                                user.submissionStartDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',
@@ -205,7 +205,7 @@ export default function CompetitionsList() {
                         },
                         {
                             content: new Date(
-                                user.voting_start_date
+                                user.votingStartDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',

@@ -32,39 +32,52 @@ export default function CompetitionLayout() {
                 toast.error(res.message);
             }
         });
-    }
+    };
 
     const getCompetitions = controller => {
-        return apiFetch(
-            '/competitions/' +
-                competitionId +
-                '?groups[]=competition&groups[]=file&groups[]=competition_visual&groups[]=competition_pictures&groups[]=competition_aside',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                signal: controller?.signal,
-            }
-        )
+        return apiFetch('/competitions/' + competitionId, {
+            query: {
+                groups: [
+                    'file:read',
+                    'competition:competitionVisual:read',
+                    'competition:competitionPictures:read',
+                    'competition:organization:read',
+                    'organization:logo:read',
+                    'organization:admins:read',
+                    'user:read',
+                    'picture:file:read',
+                    'competition:memberOfTheJuries:read',
+                    'memberOfTheJury:user:read',
+                    "competition:theme:read",
+                    "theme:read",
+                    "competition:sponsors:read",
+                    "sponsor:read",
+                    'sponsor:logo:read'
+                ],
+            },
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            signal: controller?.signal,
+        })
             .then(res => res.json())
             .then(async data => {
-                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
                 return await Promise.all([
-                    Promise.all(data.city_criteria.map(getCityByCode)),
+                    Promise.all(data.cityCriteria.map(getCityByCode)),
                     Promise.all(
-                        data.department_criteria.map(getDepartmentByCode)
+                        data.departmentCriteria.map(getDepartmentByCode)
                     ),
-                    Promise.all(data.region_criteria.map(getRegionByCode)),
+                    Promise.all(data.regionCriteria.map(getRegionByCode)),
                 ]).then(([cities, departments, regions]) => {
                     const _competition = {
                         ...data,
-                        city_criteria: cities,
-                        department_criteria: departments,
-                        region_criteria: regions,
+                        cityCriteria: cities,
+                        departmentCriteria: departments,
+                        regionCriteria: regions,
                     };
                     setEntity(_competition);
                     return _competition;
@@ -100,7 +113,7 @@ export default function CompetitionLayout() {
                             { label: 'Accueil', link: '/' },
                             { label: 'Concours photo', link: location },
                             {
-                                label: `Concours photo ${entity.competition_name}`,
+                                label: `Concours photo ${entity.competitionName}`,
                             },
                         ]}
                     />
@@ -108,23 +121,23 @@ export default function CompetitionLayout() {
                         <div className={style.viewFilter}>
                             <div>
                                 <h1>
-                                    Concours photo "{entity.competition_name}"
+                                    Concours photo "{entity.competitionName}"
                                 </h1>
                             </div>
                             <div>
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={`Pays : ${entity.country_criteria}`}
+                                    title={`Pays : ${entity.countryCriteria}`}
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={`Département(s) : ${entity.department_criteria?.map(
+                                    title={`Département(s) : ${entity.departmentCriteria?.map(
                                         department => ' ' + department.nom
                                     )}`}
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={`Région(s) : ${entity.region_criteria?.map(
+                                    title={`Région(s) : ${entity.regionCriteria?.map(
                                         region => ' ' + region.nom
                                     )}`}
                                 />
@@ -137,7 +150,7 @@ export default function CompetitionLayout() {
 
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
-                                    title={`Âge : de ${entity.min_age_criteria} à ${entity.max_age_criteria} ans`}
+                                    title={`Âge : de ${entity.minAgeCriteria} à ${entity.maxAgeCriteria} ans`}
                                 />
                                 <Chip
                                     backgroundColor={'#F5F5F5'}
@@ -151,7 +164,7 @@ export default function CompetitionLayout() {
                                     <p className={style.titleOrganizer}>
                                         Organisateur :{' '}
                                         <span>
-                                            {entity.organization?.users
+                                            {entity.organization?.admins
                                                 .map(
                                                     user =>
                                                         user.firstname +
@@ -174,7 +187,7 @@ export default function CompetitionLayout() {
                                         <p>
                                             Fin le{' '}
                                             {new Date(
-                                                entity.voting_end_date
+                                                entity.votingEndDate
                                             ).toLocaleDateString('fr-FR', {
                                                 year: 'numeric',
                                                 month: 'long',
@@ -208,7 +221,7 @@ export default function CompetitionLayout() {
                                     />
                                 )}
                                 <Chip
-                                    title={entity.consultation_count}
+                                    title={entity.consultationCount}
                                     icon={'view-show'}
                                     backgroundColor={'#F5F5F5'}
                                 />
@@ -219,7 +232,7 @@ export default function CompetitionLayout() {
                 <PortalList
                     boxSingle={{
                         type: 'picture',
-                        path: entity.competition_visual?.path,
+                        path: entity.competitionVisual?.path,
                         alt: 'Photo du concours',
                     }}
                     boxUp={{

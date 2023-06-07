@@ -26,16 +26,20 @@ export default function Profile() {
         list: [],
         isLoading: true,
     });
+    const [socialNetworksPossibility, setSocialNetworksPossibility] = useState({
+        list: [],
+        isLoading: true,
+    });
 
     const { me } = useAuthContext();
     const { logout } = useAuth();
     const { setModalContent, showModal } = useModal();
     const apiPathComplete = useApiPath();
     const [updatedFile, setUpdatedFile] = useState({
-        picture_profil: me.picture_profil
+        pictureProfil: me.pictureProfil
             ? {
-                  to: apiPathComplete(me.picture_profil.path),
-                  name: me.picture_profil.default_name,
+                  to: apiPathComplete(me.pictureProfil.path),
+                  name: me.pictureProfil.defaultName,
               }
             : null,
     });
@@ -69,17 +73,17 @@ export default function Profile() {
         postcode: { label: me.postcode, value: me.postcode },
         gender: { label: me.gender.label, value: me.gender['@id'] },
         statut: {
-            label: me.personal_statut.label,
-            value: me.personal_statut['@id'],
+            label: me.personalStatut.label,
+            value: me.personalStatut['@id'],
         },
-        dateOfBirth: new Date(me.date_of_birth),
+        dateOfBirth: new Date(me.dateOfBirth),
         category: {
-            label: me.photographer_category.label,
-            value: me.photographer_category['@id'],
+            label: me.photographerCategory.label,
+            value: me.photographerCategory['@id'],
         },
-        photographerDescription: me.photographer_description,
-        websiteUrl: me.website_url,
-        socialNetworks: me.socials_networks,
+        photographerDescription: me.photographerDescription,
+        websiteUrl: me.websiteUrl,
+        socialNetworks: me.socialsNetworks,
     });
 
     const updateEntity = (key, value) => {
@@ -119,12 +123,28 @@ export default function Profile() {
             });
     };
 
+    const getSocialNetworks = () => {
+        return apiFetch('/social_networks', {
+            method: 'GET',
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member'].map(function (item) {
+                    return { label: item.label, value: item['@id'] };
+                });
+            });
+    }
+
     useEffect(() => {
         getPersonalstatus().then(data => {
             setStatusPossibility({ list: data, isLoading: false });
         });
         getCategoryPossibility().then(data => {
             setCategoriesPossibility({ list: data, isLoading: false });
+        });
+        getSocialNetworks().then(data => {
+            setSocialNetworksPossibility({ list: data, isLoading: false });
         });
     }, []);
 
@@ -171,11 +191,11 @@ export default function Profile() {
                 <Form
                     handleSubmit={async function () {
                         const newLogoId = await (async () => {
-                            if (updatedFile.picture_profil === null) {
+                            if (updatedFile.pictureProfil === null) {
                                 return null;
-                            } else if (updatedFile.picture_profil.file) {
+                            } else if (updatedFile.pictureProfil.file) {
                                 return await uploadFile({
-                                    file: updatedFile.picture_profil.file,
+                                    file: updatedFile.pictureProfil.file,
                                 }).then(r => r['@id']);
                             }
                         })();
@@ -229,11 +249,11 @@ export default function Profile() {
                                     });
                                 }
                                 if (
-                                    updatedFile.picture_profil === null &&
-                                    entity.picture_profil
+                                    updatedFile.pictureProfil === null &&
+                                    entity.pictureProfil
                                 ) {
                                     deleteFile({
-                                        path: entity.picture_profil['@id'],
+                                        path: entity.pictureProfil['@id'],
                                     });
                                 }
                             });
@@ -257,10 +277,10 @@ export default function Profile() {
                 >
                     <Input
                         type="profile_image"
-                        name="picture_profil"
-                        onChange={d => updateFileState('picture_profil', d)}
+                        name="pictureProfil"
+                        onChange={d => updateFileState('pictureProfil', d)}
                         extra={{
-                            value: updatedFile.picture_profil,
+                            value: updatedFile.pictureProfil,
                             type: 'image',
                         }}
                     />
@@ -452,7 +472,6 @@ export default function Profile() {
                     <h2>Si vous êtes photographe</h2>
                     <div className={style.formWrapperColumn}>
                         <div className={style.formColumn}>
-                            {' '}
                             <Input
                                 type="textarea"
                                 extra={{ rows: 16 }}
@@ -486,66 +505,19 @@ export default function Profile() {
                             />
                         </div>
                     </div>
-                    <h2>Réseaux sociaux de l’organisation</h2>
-                    <div className={style.formWrapper}>
-                        <div className={style.formColumn}>
+                    <h2>Vos réseaux sociaux</h2>
+                    <div className={style.formSocialNetworks}>
+                        {socialNetworksPossibility.list.map(socialNetwork => (
                             <Input
                                 type="text"
                                 name="socialNetworks"
-                                label="Votre page Facebook"
+                                label={socialNetwork.label}
                                 onChange={d =>
                                     updateEntity('socialNetworks', d)
                                 }
-                                defaultValue={entity.socialNetworks}
+                                defaultValue={entity.userLinks.link}
                             />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre chaîne Youtube"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre page Instagram"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                        </div>
-                        <div className={style.formColumn}>
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre compte Twitter"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre page Linkedin"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre compte TikTok"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                        </div>
+                        ))}
                     </div>
                     <div className={style.formSubmit}>
                         <Button

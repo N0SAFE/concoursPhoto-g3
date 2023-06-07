@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiFilter(DateFilter::class, properties: [
-    "results_date"
+    "resultsDate"
 ])]
 #[ApiFilter(PropertyFilter::class)]
 #[ApiFilter(SearchFilter::class, properties: [
@@ -43,8 +43,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Patch(),
         new Delete(),
-    ]
+    ],
+    normalizationContext: [
+        'groups' => ['competition:read']
+    ],
 )]
+
 
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
@@ -52,140 +56,140 @@ class Competition
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['competition', 'user:read', 'user:current:read'])]
+    #[Groups(['competition:read', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['competition', 'organization', 'user:current:read'])]
-    private ?string $competition_name = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?string $competitionName = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['competition:read', 'user:current:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['competition:read', 'user:current:read'])]
     private ?string $rules = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['competition:read', 'user:current:read'])]
     private ?string $endowments = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?\DateTimeInterface $creation_date = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?\DateTimeInterface $creationDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?\DateTimeInterface $publication_date = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?\DateTimeInterface $publicationDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?\DateTimeInterface $submission_start_date = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?\DateTimeInterface $submissionStartDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?\DateTimeInterface $submission_end_date = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?\DateTimeInterface $submissionEndDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?\DateTimeInterface $voting_start_date = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?\DateTimeInterface $votingStartDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?\DateTimeInterface $voting_end_date = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?\DateTimeInterface $votingEndDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?\DateTimeInterface $results_date = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?\DateTimeInterface $resultsDate = null;
 
     #[ORM\Column]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?float $weighting_of_jury_votes = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?float $weightingOfJuryVotes = null;
 
     #[ORM\Column]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?int $number_of_max_votes = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?int $numberOfMaxVotes = null;
 
     #[ORM\Column]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?int $number_of_prices = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?int $numberOfPrices = null;
 
     #[ORM\Column]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?int $min_age_criteria = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?int $minAgeCriteria = null;
 
     #[ORM\Column]
-    #[Groups(['competition', 'user:current:read'])]
-    private ?int $max_age_criteria = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?int $maxAgeCriteria = null;
 
     #[ORM\ManyToMany(targetEntity: Theme::class, inversedBy: 'competitions')]
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['competition:theme:read', 'user:current:read'])]
     private Collection $theme;
 
     #[ORM\ManyToMany(targetEntity: ParticipantCategory::class, inversedBy: 'competitions')]
-    #[Groups(['competition', 'user:current:read'])]
-    private Collection $participant_category;
+    #[Groups(['competition:participantCategory:read', 'user:current:read'])]
+    private Collection $participantCategory;
 
-    #[Groups(['competition'])]
+    #[Groups(['competition:organization:read'])]
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     private ?Organization $organization = null;
 
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['competition:memberOfTheJuries:read', 'user:current:read'])]
     private Collection $memberOfTheJuries;
 
-    #[Groups(['competition_pictures'])]
+    #[Groups(['competition:pictures:read'])]
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Picture::class)]
     private Collection $pictures;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['competition', 'user:current:read'])]
-    private array $country_criteria = [];
+    #[Groups(['competition:read', 'user:current:read'])]
+    private array $countryCriteria = [];
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['competition', 'user:current:read'])]
-    private array $region_criteria = [];
+    #[Groups(['competition:read', 'user:current:read'])]
+    private array $regionCriteria = [];
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['competition', 'user:current:read'])]
-
-    private array $department_criteria = [];
+    #[Groups(['competition:read', 'user:current:read'])]
+    private array $departmentCriteria = [];
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['competition', 'user:current:read'])]
-    private array $city_criteria = [];
+    #[Groups(['competition:read', 'user:current:read'])]
+    private array $cityCriteria = [];
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['competition_visual', 'user:current:read'])]
-    private ?File $competition_visual = null;
+    #[Groups(['competition:competitionVisual:read', 'user:current:read'])]
+    private ?File $competitionVisual = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['competition', 'competition:read', 'user:current:read'])]
-    private ?bool $is_promoted = null;
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?bool $isPromoted = null;
 
+    #[Groups(['competition:notificationsSended:read'])]
     #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'competitionAlreadyHandled')]
     private Collection $notificationsSended;
 
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['competition:sponsors:read', 'user:current:read'])]
     #[ORM\ManyToMany(targetEntity: Sponsors::class, inversedBy: 'competitions')]
     private Collection $sponsors;
 
-    #[Groups(['competition'])]
+    #[Groups(['competition:read'])]
     #[ORM\Column(nullable: true)]
-    private ?int $consultation_count = null;
+    private ?int $consultationCount = null;
 
     public function __construct()
     {
         $this->theme = new ArrayCollection();
-        $this->participant_category = new ArrayCollection();
+        $this->participantCategory = new ArrayCollection();
         $this->memberOfTheJuries = new ArrayCollection();
         $this->pictures = new ArrayCollection();
         $this->notificationsSended = new ArrayCollection();
         $this->sponsors = new ArrayCollection();
     }
 
-    #[Groups(['competition_aside'])]
+    #[Groups(['competition:read'])]
     public function getAside(): Collection
     {
         if ($this->getState() === 2 || $this->getState() === 3) {
@@ -232,7 +236,7 @@ class Competition
         return new ArrayCollection();
     }
 
-    #[Groups(['competition_aside'])]
+    #[Groups(['competition:read'])]
     public function getAsideLabel(): string
     {
         if ($this->getState() === 2 || $this->getState() === 3) {
@@ -251,13 +255,13 @@ class Competition
         return $this->id;
     }
 
-    #[Groups(['competition'])]
+    #[Groups(['competition:read'])]
     public function getNumberOfPictures(): int
     {
         return $this->pictures->count();
     }
 
-    #[Groups(['competition'])]
+    #[Groups(['competition:read'])]
     public function getNumberOfParticipants(): int
     {
         $pictures = $this->getPictures();
@@ -268,7 +272,7 @@ class Competition
         return count($userDistinct);
     }
 
-    #[Groups(['competition'])]
+    #[Groups(['competition:read'])]
     public function getNumberOfVotes(): int
     {
         $pictures = $this->getPictures();
@@ -279,7 +283,7 @@ class Competition
         return $numOfVotes;
     }
 
-    #[Groups(['competition'])]
+    #[Groups(['competition:read'])]
     public function getState(): int
     {
         $now = new \DateTime();
@@ -303,8 +307,7 @@ class Competition
             return 6;
         }
     }
-    
-    #[Groups(['competition'])]
+    #[Groups(['competition:read'])]
     public function getStateLabel(): string
     {
         $now = new \DateTime();
@@ -331,12 +334,12 @@ class Competition
 
     public function getCompetitionName(): ?string
     {
-        return $this->competition_name;
+        return $this->competitionName;
     }
 
-    public function setCompetitionName(string $competition_name): self
+    public function setCompetitionName(string $competitionName): self
     {
-        $this->competition_name = $competition_name;
+        $this->competitionName = $competitionName;
 
         return $this;
     }
@@ -379,144 +382,144 @@ class Competition
 
     public function getCreationDate(): ?\DateTimeInterface
     {
-        return $this->creation_date;
+        return $this->creationDate;
     }
 
-    public function setCreationDate(\DateTimeInterface $creation_date): self
+    public function setCreationDate(\DateTimeInterface $creationDate): self
     {
-        $this->creation_date = $creation_date;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
 
     public function getPublicationDate(): ?\DateTimeInterface
     {
-        return $this->publication_date;
+        return $this->publicationDate;
     }
 
-    public function setPublicationDate(\DateTimeInterface $publication_date): self
+    public function setPublicationDate(\DateTimeInterface $publicationDate): self
     {
-        $this->publication_date = $publication_date;
+        $this->publicationDate = $publicationDate;
 
         return $this;
     }
 
     public function getSubmissionStartDate(): ?\DateTimeInterface
     {
-        return $this->submission_start_date;
+        return $this->submissionStartDate;
     }
 
-    public function setSubmissionStartDate(\DateTimeInterface $submission_start_date): self
+    public function setSubmissionStartDate(\DateTimeInterface $submissionStartDate): self
     {
-        $this->submission_start_date = $submission_start_date;
+        $this->submissionStartDate = $submissionStartDate;
 
         return $this;
     }
 
     public function getSubmissionEndDate(): ?\DateTimeInterface
     {
-        return $this->submission_end_date;
+        return $this->submissionEndDate;
     }
 
-    public function setSubmissionEndDate(\DateTimeInterface $submission_end_date): self
+    public function setSubmissionEndDate(\DateTimeInterface $submissionEndDate): self
     {
-        $this->submission_end_date = $submission_end_date;
+        $this->submissionEndDate = $submissionEndDate;
 
         return $this;
     }
 
     public function getVotingStartDate(): ?\DateTimeInterface
     {
-        return $this->voting_start_date;
+        return $this->votingStartDate;
     }
 
-    public function setVotingStartDate(\DateTimeInterface $voting_start_date): self
+    public function setVotingStartDate(\DateTimeInterface $votingStartDate): self
     {
-        $this->voting_start_date = $voting_start_date;
+        $this->votingStartDate = $votingStartDate;
 
         return $this;
     }
 
     public function getVotingEndDate(): ?\DateTimeInterface
     {
-        return $this->voting_end_date;
+        return $this->votingEndDate;
     }
 
-    public function setVotingEndDate(\DateTimeInterface $voting_end_date): self
+    public function setVotingEndDate(\DateTimeInterface $votingEndDate): self
     {
-        $this->voting_end_date = $voting_end_date;
+        $this->votingEndDate = $votingEndDate;
 
         return $this;
     }
 
     public function getResultsDate(): ?\DateTimeInterface
     {
-        return $this->results_date;
+        return $this->resultsDate;
     }
 
-    public function setResultsDate(\DateTimeInterface $results_date): self
+    public function setResultsDate(\DateTimeInterface $resultsDate): self
     {
-        $this->results_date = $results_date;
+        $this->resultsDate = $resultsDate;
 
         return $this;
     }
 
     public function getWeightingOfJuryVotes(): ?float
     {
-        return $this->weighting_of_jury_votes;
+        return $this->weightingOfJuryVotes;
     }
 
-    public function setWeightingOfJuryVotes(float $weighting_of_jury_votes): self
+    public function setWeightingOfJuryVotes(float $weightingOfJuryVotes): self
     {
-        $this->weighting_of_jury_votes = $weighting_of_jury_votes;
+        $this->weightingOfJuryVotes = $weightingOfJuryVotes;
 
         return $this;
     }
 
     public function getNumberOfMaxVotes(): ?int
     {
-        return $this->number_of_max_votes;
+        return $this->numberOfMaxVotes;
     }
 
-    public function setNumberOfMaxVotes(int $number_of_max_votes): self
+    public function setNumberOfMaxVotes(int $numberOfMaxVotes): self
     {
-        $this->number_of_max_votes = $number_of_max_votes;
+        $this->numberOfMaxVotes = $numberOfMaxVotes;
 
         return $this;
     }
 
     public function getNumberOfPrices(): ?int
     {
-        return $this->number_of_prices;
+        return $this->numberOfPrices;
     }
 
-    public function setNumberOfPrices(int $number_of_prices): self
+    public function setNumberOfPrices(int $numberOfPrices): self
     {
-        $this->number_of_prices = $number_of_prices;
+        $this->numberOfPrices = $numberOfPrices;
 
         return $this;
     }
 
     public function getMinAgeCriteria(): ?int
     {
-        return $this->min_age_criteria;
+        return $this->minAgeCriteria;
     }
 
-    public function setMinAgeCriteria(int $min_age_criteria): self
+    public function setMinAgeCriteria(int $minAgeCriteria): self
     {
-        $this->min_age_criteria = $min_age_criteria;
+        $this->minAgeCriteria = $minAgeCriteria;
 
         return $this;
     }
 
     public function getMaxAgeCriteria(): ?int
     {
-        return $this->max_age_criteria;
+        return $this->maxAgeCriteria;
     }
 
-    public function setMaxAgeCriteria(int $max_age_criteria): self
+    public function setMaxAgeCriteria(int $maxAgeCriteria): self
     {
-        $this->max_age_criteria = $max_age_criteria;
+        $this->maxAgeCriteria = $maxAgeCriteria;
 
         return $this;
     }
@@ -550,13 +553,13 @@ class Competition
      */
     public function getParticipantCategory(): Collection
     {
-        return $this->participant_category;
+        return $this->participantCategory;
     }
 
     public function addParticipantCategory(ParticipantCategory $participantCategory): self
     {
-        if (!$this->participant_category->contains($participantCategory)) {
-            $this->participant_category->add($participantCategory);
+        if (!$this->participantCategory->contains($participantCategory)) {
+            $this->participantCategory->add($participantCategory);
         }
 
         return $this;
@@ -564,7 +567,7 @@ class Competition
 
     public function removeParticipantCategory(ParticipantCategory $participantCategory): self
     {
-        $this->participant_category->removeElement($participantCategory);
+        $this->participantCategory->removeElement($participantCategory);
 
         return $this;
     }
@@ -619,7 +622,7 @@ class Competition
         return $this->pictures;
     }
 
-    public function addPicture(Picture $picture): self
+    public function addPictures(Picture $picture): self
     {
         if (!$this->pictures->contains($picture)) {
             $this->pictures->add($picture);
@@ -629,7 +632,7 @@ class Competition
         return $this;
     }
 
-    public function removePicture(Picture $picture): self
+    public function removePictures(Picture $picture): self
     {
         if ($this->pictures->removeElement($picture)) {
             // set the owning side to null (unless already changed)
@@ -643,72 +646,72 @@ class Competition
 
     public function getCountryCriteria(): array
     {
-        return $this->country_criteria;
+        return $this->countryCriteria;
     }
 
-    public function setCountryCriteria(array $country_criteria): self
+    public function setCountryCriteria(array $countryCriteria): self
     {
-        $this->country_criteria = $country_criteria;
+        $this->countryCriteria = $countryCriteria;
 
         return $this;
     }
 
     public function getRegionCriteria(): array
     {
-        return $this->region_criteria;
+        return $this->regionCriteria;
     }
 
-    public function setRegionCriteria(array $region_criteria): self
+    public function setRegionCriteria(array $regionCriteria): self
     {
-        $this->region_criteria = $region_criteria;
+        $this->regionCriteria = $regionCriteria;
 
         return $this;
     }
 
     public function getDepartmentCriteria(): array
     {
-        return $this->department_criteria;
+        return $this->departmentCriteria;
     }
 
-    public function setDepartmentCriteria(array $department_criteria): self
+    public function setDepartmentCriteria(array $departmentCriteria): self
     {
-        $this->department_criteria = $department_criteria;
+        $this->departmentCriteria = $departmentCriteria;
 
         return $this;
     }
 
     public function getCityCriteria(): array
     {
-        return $this->city_criteria;
+        return $this->cityCriteria;
     }
 
-    public function setCityCriteria(array $city_criteria): self
+    public function setCityCriteria(array $cityCriteria): self
     {
-        $this->city_criteria = $city_criteria;
+        $this->cityCriteria = $cityCriteria;
 
         return $this;
     }
 
     public function getCompetitionVisual(): ?File
     {
-        return $this->competition_visual;
+        return $this->competitionVisual;
     }
 
-    public function setCompetitionVisual(?File $competition_visual): self
+    public function setCompetitionVisual(?File $competitionVisual): self
     {
-        $this->competition_visual = $competition_visual;
+        $this->competitionVisual = $competitionVisual;
 
         return $this;
     }
 
     public function isIsPromoted(): ?bool
     {
-        return $this->is_promoted;
+        return $this->isPromoted;
     }
 
-    public function setIsPromoted(?bool $is_promoted): self
+    public function setIsPromoted(?bool $isPromoted): self
     {
-        $this->is_promoted = $is_promoted;
+        $this->isPromoted = $isPromoted;
 
         return $this;
     }
@@ -763,12 +766,12 @@ class Competition
 
     public function getConsultationCount(): ?int
     {
-        return $this->consultation_count;
+        return $this->consultationCount;
     }
 
-    public function setConsultationCount(?int $consultation_count): self
+    public function setConsultationCount(?int $consultationCount): self
     {
-        $this->consultation_count = $consultation_count;
+        $this->consultationCount = $consultationCount;
 
         return $this;
     }

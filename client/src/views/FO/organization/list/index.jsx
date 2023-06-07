@@ -26,12 +26,14 @@ export default function ListOrganization() {
     const [paginationOptions, setPaginationOptions] = useState({});
     const [searchParams, setSearchParams] = useSearchParams({});
     const [page, setPage] = useState(
-        isNaN(parseInt(searchParams.get('page'))) || searchParams.get('page') < 1
+        isNaN(parseInt(searchParams.get('page'))) ||
+            searchParams.get('page') < 1
             ? DEFAULT_PAGE
             : parseInt(searchParams.get('page'))
     );
     const [itemsPerPage, setItemsPerPage] = useState(
-        isNaN(parseInt(searchParams.get('itemsPerPage'))) || searchParams.get('itemsPerPage') < 1
+        isNaN(parseInt(searchParams.get('itemsPerPage'))) ||
+            searchParams.get('itemsPerPage') < 1
             ? DEFAULT_ITEMS_PER_PAGE
             : parseInt(searchParams.get('itemsPerPage'))
     );
@@ -51,36 +53,16 @@ export default function ListOrganization() {
             });
     };
 
-    function getOrganization(controller) {
-        const now = new Date();
-        return apiFetch(
-            '/organizations?&properties[]=organizer_name&properties[]=organization_visual&groups[]=file&groups[]=organization',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                signal: controller?.signal,
-            }
-        )
-            .then(res => res.json())
-            .then(async data => {
-                if (data.code === 401) {
-                    throw new Error(data.message);
-                }
-                console.debug(data);
-                setOrganization(data['hydra:member']);
-                return data['hydra:member'];
-            });
-    }
-
     useEffect(() => {
         setSearchParams({
             page: page || DEFAULT_PAGE,
             itemsPerPage: itemsPerPage || DEFAULT_ITEMS_PER_PAGE,
         });
         setCardLoading(true);
-        getListOraganization().then(() => { setCardLoading(false); setIsLoading(false);});
+        getListOraganization().then(() => {
+            setCardLoading(false);
+            setIsLoading(false);
+        });
         return () => {
             setTimeout(() => controller?.abort());
         };
@@ -95,16 +77,23 @@ export default function ListOrganization() {
         controller?.abort();
         const _controller = new AbortController();
         setController(_controller);
-        return apiFetch(
-            `/organizations?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&properties[]=organizer_name&properties[]=id&properties[]=organization_visual&properties[]=activeCompetitionCount&groups[]=file&groups[]=organization`,
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                signal: _controller?.signal,
-            }
-        )
+        return apiFetch(`/organizations`, {
+            query: {
+                page: pageToLoad,
+                itemsPerPage: itemsPerPageToLoad,
+                properties: [
+                    'organizerName',
+                    'organizationVisual',
+                    'activeCompetitionCount',
+                ],
+                groups: ['file:read', 'organization:organizationVisual:read'],
+            },
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            signal: _controller?.signal,
+        })
             .then(res => res.json())
             .then(async data => {
                 if (data.code === 401) {
@@ -146,7 +135,9 @@ export default function ListOrganization() {
                                 imagePath={organization.organization_visual.path}
                                 stats={[
                                     {
-                                        name: organization.activeCompetitionCount + ' concours actifs',
+                                        name:
+                                            organization.activeCompetitionCount +
+                                            ' concours actifs',
                                         icon: 'shutter',
                                     },
                                 ]}
@@ -170,7 +161,7 @@ export default function ListOrganization() {
                             <div>
                                 <div className={style.homeDisposition}>
                                     <div>
-                                        <h2>{totalitems } résultats</h2>
+                                        <h2>{totalitems} résultats</h2>
                                     </div>
                                     <div>
                                         <div>

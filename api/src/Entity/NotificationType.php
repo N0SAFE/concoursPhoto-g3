@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Patch(),
         new Delete()
     ],
-    normalizationContext: ['groups' => ['notification_type:read']]
+    normalizationContext: ['groups' => ['notificationType:read']]
 )]
 #[ORM\Entity(repositoryClass: NotificationTypeRepository::class)]
 class NotificationType
@@ -30,22 +30,22 @@ class NotificationType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['notification_type:read', 'user:current:read'])]
+    #[Groups(['notificationType:read', 'user:current:read'])]
     private ?int $id = null;
 
-    #[Groups(['notification_type:read', 'user:current:read'])]
+    #[Groups(['notificationType:read', 'user:current:read'])]
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[Groups(['notification_type:read', 'user:current:read'])]
+    #[Groups(['notificationType:read', 'user:current:read'])]
     #[ORM\Column]
-    private ?int $notification_code = null;
+    private ?int $notificationCode = null;
 
-    #[Groups(['notification_type:read:subscribed_users'])]
+    #[Groups(['notificationType:subscribedUsers:read'])]
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'notificationEnabled')]
     private Collection $subscribedUsers;
 
-    #[Groups(['notification_type:read:competition_already_handled'])]
+    #[Groups(['notificationType:competitionAlreadyHandled:read'])]
     #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'notificationsSended')]
     private Collection $competitionAlreadyHandled;
 
@@ -74,12 +74,12 @@ class NotificationType
 
     public function getNotificationCode(): ?int
     {
-        return $this->notification_code;
+        return $this->notificationCode;
     }
 
-    public function setNotificationCode(int $notification_code): self
+    public function setNotificationCode(int $notificationCode): self
     {
-        $this->notification_code = $notification_code;
+        $this->notificationCode = $notificationCode;
 
         return $this;
     }

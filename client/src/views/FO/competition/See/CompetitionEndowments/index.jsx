@@ -2,14 +2,16 @@ import { useOutletContext, useParams } from 'react-router-dom';
 import Navlink from '@/components/molecules/Navlink';
 import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import style from './style.module.scss';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition } = useOutletContext();
-    const asidePictures = competition.aside;
-    const asideLabel = competition.asideLabel;
+    const { competition: _competition } = useOutletContext();
+    const asidePictures = _competition.aside;
+    const asideLabel = _competition.asideLabel;
+
+    const [competition, setCompetition] = useState(_competition);
 
     const editorRef = useRef(null);
 
@@ -52,8 +54,11 @@ export default function () {
                         }}
                     ></div>
                     <Editor
+                        onEditorChange={s => {
+                            setCompetition({ ...competition, endowments: s });
+                        }}
                         onInit={(evt, editor) => (editorRef.current = editor)}
-                        initialValue={competition.endowments}
+                        initialValue={_competition.endowments}
                         init={{
                             height: 500,
                             menubar: false,

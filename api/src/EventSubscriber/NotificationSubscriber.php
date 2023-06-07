@@ -33,11 +33,12 @@ final class NotificationSubscriber implements EventSubscriberInterface
     }
 
     // @TODO à revoir car il ne sert plus à grand chose mais si on veut se baser dessus par exemple pour les notifs sur les inscriptions
-    public function onCompetitionCreate() {
-//        $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 1]);
-//        $users = $this->userRepository->findByNotificationType($notificationType);
-//        if ($users) {
-//
-//        }
+    public function onCompetitionCreate()
+    {
+        //        $notificationType = $this->notificationTypeRepository->findOneBy(["notification_code" => 1]);
+        //        $users = $this->userRepository->findByNotificationType($notificationType);
+        //        if ($users) {
+        //
+        //        }
     }
 }

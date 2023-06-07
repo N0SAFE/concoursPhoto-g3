@@ -22,6 +22,18 @@ export default function () {
 
     const getCompetitions = controller => {
         return apiFetch('/competitions/' + competitionId, {
+            query: {
+                groups: [
+                    'competition:participantCategory:read',
+                    'participantCategory:read',
+                    'competition:organization:read',
+                    'organization:read',
+                    'competition:theme:read',
+                    'theme:read',
+                    'competition:competitionVisual:read',
+                    'file:read',
+                ],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -35,17 +47,17 @@ export default function () {
                     throw new Error(data.message);
                 }
                 Promise.all([
-                    Promise.all(data.city_criteria.map(getCityByCode)),
+                    Promise.all(data.cityCriteria.map(getCityByCode)),
                     Promise.all(
-                        data.department_criteria.map(getDepartmentByCode)
+                        data.departmentCriteria.map(getDepartmentByCode)
                     ),
-                    Promise.all(data.region_criteria.map(getRegionByCode)),
+                    Promise.all(data.regionCriteria.map(getRegionByCode)),
                 ]).then(([cities, departments, regions]) => {
                     const _competition = {
                         ...data,
-                        city_criteria: cities,
-                        department_criteria: departments,
-                        region_criteria: regions,
+                        cityCriteria: cities,
+                        departmentCriteria: departments,
+                        regionCriteria: regions,
                     };
                     setEntity(_competition);
                     return _competition;
@@ -82,7 +94,7 @@ export default function () {
                         properties={[
                             {
                                 display: 'nom',
-                                name: 'competition_name',
+                                name: 'competitionName',
                             },
                             {
                                 display: 'Description',
@@ -90,7 +102,7 @@ export default function () {
                             },
                             {
                                 display: 'Date de création',
-                                name: 'creation_date',
+                                name: 'creationDate',
                                 type: 'date',
                             },
                             {
@@ -99,65 +111,65 @@ export default function () {
                             },
                             {
                                 display: 'max age',
-                                name: 'max_age_criteria',
+                                name: 'maxAgeCriteria',
                             },
                             {
                                 display: 'min age',
-                                name: 'min_age_criteria',
+                                name: 'minAgeCriteria',
                             },
                             {
                                 display: 'nombre de vote max',
-                                name: 'number_of_max_votes',
+                                name: 'numberOfMaxVotes',
                             },
                             {
                                 display: 'nombre de prix',
-                                name: 'number_of_prices',
+                                name: 'numberOfPrices',
                             },
                             {
                                 display: 'organisation',
                                 name: 'organization',
                                 customData({ entity, property }) {
-                                    return entity?.organization?.organizer_name;
+                                    return entity?.organization?.organizerName;
                                 },
                             },
                             {
                                 display: 'date de publication',
-                                name: 'publication_date',
+                                name: 'publicationDate',
                                 type: 'date',
                             },
                             {
                                 display: 'date début publication',
-                                name: 'publication_start_date',
+                                name: 'publicationStartDate',
                                 type: 'date',
                             },
                             {
                                 display: 'date début de soummision',
-                                name: 'submission_start_date',
+                                name: 'submissionStartDate',
                                 type: 'date',
                             },
                             {
                                 display: 'date de fin de soummision',
-                                name: 'submission_end_date',
+                                name: 'submissionEndDate',
                                 type: 'date',
                             },
                             {
                                 display: 'date de début de vote',
-                                name: 'voting_start_date',
+                                name: 'votingStartDate',
                                 type: 'date',
                             },
                             {
                                 display: 'date de fin de vote',
-                                name: 'voting_end_date',
+                                name: 'votingEndDate',
                                 type: 'date',
                             },
                             {
                                 display: 'date résultat',
-                                name: 'results_date',
+                                name: 'resultsDate',
                                 type: 'date',
                             },
                             {
                                 display: 'pondération vote jury',
-                                name: 'weighting_of_jury_votes',
+                                name: 'weightingOfJuryVotes',
                             },
                             {
                                 display: 'thème',
@@ -170,24 +182,24 @@ export default function () {
                             },
                             {
                                 display: 'Visuel',
-                                name: 'competition_visual',
+                                name: 'competitionVisual',
                                 type: 'img',
                                 customData: ({ entity }) => {
-                                    return entity?.competition_visual?.path
+                                    return entity?.competitionVisual?.path
                                         ? {
                                               to: toApiPath(
-                                                  entity?.competition_visual
+                                                  entity?.competitionVisual
                                                       ?.path
                                               ),
-                                              name: entity?.competition_visual
-                                                  ?.default_name,
+                                              name: entity?.competitionVisual
+                                                  ?.defaultName,
                                           }
                                         : null;
                                 },
                             },
                             {
                                 display: 'Pays',
-                                name: 'country_criteria',
+                                name: 'countryCriteria',
                             },
                             {
                                 display: 'status',
@@ -195,27 +207,27 @@ export default function () {
                             },
                             {
                                 display: 'Ville',
-                                name: 'city_criteria',
+                                name: 'cityCriteria',
                                 customData({ entity, property }) {
-                                    return entity?.city_criteria
+                                    return entity?.cityCriteria
                                         ?.map(city => city.nom)
                                         .join(', ');
                                 },
                             },
                             {
                                 display: 'département',
-                                name: 'department_criteria',
+                                name: 'departmentCriteria',
                                 customData({ entity, property }) {
-                                    return entity?.department_criteria
+                                    return entity?.departmentCriteria
                                         ?.map(department => department.nom)
                                         .join(', ');
                                 },
                             },
                             {
                                 display: 'région',
-                                name: 'region_criteria',
+                                name: 'regionCriteria',
                                 customData({ entity, property }) {
-                                    return entity?.region_criteria
+                                    return entity?.regionCriteria
                                         ?.map(region => region.nom)
                                         .join(', ');
                                 },

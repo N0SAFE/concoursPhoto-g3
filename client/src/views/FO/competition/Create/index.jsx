@@ -31,6 +31,7 @@ export default function CreateCompetitions() {
         roles: [],
         gender: '',
         dateOfBirth: null,
+        creationDate: null,
     });
     const [locationPossibility, updateLocationPossibility] =
         useLocationPosibility(['cities'], {}, {updateOnStart: false});
@@ -64,7 +65,35 @@ export default function CreateCompetitions() {
             .then(r => r.json())
             .then(data => {
                 return data['hydra:member'].map(function (item) {
-                    return {label: item.label, value: item['@id']};
+                    return { label: item.label, value: item['@id'] };
+                });
+            });
+    };
+
+    const getOrganizationsName = controller => {
+        return apiFetch('/organizations', {
+            method: 'GET',
+            signal: controller?.signal,
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member'].map(function (item) {
+                    return { label: item.organizerName, value: item['@id'] };
+                });
+            });
+    };
+
+    const getThemes = controller => {
+        return apiFetch('/themes', {
+            method: 'GET',
+            signal: controller?.signal,
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member'].map(function (item) {
+                    return { label: item.label, value: item['@id'] };
                 });
             });
     };

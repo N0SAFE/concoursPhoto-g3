@@ -90,6 +90,14 @@ export default function UserCreate() {
 
     function getUser(controller) {
         return apiFetch('/users/' + userId, {
+            query: {
+                groups: [
+                    'user:gender:read',
+                    'gender:read',
+                    'user:personalStatut:read',
+                    'personalStatut:read',
+                ],
+            },
             method: 'GET',
             signal: controller?.signal,
         })
@@ -104,7 +112,7 @@ export default function UserCreate() {
                             firstname: data.firstname,
                             lastname: data.lastname,
                             address: data.address,
-                            phoneNumber: data.phone_number,
+                            phoneNumber: data.phoneNumber,
                             roles: data.roles,
                             postcode: {
                                 value: data.postcode,
@@ -116,10 +124,10 @@ export default function UserCreate() {
                                 value: data.gender['@id'],
                             },
                             statut: {
-                                label: data.personal_statut.label,
-                                value: data.personal_statut['@id'],
+                                label: data.personalStatut.label,
+                                value: data.personalStatut['@id'],
                             },
-                            dateOfBirth: new Date(data.date_of_birth),
+                            dateOfBirth: new Date(data.dateOfBirth),
                         };
                         setEntity(_user);
                     }

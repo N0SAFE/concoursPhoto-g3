@@ -18,20 +18,16 @@ export default function MyorganizationAdmin() {
             searchParams.get('edit') === 'true' &&
             !isNaN(parseInt(searchParams.get('id')))
         ) {
-            console.log('edit admin');
             setModalContent(<div>edit admin</div>);
             showModal(function () {
-                console.log('hide modal');
                 delete searchParams.edit;
                 delete searchParams.id;
                 setSearchParams({ ...searchParams });
             });
         }
         if (searchParams.get('create') === 'true') {
-            console.log('create admin');
             setModalContent(<div>add admin</div>);
             showModal(function () {
-                console.log('hide modal');
                 delete searchParams.create;
                 setSearchParams({ ...searchParams });
             });
@@ -42,26 +38,26 @@ export default function MyorganizationAdmin() {
     return (
         <>
             <Table
-                list={selectedOrganisation?.users}
+                list={selectedOrganisation?.admins}
                 fields={['Nom', 'Prenom', 'Fonction/poste']}
-                onLineClick={function (user) {
+                onLineClick={function (admin) {
                     setSearchParams({
                         ...searchParams,
                         edit: true,
-                        id: user.id,
+                        id: admin.id,
                     });
                 }}
             >
-                {user => {
+                {admin => {
                     return [
                         {
-                            content: user.lastname,
+                            content: admin.lastname,
                         },
                         {
-                            content: user.firstname,
+                            content: admin.firstname,
                         },
                         {
-                            content: user.job,
+                            content: admin.job,
                         },
                     ];
                 }}

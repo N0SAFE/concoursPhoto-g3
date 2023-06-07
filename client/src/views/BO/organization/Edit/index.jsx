@@ -83,6 +83,16 @@ export default function OrganizationEdit() {
 
     function getOrganizations(controller) {
         return apiFetch('/organizations/' + organizationId, {
+            query: {
+                groups: [
+                    'organization:organizationType:read',
+                    'organizationType:read',
+                    'organization:competitions:read',
+                    'competition:read',
+                    'organization:logo:read',
+                    'file:read',
+                ],
+            },
             method: 'GET',
             signal: controller?.signal,
         })
@@ -92,33 +102,33 @@ export default function OrganizationEdit() {
                 return Promise.all([getCityByCode(data.citycode)]).then(
                     ([city]) => {
                         const _organization = {
-                            organizerName: data.organizer_name,
+                            organizerName: data.organizerName,
                             description: data.description,
                             address: data.address,
-                            phoneNumber: data.number_phone,
+                            phoneNumber: data.numberPhone,
                             email: data.email,
                             state: data.state,
                             logo: data.logo || null,
                             country: data.country,
-                            creationDate: data.creation_date,
-                            websiteUrl: data.website_url,
+                            creationDate: data.creationDate,
+                            websiteUrl: data.websiteUrl,
                             city: { label: city.nom, value: city.code },
                             postcode: {
                                 value: data.postcode,
                                 label: data.postcode,
                             },
                             organizationType: {
-                                value: data.organization_type['@id'],
-                                label: data.organization_type.label,
+                                value: data.organizationType['@id'],
+                                label: data.organizationType.label,
                             },
-                            numberSiret: data.number_siret,
-                            intraCommunityVat: data.intra_community_vat,
+                            numberSiret: data.numberSiret,
+                            intraCommunityVat: data.intraCommunityVat,
                         };
                         const _organizationFile = {
                             logo: data.logo
                                 ? {
                                       to: apiPathComplete(data.logo.path),
-                                      name: data.logo.default_name,
+                                      name: data.logo.defaultName,
                                   }
                                 : null,
                         };

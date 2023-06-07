@@ -9,8 +9,8 @@ export default function FOCompetitionList({ cardContentList }) {
                     return (
                         <Card
                             idContent={competition.id}
-                            title={competition.competition_name}
-                            imagePath={competition.competition_visual.path}
+                            title={competition.competitionName}
+                            imagePath={competition.competitionVisual.path}
                             filters={[
                                 competition.organization?.users.map(
                                     user =>
@@ -35,7 +35,7 @@ export default function FOCompetitionList({ cardContentList }) {
                                 },
                             ]}
                             finalDate={new Date(
-                                competition.results_date
+                                competition.resultsDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'long',

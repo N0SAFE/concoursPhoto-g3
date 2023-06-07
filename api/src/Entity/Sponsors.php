@@ -20,7 +20,8 @@ use ApiPlatform\Metadata\Post;
         new Get(),
         new Post(),
         new Patch()
-    ]
+    ],
+    normalizationContext: ["groups" => ["sponsors:read"]],
 )]
 #[ORM\Entity(repositoryClass: SponsorsRepository::class)]
 class Sponsors
@@ -28,28 +29,35 @@ class Sponsors
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['sponsor:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'sponsors')]
+    #[Groups(['sponsor:read'])]
     private ?Organization $organization = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $start_date = null;
+    #[Groups(['sponsor:read'])]
+    private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $end_date = null;
+    #[Groups(['sponsor:read'])]
+    private ?\DateTimeInterface $endDate = null;
 
     #[ORM\Column]
-    private ?int $sponsor_rank = null;
+    #[Groups(['sponsor:read'])]
+    private ?int $sponsorRank = null;
 
     #[ORM\Column]
+    #[Groups(['sponsor:read'])]
     private ?float $price = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['competition', 'user:current:read'])]
+    #[Groups(['sponsor:logo:read', 'user:current:read'])]
     private ?File $logo = null;
 
     #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'sponsors')]
+    #[Groups(['sponsor:competitions:read'])]
     private Collection $competitions;
 
     public function __construct()
@@ -76,36 +84,36 @@ class Sponsors
 
     public function getStartDate(): ?\DateTimeInterface
     {
-        return $this->start_date;
+        return $this->startDate;
     }
 
-    public function setStartDate(\DateTimeInterface $start_date): self
+    public function setStartDate(\DateTimeInterface $startDate): self
     {
-        $this->start_date = $start_date;
+        $this->startDate = $startDate;
 
         return $this;
     }
 
     public function getEndDate(): ?\DateTimeInterface
     {
-        return $this->end_date;
+        return $this->endDate;
     }
 
-    public function setEndDate(\DateTimeInterface $end_date): self
+    public function setEndDate(\DateTimeInterface $endDate): self
     {
-        $this->end_date = $end_date;
+        $this->endDate = $endDate;
 
         return $this;
     }
 
     public function getSponsorRank(): ?int
     {
-        return $this->sponsor_rank;
+        return $this->sponsorRank;
     }
 
-    public function setSponsorRank(int $sponsor_rank): self
+    public function setSponsorRank(int $sponsorRank): self
     {
-        $this->sponsor_rank = $sponsor_rank;
+        $this->sponsorRank = $sponsorRank;
 
         return $this;
     }

@@ -2,28 +2,43 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UserLinkRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(),
+        new Patch()
+    ],
+    normalizationContext: ["groups" => ["userLink:read"]],
+    denormalizationContext: ["groups" => ["userLink:write"]],
+)]
 #[ORM\Entity(repositoryClass: UserLinkRepository::class)]
 class UserLink
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['userLink:read', 'user:current:read'])]
     private ?int $id = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['userLink:user:read', 'user:current:read', "userLink:write"])]
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
     private ?User $user = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['userLink:socialNetworks:read', 'user:current:read', "userLink:write"])]
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
-    private ?SocialNetworks $social_networks = null;
+    private ?SocialNetworks $socialNetworks = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['userLink:read', 'user:current:read', "userLink:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $link = null;
 
@@ -46,12 +61,12 @@ class UserLink
 
     public function getSocialNetworks(): ?SocialNetworks
     {
-        return $this->social_networks;
+        return $this->socialNetworks;
     }
 
-    public function setSocialNetworks(?SocialNetworks $social_networks): self
+    public function setSocialNetworks(?SocialNetworks $socialNetworks): self
     {
-        $this->social_networks = $social_networks;
+        $this->socialNetworks = $socialNetworks;
 
         return $this;
     }

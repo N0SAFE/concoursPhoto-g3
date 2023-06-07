@@ -24,20 +24,28 @@ export default function () {
 
     const [selectedOrganisation, setSelectedOrganisation] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    
-    function getOrganization(id ){
+
+    function getOrganization(id) {
         setIsLoading(true);
-        apiFetch('/organizations/' + id + "?groups[]=organization:admin:read&groups[]=user:read", {
+        apiFetch('/organizations/' + id, {
+            query: {
+                groups: [
+                    'organization:admin:read',
+                    'user:read',
+                    'organization:organizationType:read',
+                    'organizationType:read',
+                ],
+            },
             method: 'GET',
         })
             .then(r => r.json())
             .then(res => {
                 const _organisation = {
                     ...res,
-                    organizationType: res.organization_type
+                    organizationType: res.organizationType
                         ? {
-                              label: res.organization_type.label,
-                              value: res.organization_type['@id'],
+                              label: res.organizationType.label,
+                              value: res.organizationType['@id'],
                           }
                         : null,
                 };
@@ -50,8 +58,6 @@ export default function () {
     useEffect(() => {
         getOrganization(context.idOrganisation);
     }, []);
-
-    console.log(selectedOrganisation);
 
     return (
         <div className={style.container}>
@@ -67,26 +73,30 @@ export default function () {
                 />
             </div>
             <div className={style.content}>
-                <Loader active={isLoading} takeInnerContent={true} style={{borderRadius: "10px"}}>
+                <Loader
+                    active={isLoading}
+                    takeInnerContent={true}
+                    style={{ borderRadius: '10px' }}
+                >
                     <Input
                         type="select"
                         name="organisation"
                         label="selectionner une organisation"
                         extra={{
                             options: me.Manage.map(function ({
-                                organizer_name,
+                                organizerName,
                                 id,
                             }) {
-                                return { value: id, label: organizer_name };
+                                return { value: id, label: organizerName };
                             }),
                             required: true,
                             value: {
-                                label: selectedOrganisation.organizer_name,
+                                label: selectedOrganisation.organizerName,
                                 value: selectedOrganisation.id,
                             },
                         }}
                         onChange={d => {
-                            getOrganization(d.value)
+                            getOrganization(d.value);
                         }}
                     />
                     <Hbar />

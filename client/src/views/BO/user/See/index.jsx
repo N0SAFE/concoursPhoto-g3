@@ -17,6 +17,14 @@ export default function () {
 
     const getUser = controller => {
         return apiFetch('/users/' + userId, {
+            query: {
+                groups: [
+                    'user:personalStatut:read',
+                    'personalStatut:read',
+                    'user:gender:read',
+                    'gender:read',
+                ],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,7 +81,7 @@ export default function () {
                         },
                         {
                             display: 'Téléphone',
-                            name: 'phone_number',
+                            name: 'phoneNumber',
                         },
                         {
                             display: 'Adresse',
@@ -85,9 +93,9 @@ export default function () {
                         },
                         {
                             display: 'Statut',
-                            name: 'personal_statut',
+                            name: 'personalStatut',
                             customData({ entity, property }) {
-                                return entity?.personal_statut?.label;
+                                return entity?.personalStatut?.label;
                             },
                         },
                         {
@@ -100,10 +108,10 @@ export default function () {
                         },
                         {
                             display: 'Date de naissance',
-                            name: 'date_of_birth',
+                            name: 'dateOfBirth',
                             customData({ entity, property }) {
                                 return new Date(
-                                    entity?.date_of_birth
+                                    entity?.dateOfBirth
                                 ).toLocaleDateString('fr-FR', {
                                     year: 'numeric',
                                     month: 'long',

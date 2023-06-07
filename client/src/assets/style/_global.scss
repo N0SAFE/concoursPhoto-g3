@@ -49,3 +49,8 @@ body {
     overflow: hidden;
     white-space: nowrap;
 }
+
+// hide registration pop-up TINY MCE
+.tox-notifications-container {
+    display: none;
+}
