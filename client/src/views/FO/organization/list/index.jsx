@@ -73,7 +73,6 @@ export default function ListOrganization() {
         const pageToLoad = page === null ? DEFAULT_PAGE : page;
         const itemsPerPageToLoad =
             itemsPerPage === null ? DEFAULT_ITEMS_PER_PAGE : itemsPerPage;
-        const actualDate = format(now, 'yyyy-MM-dd');
         controller?.abort();
         const _controller = new AbortController();
         setController(_controller);
@@ -85,6 +84,7 @@ export default function ListOrganization() {
                     'organizerName',
                     'organizationVisual',
                     'activeCompetitionCount',
+                    'id'
                 ],
                 groups: ['file:read', 'organization:organizationVisual:read'],
             },
@@ -131,8 +131,8 @@ export default function ListOrganization() {
                                 idContent={organization.id}
                                 onClick={() => { navigate(`/organization/${organization.id}`) }
                                 }
-                                title={organization.organizer_name}
-                                imagePath={organization.organization_visual.path}
+                                title={organization.organizerName}
+                                imagePath={organization.organizationVisual.path}
                                 stats={[
                                     {
                                         name:
