@@ -24,10 +24,18 @@ export default function () {
 
     const [selectedOrganisation, setSelectedOrganisation] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    
-    function getOrganization(id ){
+
+    function getOrganization(id) {
         setIsLoading(true);
-        apiFetch('/organizations/' + id + "?groups[]=organization:admin:read&groups[]=user:read&groups[]=organization:organizationType:read&groups[]=organizationType:read", {
+        apiFetch('/organizations/' + id, {
+            query: {
+                groups: [
+                    'organization:admin:read',
+                    'user:read',
+                    'organization:organizationType:read',
+                    'organizationType:read',
+                ],
+            },
             method: 'GET',
         })
             .then(r => r.json())
@@ -51,8 +59,6 @@ export default function () {
         getOrganization(context.idOrganisation);
     }, []);
 
-    console.log(selectedOrganisation);
-
     return (
         <div className={style.container}>
             <div className={style.navlinkContainer}>
@@ -67,7 +73,11 @@ export default function () {
                 />
             </div>
             <div className={style.content}>
-                <Loader active={isLoading} takeInnerContent={true} style={{borderRadius: "10px"}}>
+                <Loader
+                    active={isLoading}
+                    takeInnerContent={true}
+                    style={{ borderRadius: '10px' }}
+                >
                     <Input
                         type="select"
                         name="organisation"
@@ -86,7 +96,7 @@ export default function () {
                             },
                         }}
                         onChange={d => {
-                            getOrganization(d.value)
+                            getOrganization(d.value);
                         }}
                     />
                     <Hbar />

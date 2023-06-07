@@ -34,7 +34,10 @@ export default function UserList() {
             };
         }
 
-        return apiFetch('/users?groups[]=user:gender:read&groups[]=gender:read', {
+        return apiFetch('/users', {
+            query: {
+                groups: ['user:gender:read', 'gender:read'],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -185,7 +188,8 @@ export default function UserList() {
                     actions={[
                         {
                             name: 'Modifier',
-                            action: user => navigate('/BO/user/edit/' + user.id),
+                            action: user =>
+                                navigate('/BO/user/edit/' + user.id),
                             component: (user, callback, index) => {
                                 return (
                                     <Button
@@ -227,8 +231,7 @@ export default function UserList() {
                         },
                         {
                             name: 'Voir',
-                            action: user =>
-                                navigate('/BO/user/' + user.id),
+                            action: user => navigate('/BO/user/' + user.id),
                             component: (user, callback, index) => (
                                 <Button
                                     borderRadius={'30px'}

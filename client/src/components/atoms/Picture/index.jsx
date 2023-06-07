@@ -28,7 +28,6 @@ export function defaultOnClick(e, { showModal, setModalContent, props }) {
 }
 
 export default function (props) {
-    console.log(props?.photographer?.lastname);
     const { showModal, setModalContent } = useModal();
     return (
         <img
