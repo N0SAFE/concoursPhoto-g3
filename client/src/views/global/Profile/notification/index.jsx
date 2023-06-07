@@ -18,6 +18,7 @@ export default function ProfileNotification() {
     const [notificationTypesSelected, setNotificationTypesSelected] = useState(
         meNotificationEnabled
     );
+    
 
     function containCode(code) {
         for (let item of notificationTypesSelected) {
@@ -110,22 +111,22 @@ export default function ProfileNotification() {
                                 type="checkbox"
                                 labelDisposition={"right"}
                                 label={"Être informé par email lorsqu’un nouveau concours est publié et que mon profil satisfait les critères de participation"}
+                                onChange={() => toggleNotificationType(5)}
+                                defaultValue={containCode(5)}
+                            />
+                            <Input
+                                type="checkbox"
+                                labelDisposition={"right"}
+                                label={"Être informé par email lorsqu’un concours entre en phase de soumission"}
                                 onChange={() => toggleNotificationType(6)}
                                 defaultValue={containCode(6)}
                             />
                             <Input
                                 type="checkbox"
                                 labelDisposition={"right"}
-                                label={"Être informé par email lorsqu’un concours entre en phase de soumission"}
-                                onChange={() => toggleNotificationType(7)}
-                                checked={containCode(7)}
-                            />
-                            <Input
-                                type="checkbox"
-                                labelDisposition={"right"}
                                 label={"Être informé par email 48h avant la date de fin des soumissions d’un concours"}
-                                onChange={() => toggleNotificationType(8)}
-                                checked={containCode(8)}
+                                onChange={() => toggleNotificationType(7)}
+                                defaultValue={containCode(7)}
                             />
                         </div>
                     </div>

@@ -25,17 +25,20 @@ export default function () {
     const [controller, setController] = useState(new AbortController());
 
     const getOrganization = async (page, itemsPerPage) => {
-        return await apiFetch(
-            `/organizations?page=${page}&itemsPerPage=${itemsPerPage}&admins[]=${me['@id']}&groups[]=organization:admins:read&groups[]=user:read`,
-            {
-                method: 'GET',
-                params: {
-                    page,
-                    itemsPerPage,
-                },
-                signal: controller.signal,
-            }
-        ).then(r => r.json());
+        return await apiFetch(`/organizations`, {
+            query: {
+                page: page,
+                itemsPerPage: itemsPerPage,
+                admins: [me['@id']],
+                groups: ['organization:admins:read', 'user:read'],
+            },
+            method: 'GET',
+            params: {
+                page,
+                itemsPerPage,
+            },
+            signal: controller.signal,
+        }).then(r => r.json());
     };
 
     useEffect(() => {
@@ -55,8 +58,12 @@ export default function () {
 
     return (
         <div>
-            <Loader active={isLoading} takeInnerContent={true} style={{borderRadius: "10px", minHeight: "600px"}}>
-                <p style={{fontWeight: 600}}>
+            <Loader
+                active={isLoading}
+                takeInnerContent={true}
+                style={{ borderRadius: '10px', minHeight: '600px' }}
+            >
+                <p style={{ fontWeight: 600 }}>
                     Ce menu est destiné uniquement aux membres qui souhaitent
                     créer la fiche d’une ou plusieurs organisations qu’ils
                     représentent légalement pour publier un concours.
@@ -66,8 +73,15 @@ export default function () {
                     indispensable pour créer ensuite un concours photo en son
                     nom.
                 </p>
-                <div style={{display: "flex", gap: "20px", flexDirection: "column", marginTop: "30px"}}>
-                    <p style={{marginLeft: "15px"}}>
+                <div
+                    style={{
+                        display: 'flex',
+                        gap: '20px',
+                        flexDirection: 'column',
+                        marginTop: '30px',
+                    }}
+                >
+                    <p style={{ marginLeft: '15px' }}>
                         {data?.totalItems} organisations dont je suis l’un des
                         administrateurs
                     </p>

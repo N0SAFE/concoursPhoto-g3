@@ -29,35 +29,35 @@ class Sponsors
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['sponsors:read'])]
+    #[Groups(['sponsor:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'sponsors')]
-    #[Groups(['sponsors:read'])]
+    #[Groups(['sponsor:read'])]
     private ?Organization $organization = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['sponsors:read'])]
+    #[Groups(['sponsor:read'])]
     private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['sponsors:read'])]
+    #[Groups(['sponsor:read'])]
     private ?\DateTimeInterface $endDate = null;
 
     #[ORM\Column]
-    #[Groups(['sponsors:read'])]
+    #[Groups(['sponsor:read'])]
     private ?int $sponsorRank = null;
 
     #[ORM\Column]
-    #[Groups(['sponsors:read'])]
+    #[Groups(['sponsor:read'])]
     private ?float $price = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['sponsors:logo:read', 'user:current:read'])]
+    #[Groups(['sponsor:logo:read', 'user:current:read'])]
     private ?File $logo = null;
 
     #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'sponsors')]
-    #[Groups(['sponsors:competitions:read'])]
+    #[Groups(['sponsor:competitions:read'])]
     private Collection $competitions;
 
     public function __construct()

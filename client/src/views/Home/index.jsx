@@ -3,11 +3,11 @@ import FOStats from '@/components/organisms/FO/FOStats';
 import FOPortalList from '@/components/organisms/FO/FOPortalList';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import { useEffect, useState } from 'react';
-import useApiFetch from '@/hooks/useApiFetch.js';
+import useApiFetch, { queryListSymbol } from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import Icon from '@/components/atoms/Icon/index.jsx';
-import {useNavigate, useSearchParams} from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import Card from '@/components/molecules/Card/index.jsx';
 
@@ -24,12 +24,14 @@ export default function Home() {
     const [promotedCompetitions, setPromotedCompetitions] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams({});
     const [page, setPage] = useState(
-        isNaN(parseInt(searchParams.get('page'))) || searchParams.get('page') < 1
+        isNaN(parseInt(searchParams.get('page'))) ||
+            searchParams.get('page') < 1
             ? DEFAULT_PAGE
             : parseInt(searchParams.get('page'))
     );
     const [itemsPerPage, setItemsPerPage] = useState(
-        isNaN(parseInt(searchParams.get('itemsPerPage'))) || searchParams.get('itemsPerPage') < 1
+        isNaN(parseInt(searchParams.get('itemsPerPage'))) ||
+            searchParams.get('itemsPerPage') < 1
             ? DEFAULT_ITEMS_PER_PAGE
             : parseInt(searchParams.get('itemsPerPage'))
     );
@@ -51,18 +53,25 @@ export default function Home() {
 
     function getPromotedCompetitions(controller) {
         const now = new Date();
-        return apiFetch(
-            '/competitions?isPromoted=1&groups[]=competition:read&groups[]=file:read&groups[]=competition:competitionVisual:read&resultsDate[after]=' +
-                format(now, 'yyyy-MM-dd') +
-                '&properties[]=competitionVisual',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
+        return apiFetch('/competitions', {
+            query: {
+                isPromoted: 1,
+                groups: [
+                    'competition:read',
+                    'file:read',
+                    'competition:competitionVisual:read',
+                ],
+                resultsDate: {
+                    after: format(now, 'yyyy-MM-dd'),
                 },
-                signal: controller?.signal,
-            }
-        )
+                properties: ['competitionVisual'],
+            },
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            signal: controller?.signal,
+        })
             .then(res => res.json())
             .then(async data => {
                 if (data.code === 401) {
@@ -96,8 +105,40 @@ export default function Home() {
         const _controller = new AbortController();
         setController(_controller);
         return apiFetch(
-            `/competitions?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&groups[]=competition:read&groups[]=file:read&groups[]=competition:competitionVisual:read&groups[]=competition:theme:read&groups[]=theme:read&groups[]=competition:organization:read&groups[]=organization:admins:read&groups[]=user:read&resultsDate[after]=${actualDate}&properties[]=competitionVisual&properties[]=competitionName&properties[]=state&properties[]=numberOfVotes&properties[]=numberOfParticipants&properties[]=numberOfPictures&properties[]=resultsDate&properties[organization][]=admins&properties[]=theme&properties[]=id&properties[]=consultationCount`,
+            `/competitions`,
             {
+                query: {
+                    page: pageToLoad,
+                    itemsPerPage: itemsPerPageToLoad,
+                    groups: [
+                        'competition:read',
+                        'file:read',
+                        'competition:competitionVisual:read',
+                        'competition:theme:read',
+                        'theme:read',
+                        'competition:organization:read',
+                        'organization:admins:read',
+                        'user:read',
+                    ],
+                    resultsDate: {
+                        after: actualDate,
+                    },
+                    properties: {
+                        organization: ['admins'],
+                        [queryListSymbol]: [
+                            'competitionVisual',
+                            'competitionName',
+                            'state',
+                            'numberOfVotes',
+                            'numberOfParticipants',
+                            'numberOfPictures',
+                            'resultsDate',
+                            'theme',
+                            'id',
+                            'consultationCount',
+                        ],
+                    },
+                },
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -157,7 +198,6 @@ export default function Home() {
                         alt: "Photo de la page d'accueil",
                     }}
                     boxSingleContents={promotedCompetitions.map(competition => {
-                        console.log(competition)
                         return competition.competitionVisual.path;
                     })}
                     boxUp={{
@@ -171,7 +211,7 @@ export default function Home() {
                         alt: "Photo de la page d'accueil",
                     }}
                 />
-                
+
                 <Pagination
                     items={competitions}
                     totalPageCount={paginationOptions['Max-Page']}
@@ -189,8 +229,9 @@ export default function Home() {
                             : 'Terminé';
                         return (
                             <Card
-                                onClick={() => { navigate(`/competition/${competition.id}`) }
-                                }
+                                onClick={() => {
+                                    navigate(`/competition/${competition.id}`);
+                                }}
                                 idContent={competition.id}
                                 title={competition.competitionName}
                                 imagePath={competition.competitionVisual.path}

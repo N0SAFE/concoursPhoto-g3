@@ -55,7 +55,6 @@ export default function Myorganization() {
         );
     };
     const updateOrgnisation = (key, value) => {
-        console.log(key, value);
         setOrganisation({ ...organisation, [key]: value });
     };
 

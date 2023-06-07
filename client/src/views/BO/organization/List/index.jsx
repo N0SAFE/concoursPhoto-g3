@@ -14,7 +14,15 @@ export default function OrganizationList() {
     const navigate = useNavigate();
 
     function getOrganizations(controller) {
-        return apiFetch('/organizations?groups[]=organization:organizationType:read&groups[]=organizationType:read&groups[]=organization:competitions:read&groups[]=competition:read', {
+        return apiFetch('/organizations', {
+            query: {
+                groups: [
+                    'organization:organizationType:read',
+                    'organizationType:read',
+                    'organization:competitions:read',
+                    'competition:read',
+                ],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
