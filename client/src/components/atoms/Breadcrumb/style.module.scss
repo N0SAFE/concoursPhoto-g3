@@ -9,13 +9,23 @@
             list-style: none;
             gap: 10px;
 
-            & > li > a {
+            & > li > a {    
                 text-decoration: none;
                 color: $text-color-secondary;
 
                 &::after {
                     content: '>';
                     margin-left: 10px;
+                }
+            }
+            
+            & > li:last-child {
+                font-weight: bold;
+                
+                & > a {
+                    &::after {
+                        content: '';
+                    }
                 }
             }
         }

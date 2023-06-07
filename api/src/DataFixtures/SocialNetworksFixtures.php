@@ -10,11 +10,11 @@ class SocialNetworksFixtures extends Fixture
 {
     const SN_REFERENCE = 'social_networks';
     const SN_ARRAY = [
-        "Facebook",
-        "Instagram",
-        "LinkedIn",
+        "Facebook", 
         "Youtube",
+        "Instagram", 
         "Twitter",
+        "LinkedIn",
         "TikTok"
     ];
 

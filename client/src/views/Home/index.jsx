@@ -111,7 +111,6 @@ export default function Home() {
                     page: pageToLoad,
                     itemsPerPage: itemsPerPageToLoad,
                     groups: [
-                        'competition:read',
                         'file:read',
                         'competition:competitionVisual:read',
                         'competition:theme:read',
