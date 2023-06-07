@@ -21,7 +21,19 @@ export default function () {
     const { id: competitionId } = useParams();
 
     const getCompetitions = controller => {
-        return apiFetch('/competitions/' + competitionId + "?groups[]=competition:participantCategory:read&groups[]=participantCategory:read&groups[]=competition:organization:read&groups[]=organization:read&groups[]=competition:theme:read&groups[]=theme:read&groups[]=competition:competitionVisual:read&groups[]=file:read", {
+        return apiFetch('/competitions/' + competitionId, {
+            query: {
+                groups: [
+                    'competition:participantCategory:read',
+                    'participantCategory:read',
+                    'competition:organization:read',
+                    'organization:read',
+                    'competition:theme:read',
+                    'theme:read',
+                    'competition:competitionVisual:read',
+                    'file:read',
+                ],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

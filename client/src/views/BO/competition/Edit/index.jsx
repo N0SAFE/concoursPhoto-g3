@@ -137,10 +137,25 @@ export default function CompetitionEdit() {
     };
 
     const getCompetitions = controller => {
-return apiFetch(`/competitions/${competitionId}?groups[]=competition:participantCategory:read&groups[]=participantCategory:read&groups[]=competition:organization:read&groups[]=organization:read&groups[]=competition:theme:read&groups[]=theme:read&groups[]=competition:competitionVisual:read&groups[]=file:read`, {
-            method: 'GET',
-            signal: controller?.signal,
-        })
+        return apiFetch(
+            `/competitions/${competitionId}`,
+            {
+                query: {
+                    groups: [
+                        'competition:participantCategory:read',
+                        'participantCategory:read',
+                        'competition:organization:read',
+                        'organization:read',
+                        'competition:theme:read',
+                        'theme:read',
+                        'competition:competitionVisual:read',
+                        'file:read',
+                    ],
+                },
+                method: 'GET',
+                signal: controller?.signal,
+            }
+        )
             .then(r => r.json())
             .then(async data => {
                 console.debug(data);
@@ -177,9 +192,7 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                         })),
                         creationDate: new Date(data.creationDate),
                         publicationDate: new Date(data.publicationDate),
-                        submissionStartDate: new Date(
-                            data.submissionStartDate
-                        ),
+                        submissionStartDate: new Date(data.submissionStartDate),
                         submissionEndDate: new Date(data.submissionEndDate),
                         votingStartDate: new Date(data.votingStartDate),
                         votingEndDate: new Date(data.votingEndDate),
@@ -261,7 +274,6 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
         return () => setTimeout(() => controller.abort());
     }, []);
 
-
     return (
         <Loader active={isLoading}>
             <BOCreate
@@ -274,7 +286,8 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                                     return null;
                                 } else if (updatedFile.competitionVisual.file) {
                                     return await uploadFile({
-                                        file: updatedFile.competitionVisual.file,
+                                        file: updatedFile.competitionVisual
+                                            .file,
                                     }).then(r => r['@id']);
                                 }
                             })().catch(e => {
@@ -352,11 +365,14 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                                         throw new Error(data.description);
                                     }
                                     if (
-                                        updatedFile.competitionVisual === null &&
+                                        updatedFile.competitionVisual ===
+                                            null &&
                                         entity.competitionVisual
                                     ) {
                                         await deleteFile({
-                                            path: entity.competitionVisual['@id'],
+                                            path: entity.competitionVisual[
+                                                '@id'
+                                            ],
                                         });
                                     }
                                 })
@@ -404,9 +420,12 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                         name="visual"
                         label="Visuel"
                         onChange={d => {
-                            updateFileState('competitionVisual', d)
+                            updateFileState('competitionVisual', d);
                         }}
-                        extra={{ value: updatedFile.competitionVisual, type: 'image' }}
+                        extra={{
+                            value: updatedFile.competitionVisual,
+                            type: 'image',
+                        }}
                     />
                     <label>Description</label>
                     <Editor
@@ -695,7 +714,8 @@ return apiFetch(`/competitions/${competitionId}?groups[]=competition:participant
                             extra={{
                                 isMulti: true,
                                 required: true,
-                                options: entityPossibility.participantCategories,
+                                options:
+                                    entityPossibility.participantCategories,
                                 closeMenuOnSelect: false,
                                 menuPlacement: 'top',
                                 value: entity.participantCategories,

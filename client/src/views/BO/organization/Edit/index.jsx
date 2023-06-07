@@ -82,7 +82,17 @@ export default function OrganizationEdit() {
     };
 
     function getOrganizations(controller) {
-        return apiFetch('/organizations/' + organizationId + "?groups[]=organization:organizationType:read&groups[]=organizationType:read&groups[]=organization:competitions:read&groups[]=competition:read&groups[]=organization:logo:read&groups[]=file:read", {
+        return apiFetch('/organizations/' + organizationId, {
+            query: {
+                groups: [
+                    'organization:organizationType:read',
+                    'organizationType:read',
+                    'organization:competitions:read',
+                    'competition:read',
+                    'organization:logo:read',
+                    'file:read',
+                ],
+            },
             method: 'GET',
             signal: controller?.signal,
         })

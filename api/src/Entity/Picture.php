@@ -16,11 +16,13 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 
 #[ApiFilter(
     GroupFilter::class
 )]
 #[ApiFilter(SearchFilter::class)]
+#[ApiFilter(PropertyFilter::class)]
 #[ApiResource(
     operations: [
         new GetCollection(),

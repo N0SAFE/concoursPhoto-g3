@@ -46,6 +46,7 @@ export default function FOPortalList({
                     {boxDown.type === 'slider' && (
                         <Slider
                             slides={boxDownContents.map(content => {
+                                console.log(content)
                                 return {
                                     imagePath: apiPath(content),
                                     imageAlt: content,

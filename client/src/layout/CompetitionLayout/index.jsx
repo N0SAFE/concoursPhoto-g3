@@ -32,21 +32,35 @@ export default function CompetitionLayout() {
                 toast.error(res.message);
             }
         });
-    }
+    };
 
     const getCompetitions = controller => {
-        return apiFetch(
-            '/competitions/' +
-                competitionId +
-                '?groups[]=file:read&groups[]=competition:competitionVisual:read&groups[]=competition:competitionPictures:read&groups[]=competition:organization:read&groups[]=organization:logo:read&groups[]=organization:admins:read&groups[]=user:read&groups[]=picture:file:read&groups[]=competition:memberOfTheJuries:read&groups[]=memberOfTheJury:user:read',
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                signal: controller?.signal,
-            }
-        )
+        return apiFetch('/competitions/' + competitionId, {
+            query: {
+                groups: [
+                    'file:read',
+                    'competition:competitionVisual:read',
+                    'competition:competitionPictures:read',
+                    'competition:organization:read',
+                    'organization:logo:read',
+                    'organization:admins:read',
+                    'user:read',
+                    'picture:file:read',
+                    'competition:memberOfTheJuries:read',
+                    'memberOfTheJury:user:read',
+                    "competition:theme:read",
+                    "theme:read",
+                    "competition:sponsors:read",
+                    "sponsor:read",
+                    'sponsor:logo:read'
+                ],
+            },
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            signal: controller?.signal,
+        })
             .then(res => res.json())
             .then(async data => {
                 console.debug(data);

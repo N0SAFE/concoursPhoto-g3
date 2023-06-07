@@ -89,7 +89,15 @@ export default function UserCreate() {
     };
 
     function getUser(controller) {
-        return apiFetch('/users/' + userId + "?groups[]=user:gender:read&groups[]=gender:read&groups[]=user:personalStatut:read&groups[]=user:personalStatut:read&groups[]=personalStatut:read", {
+        return apiFetch('/users/' + userId, {
+            query: {
+                groups: [
+                    'user:gender:read',
+                    'gender:read',
+                    'user:personalStatut:read',
+                    'personalStatut:read',
+                ],
+            },
             method: 'GET',
             signal: controller?.signal,
         })

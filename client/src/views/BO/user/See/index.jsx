@@ -16,7 +16,15 @@ export default function () {
     const { id: userId } = useParams();
 
     const getUser = controller => {
-        return apiFetch('/users/' + userId + "?groups[]=user:personalStatut:read&groups[]=personalStatut:read&groups[]=user:gender:read&groups[]=gender:read", {
+        return apiFetch('/users/' + userId, {
+            query: {
+                groups: [
+                    'user:personalStatut:read',
+                    'personalStatut:read',
+                    'user:gender:read',
+                    'gender:read',
+                ],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

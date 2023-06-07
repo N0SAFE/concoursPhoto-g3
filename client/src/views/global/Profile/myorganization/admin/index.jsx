@@ -18,20 +18,16 @@ export default function MyorganizationAdmin() {
             searchParams.get('edit') === 'true' &&
             !isNaN(parseInt(searchParams.get('id')))
         ) {
-            console.log('edit admin');
             setModalContent(<div>edit admin</div>);
             showModal(function () {
-                console.log('hide modal');
                 delete searchParams.edit;
                 delete searchParams.id;
                 setSearchParams({ ...searchParams });
             });
         }
         if (searchParams.get('create') === 'true') {
-            console.log('create admin');
             setModalContent(<div>add admin</div>);
             showModal(function () {
-                console.log('hide modal');
                 delete searchParams.create;
                 setSearchParams({ ...searchParams });
             });
