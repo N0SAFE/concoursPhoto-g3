@@ -33,7 +33,6 @@ export default function CompetitionParticipation() {
         })
             .then(res => res.json())
             .then(data => {
-                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }

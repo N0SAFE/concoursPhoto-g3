@@ -63,7 +63,6 @@ export default function CompetitionLayout() {
         })
             .then(res => res.json())
             .then(async data => {
-                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }

@@ -19,12 +19,9 @@ export default function ProfileNotification() {
         meNotificationEnabled
     );
     
-    console.log(meNotificationEnabled);
 
     function containCode(code) {
         for (let item of notificationTypesSelected) {
-            console.log(item);
-            console.log(code)
             if (item[0] === code) {
                 return true;
             }
