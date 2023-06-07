@@ -18,6 +18,7 @@ const DEFAULT_ITEMS_PER_PAGE = 9;
 
 export default function ListOrganization() {
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
     const [stats, setStats] = useState({});
     const apiFetch = useApiFetch();
     const [organization, setOrganization] = useState([]);
@@ -95,7 +96,7 @@ export default function ListOrganization() {
         const _controller = new AbortController();
         setController(_controller);
         return apiFetch(
-            `/organizations?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&properties[]=organizer_name&properties[]=organization_visual&properties[]=activeCompetitionCount&groups[]=file&groups[]=organization`,
+            `/organizations?page=${pageToLoad}&itemsPerPage=${itemsPerPageToLoad}&properties[]=organizer_name&properties[]=id&properties[]=organization_visual&properties[]=activeCompetitionCount&groups[]=file&groups[]=organization`,
             {
                 method: 'GET',
                 headers: {
@@ -139,7 +140,7 @@ export default function ListOrganization() {
                         return (
                             <Card
                                 idContent={organization.id}
-                                onClick={e => { }
+                                onClick={() => { navigate(`/organization/${organization.id}`) }
                                 }
                                 title={organization.organizer_name}
                                 imagePath={organization.organization_visual.path}

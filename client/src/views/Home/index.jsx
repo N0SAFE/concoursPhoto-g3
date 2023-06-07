@@ -206,7 +206,7 @@ export default function Home() {
                                     },
                                     {
                                         name: competition.numberOfPictures,
-                                        icon: 'camera',
+                                        icon: 'camera1',
                                     },
                                     {
                                         name: competition.numberOfVotes,
