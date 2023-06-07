@@ -1,12 +1,15 @@
 import style from './style.module.scss';
 import Button from '@/components/atoms/Button/index.jsx';
+import Picture from '@/components/atoms/Picture/index.jsx';
 import useApiPath from '@/hooks/useApiPath.js';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 export default function PicturesAside({ pictures, asideLabel, idPage }) {
     const apiPath = useApiPath();
     const navigate = useNavigate();
 
+    console.log(pictures);
+    
     return (
         <div className={style.asideContainer}>
             <div>
@@ -14,9 +17,11 @@ export default function PicturesAside({ pictures, asideLabel, idPage }) {
                 <div>
                     {pictures.map(picture => {
                         return (
-                            <img
+                            <Picture
+                                key={picture.id}
                                 src={apiPath(picture.file.path)}
                                 alt={picture.competition_name}
+                                photographer={picture.user}
                             />
                         );
                     })}

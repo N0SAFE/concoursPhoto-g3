@@ -38,7 +38,7 @@ export default function CompetitionLayout() {
         return apiFetch(
             '/competitions/' +
                 competitionId +
-                '?groups[]=file:read&groups[]=competition:competitionVisual:read&groups[]=competition:competitionPictures:read&groups[]=competition:organization:read&groups[]=organization:logo:read&groups[]=organization:admins:read&groups[]=user:read&groups[]=picture:file:read&groups[]=competition:memberOfTheJuries:read&groups[]=memberOfTheJury:user:read',
+                '?groups[]=file:read&groups[]=competition:competitionVisual:read&groups[]=competition:competitionPictures:read&groups[]=competition:organization:read&groups[]=organization:logo:read&groups[]=organization:admins:read&groups[]=user:read&groups[]=picture:file:read&groups[]=competition:memberOfTheJuries:read&groups[]=memberOfTheJury:user:read&groups[]=picture:user:read',
             {
                 method: 'GET',
                 headers: {
