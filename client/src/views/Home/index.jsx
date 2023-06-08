@@ -223,9 +223,6 @@ export default function Home() {
                         const themes = competition?.theme.map(
                             item => item.label
                         );
-                        const state = competition.state
-                            ? 'En cours'
-                            : 'Terminé';
                         return (
                             <Card
                                 onClick={() => {

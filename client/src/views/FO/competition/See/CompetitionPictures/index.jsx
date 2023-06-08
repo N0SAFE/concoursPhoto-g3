@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import useApiFetch, { queryListSymbol } from '@/hooks/useApiFetch.js';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import useApiPath from '@/hooks/useApiPath.js';
+import Picture from '@/components/atoms/Picture/index.jsx';
 
 export default function () {
     const apiPath = useApiPath();
@@ -118,13 +119,14 @@ export default function () {
                                                 }
                                             >
                                                 <div>
-                                                    <img
+                                                    <Picture
                                                         src={apiPath(
                                                             picture.file.path
                                                         )}
                                                         alt={
                                                             picture.pictureName
                                                         }
+                                                        photographer={picture.user}
                                                     />
                                                 </div>
                                                 <div
@@ -163,7 +165,11 @@ export default function () {
                                                                 '#F5F5F5'
                                                             }
                                                             icon={'shutter'}
-                                                        >{competition.consultationCount}</Chip>
+                                                        >
+                                                            {
+                                                                competition.consultationCount
+                                                            }
+                                                        </Chip>
                                                         <Chip
                                                             iconColor={'white'}
                                                             color={'white'}
@@ -171,7 +177,9 @@ export default function () {
                                                                 '#A8A8A8'
                                                             }
                                                             icon={'like'}
-                                                        >Voter</Chip>
+                                                        >
+                                                            Voter
+                                                        </Chip>
                                                     </div>
                                                 </div>
                                             </div>

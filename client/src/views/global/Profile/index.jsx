@@ -17,17 +17,13 @@ import useApiPath from '@/hooks/useApiPath.js';
 
 export default function Profile() {
     const {refreshUser} = useAuthContext()
-    const { gendersPossibility } = useOutletContext(); // to avoid the loading when we change the page
+    const { gendersPossibility, socialNetworksPossibility } = useOutletContext(); // to avoid the loading when we change the page
     const [statusPossibility, setStatusPossibility] = useState({
         list: [],
         isLoading: true,
     });
 
     const [categoriesPossibility, setCategoriesPossibility] = useState({
-        list: [],
-        isLoading: true,
-    });
-    const [socialNetworksPossibility, setSocialNetworksPossibility] = useState({
         list: [],
         isLoading: true,
     });
@@ -132,26 +128,12 @@ export default function Profile() {
             });
     };
 
-    const getSocialNetworks = () => {
-        return apiFetch('/social_networks', {
-            method: 'GET',
-        })
-            .then(r => r.json())
-            .then(data => {
-                console.debug(data);
-                return data['hydra:member']
-            });
-    }
-
     useEffect(() => {
         getPersonalstatus().then(data => {
             setStatusPossibility({ list: data, isLoading: false });
         });
         getCategoryPossibility().then(data => {
             setCategoriesPossibility({ list: data, isLoading: false });
-        });
-        getSocialNetworks().then(data => {
-            setSocialNetworksPossibility({ list: data, isLoading: false });
         });
     }, []);
 
@@ -193,7 +175,7 @@ export default function Profile() {
     }, [entity.postcode, entity.city]);
 
     return (
-        <Loader active={gendersPossibility.isLoading || socialNetworksPossibility.isLoading}>
+        <Loader active={gendersPossibility.isLoading || socialNetworksPossibility.isLoading} takeInnerContent={true} style={{borderRadius: "10px"}}>
             <div className={style.formContainer}>
                 <Form
                     handleSubmit={async function () {
