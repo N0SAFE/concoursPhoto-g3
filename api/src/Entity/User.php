@@ -48,7 +48,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
-    #[Groups(['user:read', 'competition', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -66,12 +66,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
-    #[Groups(['user:read', 'competition', 'user:current:read', 'user:write'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $firstname = null;
 
-    #[Groups(['user:read', 'competition', 'user:current:read', 'user:write'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $lastname = null;
@@ -186,7 +186,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?string $department = null;
 
     #[Groups(['user:read', 'user:current:read', 'user:write'])]
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class, cascade: ['persist', 'remove'])]
     private Collection $userLinks;
 
     #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'subscribedUsers')]

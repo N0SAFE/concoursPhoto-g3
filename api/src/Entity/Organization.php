@@ -29,7 +29,8 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
         new Post(),
         new Patch(),
         new Delete()
-    ],normalizationContext: ['groups' => ['organization:read']]
+    ],
+    normalizationContext: ['groups' => ['organization:read']]
 )]
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 class Organization
@@ -132,35 +133,40 @@ class Organization
         $this->sponsors = new ArrayCollection();
         $this->organizationLinks = new ArrayCollection();
     }
-    
+
     #[Groups(['organization:read'])]
-    public function getCompetitionCount(): int {
+    public function getCompetitionCount(): int
+    {
         return $this->competitions->count();
     }
-    
+
     #[Groups(['organization:read'])]
-    public function getActiveCompetitionCount(): int {
+    public function getActiveCompetitionCount(): int
+    {
         $count = 0;
-        foreach($this->competitions as $competition) {
-            if($competition->getState() != 6 ) {
+        foreach ($this->competitions as $competition) {
+            if ($competition->getState() != 6) {
                 $count++;
             }
         }
         return $count;
     }
-    
+
     #[Groups(['organization:read'])]
-    public function getRentCount(): int {
+    public function getRentCount(): int
+    {
         return $this->rents->count();
     }
-    
+
     #[Groups(['organization:read'])]
-    public function getSponsorCount(): int {
+    public function getSponsorCount(): int
+    {
         return $this->sponsors->count();
     }
-    
+
     #[Groups(['organization:read'])]
-    public function getAdminCount(): int {
+    public function getAdminCount(): int
+    {
         return $this->admins->count();
     }
 

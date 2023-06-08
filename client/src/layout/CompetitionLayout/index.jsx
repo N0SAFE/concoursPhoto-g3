@@ -21,21 +21,8 @@ export default function CompetitionLayout() {
     const { id: competitionId } = useParams();
     const navigate = useNavigate();
 
-    const incrementPageCount = () => {
-        apiFetch('/competitions/view/' + competitionId, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then(res => {
-            if (res.code === 401) {
-                toast.error(res.message);
-            }
-        });
-    };
-
     const getCompetitions = controller => {
-        return apiFetch('/competitions/' + competitionId, {
+        return apiFetch('/competitions/view/' + competitionId, {
             query: {
                 groups: [
                     'file:read',
@@ -101,8 +88,6 @@ export default function CompetitionLayout() {
             });
         }
 
-        incrementPageCount();
-
         return () => setTimeout(() => controller.abort());
     }, []);
 
@@ -117,7 +102,7 @@ export default function CompetitionLayout() {
                             { label: 'Accueil', link: '/' },
                             { label: 'Concours photo', link: location },
                             {
-                                label: `Concours photo ${entity.competitionName}`,
+                                label: `Concours photo ${entity.competitionName}`
                             },
                         ]}
                     />
@@ -210,7 +195,8 @@ export default function CompetitionLayout() {
                                             {entity.numberOfParticipants}
                                         </Chip>
                                         <Chip
-                                            icon={'camera'}
+                                            title={entity.numberOfPictures}
+                                            icon={'camera1'}
                                             backgroundColor={'#F5F5F5'}
                                         >
                                             {entity.numberOfPictures}

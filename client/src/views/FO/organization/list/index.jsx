@@ -18,6 +18,7 @@ const DEFAULT_ITEMS_PER_PAGE = 9;
 
 export default function ListOrganization() {
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
     const [stats, setStats] = useState({});
     const apiFetch = useApiFetch();
     const [organization, setOrganization] = useState([]);
@@ -72,7 +73,6 @@ export default function ListOrganization() {
         const pageToLoad = page === null ? DEFAULT_PAGE : page;
         const itemsPerPageToLoad =
             itemsPerPage === null ? DEFAULT_ITEMS_PER_PAGE : itemsPerPage;
-        const actualDate = format(now, 'yyyy-MM-dd');
         controller?.abort();
         const _controller = new AbortController();
         setController(_controller);
@@ -84,6 +84,7 @@ export default function ListOrganization() {
                     'organizerName',
                     'organizationVisual',
                     'activeCompetitionCount',
+                    'id'
                 ],
                 groups: ['file:read', 'organization:organizationVisual:read'],
             },
@@ -128,7 +129,8 @@ export default function ListOrganization() {
                         return (
                             <Card
                                 idContent={organization.id}
-                                onClick={e => {}}
+                                onClick={() => { navigate(`/organization/${organization.id}`) }
+                                }
                                 title={organization.organizerName}
                                 imagePath={organization.organizationVisual.path}
                                 stats={[

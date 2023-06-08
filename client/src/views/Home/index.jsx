@@ -111,7 +111,6 @@ export default function Home() {
                     page: pageToLoad,
                     itemsPerPage: itemsPerPageToLoad,
                     groups: [
-                        'competition:read',
                         'file:read',
                         'competition:competitionVisual:read',
                         'competition:theme:read',
@@ -247,7 +246,7 @@ export default function Home() {
                                     },
                                     {
                                         name: competition.numberOfPictures,
-                                        icon: 'camera',
+                                        icon: 'camera1',
                                     },
                                     {
                                         name: competition.numberOfVotes,

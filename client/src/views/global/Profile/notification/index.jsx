@@ -125,7 +125,7 @@ export default function ProfileNotification() {
                                 type="checkbox"
                                 labelDisposition={"right"}
                                 label={"Être informé par email 48h avant la date de fin des soumissions d’un concours"}
-                                onChange={() => toggleNotificationType(7)}
+                                onChange={() => {toggleNotificationType(7)}}
                                 defaultValue={containCode(7)}
                             />
                         </div>
