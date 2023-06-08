@@ -14,7 +14,6 @@ function App() {
         <>
             <Helmet>
                 <meta charSet="utf-8" />
-                <title>Concours photo</title>
                 <link
                     type="image/svg+xml"
                     rel="icon" 
