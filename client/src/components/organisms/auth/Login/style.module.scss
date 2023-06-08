@@ -1,5 +1,6 @@
 .login {
     &Container {
+        background-color: $background-color-primary;
         @extend .limited-content;
 
         form {

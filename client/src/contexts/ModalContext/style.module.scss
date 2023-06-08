@@ -1,38 +1,87 @@
 .modal {
-    background-color: $background-color-primary;
-    width: 40%;
-    max-height: 0;
-    overflow: hidden;
-    position: fixed;
-    border-radius: 10px;
-    z-index: 100;
-    transition: max-height 0.5s ease-in-out;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    &Container {
+        width: 40%;
+        max-height: 0;
+        position: fixed;
+        border-radius: 10px;
+        z-index: 100;
+        transition: max-height 0.5s ease-in-out;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: row;
 
-    @include below(xl) {
-        width: 50%;
+        @include below(xl) {
+            width: 50%;
+        }
+
+        @include below(md) {
+            width: 100%;
+        }
     }
 
-    @include below(md) {
-        width: 100%;
+    &ContentContainer {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 
-    &::-webkit-scrollbar {
-        display: none;
+    &Content {
+        position: relative;
+    }
+
+    &Top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        transform: translateY(-100%);
+        visibility: hidden;
+    }
+
+    &Bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: translateY(100%);
+        visibility: hidden;
+    }
+
+    &Left {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        visibility: hidden;
+    }
+
+    &Right {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(100%);
+        visibility: hidden;
     }
 
     &Show {
+        .modalLeft, .modalRight, .modalTop, .modalBottom {
+            visibility: visible;
+        }
+
         max-height: 90%;
         height: auto;
-        overflow: scroll;
     }
 
     &Close {
         position: absolute;
-        right: 0;
-        top: 0;
+        right: 5px;
+        top: 5px;
         padding: 15px;
         border-radius: 10px;
         transform-origin: center center;

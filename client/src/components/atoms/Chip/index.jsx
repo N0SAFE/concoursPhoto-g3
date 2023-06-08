@@ -2,13 +2,13 @@ import style from './style.module.scss';
 import Icon from '@/components/atoms/Icon';
 
 export default function Chip({
-    title,
     key,
     icon,
     backgroundColor,
     color,
     iconColor,
     onClick,
+    children
 }) {
     return (
         <div
@@ -20,7 +20,7 @@ export default function Chip({
             {icon && (
                 <Icon icon={icon} size="20" style={{ color: iconColor }} />
             )}
-            <span style={{ color: color }}>{title}</span>
+            <span style={{ color: color }}>{children}</span>
         </div>
     );
 }
