@@ -91,8 +91,6 @@ export default function CompetitionLayout() {
         return () => setTimeout(() => controller.abort());
     }, []);
 
-    console.log(entity);
-
     return (
         <Loader active={isLoading}>
             <div className={style.competitionContainer}>

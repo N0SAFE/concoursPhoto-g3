@@ -70,19 +70,7 @@
     }
 
     &Show {
-        .modalLeft {
-            visibility: visible;
-        }
-
-        .modalRight {
-            visibility: visible;
-        }
-
-        .modalTop {
-            visibility: visible;
-        }
-
-        .modalBottom {
+        .modalLeft, .modalRight, .modalTop, .modalBottom {
             visibility: visible;
         }
 
