@@ -37,6 +37,7 @@ import CreateCompetitions from '@/views/FO/competition/Create/index.jsx';
 import CreateOrganization from '@/views/FO/organization/index.jsx';
 import MyorganizationLayout from '@/layout/ProfileLayout/MyorganizationLayout';
 import MyorganizationAdmin from './views/global/Profile/myorganization/admin/index.jsx';
+import MyorganizationCompetiton from './views/global/Profile/myorganization/competitions/index.jsx';
 import useApiFetch from './hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
 import PhotographerList from './views/FO/photographer/index.jsx';
@@ -164,7 +165,7 @@ function Router() {
                                     />
                                     <Route
                                         path="competition"
-                                        element={<div />}
+                                        element={<MyorganizationCompetiton />}
                                     />
                                     <Route path="pub" element={<div />} />
                                 </Route>
