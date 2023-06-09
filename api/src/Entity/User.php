@@ -26,24 +26,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Post(processor: UserStateProcessor::class),
-        new Get(),
-        new Get(
-            name: UserController::USER_COMPETITIONS,
-            uriTemplate: '/users/{id}/user-competitions',
-            controller: UserController::class
-        ),
-        new Patch(processor: UserStateProcessor::class),
-        new Delete()
-    ],
-    normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:write', 'userLink:write']]
-)]
+#[
+    ApiResource(
+        operations: [
+            new GetCollection(),
+            new Post(processor: UserStateProcessor::class),
+            new Get(),
+            new Get(
+                name: UserController::USER_COMPETITIONS,
+                uriTemplate: '/users/{id}/user-competitions',
+                controller: UserController::class
+            ),
+            new Patch(processor: UserStateProcessor::class),
+            new Delete(),
+        ],
+        normalizationContext: ['groups' => ['user:read']],
+        denormalizationContext: ['groups' => ['user:write', 'userLink:write']]
+    )
+]
 #[ApiFilter(PropertyFilter::class)]
-#[ApiFilter(SearchFilter::class,properties: ['roles'=>'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['roles' => 'partial'])]
 #[ApiFilter(GroupFilter::class)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
@@ -105,16 +107,36 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Length(10, minMessage: 'Le numéro de téléphone doit avoir au moins 10 caractères')]
-    #[Assert\Regex(pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/', message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00')]
+    #[
+        Assert\Length(
+            10,
+            minMessage: 'Le numéro de téléphone doit avoir au moins 10 caractères'
+        )
+    ]
+    #[
+        Assert\Regex(
+            pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/',
+            message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00'
+        )
+    ]
     private ?string $phoneNumber = null;
 
     #[ORM\Column(type: 'string')]
     private $password;
 
     #[Groups(['user:read', 'user:current:read', 'user:write'])]
-    #[Assert\Length(min: 8, minMessage: 'Le mot de passe doit avoir au moins 8 caractères')]
-    #[Assert\Regex(pattern: '/^(?=.*[A-Z])(?=.*\d).+$/', message: 'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre')]
+    #[
+        Assert\Length(
+            min: 8,
+            minMessage: 'Le mot de passe doit avoir au moins 8 caractères'
+        )
+    ]
+    #[
+        Assert\Regex(
+            pattern: '/^(?=.*[A-Z])(?=.*\d).+$/',
+            message: 'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre'
+        )
+    ]
     private ?string $plainPassword = null;
 
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'admins')]
@@ -122,10 +144,22 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private Collection $Manage;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Groups(['user:photographerCategory:read', 'user:current:read', 'user:write'])]
+    #[
+        Groups([
+            'user:photographerCategory:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
     private ?PhotographerCategory $photographerCategory = null;
 
-    #[Groups(['user:memberOfTheJuries:read', 'user:current:read', 'user:write'])]
+    #[
+        Groups([
+            'user:memberOfTheJuries:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
@@ -186,11 +220,28 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?string $department = null;
 
     #[Groups(['user:read', 'user:current:read', 'user:write'])]
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class, cascade: ['persist', 'remove'])]
+    #[
+        ORM\OneToMany(
+            mappedBy: 'user',
+            targetEntity: UserLink::class,
+            cascade: ['persist', 'remove']
+        )
+    ]
     private Collection $userLinks;
 
-    #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'subscribedUsers')]
-    #[Groups(['user:notificationEnabled:read', 'user:current:read', 'user:write'])]
+    #[
+        ORM\ManyToMany(
+            targetEntity: NotificationType::class,
+            inversedBy: 'subscribedUsers'
+        )
+    ]
+    #[
+        Groups([
+            'user:notificationEnabled:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
     private Collection $notificationEnabled;
 
     public function __construct()
@@ -387,7 +438,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string)$this->email;
+        return (string) $this->email;
     }
 
     /**
@@ -427,8 +478,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this->photographerCategory;
     }
 
-    public function setPhotographerCategory(?PhotographerCategory $photographerCategory): self
-    {
+    public function setPhotographerCategory(
+        ?PhotographerCategory $photographerCategory
+    ): self {
         $this->photographerCategory = $photographerCategory;
 
         return $this;
@@ -452,8 +504,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function removeMemberOfTheJury(MemberOfTheJury $memberOfTheJury): self
-    {
+    public function removeMemberOfTheJury(
+        MemberOfTheJury $memberOfTheJury
+    ): self {
         if ($this->memberOfTheJuries->removeElement($memberOfTheJury)) {
             // set the owning side to null (unless already changed)
             if ($memberOfTheJury->getUser() === $this) {
@@ -529,8 +582,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this->registrationDate;
     }
 
-    public function setRegistrationDate(\DateTimeInterface $registrationDate): self
-    {
+    public function setRegistrationDate(
+        \DateTimeInterface $registrationDate
+    ): self {
         $this->registrationDate = $registrationDate;
 
         return $this;
@@ -565,8 +619,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this->lastConnectionDate;
     }
 
-    public function setLastConnectionDate(\DateTimeInterface $lastConnectionDate): self
-    {
+    public function setLastConnectionDate(
+        \DateTimeInterface $lastConnectionDate
+    ): self {
         $this->lastConnectionDate = $lastConnectionDate;
 
         return $this;
@@ -577,8 +632,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this->photographerDescription;
     }
 
-    public function setPhotographerDescription(string $photographerDescription): self
-    {
+    public function setPhotographerDescription(
+        string $photographerDescription
+    ): self {
         $this->photographerDescription = $photographerDescription;
 
         return $this;
@@ -725,8 +781,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this->notificationEnabled;
     }
 
-    public function addNotificationEnabled(NotificationType $notificationEnabled): self
-    {
+    public function addNotificationEnabled(
+        NotificationType $notificationEnabled
+    ): self {
         if (!$this->notificationEnabled->contains($notificationEnabled)) {
             $this->notificationEnabled->add($notificationEnabled);
         }
@@ -734,11 +791,11 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function removeNotificationEnabled(NotificationType $notificationEnabled): self
-    {
+    public function removeNotificationEnabled(
+        NotificationType $notificationEnabled
+    ): self {
         $this->notificationEnabled->removeElement($notificationEnabled);
 
         return $this;
     }
-
 }

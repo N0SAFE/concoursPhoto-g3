@@ -14,15 +14,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["sponsors:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['sponsors:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: SponsorsRepository::class)]
 class Sponsors
 {

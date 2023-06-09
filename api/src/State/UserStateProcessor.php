@@ -8,14 +8,25 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class UserStateProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly ProcessorInterface $processor, private readonly UserPasswordHasherInterface $passwordHasher)
-    {
+    public function __construct(
+        private readonly ProcessorInterface $processor,
+        private readonly UserPasswordHasherInterface $passwordHasher
+    ) {
     }
 
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
-    {
+    public function process(
+        $data,
+        Operation $operation,
+        array $uriVariables = [],
+        array $context = []
+    ) {
         if (!$data->getPlainPassword()) {
-            return $this->processor->process($data, $operation, $uriVariables, $context);
+            return $this->processor->process(
+                $data,
+                $operation,
+                $uriVariables,
+                $context
+            );
         }
 
         $hashedPassword = $this->passwordHasher->hashPassword(
@@ -25,6 +36,11 @@ final class UserStateProcessor implements ProcessorInterface
         $data->setPassword($hashedPassword);
         $data->eraseCredentials();
 
-        return $this->processor->process($data, $operation, $uriVariables, $context);
+        return $this->processor->process(
+            $data,
+            $operation,
+            $uriVariables,
+            $context
+        );
     }
 }

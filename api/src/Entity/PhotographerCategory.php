@@ -13,30 +13,32 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["photographerCategory:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['photographerCategory:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: PhotographerCategoryRepository::class)]
 class PhotographerCategory
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups((['photographerCategory:read', 'user:current:read']))]
+    #[Groups(['photographerCategory:read', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['photographerCategory:read', 'user:current:read'])]
     private ?string $label = null;
 
-    #[ORM\OneToMany(mappedBy: 'photographerCategory', targetEntity: User::class)]
-    #[Groups("photographerCategory:users:read")]
+    #[
+        ORM\OneToMany(
+            mappedBy: 'photographerCategory',
+            targetEntity: User::class
+        )
+    ]
+    #[Groups('photographerCategory:users:read')]
     private Collection $users;
 
     public function __construct()

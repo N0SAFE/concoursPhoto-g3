@@ -18,12 +18,16 @@ class ParticipantCategoryFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-
         for ($i = 0; $i <= count(self::PARTICIPANT_CATEGORY_ARRAY) - 1; $i++) {
             $participant_category = new ParticipantCategory();
-            $participant_category->setLabel(self::PARTICIPANT_CATEGORY_ARRAY[$i]);
+            $participant_category->setLabel(
+                self::PARTICIPANT_CATEGORY_ARRAY[$i]
+            );
             $manager->persist($participant_category);
-            $this->addReference(sprintf('%s%d', self::PARTICIPANT_CATEGORY_REFERENCE, $i + 1), $participant_category);
+            $this->addReference(
+                sprintf('%s%d', self::PARTICIPANT_CATEGORY_REFERENCE, $i + 1),
+                $participant_category
+            );
         }
 
         $manager->flush();

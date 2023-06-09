@@ -13,15 +13,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["personalStatut:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['personalStatut:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: PersonalStatutRepository::class)]
 class PersonalStatut
 {

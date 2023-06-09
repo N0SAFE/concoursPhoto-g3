@@ -17,7 +17,8 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
 
     private $faker;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->faker = Factory::create('fr_FR');
     }
 
@@ -31,14 +32,27 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
             $sponsors->setStartDate($faker->dateTime());
             $sponsors->setEndDate($faker->dateTime());
             $sponsors->setSponsorRank($faker->randomDigit());
-            $sponsors->setOrganization($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, self::SPONSORS_COUNT_REFERENCE)));
-            $sponsors->setPrice($faker->randomFloat(3, 0, self::COUNT_REFERENCE));
-            $sponsors->setLogo((new FileFixtures)->createFileFromString(FileFixtures::SPONSOR_LOGO_ARRAY[$i]));
-            
+            $sponsors->setOrganization(
+                $this->getReference(
+                    OrganizationFixtures::ORGANIZATION_REFERENCE .
+                        rand(1, self::SPONSORS_COUNT_REFERENCE)
+                )
+            );
+            $sponsors->setPrice(
+                $faker->randomFloat(3, 0, self::COUNT_REFERENCE)
+            );
+            $sponsors->setLogo(
+                (new FileFixtures())->createFileFromString(
+                    FileFixtures::SPONSOR_LOGO_ARRAY[$i]
+                )
+            );
 
             $manager->persist($sponsors);
-            
-            $this->addReference(sprintf('%s%d', self::SPONSORS_REFERENCE, $i + 1), $sponsors);
+
+            $this->addReference(
+                sprintf('%s%d', self::SPONSORS_REFERENCE, $i + 1),
+                $sponsors
+            );
         }
 
         $manager->flush();
@@ -46,8 +60,6 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [
-            OrganizationFixtures::class
-        ];
+        return [OrganizationFixtures::class];
     }
 }

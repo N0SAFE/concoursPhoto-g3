@@ -13,15 +13,12 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["role:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['role:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
 class Role
 {

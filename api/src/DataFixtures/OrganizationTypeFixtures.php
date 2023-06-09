@@ -18,12 +18,14 @@ class OrganizationTypeFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-
         for ($i = 0; $i <= count(self::ORGANIZATION_TYPE_ARRAY) - 1; $i++) {
             $organization_type = new OrganizationType();
             $organization_type->setLabel(self::ORGANIZATION_TYPE_ARRAY[$i]);
             $manager->persist($organization_type);
-            $this->addReference(sprintf('%s%d', self::ORGANIZATION_TYPE_REFERENCE, $i + 1), $organization_type);
+            $this->addReference(
+                sprintf('%s%d', self::ORGANIZATION_TYPE_REFERENCE, $i + 1),
+                $organization_type
+            );
         }
 
         $manager->flush();

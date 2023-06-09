@@ -12,15 +12,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["memberOfTheJury:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['memberOfTheJury:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: MemberOfTheJuryRepository::class)]
 class MemberOfTheJury
 {

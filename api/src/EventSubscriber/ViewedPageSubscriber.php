@@ -24,8 +24,8 @@ final class ViewedPageSubscriber implements EventSubscriberInterface
     public function onEvents(RequestEvent $event): void
     {
         match ($event->getRequest()->attributes->get('_api_operation_name')) {
-            "CompetitionView" => $this->onCompetitionView($event),
-            default => ""
+            'CompetitionView' => $this->onCompetitionView($event),
+            default => '',
         };
     }
 
@@ -33,7 +33,9 @@ final class ViewedPageSubscriber implements EventSubscriberInterface
     {
         $competition = $event->getRequest()->attributes->get('data');
 
-        $count = $competition->setConsultationCount($competition->getConsultationCount() + 1);
+        $count = $competition->setConsultationCount(
+            $competition->getConsultationCount() + 1
+        );
 
         $this->entityManager->persist($count);
         $this->entityManager->flush();

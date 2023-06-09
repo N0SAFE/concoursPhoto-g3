@@ -22,7 +22,17 @@ class AuthenticationSuccessListener
         $event->setData($data);
 
         $response->headers->setCookie(
-            new Cookie('BEARER', $token, new \DateTime('+1 day'), '/', null, $this->secure, true, false, "None")
+            new Cookie(
+                'BEARER',
+                $token,
+                new \DateTime('+1 day'),
+                '/',
+                null,
+                $this->secure,
+                true,
+                false,
+                'None'
+            )
         );
 
         $event->setData(['message' => 'logged in', 'code' => 200]);

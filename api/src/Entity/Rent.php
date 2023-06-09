@@ -12,15 +12,12 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["rent:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['rent:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: RentRepository::class)]
 class Rent
 {

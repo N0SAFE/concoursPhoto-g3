@@ -13,15 +13,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["socialNetworks:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['socialNetworks:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: SocialNetworksRepository::class)]
 class SocialNetworks
 {
@@ -36,11 +33,16 @@ class SocialNetworks
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'socialNetworks', targetEntity: UserLink::class)]
-    #[Groups("socialNetworks:userLinks:read")]
+    #[Groups('socialNetworks:userLinks:read')]
     private Collection $userLinks;
 
-    #[ORM\OneToMany(mappedBy: 'socialNetworks', targetEntity: OrganizationLink::class)]
-    #[Groups("socialNetworks:organizationLinks:read")]
+    #[
+        ORM\OneToMany(
+            mappedBy: 'socialNetworks',
+            targetEntity: OrganizationLink::class
+        )
+    ]
+    #[Groups('socialNetworks:organizationLinks:read')]
     private Collection $organizationLinks;
 
     public function __construct()
@@ -104,8 +106,9 @@ class SocialNetworks
         return $this->organizationLinks;
     }
 
-    public function addOrganizationLink(OrganizationLink $organizationLink): self
-    {
+    public function addOrganizationLink(
+        OrganizationLink $organizationLink
+    ): self {
         if (!$this->organizationLinks->contains($organizationLink)) {
             $this->organizationLinks->add($organizationLink);
             $organizationLink->setSocialNetworks($this);
@@ -114,8 +117,9 @@ class SocialNetworks
         return $this;
     }
 
-    public function removeOrganizationLink(OrganizationLink $organizationLink): self
-    {
+    public function removeOrganizationLink(
+        OrganizationLink $organizationLink
+    ): self {
         if ($this->organizationLinks->removeElement($organizationLink)) {
             // set the owning side to null (unless already changed)
             if ($organizationLink->getSocialNetworks() === $this) {

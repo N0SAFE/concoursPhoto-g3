@@ -19,12 +19,16 @@ class PhotographerCategoryFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-
         for ($i = 0; $i <= count(self::PHOTOGRAPHER_CATEGORY_ARRAY) - 1; $i++) {
             $photographer_category = new PhotographerCategory();
-            $photographer_category->setLabel(self::PHOTOGRAPHER_CATEGORY_ARRAY[$i]);
+            $photographer_category->setLabel(
+                self::PHOTOGRAPHER_CATEGORY_ARRAY[$i]
+            );
             $manager->persist($photographer_category);
-            $this->addReference(sprintf('%s%d', self::PHOTOGRAPHER_CATEGORY_REFERENCE, $i + 1), $photographer_category);
+            $this->addReference(
+                sprintf('%s%d', self::PHOTOGRAPHER_CATEGORY_REFERENCE, $i + 1),
+                $photographer_category
+            );
         }
 
         $manager->flush();

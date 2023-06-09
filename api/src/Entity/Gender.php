@@ -13,15 +13,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ['groups' => ['gender:read']],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['gender:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: GenderRepository::class)]
 class Gender
 {
@@ -36,7 +33,7 @@ class Gender
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'gender', targetEntity: User::class)]
-    #[Groups("gender:users:read")]
+    #[Groups('gender:users:read')]
     private Collection $users;
 
     public function __construct()

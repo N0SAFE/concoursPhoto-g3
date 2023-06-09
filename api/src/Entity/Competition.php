@@ -21,36 +21,37 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiFilter(DateFilter::class, properties: [
-    "resultsDate"
-])]
+#[ApiFilter(DateFilter::class, properties: ['resultsDate'])]
 #[ApiFilter(PropertyFilter::class)]
-#[ApiFilter(SearchFilter::class, properties: [
-    'pictures.user' => 'exact',
-    'organization' => 'exact',
-])]
+#[
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'pictures.user' => 'exact',
+            'organization' => 'exact',
+        ]
+    )
+]
 #[ApiFilter(GroupFilter::class)]
 #[ApiFilter(FilterLogic::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Get(
-            name: "CompetitionView",
-            uriTemplate: "/competitions/view/{id}",
-        ),
-        new Post(
-            name: "CompetitionCreate"
-        ),
-        new Patch(),
-        new Delete(),
-    ],
-    normalizationContext: [
-        'groups' => ['competition:read']
-    ],
-)]
-
-
+#[
+    ApiResource(
+        operations: [
+            new GetCollection(),
+            new Get(),
+            new Get(
+                name: 'CompetitionView',
+                uriTemplate: '/competitions/view/{id}'
+            ),
+            new Post(name: 'CompetitionCreate'),
+            new Patch(),
+            new Delete(),
+        ],
+        normalizationContext: [
+            'groups' => ['competition:read'],
+        ]
+    )
+]
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
 {
@@ -128,7 +129,12 @@ class Competition
     #[Groups(['competition:theme:read', 'user:current:read'])]
     private Collection $theme;
 
-    #[ORM\ManyToMany(targetEntity: ParticipantCategory::class, inversedBy: 'competitions')]
+    #[
+        ORM\ManyToMany(
+            targetEntity: ParticipantCategory::class,
+            inversedBy: 'competitions'
+        )
+    ]
     #[Groups(['competition:participantCategory:read', 'user:current:read'])]
     private Collection $participantCategory;
 
@@ -136,7 +142,12 @@ class Competition
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     private ?Organization $organization = null;
 
-    #[ORM\OneToMany(mappedBy: 'competition', targetEntity: MemberOfTheJury::class)]
+    #[
+        ORM\OneToMany(
+            mappedBy: 'competition',
+            targetEntity: MemberOfTheJury::class
+        )
+    ]
     #[Groups(['competition:memberOfTheJuries:read', 'user:current:read'])]
     private Collection $memberOfTheJuries;
 
@@ -169,7 +180,12 @@ class Competition
     private ?bool $isPromoted = null;
 
     #[Groups(['competition:notificationsSended:read'])]
-    #[ORM\ManyToMany(targetEntity: NotificationType::class, inversedBy: 'competitionAlreadyHandled')]
+    #[
+        ORM\ManyToMany(
+            targetEntity: NotificationType::class,
+            inversedBy: 'competitionAlreadyHandled'
+        )
+    ]
     private Collection $notificationsSended;
 
     #[Groups(['competition:sponsors:read', 'user:current:read'])]
@@ -201,11 +217,16 @@ class Competition
             $lastPicturesPosted = array_slice($lastPicturesPosted, 0, 8);
             return new ArrayCollection($lastPicturesPosted);
         } elseif ($this->getState() === 4 || $this->getState() === 5) {
-            $lastPicturesObtainedVotes = $this->getPictures()->filter(function (Picture $picture) {
-                return $picture->getVotes()->count() > 0;
-            })->toArray();
-            usort($lastPicturesObtainedVotes, function (Picture $a, Picture $b) {
-                // sort by lastVote 
+            $lastPicturesObtainedVotes = $this->getPictures()
+                ->filter(function (Picture $picture) {
+                    return $picture->getVotes()->count() > 0;
+                })
+                ->toArray();
+            usort($lastPicturesObtainedVotes, function (
+                Picture $a,
+                Picture $b
+            ) {
+                // sort by lastVote
                 $lastVoteA = $a->getVotes()->toArray();
                 usort($lastVoteA, function (Vote $a, Vote $b) {
                     return $a->getVoteDate() <=> $b->getVoteDate();
@@ -220,12 +241,18 @@ class Competition
 
                 return $lastVoteA->getVoteDate() <=> $lastVoteB->getVoteDate();
             });
-            $lastPicturesObtainedVotes = array_slice($lastPicturesObtainedVotes, 0, 8);
+            $lastPicturesObtainedVotes = array_slice(
+                $lastPicturesObtainedVotes,
+                0,
+                8
+            );
             return new ArrayCollection($lastPicturesObtainedVotes);
         } elseif ($this->getState() === 6) {
-            $picturesObtainedPrice = $this->getPictures()->filter(function (Picture $picture) {
-                return $picture->isPriceWon() !== null;
-            })->toArray();
+            $picturesObtainedPrice = $this->getPictures()
+                ->filter(function (Picture $picture) {
+                    return $picture->isPriceWon() !== null;
+                })
+                ->toArray();
             usort($picturesObtainedPrice, function ($a, $b) {
                 // sort by id
                 return $a->getId() <=> $b->getId();
@@ -247,7 +274,7 @@ class Competition
         } elseif ($this->getState() === 6) {
             return 'Photos ayant obtenu un prix';
         } else {
-            return "Photo à venir";
+            return 'Photo à venir';
         }
     }
 
@@ -291,16 +318,28 @@ class Competition
         if ($now < $this->getSubmissionStartDate()) {
             // return 'A venir';
             return 1;
-        } elseif ($now > $this->getSubmissionStartDate() && $now < $this->getSubmissionEndDate()) {
+        } elseif (
+            $now > $this->getSubmissionStartDate() &&
+            $now < $this->getSubmissionEndDate()
+        ) {
             // return 'En phase de participation';
             return 2;
-        } elseif ($now > $this->getSubmissionEndDate() && $now < $this->getVotingStartDate()) {
+        } elseif (
+            $now > $this->getSubmissionEndDate() &&
+            $now < $this->getVotingStartDate()
+        ) {
             // return 'En attente';
             return 3;
-        } elseif ($now > $this->getVotingStartDate() && $now < $this->getVotingEndDate()) {
+        } elseif (
+            $now > $this->getVotingStartDate() &&
+            $now < $this->getVotingEndDate()
+        ) {
             // return 'En phase de vote';
             return 4;
-        } elseif ($now > $this->getVotingEndDate() && $now < $this->getResultsDate()) {
+        } elseif (
+            $now > $this->getVotingEndDate() &&
+            $now < $this->getResultsDate()
+        ) {
             // return "En phase d'attribution";
             return 5;
         } elseif ($now > $this->getResultsDate()) {
@@ -315,16 +354,28 @@ class Competition
         if ($now < $this->getSubmissionStartDate()) {
             return 'À venir';
             // return 1;
-        } elseif ($now > $this->getSubmissionStartDate() && $now < $this->getSubmissionEndDate()) {
+        } elseif (
+            $now > $this->getSubmissionStartDate() &&
+            $now < $this->getSubmissionEndDate()
+        ) {
             return 'En phase de participation';
             // return 2;
-        } elseif ($now > $this->getSubmissionEndDate() && $now < $this->getVotingStartDate()) {
+        } elseif (
+            $now > $this->getSubmissionEndDate() &&
+            $now < $this->getVotingStartDate()
+        ) {
             return 'En attente';
             // return 3;
-        } elseif ($now > $this->getVotingStartDate() && $now < $this->getVotingEndDate()) {
+        } elseif (
+            $now > $this->getVotingStartDate() &&
+            $now < $this->getVotingEndDate()
+        ) {
             return 'En phase de vote';
             // return 4;
-        } elseif ($now > $this->getVotingEndDate() && $now < $this->getResultsDate()) {
+        } elseif (
+            $now > $this->getVotingEndDate() &&
+            $now < $this->getResultsDate()
+        ) {
             return "En phase d'attribution";
             // return 5;
         } elseif ($now > $this->getResultsDate()) {
@@ -398,8 +449,9 @@ class Competition
         return $this->publicationDate;
     }
 
-    public function setPublicationDate(\DateTimeInterface $publicationDate): self
-    {
+    public function setPublicationDate(
+        \DateTimeInterface $publicationDate
+    ): self {
         $this->publicationDate = $publicationDate;
 
         return $this;
@@ -410,8 +462,9 @@ class Competition
         return $this->submissionStartDate;
     }
 
-    public function setSubmissionStartDate(\DateTimeInterface $submissionStartDate): self
-    {
+    public function setSubmissionStartDate(
+        \DateTimeInterface $submissionStartDate
+    ): self {
         $this->submissionStartDate = $submissionStartDate;
 
         return $this;
@@ -422,8 +475,9 @@ class Competition
         return $this->submissionEndDate;
     }
 
-    public function setSubmissionEndDate(\DateTimeInterface $submissionEndDate): self
-    {
+    public function setSubmissionEndDate(
+        \DateTimeInterface $submissionEndDate
+    ): self {
         $this->submissionEndDate = $submissionEndDate;
 
         return $this;
@@ -434,8 +488,9 @@ class Competition
         return $this->votingStartDate;
     }
 
-    public function setVotingStartDate(\DateTimeInterface $votingStartDate): self
-    {
+    public function setVotingStartDate(
+        \DateTimeInterface $votingStartDate
+    ): self {
         $this->votingStartDate = $votingStartDate;
 
         return $this;
@@ -557,8 +612,9 @@ class Competition
         return $this->participantCategory;
     }
 
-    public function addParticipantCategory(ParticipantCategory $participantCategory): self
-    {
+    public function addParticipantCategory(
+        ParticipantCategory $participantCategory
+    ): self {
         if (!$this->participantCategory->contains($participantCategory)) {
             $this->participantCategory->add($participantCategory);
         }
@@ -566,8 +622,9 @@ class Competition
         return $this;
     }
 
-    public function removeParticipantCategory(ParticipantCategory $participantCategory): self
-    {
+    public function removeParticipantCategory(
+        ParticipantCategory $participantCategory
+    ): self {
         $this->participantCategory->removeElement($participantCategory);
 
         return $this;
@@ -603,8 +660,9 @@ class Competition
         return $this;
     }
 
-    public function removeMemberOfTheJury(MemberOfTheJury $memberOfTheJury): self
-    {
+    public function removeMemberOfTheJury(
+        MemberOfTheJury $memberOfTheJury
+    ): self {
         if ($this->memberOfTheJuries->removeElement($memberOfTheJury)) {
             // set the owning side to null (unless already changed)
             if ($memberOfTheJury->getCompetition() === $this) {
@@ -725,8 +783,9 @@ class Competition
         return $this->notificationsSended;
     }
 
-    public function addNotificationsSended(NotificationType $notificationsSended): self
-    {
+    public function addNotificationsSended(
+        NotificationType $notificationsSended
+    ): self {
         if (!$this->notificationsSended->contains($notificationsSended)) {
             $this->notificationsSended->add($notificationsSended);
         }
@@ -734,8 +793,9 @@ class Competition
         return $this;
     }
 
-    public function removeNotificationsSended(NotificationType $notificationsSended): self
-    {
+    public function removeNotificationsSended(
+        NotificationType $notificationsSended
+    ): self {
         $this->notificationsSended->removeElement($notificationsSended);
 
         return $this;

@@ -20,12 +20,14 @@ class ThemeFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-
         for ($i = 0; $i <= count(self::THEME_ARRAY) - 1; $i++) {
             $theme = new Theme();
             $theme->setLabel(self::THEME_ARRAY[$i]);
             $manager->persist($theme);
-            $this->addReference(sprintf('%s%d', self::THEME_REFERENCE, $i + 1), $theme);
+            $this->addReference(
+                sprintf('%s%d', self::THEME_REFERENCE, $i + 1),
+                $theme
+            );
         }
 
         $manager->flush();

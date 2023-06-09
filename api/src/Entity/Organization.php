@@ -22,16 +22,18 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 #[ApiFilter(PropertyFilter::class)]
 #[ApiFilter(SearchFilter::class)]
 #[ApiFilter(GroupFilter::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch(),
-        new Delete()
-    ],
-    normalizationContext: ['groups' => ['organization:read']]
-)]
+#[
+    ApiResource(
+        operations: [
+            new GetCollection(),
+            new Get(),
+            new Post(),
+            new Patch(),
+            new Delete(),
+        ],
+        normalizationContext: ['groups' => ['organization:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 class Organization
 {
@@ -114,7 +116,12 @@ class Organization
     private ?File $logo = null;
 
     #[Groups(['organization:organizationLinks:read'])]
-    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: OrganizationLink::class)]
+    #[
+        ORM\OneToMany(
+            mappedBy: 'organization',
+            targetEntity: OrganizationLink::class
+        )
+    ]
     private Collection $organizationLinks;
 
     #[Groups(['organization:read', 'user:current:read'])]
@@ -300,8 +307,9 @@ class Organization
         return $this->organizationType;
     }
 
-    public function setOrganizationType(?OrganizationType $organizationType): self
-    {
+    public function setOrganizationType(
+        ?OrganizationType $organizationType
+    ): self {
         $this->organizationType = $organizationType;
 
         return $this;
@@ -468,8 +476,9 @@ class Organization
         return $this->organizationLinks;
     }
 
-    public function addOrganizationLink(OrganizationLink $organizationLink): self
-    {
+    public function addOrganizationLink(
+        OrganizationLink $organizationLink
+    ): self {
         if (!$this->organizationLinks->contains($organizationLink)) {
             $this->organizationLinks->add($organizationLink);
             $organizationLink->setOrganization($this);
@@ -478,8 +487,9 @@ class Organization
         return $this;
     }
 
-    public function removeOrganizationLink(OrganizationLink $organizationLink): self
-    {
+    public function removeOrganizationLink(
+        OrganizationLink $organizationLink
+    ): self {
         if ($this->organizationLinks->removeElement($organizationLink)) {
             // set the owning side to null (unless already changed)
             if ($organizationLink->getOrganization() === $this) {

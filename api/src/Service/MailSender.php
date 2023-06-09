@@ -26,8 +26,7 @@ class MailSender
             ->htmlTemplate(sprintf('mails/%s', $pathname))
 
             // pass variables (name => value) to the template
-            ->context($context)
-        ;
+            ->context($context);
 
         $this->mailer->send($email);
     }

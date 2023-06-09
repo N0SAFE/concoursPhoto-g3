@@ -20,8 +20,11 @@ class AuthController extends AbstractController
     private IriConverterInterface $iriConverter;
     private SerializerContextBuilderInterface $contextBuilder;
     private SerializerInterface $serializer;
-    public function __construct(IriConverterInterface $iriConverter, SerializerContextBuilderInterface $contextBuilder, SerializerInterface $serializer)
-    {
+    public function __construct(
+        IriConverterInterface $iriConverter,
+        SerializerContextBuilderInterface $contextBuilder,
+        SerializerInterface $serializer
+    ) {
         $this->iriConverter = $iriConverter;
         $this->contextBuilder = $contextBuilder;
         $this->serializer = $serializer;
@@ -36,8 +39,22 @@ class AuthController extends AbstractController
 
         // remove cookie from server
         $response = new Response();
-        $response->headers->clearCookie('BEARER', '/', null, true, true, "None");
-        $response->headers->clearCookie('refreshToken', '/', null, true, true, "None");
+        $response->headers->clearCookie(
+            'BEARER',
+            '/',
+            null,
+            true,
+            true,
+            'None'
+        );
+        $response->headers->clearCookie(
+            'refreshToken',
+            '/',
+            null,
+            true,
+            true,
+            'None'
+        );
 
         return $response;
     }
@@ -45,6 +62,13 @@ class AuthController extends AbstractController
     #[Route('/whoami', name: 'whoami', methods: ['GET'])]
     public function whoami()
     {
-        return new JsonResponse($this->serializer->serialize($this->getUser(), 'jsonld', ["groups" => ["user:current:read"]]), 201, [], true);
+        return new JsonResponse(
+            $this->serializer->serialize($this->getUser(), 'jsonld', [
+                'groups' => ['user:current:read'],
+            ]),
+            201,
+            [],
+            true
+        );
     }
 }

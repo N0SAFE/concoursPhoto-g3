@@ -18,20 +18,15 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Serializer\Filter\PropertyFilter;
 
-#[ApiFilter(
-    GroupFilter::class
-)]
+#[ApiFilter(GroupFilter::class)]
 #[ApiFilter(SearchFilter::class)]
 #[ApiFilter(PropertyFilter::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["picture:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['picture:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: PictureRepository::class)]
 class Picture
 {
@@ -229,4 +224,3 @@ class Picture
         return $this;
     }
 }
-	

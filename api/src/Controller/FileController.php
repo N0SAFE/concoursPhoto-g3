@@ -19,10 +19,10 @@ class FileController extends AbstractController
         if (!$uploadedFile) {
             throw new BadRequestHttpException('"file" is required');
         }
-        
-        try{
+
+        try {
             $fileOptions = $fileUploader->upload($uploadedFile);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
