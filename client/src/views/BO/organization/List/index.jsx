@@ -203,9 +203,7 @@ export default function OrganizationList() {
                         { content: organization.country },
                         {
                             content: organization.competitions
-                                .map(
-                                    competition => competition.competitionName
-                                )
+                                .map(competition => competition.competitionName)
                                 .join(', '),
                         },
                     ]}

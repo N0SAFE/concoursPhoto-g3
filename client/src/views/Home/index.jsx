@@ -104,47 +104,44 @@ export default function Home() {
         controller?.abort();
         const _controller = new AbortController();
         setController(_controller);
-        return apiFetch(
-            `/competitions`,
-            {
-                query: {
-                    page: pageToLoad,
-                    itemsPerPage: itemsPerPageToLoad,
-                    groups: [
-                        'file:read',
-                        'competition:competitionVisual:read',
-                        'competition:theme:read',
-                        'theme:read',
-                        'competition:organization:read',
-                        'organization:admins:read',
-                        'user:read',
+        return apiFetch(`/competitions`, {
+            query: {
+                page: pageToLoad,
+                itemsPerPage: itemsPerPageToLoad,
+                groups: [
+                    'file:read',
+                    'competition:competitionVisual:read',
+                    'competition:theme:read',
+                    'theme:read',
+                    'competition:organization:read',
+                    'organization:admins:read',
+                    'user:read',
+                ],
+                resultsDate: {
+                    after: actualDate,
+                },
+                properties: {
+                    organization: ['admins'],
+                    [queryListSymbol]: [
+                        'competitionVisual',
+                        'competitionName',
+                        'state',
+                        'numberOfVotes',
+                        'numberOfParticipants',
+                        'numberOfPictures',
+                        'resultsDate',
+                        'theme',
+                        'id',
+                        'consultationCount',
                     ],
-                    resultsDate: {
-                        after: actualDate,
-                    },
-                    properties: {
-                        organization: ['admins'],
-                        [queryListSymbol]: [
-                            'competitionVisual',
-                            'competitionName',
-                            'state',
-                            'numberOfVotes',
-                            'numberOfParticipants',
-                            'numberOfPictures',
-                            'resultsDate',
-                            'theme',
-                            'id',
-                            'consultationCount',
-                        ],
-                    },
                 },
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                signal: _controller?.signal,
-            }
-        )
+            },
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            signal: _controller?.signal,
+        })
             .then(res => res.json())
             .then(async data => {
                 if (data.code === 401) {

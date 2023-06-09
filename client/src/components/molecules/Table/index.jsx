@@ -6,7 +6,7 @@ export default function Table({
     list,
     actions = [],
     children,
-    onLineClick = (entity) => {}
+    onLineClick = entity => {},
 }) {
     return (
         <table className={style.tableContainer}>
@@ -23,8 +23,15 @@ export default function Table({
                     const entityFields = children(entity);
                     return (
                         <tr key={entity.id} onClick={() => onLineClick(entity)}>
-                            {entityFields.map(function ({content, style}, index) {
-                                return <td style={style} key={index}>{content}</td>;
+                            {entityFields.map(function (
+                                { content, style },
+                                index
+                            ) {
+                                return (
+                                    <td style={style} key={index}>
+                                        {content}
+                                    </td>
+                                );
                             })}
                             {actions.length > 0 && (
                                 <td>
@@ -32,9 +39,13 @@ export default function Table({
                                         { name, action, component },
                                         index
                                     ) {
-                                        if(typeof component === "function"){
-                                            return component(entity, action, index);
-                                        }else if(component){
+                                        if (typeof component === 'function') {
+                                            return component(
+                                                entity,
+                                                action,
+                                                index
+                                            );
+                                        } else if (component) {
                                             return component;
                                         }
                                         return (

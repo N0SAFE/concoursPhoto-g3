@@ -59,7 +59,7 @@ export default function ProfileLayout() {
                 return data['hydra:member'];
             });
     };
-    
+
     const getSocialNetworks = () => {
         return apiFetch('/social_networks', {
             method: 'GET',
@@ -67,9 +67,9 @@ export default function ProfileLayout() {
             .then(r => r.json())
             .then(data => {
                 console.debug(data);
-                return data['hydra:member']
+                return data['hydra:member'];
             });
-    }
+    };
 
     useEffect(() => {
         const controller = new AbortController();

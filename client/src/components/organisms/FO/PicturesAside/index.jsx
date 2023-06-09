@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export default function PicturesAside({ pictures, asideLabel, idPage }) {
     const apiPath = useApiPath();
     const navigate = useNavigate();
-    
+
     return (
         <div className={style.asideContainer}>
             <div>

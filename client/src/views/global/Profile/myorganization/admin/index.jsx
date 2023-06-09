@@ -34,7 +34,6 @@ export default function MyorganizationAdmin() {
         }
     }, [searchParams]);
 
-
     return (
         <>
             <Table

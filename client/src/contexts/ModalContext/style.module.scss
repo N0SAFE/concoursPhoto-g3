@@ -70,7 +70,10 @@
     }
 
     &Show {
-        .modalLeft, .modalRight, .modalTop, .modalBottom {
+        .modalLeft,
+        .modalRight,
+        .modalTop,
+        .modalBottom {
             visibility: visible;
         }
 

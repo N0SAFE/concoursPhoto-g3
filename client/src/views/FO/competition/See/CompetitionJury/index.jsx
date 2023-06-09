@@ -42,7 +42,11 @@ export default function () {
                     </div>
                 )}
             </div>
-            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} idPage={competition.id} />
+            <PicturesAside
+                pictures={asidePictures}
+                asideLabel={asideLabel}
+                idPage={competition.id}
+            />
         </div>
     );
 }

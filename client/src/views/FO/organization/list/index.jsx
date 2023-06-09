@@ -84,7 +84,7 @@ export default function ListOrganization() {
                     'organizerName',
                     'organizationVisual',
                     'activeCompetitionCount',
-                    'id'
+                    'id',
                 ],
                 groups: ['file:read', 'organization:organizationVisual:read'],
             },
@@ -129,8 +129,11 @@ export default function ListOrganization() {
                         return (
                             <Card
                                 idContent={organization.id}
-                                onClick={() => { navigate(`/organization/${organization.id}`) }
-                                }
+                                onClick={() => {
+                                    navigate(
+                                        `/organization/${organization.id}`
+                                    );
+                                }}
                                 title={organization.organizerName}
                                 imagePath={organization.organizationVisual.path}
                                 stats={[

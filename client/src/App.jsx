@@ -16,7 +16,7 @@ function App() {
                 <meta charSet="utf-8" />
                 <link
                     type="image/svg+xml"
-                    rel="icon" 
+                    rel="icon"
                     href={apiFetch('logo-concoursPhoto-little.svg')}
                 />
             </Helmet>

@@ -1,6 +1,6 @@
 .navLinkContainer {
     @extend .margin-title;
-    
+
     &.vertical {
         & > div {
             flex-direction: column;
@@ -14,7 +14,7 @@
                     top: 0;
                     left: 0;
                 }
-                
+
                 &.active::after {
                     content: '';
                     height: 100%;

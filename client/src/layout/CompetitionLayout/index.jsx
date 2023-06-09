@@ -100,7 +100,7 @@ export default function CompetitionLayout() {
                             { label: 'Accueil', link: '/' },
                             { label: 'Concours photo', link: location },
                             {
-                                label: `Concours photo ${entity.competitionName}`
+                                label: `Concours photo ${entity.competitionName}`,
                             },
                         ]}
                     />

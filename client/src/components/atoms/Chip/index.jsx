@@ -8,7 +8,7 @@ export default function Chip({
     color,
     iconColor,
     onClick,
-    children
+    children,
 }) {
     return (
         <div

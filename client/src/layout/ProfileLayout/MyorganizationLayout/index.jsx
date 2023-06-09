@@ -100,7 +100,13 @@ export default function () {
                         }}
                     />
                     <Hbar />
-                    <Outlet context={{ ...context, selectedOrganisation, idOrganisation : selectedOrganisation.id }} />
+                    <Outlet
+                        context={{
+                            ...context,
+                            selectedOrganisation,
+                            idOrganisation: selectedOrganisation.id,
+                        }}
+                    />
                 </Loader>
             </div>
         </div>

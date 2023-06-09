@@ -76,7 +76,7 @@ function Router() {
                         <Route path="edit/:id" element={<UserEdit />} />
                         <Route path="create" element={<UserCreate />} />
                     </Route>
-                    
+
                     <Route path="organization">
                         <Route path="" element={<OrganizationList />} />
                         <Route path=":id" element={<OrganizationSee />} />
@@ -110,7 +110,10 @@ function Router() {
                     <Route path="" element={<ProfileLayout />}>
                         <Route path="" element={<Navigate to="me" />} />
                         <Route path="me" element={<Profile />} />
-                        <Route path="preference" element={<ProfileNotification />} />
+                        <Route
+                            path="preference"
+                            element={<ProfileNotification />}
+                        />
                         <Route path="myorganization">
                             <Route path="" element={<MyorganizationList />} />
                             <Route
@@ -127,11 +130,11 @@ function Router() {
                                             }
                                             return {
                                                 state: !!me.Manage.find(
-                                                    o => (o.id === idOrganisation)
+                                                    o => o.id === idOrganisation
                                                 ),
                                                 context: {
-                                                    idOrganisation
-                                                }
+                                                    idOrganisation,
+                                                },
                                             };
                                         }}
                                         fallback={({ me }) => {
@@ -145,7 +148,7 @@ function Router() {
                                                     />
                                                 );
                                             } else {
-                                                return <NotFound />
+                                                return <NotFound />;
                                             }
                                         }}
                                     />
@@ -184,10 +187,13 @@ function Router() {
                 <Route path="/organization">
                     <Route path="" element={<ListOrganization />} />
                 </Route>
-                <Route path="/organization/:id" element={<OrganisationLayout />}></Route>
+                <Route
+                    path="/organization/:id"
+                    element={<OrganisationLayout />}
+                ></Route>
                 <Route path="photographer">
-                        <Route path="" element={<PhotographerList />} />
-                    </Route>
+                    <Route path="" element={<PhotographerList />} />
+                </Route>
                 <Route
                     path="/createorganization"
                     element={<CreateOrganization />}

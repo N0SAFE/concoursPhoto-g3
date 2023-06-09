@@ -137,25 +137,22 @@ export default function CompetitionEdit() {
     };
 
     const getCompetitions = controller => {
-        return apiFetch(
-            `/competitions/${competitionId}`,
-            {
-                query: {
-                    groups: [
-                        'competition:participantCategory:read',
-                        'participantCategory:read',
-                        'competition:organization:read',
-                        'organization:read',
-                        'competition:theme:read',
-                        'theme:read',
-                        'competition:competitionVisual:read',
-                        'file:read',
-                    ],
-                },
-                method: 'GET',
-                signal: controller?.signal,
-            }
-        )
+        return apiFetch(`/competitions/${competitionId}`, {
+            query: {
+                groups: [
+                    'competition:participantCategory:read',
+                    'participantCategory:read',
+                    'competition:organization:read',
+                    'organization:read',
+                    'competition:theme:read',
+                    'theme:read',
+                    'competition:competitionVisual:read',
+                    'file:read',
+                ],
+            },
+            method: 'GET',
+            signal: controller?.signal,
+        })
             .then(r => r.json())
             .then(async data => {
                 console.debug(data);
