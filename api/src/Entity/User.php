@@ -45,7 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     )
 ]
 #[ApiFilter(PropertyFilter::class)]
-#[ApiFilter(SearchFilter::class, properties: ['roles' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['roles' => 'partial', 'Manage' => 'exact'])]
 #[ApiFilter(GroupFilter::class)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface

@@ -197,7 +197,7 @@ export default function MyorganizationAdmin() {
                         borderRadius: '2rem',
                     }}
                 >
-                    Ajouter un administrateur
+                    Ajouter un concours
                 </Button>
             </div>
         </>
