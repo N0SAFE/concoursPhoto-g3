@@ -67,7 +67,6 @@ export default function ProfileNotification() {
                             success: 'Enregistré !',
                             error: "Erreur lors de l'enregistrement",
                         });
-                        5;
                         promise.then(() => {
                             refreshUser();
                         });

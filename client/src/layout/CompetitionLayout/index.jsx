@@ -35,11 +35,12 @@ export default function CompetitionLayout() {
                     'picture:file:read',
                     'competition:memberOfTheJuries:read',
                     'memberOfTheJury:user:read',
-                    "competition:theme:read",
-                    "theme:read",
-                    "competition:sponsors:read",
-                    "sponsor:read",
-                    'sponsor:logo:read'
+                    'competition:theme:read',
+                    'theme:read',
+                    'competition:sponsors:read',
+                    'sponsor:read',
+                    'sponsor:logo:read',
+                    'picture:user:read',
                 ],
             },
             method: 'GET',
@@ -50,6 +51,7 @@ export default function CompetitionLayout() {
         })
             .then(res => res.json())
             .then(async data => {
+                console.debug(data);
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
@@ -110,37 +112,34 @@ export default function CompetitionLayout() {
                                 </h1>
                             </div>
                             <div>
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={`Pays : ${entity.countryCriteria}`}
-                                />
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={`Département(s) : ${entity.departmentCriteria?.map(
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Pays : {entity.countryCriteria}
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Département(s) :{' '}
+                                    {entity.departmentCriteria?.map(
                                         department => ' ' + department.nom
-                                    )}`}
-                                />
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={`Région(s) : ${entity.regionCriteria?.map(
+                                    )}
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Région(s) :{' '}
+                                    {entity.regionCriteria?.map(
                                         region => ' ' + region.nom
-                                    )}`}
-                                />
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={`Thème(s) : ${entity.theme?.map(
+                                    )}
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Thème(s) :{' '}
+                                    {entity.theme?.map(
                                         theme => ' ' + theme.label
-                                    )}`}
-                                />
-
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={`Âge : de ${entity.minAgeCriteria} à ${entity.maxAgeCriteria} ans`}
-                                />
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={`Dotation : ${entity.endowments}`}
-                                />
+                                    )}
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Âge : de {entity.minAgeCriteria} à{' '}
+                                    {entity.maxAgeCriteria} ans
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Dotation : {entity.endowments}
+                                </Chip>
                             </div>
                         </div>
                         <div className={style.viewOrganizer}>
@@ -163,10 +162,11 @@ export default function CompetitionLayout() {
                                 <div className={style.viewOrganizerTwo}>
                                     <div>
                                         <Chip
-                                            title={entity.stateLabel}
                                             backgroundColor={'#000'}
                                             color={'#fff'}
-                                        />
+                                        >
+                                            {entity.stateLabel}
+                                        </Chip>
                                     </div>
                                     <div>
                                         <p>
@@ -187,29 +187,34 @@ export default function CompetitionLayout() {
                                 {entity.state >= 2 && (
                                     <>
                                         <Chip
-                                            title={entity.numberOfParticipants}
                                             icon={'user-plus'}
                                             backgroundColor={'#F5F5F5'}
-                                        />
+                                        >
+                                            {entity.numberOfParticipants}
+                                        </Chip>
                                         <Chip
                                             title={entity.numberOfPictures}
                                             icon={'camera1'}
                                             backgroundColor={'#F5F5F5'}
-                                        />
+                                        >
+                                            {entity.numberOfPictures}
+                                        </Chip>
                                     </>
                                 )}
                                 {entity.state >= 4 && (
                                     <Chip
-                                        title={entity.numberOfVotes}
                                         icon={'like'}
                                         backgroundColor={'#F5F5F5'}
-                                    />
+                                    >
+                                        {entity.numberOfVotes}
+                                    </Chip>
                                 )}
                                 <Chip
-                                    title={entity.consultationCount}
                                     icon={'view-show'}
                                     backgroundColor={'#F5F5F5'}
-                                />
+                                >
+                                    {entity.consultationCount}
+                                </Chip>
                             </div>
                         </div>
                     </div>

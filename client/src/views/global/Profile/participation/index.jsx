@@ -5,8 +5,10 @@ import { useEffect, useState } from 'react';
 import style from './style.module.scss';
 import Chip from '@/components/atoms/Chip/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function CompetitionParticipation() {
+    const navigate = useNavigate()
     const { me } = useAuthContext();
     const apiFetch = useApiFetch();
     const [userCompetitions, setUserCompetitions] = useState([]);
@@ -18,6 +20,7 @@ export default function CompetitionParticipation() {
             query: {
                 'pictures.user': `/users/${me.id}`,
                 properties: [
+                    'id',
                     'competitionName',
                     'submissionStartDate',
                     'submissionEndDate',
@@ -59,8 +62,15 @@ export default function CompetitionParticipation() {
             <p className={style.participationsCounter}>
                 {userCompetitions.length} concours
             </p>
-            <Loader active={isLoading} takeInnerContent={true} style={{borderRadius: "10px"}}>
+            <Loader
+                active={isLoading}
+                takeInnerContent={true}
+                style={{ borderRadius: '10px' }}
+            >
                 <Table
+                    onLineClick={function (competition) {
+                        navigate(`/competition/${competition.id}`);
+                    }}
                     list={userCompetitions}
                     fields={[
                         'Nom du concours',
@@ -109,15 +119,14 @@ export default function CompetitionParticipation() {
                                                 ? '#fff'
                                                 : '#000'
                                         }
-                                        title={
-                                            competition.state === 1
-                                                ? 'A venir'
-                                                : competition.state >= 2 &&
-                                                  competition.state <= 5
-                                                ? 'En cours'
-                                                : 'Terminé'
-                                        }
-                                    />
+                                    >
+                                        {competition.state === 1
+                                            ? 'A venir'
+                                            : competition.state >= 2 &&
+                                              competition.state <= 5
+                                            ? 'En cours'
+                                            : 'Terminé'}
+                                    </Chip>
                                 ),
                             },
                             { content: competition.numberOfPictures },

@@ -42,9 +42,10 @@ export default function Card({
                                     return (
                                         <Chip
                                             key={index}
-                                            title={filter}
                                             backgroundColor={'#F5F5F5'}
-                                        />
+                                        >
+                                            {filter}
+                                        </Chip>
                                     );
                                 })}
                         </div>
@@ -60,9 +61,10 @@ export default function Card({
                                         <Chip
                                             icon={stat.icon}
                                             key={index}
-                                            title={stat.name}
                                             backgroundColor={'#F5F5F5'}
-                                        />
+                                        >
+                                            {stat.name}
+                                        </Chip>
                                     );
                                 })}
                             </div>

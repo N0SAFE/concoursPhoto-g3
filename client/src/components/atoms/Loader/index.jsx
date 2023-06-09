@@ -10,7 +10,7 @@ export default function Loader({
         if (takeInnerContent) {
             return (
                 <>
-                    <div className={style.takeInnerContainer} style={_style}>
+                    <div className={style.takeInnerContainer} style={{minHeight: "100px", ..._style}}>
                         <div style={{ visibility: 'hidden' }}>{children}</div>
                         <div className={style['lds-roller']}>
                             <div></div>

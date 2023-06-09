@@ -25,20 +25,18 @@ export default function ProfileLayout() {
             map: new Map(),
             isLoading: true,
         });
-        
+    const [socialNetworksPossibility, setSocialNetworksPossibility] = useState({
+        list: [],
+        isLoading: true,
+    });
     const meNotificationEnabled = new Map(
-        me.notificationEnabled.map(item => [
-            item.notificationCode,
-            item['@id'],
-        ])
+        me.notificationEnabled.map(item => [item.notificationCode, item['@id']])
     );
 
     const getGendersPossibility = controller => {
         return apiFetch('/genders', {
             query: {
-                groups: [
-                    "gender:read"
-                ]
+                groups: ['gender:read'],
             },
             method: 'GET',
             signal: controller.signal,
@@ -61,6 +59,17 @@ export default function ProfileLayout() {
                 return data['hydra:member'];
             });
     };
+    
+    const getSocialNetworks = () => {
+        return apiFetch('/social_networks', {
+            method: 'GET',
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member']
+            });
+    }
 
     useEffect(() => {
         const controller = new AbortController();
@@ -79,6 +88,9 @@ export default function ProfileLayout() {
                 isLoading: false,
             });
         });
+        getSocialNetworks().then(data => {
+            setSocialNetworksPossibility({ list: data, isLoading: false });
+        });
 
         return () => {
             setTimeout(() => controller.abort());
@@ -94,6 +106,7 @@ export default function ProfileLayout() {
                     gendersPossibility,
                     notificationTypePossibility,
                     meNotificationEnabled,
+                    socialNetworksPossibility,
                 }}
             />
         </div>

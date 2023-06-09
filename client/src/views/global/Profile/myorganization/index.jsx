@@ -138,21 +138,23 @@ export default function () {
                                                         organization.competitionCount >
                                                         0 ? (
                                                             <Chip
-                                                                title={
-                                                                    organization.competitionCount
-                                                                }
                                                                 backgroundColor={
                                                                     '#00CE3A'
                                                                 }
                                                                 color={'white'}
-                                                            />
+                                                            >
+                                                                {
+                                                                    organization.competitionCount
+                                                                }
+                                                            </Chip>
                                                         ) : (
                                                             <Chip
-                                                                title={0}
                                                                 backgroundColor={
                                                                     'grey'
                                                                 }
-                                                            />
+                                                            >
+                                                                0
+                                                            </Chip>
                                                         ),
                                                 },
                                                 {

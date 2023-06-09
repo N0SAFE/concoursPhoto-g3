@@ -35,51 +35,61 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             "code" => '60341',
             "codeDepartment" => '60',
             "codeRegion" => '32',
+            "codePostal" => "60330"
         ],
         [
             "code" => '01032',
             "codeDepartment" => '01',
             "codeRegion" => '84',
+            "codePostal" => "01360"
         ],
         [
             "code" => '46201',
             "codeDepartment" => '46',
             "codeRegion" => '76',
+            "codePostal" => "46800"
         ],
         [
             "code" => '24008',
             "codeDepartment" => '24',
             "codeRegion" => '75',
+            "codePostal" => "24270"
         ],
         [
             "code" => '02347',
             "codeDepartment" => '02',
             "codeRegion" => '32',
+            "codePostal" => "02400"
         ],
         [
             "code" => '06055',
             "codeDepartment" => '06',
             "codeRegion" => '93',
+            "codePostal" => "06670"
         ],
         [
             "code" => '34343',
             "codeDepartment" => '34',
             "codeRegion" => '76',
+            "codePostal" => "34380"
         ],
         [
             "code" => '66025',
             "codeDepartment" => '66',
             "codeRegion" => '76',
+            "codePostal" => "66760"
         ],
         [
             "code" => '80829',
             "codeDepartment" => '80',
             "codeRegion" => '32',
+            "codePostal" => "80190"
         ],
         [
             "code" => '51578',
             "codeDepartment" => '51',
             "codeRegion" => '44',
+            "codePostal" => "51130"
         ],
     ];
 
@@ -122,7 +132,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setCitycode($city['code']);
         $user->setDepartment($city['codeDepartment']);
         $user->setRegion($city['codeRegion']);
-        $user->setPostcode(str_replace(' ', '', $faker->postcode()));
+        $user->setPostcode($city['codePostal']);
         $user->setCountry($faker->countryCode());
         $user->setPictureProfil((new FileFixtures)->createFileFromString("77668394.jfif"));
         $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
@@ -168,7 +178,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setDepartment($city['codeDepartment']);
             $user->setRegion($city['codeRegion']);
             $user->setCountry("FRANCE");
-            $user->setPostcode(str_replace(' ', '', $faker->postcode()));
+            $user->setPostcode($city['codePostal']);
             $user->setPictureProfil((new FileFixtures)->createFileFromArray(FileFixtures::USER_LOGO_ARRAY));
             $user->setGender($this->getReference(GenderFixtures::GENDER_REFERENCE . rand(1, count(GenderFixtures::GENDER_ARRAY))));
             $user->setPhotographerCategory($this->getReference(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_REFERENCE . rand(1, count(PhotographerCategoryFixtures::PHOTOGRAPHER_CATEGORY_ARRAY))));
