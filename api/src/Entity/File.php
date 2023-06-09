@@ -15,12 +15,18 @@ use Symfony\Component\HttpFoundation\File\File as FileFile;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(operations: [
-    new GetCollection(),
-    new Post(controller: FileController::class, deserialize: false),
-    new Get(),
-    new Delete()
-], normalizationContext: ['groups' => ['file:read']], denormalizationContext: ['groups' => ['file:write']])]
+#[
+    ApiResource(
+        operations: [
+            new GetCollection(),
+            new Post(controller: FileController::class, deserialize: false),
+            new Get(),
+            new Delete(),
+        ],
+        normalizationContext: ['groups' => ['file:read']],
+        denormalizationContext: ['groups' => ['file:write']]
+    )
+]
 #[ORM\Entity(repositoryClass: FileRepository::class)]
 class File
 {

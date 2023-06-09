@@ -8,12 +8,12 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 import { toast } from 'react-toastify';
 
 export default function () {
-    const { competition: _competition} = useOutletContext();
+    const { competition: _competition } = useOutletContext();
     const asidePictures = _competition.aside;
     const asideLabel = _competition.asideLabel;
-    
+
     const [competition, setCompetition] = useState(_competition);
-    
+
     const apiFetch = useApiFetch();
     const editorRef = useRef(null);
 
@@ -41,7 +41,7 @@ export default function () {
             error: 'Erreur lors de la mise à jour',
         });
     }
-    
+
     return (
         <div className={style.viewContainer}>
             <div>
@@ -53,7 +53,7 @@ export default function () {
                     }}
                 ></div>
                 <Editor
-                    onEditorChange={(s) => { 
+                    onEditorChange={s => {
                         setCompetition({ ...competition, description: s });
                     }}
                     onInit={(evt, editor) => (editorRef.current = editor)}
@@ -101,7 +101,11 @@ export default function () {
                     Editer
                 </button>
             </div>
-            <PicturesAside pictures={asidePictures} asideLabel={asideLabel} idPage={competition.id} />
+            <PicturesAside
+                pictures={asidePictures}
+                asideLabel={asideLabel}
+                idPage={competition.id}
+            />
         </div>
     );
 }

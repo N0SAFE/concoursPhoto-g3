@@ -9,7 +9,7 @@ const DEFAULT_ITEMS_PER_PAGE = 9;
 const caching = {};
 
 export default function Pagination({
-    classListInnerContainer = "",
+    classListInnerContainer = '',
     _useBetaCache = false,
     items,
     totalPageCount,
@@ -44,7 +44,6 @@ export default function Pagination({
 
     const hasPreviousPage = _pageCurrent > 1;
     const hasNextPage = _pageCurrent < totalPageCount;
-
 
     const dotSize = 2;
     const dots = [];

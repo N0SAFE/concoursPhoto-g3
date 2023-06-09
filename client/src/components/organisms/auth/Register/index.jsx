@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import Button from '@/components/atoms/Button';
-import {Link, useOutletContext} from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useModal } from '@/contexts/ModalContext';
 import Login from '@/components/organisms/auth/Login';
 
@@ -64,9 +64,7 @@ export default function UserRegister() {
         const promise = Promise.all([
             getGendersPossibility(),
             getPersonalstatus(),
-        ]).then(([gender, statut]) =>
-            setEntityPossibility({ gender, statut })
-        );
+        ]).then(([gender, statut]) => setEntityPossibility({ gender, statut }));
         toast.promise(promise, {
             pending: 'Chargement des possibilités',
             success: 'Possibilités chargées',

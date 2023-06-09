@@ -10,7 +10,8 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 
 $numberOfJury = rand(5, UserFixtures::USER_COUNT_REFERENCE);
-class MemberOfTheJuryFixtures extends Fixture implements DependentFixtureInterface
+class MemberOfTheJuryFixtures extends Fixture implements
+    DependentFixtureInterface
 {
     public $numberOfJury;
 
@@ -31,8 +32,17 @@ class MemberOfTheJuryFixtures extends Fixture implements DependentFixtureInterfa
             $member_of_the_jury->setInviteDate($faker->dateTime());
             $member_of_the_jury->setAcceptanceDate($faker->dateTime());
             $member_of_the_jury->setTheFunction($faker->text());
-            $member_of_the_jury->setCompetition($this->getReference(CompetitionFixtures::COMPETITION_REFERENCE . rand(1, $this->numberOfJury)));
-            $member_of_the_jury->setUser($this->getReference(UserFixtures::USER_REFERENCE . rand(1, $this->numberOfJury)));
+            $member_of_the_jury->setCompetition(
+                $this->getReference(
+                    CompetitionFixtures::COMPETITION_REFERENCE .
+                        rand(1, $this->numberOfJury)
+                )
+            );
+            $member_of_the_jury->setUser(
+                $this->getReference(
+                    UserFixtures::USER_REFERENCE . rand(1, $this->numberOfJury)
+                )
+            );
 
             $manager->persist($member_of_the_jury);
         }
@@ -42,9 +52,6 @@ class MemberOfTheJuryFixtures extends Fixture implements DependentFixtureInterfa
 
     public function getDependencies(): array
     {
-        return [
-            CompetitionFixtures::class,
-            UserFixtures::class
-        ];
+        return [CompetitionFixtures::class, UserFixtures::class];
     }
 }

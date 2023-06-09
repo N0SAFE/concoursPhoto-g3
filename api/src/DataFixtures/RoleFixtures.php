@@ -18,7 +18,6 @@ class RoleFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-
         for ($i = 0; $i <= count(self::ROLE_ARRAY) - 1; $i++) {
             $role = new Role();
             $role->setLabel(self::ROLE_ARRAY[$i]);

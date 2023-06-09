@@ -13,8 +13,12 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class NotificationSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private UserRepository $userRepository, private CompetitionRepository $competitionRepository, private MailSender $mailSender, private NotificationTypeRepository $notificationTypeRepository)
-    {
+    public function __construct(
+        private UserRepository $userRepository,
+        private CompetitionRepository $competitionRepository,
+        private MailSender $mailSender,
+        private NotificationTypeRepository $notificationTypeRepository
+    ) {
     }
 
     public static function getSubscribedEvents()
@@ -27,8 +31,8 @@ final class NotificationSubscriber implements EventSubscriberInterface
     public function sendMail(ViewEvent $event): void
     {
         match ($event->getRequest()->attributes->get('_api_operation_name')) {
-            "CompetitionCreate" => $this->onCompetitionCreate(),
-            default => ""
+            'CompetitionCreate' => $this->onCompetitionCreate(),
+            default => '',
         };
     }
 

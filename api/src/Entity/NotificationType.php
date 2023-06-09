@@ -14,16 +14,18 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Post(),
-        new Get(),
-        new Patch(),
-        new Delete()
-    ],
-    normalizationContext: ['groups' => ['notificationType:read']]
-)]
+#[
+    ApiResource(
+        operations: [
+            new GetCollection(),
+            new Post(),
+            new Get(),
+            new Patch(),
+            new Delete(),
+        ],
+        normalizationContext: ['groups' => ['notificationType:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: NotificationTypeRepository::class)]
 class NotificationType
 {
@@ -42,11 +44,21 @@ class NotificationType
     private ?int $notificationCode = null;
 
     #[Groups(['notificationType:subscribedUsers:read'])]
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'notificationEnabled')]
+    #[
+        ORM\ManyToMany(
+            targetEntity: User::class,
+            mappedBy: 'notificationEnabled'
+        )
+    ]
     private Collection $subscribedUsers;
 
     #[Groups(['notificationType:competitionAlreadyHandled:read'])]
-    #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'notificationsSended')]
+    #[
+        ORM\ManyToMany(
+            targetEntity: Competition::class,
+            mappedBy: 'notificationsSended'
+        )
+    ]
     private Collection $competitionAlreadyHandled;
 
     public function __construct()
@@ -119,9 +131,14 @@ class NotificationType
         return $this->competitionAlreadyHandled;
     }
 
-    public function addCompetitionAlreadyHandled(Competition $competitionAlreadyHandled): self
-    {
-        if (!$this->competitionAlreadyHandled->contains($competitionAlreadyHandled)) {
+    public function addCompetitionAlreadyHandled(
+        Competition $competitionAlreadyHandled
+    ): self {
+        if (
+            !$this->competitionAlreadyHandled->contains(
+                $competitionAlreadyHandled
+            )
+        ) {
             $this->competitionAlreadyHandled->add($competitionAlreadyHandled);
             $competitionAlreadyHandled->addNotificationsSended($this);
         }
@@ -129,9 +146,14 @@ class NotificationType
         return $this;
     }
 
-    public function removeCompetitionAlreadyHandled(Competition $competitionAlreadyHandled): self
-    {
-        if ($this->competitionAlreadyHandled->removeElement($competitionAlreadyHandled)) {
+    public function removeCompetitionAlreadyHandled(
+        Competition $competitionAlreadyHandled
+    ): self {
+        if (
+            $this->competitionAlreadyHandled->removeElement(
+                $competitionAlreadyHandled
+            )
+        ) {
             $competitionAlreadyHandled->removeNotificationsSended($this);
         }
 

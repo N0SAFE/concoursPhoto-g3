@@ -13,15 +13,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["organizationType:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['organizationType:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: OrganizationTypeRepository::class)]
 class OrganizationType
 {
@@ -36,7 +33,12 @@ class OrganizationType
     private ?string $label = null;
 
     #[Groups(['organizationType:organizations:read'])]
-    #[ORM\OneToMany(mappedBy: 'organizationType', targetEntity: Organization::class)]
+    #[
+        ORM\OneToMany(
+            mappedBy: 'organizationType',
+            targetEntity: Organization::class
+        )
+    ]
     private Collection $organizations;
 
     public function __construct()

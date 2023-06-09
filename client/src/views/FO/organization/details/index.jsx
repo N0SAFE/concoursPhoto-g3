@@ -22,16 +22,16 @@ export default function OrganisationLayout() {
     const getOrganization = controller => {
         return apiFetch(
             '/organizations/' +
-            organizationid +
-            '?groups[]=competition&groups[]=file&groups[]=organization',
+                organizationid +
+                '?groups[]=competition&groups[]=file&groups[]=organization',
             {
                 query: {
                     groups: [
-                        "organization:competition:read",
+                        'organization:competition:read',
                         'competition:read',
-                        "organization:organizationVisual:read",
-                        "file:read"
-                    ]
+                        'organization:organizationVisual:read',
+                        'file:read',
+                    ],
                 },
                 method: 'GET',
                 headers: {
@@ -46,12 +46,11 @@ export default function OrganisationLayout() {
                 if (data.code === 401) {
                     throw new Error(data.message);
                 }
-                
+
                 setEntity(data);
-                
             });
     };
-    
+
     useEffect(() => {
         const controller = new AbortController();
         const promise = getOrganization(controller);

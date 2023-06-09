@@ -20,8 +20,18 @@ class UserLinkFixtures extends Fixture implements DependentFixtureInterface
             $link = new UserLink();
 
             $link->setLink($faker->url);
-            $link->setSocialnetworks($this->getReference(SocialNetworksFixtures::SN_REFERENCE . rand(1, self::USER_LINK_COUNT_REFERENCE)));
-            $link->setUser($this->getReference(UserFixtures::USER_REFERENCE . rand(1, self::USER_LINK_COUNT_REFERENCE)));
+            $link->setSocialnetworks(
+                $this->getReference(
+                    SocialNetworksFixtures::SN_REFERENCE .
+                        rand(1, self::USER_LINK_COUNT_REFERENCE)
+                )
+            );
+            $link->setUser(
+                $this->getReference(
+                    UserFixtures::USER_REFERENCE .
+                        rand(1, self::USER_LINK_COUNT_REFERENCE)
+                )
+            );
 
             $manager->persist($link);
         }
@@ -31,9 +41,6 @@ class UserLinkFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [
-            SocialNetworksFixtures::class,
-            UserFixtures::class
-        ];
+        return [SocialNetworksFixtures::class, UserFixtures::class];
     }
 }

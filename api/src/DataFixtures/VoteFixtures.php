@@ -12,7 +12,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class VoteFixtures extends Fixture implements DependentFixtureInterface
 {
-
     const VOTE_COUNT_REFERENCE = PictureFixtures::PICTURE_COUNT_REFERENCE * 5;
 
     public function load(ObjectManager $manager): void
@@ -23,8 +22,18 @@ class VoteFixtures extends Fixture implements DependentFixtureInterface
             $vote = new Vote();
 
             $vote->setVoteDate($faker->dateTime());
-            $vote->setUser($this->getReference(UserFixtures::USER_REFERENCE . rand(1, UserFixtures::USER_COUNT_REFERENCE)));
-            $vote->setPicture($this->getReference(PictureFixtures::PICTURE_REFERENCE . rand(1, PictureFixtures::PICTURE_COUNT_REFERENCE)));
+            $vote->setUser(
+                $this->getReference(
+                    UserFixtures::USER_REFERENCE .
+                        rand(1, UserFixtures::USER_COUNT_REFERENCE)
+                )
+            );
+            $vote->setPicture(
+                $this->getReference(
+                    PictureFixtures::PICTURE_REFERENCE .
+                        rand(1, PictureFixtures::PICTURE_COUNT_REFERENCE)
+                )
+            );
 
             $manager->persist($vote);
         }
@@ -34,9 +43,6 @@ class VoteFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [
-            UserFixtures::class,
-            PictureFixtures::class,
-        ];
+        return [UserFixtures::class, PictureFixtures::class];
     }
 }

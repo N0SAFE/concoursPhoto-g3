@@ -2,7 +2,7 @@ import style from '@/components/atoms/Input/style.module.scss';
 import Select from 'react-select';
 import { useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import Button from "@/components/atoms/Button/index.jsx";
+import Button from '@/components/atoms/Button/index.jsx';
 
 function FileInput({ name, extra, label, onChange, error }) {
     if (!extra?.multiple) {
@@ -140,7 +140,6 @@ function ProfileInput({ name, extra, onChange, error }) {
     if (!extra?.multiple) {
         const inputRef = useRef();
         return (
-
             <div className={style.componentProfile}>
                 <div className={style.imageWrapper}>
                     {extra?.type === 'image' && extra?.value ? (
@@ -154,41 +153,45 @@ function ProfileInput({ name, extra, onChange, error }) {
                                             : extra?.value?.to
                                         : null
                                 }
-                                onClick={function () {
-                                }}
+                                onClick={function () {}}
                             />
                         </Link>
                     ) : (
-                        <svg width="112" height="112" viewBox="0 0 112 112" fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="56" cy="56" r="56" fill="#F1F1F1"/>
+                        <svg
+                            width="112"
+                            height="112"
+                            viewBox="0 0 112 112"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <circle cx="56" cy="56" r="56" fill="#F1F1F1" />
                             <path
                                 d="M35 79C35 67.8491 44.1782 58.8095 55.5 58.8095C66.8219 58.8095 76 67.8491 76 79H70.875C70.875 70.6369 63.9914 63.8571 55.5 63.8571C47.0086 63.8571 40.125 70.6369 40.125 79H35ZM55.5 56.2857C47.0053 56.2857 40.125 49.5093 40.125 41.1429C40.125 32.7764 47.0053 26 55.5 26C63.9947 26 70.875 32.7764 70.875 41.1429C70.875 49.5093 63.9947 56.2857 55.5 56.2857ZM55.5 51.2381C61.1631 51.2381 65.75 46.7205 65.75 41.1429C65.75 35.5652 61.1631 31.0476 55.5 31.0476C49.8369 31.0476 45.25 35.5652 45.25 41.1429C45.25 46.7205 49.8369 51.2381 55.5 51.2381Z"
-                                fill="white"/>
+                                fill="white"
+                            />
                         </svg>
                     )}
-
                 </div>
                 <div className={style.buttonWrapper}>
                     {extra?.value ? (
                         <>
                             <Button
-                                color={"#F1F1F1"}
-                                width={"250px"}
-                                height={"50px"}
-                                padding={"0 20px"}
-                                borderRadius={"25px"}
+                                color={'#F1F1F1'}
+                                width={'250px'}
+                                height={'50px'}
+                                padding={'0 20px'}
+                                borderRadius={'25px'}
                                 type="button"
                                 onClick={() => inputRef.current.click()}
                             >
                                 Télécharger ma photo
                             </Button>
                             <Button
-                                color={"#F1F1F1"}
-                                width={"150px"}
-                                height={"50px"}
-                                padding={"0 20px"}
-                                borderRadius={"25px"}
+                                color={'#F1F1F1'}
+                                width={'150px'}
+                                height={'50px'}
+                                padding={'0 20px'}
+                                borderRadius={'25px'}
                                 type="button"
                                 onClick={() => onChange(null)}
                             >
@@ -198,11 +201,11 @@ function ProfileInput({ name, extra, onChange, error }) {
                     ) : (
                         <>
                             <Button
-                                color={"#F1F1F1"}
-                                width={"250px"}
-                                height={"50px"}
-                                padding={"0 20px"}
-                                borderRadius={"25px"}
+                                color={'#F1F1F1'}
+                                width={'250px'}
+                                height={'50px'}
+                                padding={'0 20px'}
+                                borderRadius={'25px'}
                                 type="button"
                                 onClick={() => inputRef.current.click()}
                             >
@@ -274,9 +277,7 @@ function ProfileInput({ name, extra, onChange, error }) {
                         }}
                     >
                         <div>left</div>
-                        <div>
-                            right
-                        </div>
+                        <div>right</div>
                     </div>
                     <div>bottom</div>
                 </div>

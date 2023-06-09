@@ -126,7 +126,9 @@ export default function () {
                                                         alt={
                                                             picture.pictureName
                                                         }
-                                                        photographer={picture.user}
+                                                        photographer={
+                                                            picture.user
+                                                        }
                                                     />
                                                 </div>
                                                 <div

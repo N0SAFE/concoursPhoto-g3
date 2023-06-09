@@ -1,4 +1,5 @@
 import Button from '@/components/atoms/Button/index.jsx';
+import Chip from '@/components/atoms/Chip/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import Table from '@/components/molecules/Table/index.jsx';
@@ -8,11 +9,10 @@ import { useEffect, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 
 export default function MyorganizationAdmin() {
-    const apiFetch = useApiFetch()
+    const apiFetch = useApiFetch();
     const [searchParams, setSearchParams] = useSearchParams({});
     const { showModal, setModalContent } = useModal();
     const { idOrganisation, selectedOrganisation } = useOutletContext();
-    
     const [page, setPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(20);
     const [data, setData] = useState({
@@ -22,19 +22,20 @@ export default function MyorganizationAdmin() {
     });
     const [pageLoading, setPageLoading] = useState(true);
     const [controller, setController] = useState(new AbortController());
-    
-    const getAdmin = async (page, itemsPerPage) => {
+
+    const getCompetiiton = async (page, itemsPerPage) => {
         setPageLoading(true);
-        apiFetch('/users', {
+        apiFetch('/competitions', {
             method: 'GET',
             query: {
-                Manage: '/organizations/' + idOrganisation,
+                organization: '/organizations/' + idOrganisation,
                 page: page,
                 itemsPerPage: itemsPerPage,
-                groups: ['user:manage:read'],
+                groups: ['competition:organization:read'],
             },
             signal: controller.signal,
-        }).then(r => r.json())
+        })
+            .then(r => r.json())
             .then(r => {
                 setData({
                     member: r['hydra:member'],
@@ -44,20 +45,20 @@ export default function MyorganizationAdmin() {
                     totalItems: r['hydra:totalItems'],
                 });
                 setPageLoading(false);
-                console.debug(r);
+                console.log(r);
             });
     };
-    
-    useEffect(() => {
-        getAdmin(page, itemsPerPage);
-        return function () {
-            setModalContent(null);
-        };
-    }, [page, itemsPerPage]);
 
     if (isNaN(idOrganisation)) {
         return <div>the idOrganisation is not a number</div>;
     }
+
+    useEffect(() => {
+        getCompetiiton(page, itemsPerPage);
+        return function () {
+            setModalContent(null);
+        };
+    }, [page, itemsPerPage]);
 
     useEffect(() => {
         if (
@@ -80,6 +81,8 @@ export default function MyorganizationAdmin() {
         }
     }, [searchParams]);
 
+    console.log(pageLoading);
+
     return (
         <>
             <Pagination
@@ -96,28 +99,79 @@ export default function MyorganizationAdmin() {
             >
                 {data => {
                     return (
-                        <Loader active={pageLoading} takeInnerContent={true} style={{borderRadius: "10px"}}>
+                        <Loader
+                            active={pageLoading}
+                            takeInnerContent={true}
+                            style={{ borderRadius: '10px' }}
+                        >
                             <Table
                                 list={data}
-                                fields={['Nom', 'Prenom', 'Fonction/poste']}
-                                onLineClick={function (admin) {
+                                fields={[
+                                    'Nom du concours',
+                                    'Début',
+                                    'Fin',
+                                    'Statut',
+                                ]}
+                                onLineClick={function (competition) {
                                     setSearchParams({
                                         ...searchParams,
                                         edit: true,
-                                        id: admin.id,
+                                        id: competition.id,
                                     });
                                 }}
                             >
-                                {admin => {
+                                {competition => {
+                                    const stateColor = (function () {
+                                        switch (competition.state) {
+                                            case 1:
+                                                return '#FFA800';
+                                            case 2:
+                                                return '#FF0000';
+                                            case 3:
+                                                return '#2FB6AE';
+                                            case 4:
+                                                return '#00A3FF';
+                                            case 5:
+                                                return '#00CE3A';
+                                            case 6:
+                                                return '#F1F1F1';
+                                            case 7:
+                                                return '#A8A8A8';
+                                            default:
+                                                return '#A8A8A8';
+                                        }
+                                    })();
                                     return [
                                         {
-                                            content: admin.lastname,
+                                            content:
+                                                competition.competitionName,
                                         },
                                         {
-                                            content: admin.firstname,
+                                            content: new Date(
+                                                competition.submissionStartDate
+                                            ).toLocaleDateString('fr-FR', {
+                                                year: 'numeric',
+                                                month: 'numeric',
+                                                day: 'numeric',
+                                            }),
                                         },
                                         {
-                                            content: admin.job,
+                                            content: new Date(
+                                                competition.votingEndDate
+                                            ).toLocaleDateString('fr-FR', {
+                                                year: 'numeric',
+                                                month: 'numeric',
+                                                day: 'numeric',
+                                            }),
+                                        },
+                                        {
+                                            content: (
+                                                <Chip
+                                                    backgroundColor={stateColor}
+                                                >
+                                                    {competition.stateLabel}
+                                                </Chip>
+                                            ),
                                         },
                                     ];
                                 }}
@@ -143,7 +197,7 @@ export default function MyorganizationAdmin() {
                         borderRadius: '2rem',
                     }}
                 >
-                    Ajouter un administrateur
+                    Ajouter un concours
                 </Button>
             </div>
         </>

@@ -8,7 +8,7 @@ import Loader from '@/components/atoms/Loader/index.jsx';
 import { useNavigate } from 'react-router-dom';
 
 export default function CompetitionParticipation() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { me } = useAuthContext();
     const apiFetch = useApiFetch();
     const [userCompetitions, setUserCompetitions] = useState([]);

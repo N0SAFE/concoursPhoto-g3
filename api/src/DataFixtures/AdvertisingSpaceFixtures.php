@@ -24,18 +24,23 @@ class AdvertisingSpaceFixtures extends Fixture
         for ($i = 0; $i < self::ADVERTISING_SPACE_COUNT_REFERENCE; $i++) {
             $heightPx = random_int(self::MIN_HEIGHT_PX, self::MAX_HEIGHT_PX);
             $widthPx = random_int(self::MIN_WIDTH_PX, self::MAX_WIDTH_PX);
-            
+
             $advertising_space = new AdvertisingSpace();
 
             $advertising_space->setState($faker->boolean());
             $advertising_space->setLocationName($faker->text());
             $advertising_space->setHeightPx($heightPx);
             $advertising_space->setWidthPx($widthPx);
-            $advertising_space->setReferencePrice(random_int(0, self::MAX_COUNT_REFERENCE_PRICE));
+            $advertising_space->setReferencePrice(
+                random_int(0, self::MAX_COUNT_REFERENCE_PRICE)
+            );
 
             $manager->persist($advertising_space);
 
-            $this->addReference(sprintf('%s%d', self::ADVERTISING_SPACE_REFERENCE, $i + 1), $advertising_space);
+            $this->addReference(
+                sprintf('%s%d', self::ADVERTISING_SPACE_REFERENCE, $i + 1),
+                $advertising_space
+            );
         }
 
         $manager->flush();

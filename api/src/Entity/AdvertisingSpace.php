@@ -13,15 +13,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ['groups' => ['advertisingSpace:read']],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['advertisingSpace:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: AdvertisingSpaceRepository::class)]
 class AdvertisingSpace
 {

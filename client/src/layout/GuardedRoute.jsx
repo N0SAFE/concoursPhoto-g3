@@ -17,7 +17,7 @@ export default function ({ fallback, verify = () => true }) {
             return ret;
         }
     })();
-    
+
     const [Fallback, setFallback] = useState(null);
     useEffect(() => {
         if (typeof fallback === 'function' && !state) {

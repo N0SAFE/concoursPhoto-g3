@@ -11,15 +11,12 @@ use App\Repository\OrganizationLinkRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["organizationLink:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['organizationLink:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: OrganizationLinkRepository::class)]
 class OrganizationLink
 {

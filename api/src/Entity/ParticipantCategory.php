@@ -13,15 +13,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Patch()
-    ],
-    normalizationContext: ["groups" => ["participantCategory:read"]],
-)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['participantCategory:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: ParticipantCategoryRepository::class)]
 class ParticipantCategory
 {
@@ -36,7 +33,12 @@ class ParticipantCategory
     private ?string $label = null;
 
     #[Groups('participantCategory:competitions:read')]
-    #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'participantCategory')]
+    #[
+        ORM\ManyToMany(
+            targetEntity: Competition::class,
+            mappedBy: 'participantCategory'
+        )
+    ]
     private Collection $competitions;
 
     public function __construct()

@@ -16,8 +16,9 @@ import useFilesUploader from '@/hooks/useFilesUploader.js';
 import useApiPath from '@/hooks/useApiPath.js';
 
 export default function Profile() {
-    const {refreshUser} = useAuthContext()
-    const { gendersPossibility, socialNetworksPossibility } = useOutletContext(); // to avoid the loading when we change the page
+    const { refreshUser } = useAuthContext();
+    const { gendersPossibility, socialNetworksPossibility } =
+        useOutletContext(); // to avoid the loading when we change the page
     const [statusPossibility, setStatusPossibility] = useState({
         list: [],
         isLoading: true,
@@ -80,15 +81,20 @@ export default function Profile() {
         },
         photographerDescription: me.photographerDescription,
         websiteUrl: me.websiteUrl,
-        userLinks: new Map(me.userLinks.map(l => {
-            return [l?.socialNetworks?.['@id'], {
-                user: l.user,
-                socialNetworks: l?.socialNetworks?.['@id'],
-                link: l.link,
-            }];
-        })),
+        userLinks: new Map(
+            me.userLinks.map(l => {
+                return [
+                    l?.socialNetworks?.['@id'],
+                    {
+                        user: l.user,
+                        socialNetworks: l?.socialNetworks?.['@id'],
+                        link: l.link,
+                    },
+                ];
+            })
+        ),
     });
-    
+
     console.debug(entity);
 
     const updateEntity = (key, value) => {
@@ -175,7 +181,14 @@ export default function Profile() {
     }, [entity.postcode, entity.city]);
 
     return (
-        <Loader active={gendersPossibility.isLoading || socialNetworksPossibility.isLoading} takeInnerContent={true} style={{borderRadius: "10px"}}>
+        <Loader
+            active={
+                gendersPossibility.isLoading ||
+                socialNetworksPossibility.isLoading
+            }
+            takeInnerContent={true}
+            style={{ borderRadius: '10px' }}
+        >
             <div className={style.formContainer}>
                 <Form
                     handleSubmit={async function () {
@@ -204,9 +217,11 @@ export default function Profile() {
                                 entity.photographerDescription,
                             photographerCategory: entity.category.value,
                             websiteUrl: entity.websiteUrl,
-                            userLinks: Array.from(entity.userLinks).map(([key, value]) => {
-                                return value
-                            }).filter(l => l.link !== ""),
+                            userLinks: Array.from(entity.userLinks)
+                                .map(([key, value]) => {
+                                    return value;
+                                })
+                                .filter(l => l.link !== ''),
                             country: entity.country,
                             pictureProfil: newLogoId,
                         };
@@ -238,7 +253,7 @@ export default function Profile() {
                                         showModal();
                                         navigate('/');
                                     });
-                                }else {
+                                } else {
                                     refreshUser();
                                 }
                                 if (
@@ -502,21 +517,28 @@ export default function Profile() {
                     <div className={style.formSocialNetworks}>
                         {socialNetworksPossibility.list.map(socialNetwork => {
                             // socialNetwork.id === 'facebook' || ....
-                            return (<Input
-                                type="text"
-                                name="userLinks"
-                                label={socialNetwork.label}
-                                onChange={d =>{
-                                    const map = entity.userLinks
-                                    map.set(socialNetwork['@id'], {
-                                        link: d,
-                                        socialNetworks: socialNetwork['@id'],
-                                    })
-                                    updateEntity('userLinks', map)
-                                }}
-                                defaultValue={entity.userLinks.get(socialNetwork['@id'])?.link}
-                            />)
-                            })}
+                            return (
+                                <Input
+                                    type="text"
+                                    name="userLinks"
+                                    label={socialNetwork.label}
+                                    onChange={d => {
+                                        const map = entity.userLinks;
+                                        map.set(socialNetwork['@id'], {
+                                            link: d,
+                                            socialNetworks:
+                                                socialNetwork['@id'],
+                                        });
+                                        updateEntity('userLinks', map);
+                                    }}
+                                    defaultValue={
+                                        entity.userLinks.get(
+                                            socialNetwork['@id']
+                                        )?.link
+                                    }
+                                />
+                            );
+                        })}
                     </div>
                     <div className={style.formSubmit}>
                         <Button

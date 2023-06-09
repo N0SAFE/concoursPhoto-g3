@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { useModal } from '@/contexts/ModalContext';
 import Register from '@/components/organisms/auth/Register';
 
-export default function Login({forceRedirect}) {
+export default function Login({ forceRedirect }) {
     const { setModalContent, hideModal } = useModal();
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -26,15 +26,16 @@ export default function Login({forceRedirect}) {
                     Veuillez vous identifier pour pouvoir voter et participer.
                 </span>
                 <p className={style.loginProposition}>
-                    Si vous n'avez pas de compte, {" "}
+                    Si vous n'avez pas de compte,{' '}
                     <Link
                         onClick={e => {
                             e.preventDefault();
                             setModalContent(<Register />);
                         }}
-                    >inscrivez-vous
-                    </Link>, c'est
-                    gratuit.
+                    >
+                        inscrivez-vous
+                    </Link>
+                    , c'est gratuit.
                 </p>
             </div>
             <Form
@@ -43,9 +44,9 @@ export default function Login({forceRedirect}) {
                         identifier: identifier,
                         password: password,
                     }).then(function (me) {
-                        if(forceRedirect){
-                            navigate(forceRedirect)
-                            return 
+                        if (forceRedirect) {
+                            navigate(forceRedirect);
+                            return;
                         }
                         if (me.roles.includes('ROLE_ADMIN')) {
                             navigate('/BO');
@@ -96,7 +97,9 @@ export default function Login({forceRedirect}) {
                             Se connecter
                         </Button>
                     </div>
-                    <p className={`${style.loginProposition} ${style.loginPropositionExtra}`}>
+                    <p
+                        className={`${style.loginProposition} ${style.loginPropositionExtra}`}
+                    >
                         Vous avez oublié votre mot de passe ?{' '}
                         <Link
                             onClick={e => {

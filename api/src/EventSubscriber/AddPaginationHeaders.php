@@ -7,13 +7,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-
-
 final class AddPaginationHeaders implements EventSubscriberInterface
 {
     /**
      *  {@inheritdoc}
-    */
+     */
     public static function getSubscribedEvents(): array
     {
         return [KernelEvents::RESPONSE => 'addHeaders'];
@@ -22,9 +20,17 @@ final class AddPaginationHeaders implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (($data = $request->attributes->get('data')) && $data instanceof Paginator) {
-            $from = $data->count() ? ($data->getCurrentPage() - 1) * $data->getItemsPerPage() : 0;
-            $to = $data->getCurrentPage() < $data->getLastPage() ? $data->getCurrentPage() * $data->getItemsPerPage() : $data->getTotalItems();
+        if (
+            ($data = $request->attributes->get('data')) &&
+            $data instanceof Paginator
+        ) {
+            $from = $data->count()
+                ? ($data->getCurrentPage() - 1) * $data->getItemsPerPage()
+                : 0;
+            $to =
+                $data->getCurrentPage() < $data->getLastPage()
+                    ? $data->getCurrentPage() * $data->getItemsPerPage()
+                    : $data->getTotalItems();
 
             $response = $event->getResponse();
             // add a new array to the response
@@ -34,7 +40,12 @@ final class AddPaginationHeaders implements EventSubscriberInterface
                 $content['hydra:pagination'] = [
                     'Accept-Ranges' => 'items',
                     'Range-Unit' => 'items',
-                    'Content-Range' => \sprintf('%u-%u/%u', $from, $to, $data->getTotalItems()),
+                    'Content-Range' => \sprintf(
+                        '%u-%u/%u',
+                        $from,
+                        $to,
+                        $data->getTotalItems()
+                    ),
                     'Max-Page' => $data->getLastPage(),
                     'Current-Page' => $data->getCurrentPage(),
                     'Total-Items' => $data->getTotalItems(),

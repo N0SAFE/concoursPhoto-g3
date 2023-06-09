@@ -1,23 +1,22 @@
 import Input from '@/components/atoms/Input';
 import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch';
-import {useState, useEffect} from 'react';
-import {toast} from 'react-toastify';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import Button from '@/components/atoms/Button';
-import {useModal} from '@/contexts/ModalContext';
-import {useNavigate} from 'react-router-dom';
+import { useModal } from '@/contexts/ModalContext';
+import { useNavigate } from 'react-router-dom';
 import useLocationPosibility from '@/hooks/useLocationPosibility.js';
 
 export default function CreateCompetitions() {
     const apiFetch = useApiFetch();
     const [gtc, setGtc] = useState(false);
-    const {hideModal, setModalContent} = useModal();
+    const { hideModal, setModalContent } = useModal();
     const navigate = useNavigate();
 
     const [entityPossibility, setEntityPossibility] = useState({
         genders: [],
-
     });
     const [entity, setEntity] = useState({
         state: false,
@@ -34,7 +33,7 @@ export default function CreateCompetitions() {
         creationDate: null,
     });
     const [locationPossibility, updateLocationPossibility] =
-        useLocationPosibility(['cities'], {}, {updateOnStart: false});
+        useLocationPosibility(['cities'], {}, { updateOnStart: false });
     const citiesPossibility = locationPossibility.citiesPossibility.map(c => ({
         label: `${c.nom} [${c.codesPostaux.join(',')}]`,
         value: c.code,
@@ -45,15 +44,15 @@ export default function CreateCompetitions() {
                 .map(c => c.codesPostaux)
                 .flat()
         ),
-    ].map(c => ({label: c, value: c}));
+    ].map(c => ({ label: c, value: c }));
     const [locationPossibilityIsLoading, setLocationPossibilityIsLoading] =
         useState(false);
 
     const updateEntity = (key, value) => {
-        setEntity({...entity, [key]: value});
+        setEntity({ ...entity, [key]: value });
     };
     const updateEntityState = (key, value) => {
-        setEntity({...entity, [key]: value});
+        setEntity({ ...entity, [key]: value });
     };
 
     const [errors, setErrors] = useState({});
@@ -99,10 +98,8 @@ export default function CreateCompetitions() {
     };
 
     useEffect(() => {
-        const promise = Promise.all([
-            getGendersPossibility(),
-        ]).then(([genders]) =>
-            setEntityPossibility({genders})
+        const promise = Promise.all([getGendersPossibility()]).then(
+            ([genders]) => setEntityPossibility({ genders })
         );
         toast.promise(promise, {
             pending: 'Chargement des possibilités',
@@ -148,16 +145,18 @@ export default function CreateCompetitions() {
         });
     }, [entity.postcode, entity.city]);
 
-
     return (
         <div>
             <h1>Créez votre concours</h1>
-            <div style={{marginBottom: "2%"}} className={style.formWrapper}>
+            <div style={{ marginBottom: '2%' }} className={style.formWrapper}>
                 <div className={style.formColumn}>
-
-                    <h2 style={{marginTop: "15px"}}>Qui peut créer un concours photo ?</h2>
-                    <p>La création d’un concours est ouvert aux organisations suivantes :
-                        <li style={{marginTop: "10px"}}> Mairies</li>
+                    <h2 style={{ marginTop: '15px' }}>
+                        Qui peut créer un concours photo ?
+                    </h2>
+                    <p>
+                        La création d’un concours est ouvert aux organisations
+                        suivantes :
+                        <li style={{ marginTop: '10px' }}> Mairies</li>
                         <li> Offices de tourisme</li>
                         <li> Agglomérations</li>
                         <li> Départements</li>
@@ -171,21 +170,36 @@ export default function CreateCompetitions() {
                 </div>
                 <div className={style.formColumn}>
                     <h2>Combien ça coûte</h2>
-                    <p>Le prix est établi pour chaque concours publié et il depend de plusieurs critères :
-                        <li style={{marginTop: "10px"}}> Nature de votre organisation (privée, publique,
-                            association/ONG)</li>
-                        <li> Taille de votre organisation (moyens budgétaires)</li>
-                        <li> Objet du concours photo, étendue, audience visée.</li>
-
-                        <p style={{marginTop: "10px"}}>Pour recevoir un devis, veuillez renseigner le formulaire de
-                            demande de création suivant qui va créer automatiquement
-                            un compte membre et une fiche organisme associée. Votre demande sera étudiée et vous
-                            recevrez un devis. Après avoir encaissé le paiement,
-                            vous pourrez paramétrer et publier votre concours.</p>
-
-                        <p style={{marginTop: "10px"}}>Si vous avez déjà créé un compte membre, veuillez vous connecter
-                            puis rendez-vous dans
-                            “Mon profil / Mes organisations / Concours”</p>
+                    <p>
+                        Le prix est établi pour chaque concours publié et il
+                        depend de plusieurs critères :
+                        <li style={{ marginTop: '10px' }}>
+                            {' '}
+                            Nature de votre organisation (privée, publique,
+                            association/ONG)
+                        </li>
+                        <li>
+                            {' '}
+                            Taille de votre organisation (moyens budgétaires)
+                        </li>
+                        <li>
+                            {' '}
+                            Objet du concours photo, étendue, audience visée.
+                        </li>
+                        <p style={{ marginTop: '10px' }}>
+                            Pour recevoir un devis, veuillez renseigner le
+                            formulaire de demande de création suivant qui va
+                            créer automatiquement un compte membre et une fiche
+                            organisme associée. Votre demande sera étudiée et
+                            vous recevrez un devis. Après avoir encaissé le
+                            paiement, vous pourrez paramétrer et publier votre
+                            concours.
+                        </p>
+                        <p style={{ marginTop: '10px' }}>
+                            Si vous avez déjà créé un compte membre, veuillez
+                            vous connecter puis rendez-vous dans “Mon profil /
+                            Mes organisations / Concours”
+                        </p>
                     </p>
                 </div>
             </div>
@@ -267,7 +281,7 @@ export default function CreateCompetitions() {
                         pending: 'Création du compte',
                         success: 'Compte créé',
                         error: {
-                            render({data}) {
+                            render({ data }) {
                                 return data;
                             },
                         },
@@ -275,15 +289,13 @@ export default function CreateCompetitions() {
                 }}
                 hasSubmit={true}
             >
-
-
                 <div className={style.formWrapper}>
                     <div className={style.formColumn}>
                         <Input
                             type="text"
                             name="lastname"
                             label="Nom*"
-                            extra={{required: true}}
+                            extra={{ required: true }}
                             onChange={d => updateEntity('lastname', d)}
                             defaultValue={entity.lastname}
                         />
@@ -291,7 +303,7 @@ export default function CreateCompetitions() {
                             type="text"
                             name="Prénom"
                             label="Prénom*"
-                            extra={{required: true}}
+                            extra={{ required: true }}
                             onChange={d => updateEntity('firstname', d)}
                             defaultValue={entity.firstname}
                         />
@@ -299,7 +311,7 @@ export default function CreateCompetitions() {
                             type="email"
                             name="email"
                             label="Adresse mail*"
-                            extra={{required: true}}
+                            extra={{ required: true }}
                             onChange={d => updateEntity('email', d)}
                             defaultValue={entity.email}
                         />
@@ -321,7 +333,7 @@ export default function CreateCompetitions() {
                             type="tel"
                             name="phoneNumber"
                             label="Numéro de téléphone"
-                            extra={{required: true}}
+                            extra={{ required: true }}
                             onChange={d => updateEntityState('phoneNumber', d)}
                             defaultValue={entity.phoneNumber}
                         />
@@ -329,11 +341,11 @@ export default function CreateCompetitions() {
                             type="date"
                             name="dateOfBirth"
                             label="Date de naissance*"
-                            extra={{required: true}}
+                            extra={{ required: true }}
                             onChange={d => updateEntity('dateOfBirth', d)}
                             defaultValue={entity.dateOfBirth}
                         />
-                        <div style={{display: 'flex', gap: '30px'}}>
+                        <div style={{ display: 'flex', gap: '30px' }}>
                             <Input
                                 type="select"
                                 name="city"
@@ -345,21 +357,24 @@ export default function CreateCompetitions() {
                                     required: true,
                                     options: citiesPossibility,
                                     multiple: false,
-                                    onInputChange: (cityName, {action}) => {
+                                    onInputChange: (cityName, { action }) => {
                                         if (action === 'menu-close') {
                                             updateLocationPossibility({
                                                 id: 'city',
                                                 args: {
-                                                    codeCity: entity.city?.value,
+                                                    codeCity:
+                                                        entity.city?.value,
                                                     city: '',
                                                 },
                                             });
                                         }
                                         if (action === 'input-change') {
-                                            setLocationPossibilityIsLoading(true);
+                                            setLocationPossibilityIsLoading(
+                                                true
+                                            );
                                             updateLocationPossibility({
                                                 id: 'city',
-                                                args: {city: cityName},
+                                                args: { city: cityName },
                                             }).then(function () {
                                                 setLocationPossibilityIsLoading(
                                                     false
@@ -381,13 +396,13 @@ export default function CreateCompetitions() {
                                     required: true,
                                     options: postalCodesPossibility,
                                     multiple: false,
-                                    onInputChange: (_postcode, {action}) => {
+                                    onInputChange: (_postcode, { action }) => {
                                         if (action === 'menu-close') {
                                             updateLocationPossibility({
                                                 id: 'city',
                                                 args: {
                                                     postcode:
-                                                    entity.postcode?.value,
+                                                        entity.postcode?.value,
                                                 },
                                             });
                                         }
@@ -395,10 +410,12 @@ export default function CreateCompetitions() {
                                             action === 'input-change' &&
                                             _postcode.length === 5
                                         ) {
-                                            setLocationPossibilityIsLoading(true);
+                                            setLocationPossibilityIsLoading(
+                                                true
+                                            );
                                             updateLocationPossibility({
                                                 id: 'city',
-                                                args: {postcode: _postcode},
+                                                args: { postcode: _postcode },
                                             }).then(function () {
                                                 setLocationPossibilityIsLoading(
                                                     false
@@ -411,11 +428,15 @@ export default function CreateCompetitions() {
                             />
                         </div>
                     </div>
-
                 </div>
 
-                <h2 style={{marginTop: "2%"}}>A propos du concours que vous souhaitez publier</h2>
-                <div style={{marginBottom: "1%"}} className={style.formWrapper}>
+                <h2 style={{ marginTop: '2%' }}>
+                    A propos du concours que vous souhaitez publier
+                </h2>
+                <div
+                    style={{ marginBottom: '1%' }}
+                    className={style.formWrapper}
+                >
                     <div className={style.formColumn}>
                         <Input
                             type="select"
@@ -445,16 +466,12 @@ export default function CreateCompetitions() {
                     type="textarea"
                     name="Quelle est le thème et la nature du concours ? *"
                     label="Quelle est le thème et la nature du concours ? *"
-                    extra={{rows: 16}}
-
+                    extra={{ rows: 16 }}
                 />
-                <Input
-                    type="checkbox"
-                    onChange={setGtc}
-                    defaultValue={gtc}
-                />
+                <Input type="checkbox" onChange={setGtc} defaultValue={gtc} />
                 <p>
-                    En validant ce formulaire, j’accepte qu’un compte membre soit créé pour traiter ma demande.
+                    En validant ce formulaire, j’accepte qu’un compte membre
+                    soit créé pour traiter ma demande.
                 </p>
                 <div className={style.registerSubmit}>
                     <Button
@@ -466,10 +483,11 @@ export default function CreateCompetitions() {
                         border={false}
                         borderRadius={'44px'}
                         width={'245px'}
-                    >Envoyer la demande</Button>
+                    >
+                        Envoyer la demande
+                    </Button>
                 </div>
             </Form>
         </div>
     );
 }
-   
