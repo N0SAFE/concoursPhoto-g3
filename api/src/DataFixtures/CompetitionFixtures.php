@@ -117,7 +117,7 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
                 $publicationDate
             );
 
-            $competition->setCompetitionName($faker->text());
+            $competition->setCompetitionName($faker->sentence(rand(3, 9)));
             $competition->setCompetitionVisual(
                 (new FileFixtures())->createFileFromArray(
                     FileFixtures::COMPETITION_LOGO_ARRAY
@@ -149,6 +149,7 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
             $competition->setCountryCriteria(['FRANCE']);
             $competition->setIsPromoted($faker->boolean());
             $competition->setConsultationCount(0);
+            $competition->setCompetitionResults($faker->text());
 
             $cities = [];
             $cityNumber = rand(1, 3);

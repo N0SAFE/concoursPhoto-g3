@@ -10,12 +10,12 @@ class SocialNetworksFixtures extends Fixture
 {
     const SN_REFERENCE = 'social_networks';
     const SN_ARRAY = [
-        'Facebook',
-        'Youtube',
-        'Instagram',
-        'Twitter',
-        'LinkedIn',
-        'TikTok',
+        'Votre page Facebook',
+        'Votre chaîne Youtube',
+        'Votre page Instagram',
+        'Votre compte Twitter',
+        'Votre page LinkedIn',
+        'Votre compte TikTok',
     ];
 
     public function load(ObjectManager $manager): void

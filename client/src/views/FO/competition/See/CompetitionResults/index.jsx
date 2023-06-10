@@ -18,10 +18,12 @@ export default function () {
     ];
 
     return (
-        <div className={style.results}>
+        <div className={style.resultsContainer}>
             <div>
                 <Navlink base="/competition/:id" list={competitionRouteList} />
-                mettre l'entity result ici
+                <div className={style.description}>
+                    {competition.competitionResults}
+                </div>
             </div>
             <PicturesAside
                 pictures={asidePictures}

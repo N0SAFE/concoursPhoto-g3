@@ -144,17 +144,19 @@ export default function ProfileNotification() {
                             />
                         </div>
                     </div>
-                    <Button
-                        type="submit"
-                        color={'black'}
-                        textColor={'white'}
-                        padding={'14px 30px'}
-                        border={false}
-                        borderRadius={'44px'}
-                        width={'245px'}
-                    >
-                        Mettre à jour
-                    </Button>
+                    <div className={style.notificationSubmit}>
+                        <Button
+                            type="submit"
+                            color={'black'}
+                            textColor={'white'}
+                            padding={'14px 30px'}
+                            border={false}
+                            borderRadius={'44px'}
+                            width={'245px'}
+                        >
+                            Mettre à jour
+                        </Button>
+                    </div>
                 </BOForm>
             </div>
         </Loader>

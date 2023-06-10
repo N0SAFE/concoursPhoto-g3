@@ -194,7 +194,7 @@ export default function CompetitionLayout() {
                                         </Chip>
                                         <Chip
                                             title={entity.numberOfPictures}
-                                            icon={'camera1'}
+                                            icon={'camera'}
                                             backgroundColor={'#F5F5F5'}
                                         >
                                             {entity.numberOfPictures}

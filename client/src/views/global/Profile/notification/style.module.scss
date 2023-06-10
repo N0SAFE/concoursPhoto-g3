@@ -23,4 +23,16 @@
             gap: $gapBetweenElement;
         }
     }
+
+    &Submit {
+        @include below(md) {
+            display: flex;
+            justify-content: center;
+        }
+
+        & > button > div {
+            display: inherit;
+            align-items: inherit;
+        }
+    }
 }
