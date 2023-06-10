@@ -11,6 +11,13 @@ export default defineConfig({
             enabledMode: ['development', 'production'],
         }),
         splitVendorChunkPlugin(),
+        ViteRestart({
+            reload: [
+              '../api/src/**/*',
+              '../api/config/**/*',
+              '../api/templates/**/*',
+            ]
+          })
     ],
     resolve: {
         alias: {
