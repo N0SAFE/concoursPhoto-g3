@@ -38,7 +38,7 @@ export default function () {
                     'organizationLink:read',
                     'organizationLink:socialNetworks:read',
                     'socialNetworks:read',
-                    'organization:file:read',
+                    'organization:logo:read',
                     'file:read',
                 ],
             },
