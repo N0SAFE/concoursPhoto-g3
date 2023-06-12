@@ -48,6 +48,9 @@ export default function Login({ forceRedirect }) {
                             navigate(forceRedirect);
                             return;
                         }
+                        if(forceRedirect === false) {
+                            return;
+                        }   
                         if (me.roles.includes('ROLE_ADMIN')) {
                             navigate('/BO');
                         } else {

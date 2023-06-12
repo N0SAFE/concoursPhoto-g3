@@ -3,7 +3,7 @@ import PortalList from '@/components/organisms/FO/FOPortalList';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import useLocation from '@/hooks/useLocation.js';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Breadcrumb from '@/components/atoms/Breadcrumb';
 import Chip from '@/components/atoms/Chip/index.jsx';
@@ -13,84 +13,8 @@ import Loader from '@/components/atoms/Loader/index.jsx';
 import Button from '@/components/atoms/Button/index.jsx';
 
 export default function CompetitionLayout() {
-    const [isLoading, setIsLoading] = useState(true);
-    const apiFetch = useApiFetch();
-    const { getCityByCode, getDepartmentByCode, getRegionByCode } =
-        useLocation();
-    const [entity, setEntity] = useState({});
-    const { id: competitionId } = useParams();
-    const navigate = useNavigate();
-
-    const getCompetitions = controller => {
-        return apiFetch('/competitions/view/' + competitionId, {
-            query: {
-                groups: [
-                    'file:read',
-                    'competition:competitionVisual:read',
-                    'competition:competitionPictures:read',
-                    'competition:organization:read',
-                    'organization:logo:read',
-                    'organization:admins:read',
-                    'user:read',
-                    'picture:file:read',
-                    'competition:memberOfTheJuries:read',
-                    'memberOfTheJury:user:read',
-                    'competition:theme:read',
-                    'theme:read',
-                    'competition:sponsors:read',
-                    'sponsor:read',
-                    'sponsor:logo:read',
-                    'picture:user:read',
-                ],
-            },
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            signal: controller?.signal,
-        })
-            .then(res => res.json())
-            .then(async data => {
-                console.debug(data);
-                if (data.code === 401) {
-                    throw new Error(data.message);
-                }
-                return await Promise.all([
-                    Promise.all(data.cityCriteria.map(getCityByCode)),
-                    Promise.all(
-                        data.departmentCriteria.map(getDepartmentByCode)
-                    ),
-                    Promise.all(data.regionCriteria.map(getRegionByCode)),
-                ]).then(([cities, departments, regions]) => {
-                    const _competition = {
-                        ...data,
-                        cityCriteria: cities,
-                        departmentCriteria: departments,
-                        regionCriteria: regions,
-                    };
-                    setEntity(_competition);
-                    return _competition;
-                });
-            });
-    };
-
-    useEffect(() => {
-        const controller = new AbortController();
-        const promise = getCompetitions(controller);
-        promise.then(function () {
-            setIsLoading(false);
-        });
-        if (import.meta.env.MODE === 'development') {
-            toast.promise(promise, {
-                pending: 'Chargement du concours',
-                success: 'Concours chargé',
-                error: 'Erreur lors du chargement du concours',
-            });
-        }
-
-        return () => setTimeout(() => controller.abort());
-    }, []);
-
+    const {isLoading, competition} = useOutletContext();
+    
     return (
         <Loader active={isLoading}>
             <div className={style.competitionContainer}>
@@ -100,7 +24,7 @@ export default function CompetitionLayout() {
                             { label: 'Accueil', link: '/' },
                             { label: 'Concours photo', link: location },
                             {
-                                label: `Concours photo ${entity.competitionName}`,
+                                label: `Concours photo ${competition.competitionName}`,
                             },
                         ]}
                     />
@@ -108,37 +32,37 @@ export default function CompetitionLayout() {
                         <div className={style.viewFilter}>
                             <div>
                                 <h1>
-                                    Concours photo "{entity.competitionName}"
+                                    Concours photo "{competition.competitionName}"
                                 </h1>
                             </div>
                             <div>
                                 <Chip backgroundColor={'#F5F5F5'}>
-                                    Pays : {entity.countryCriteria}
+                                    Pays : {competition.countryCriteria}
                                 </Chip>
                                 <Chip backgroundColor={'#F5F5F5'}>
                                     Département(s) :{' '}
-                                    {entity.departmentCriteria?.map(
+                                    {competition.departmentCriteria?.map(
                                         department => ' ' + department.nom
                                     )}
                                 </Chip>
                                 <Chip backgroundColor={'#F5F5F5'}>
                                     Région(s) :{' '}
-                                    {entity.regionCriteria?.map(
+                                    {competition.regionCriteria?.map(
                                         region => ' ' + region.nom
                                     )}
                                 </Chip>
                                 <Chip backgroundColor={'#F5F5F5'}>
                                     Thème(s) :{' '}
-                                    {entity.theme?.map(
+                                    {competition.theme?.map(
                                         theme => ' ' + theme.label
                                     )}
                                 </Chip>
                                 <Chip backgroundColor={'#F5F5F5'}>
-                                    Âge : de {entity.minAgeCriteria} à{' '}
-                                    {entity.maxAgeCriteria} ans
+                                    Âge : de {competition.minAgeCriteria} à{' '}
+                                    {competition.maxAgeCriteria} ans
                                 </Chip>
                                 <Chip backgroundColor={'#F5F5F5'}>
-                                    Dotation : {entity.endowments}
+                                    Dotation : {competition.endowments}
                                 </Chip>
                             </div>
                         </div>
@@ -148,7 +72,7 @@ export default function CompetitionLayout() {
                                     <p className={style.titleOrganizer}>
                                         Organisateur :{' '}
                                         <span>
-                                            {entity.organization?.admins
+                                            {competition.organization?.admins
                                                 .map(
                                                     user =>
                                                         user.firstname +
@@ -165,14 +89,14 @@ export default function CompetitionLayout() {
                                             backgroundColor={'#000'}
                                             color={'#fff'}
                                         >
-                                            {entity.stateLabel}
+                                            {competition.stateLabel}
                                         </Chip>
                                     </div>
                                     <div>
                                         <p>
                                             Fin le{' '}
                                             {new Date(
-                                                entity.votingEndDate
+                                                competition.votingEndDate
                                             ).toLocaleDateString('fr-FR', {
                                                 year: 'numeric',
                                                 month: 'long',
@@ -184,36 +108,36 @@ export default function CompetitionLayout() {
                                 </div>
                             </div>
                             <div className={style.viewOrganizerStats}>
-                                {entity.state >= 2 && (
+                                {competition.state >= 2 && (
                                     <>
                                         <Chip
                                             icon={'user-plus'}
                                             backgroundColor={'#F5F5F5'}
                                         >
-                                            {entity.numberOfParticipants}
+                                            {competition.numberOfParticipants}
                                         </Chip>
                                         <Chip
-                                            title={entity.numberOfPictures}
+                                            title={competition.numberOfPictures}
                                             icon={'camera1'}
                                             backgroundColor={'#F5F5F5'}
                                         >
-                                            {entity.numberOfPictures}
+                                            {competition.numberOfPictures}
                                         </Chip>
                                     </>
                                 )}
-                                {entity.state >= 4 && (
+                                {competition.state >= 4 && (
                                     <Chip
                                         icon={'like'}
                                         backgroundColor={'#F5F5F5'}
                                     >
-                                        {entity.numberOfVotes}
+                                        {competition.numberOfVotes}
                                     </Chip>
                                 )}
                                 <Chip
                                     icon={'view-show'}
                                     backgroundColor={'#F5F5F5'}
                                 >
-                                    {entity.consultationCount}
+                                    {competition.consultationCount}
                                 </Chip>
                             </div>
                         </div>
@@ -222,21 +146,21 @@ export default function CompetitionLayout() {
                 <PortalList
                     boxSingle={{
                         type: 'picture',
-                        path: entity.competitionVisual?.path,
+                        path: competition.competitionVisual?.path,
                         alt: 'Photo du concours',
                     }}
                     boxUp={{
                         type: 'picture',
-                        path: entity.organization?.logo.path,
+                        path: competition.organization?.logo.path,
                     }}
                     boxDown={{
                         type: 'slider',
                     }}
-                    boxDownContents={entity.sponsors?.map(
+                    boxDownContents={competition.sponsors?.map(
                         image => image.logo.path
                     )}
                 />
-                <Outlet context={{ competition: entity }} />
+                <Outlet context={{ competition }} />
                 <Button
                     borderRadius={'30px'}
                     padding={'20px'}
