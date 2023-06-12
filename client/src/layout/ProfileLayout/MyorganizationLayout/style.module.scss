@@ -1,6 +1,11 @@
 .container {
     display: flex;
     gap: 40px;
+
+    @include below(md) {
+        gap: 20px;
+        flex-direction: column;
+    }
 }
 
 .navlinkContainer {

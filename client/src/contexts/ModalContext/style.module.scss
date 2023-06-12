@@ -3,7 +3,6 @@
         width: 40%;
         max-height: 0;
         position: fixed;
-        border-radius: 10px;
         z-index: 100;
         transition: max-height 0.5s ease-in-out;
         top: 50%;
@@ -24,6 +23,8 @@
     &ContentContainer {
         overflow-x: hidden;
         overflow-y: scroll;
+        border-radius: 15px;
+
         &::-webkit-scrollbar {
             display: none;
         }

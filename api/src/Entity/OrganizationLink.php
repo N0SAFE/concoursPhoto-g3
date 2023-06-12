@@ -14,7 +14,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[
     ApiResource(
         operations: [new GetCollection(), new Get(), new Post(), new Patch()],
-        normalizationContext: ['groups' => ['organizationLink:read']]
+        normalizationContext: ['groups' => ['organizationLink:read']],
+        denormalizationContext: ['groups' => ['organizationLink:write']]
     )
 ]
 #[ORM\Entity(repositoryClass: OrganizationLinkRepository::class)]
@@ -26,15 +27,15 @@ class OrganizationLink
     #[Groups(['organizationLink:read'])]
     private ?int $id = null;
 
-    #[Groups(['organizationLink:organization:read'])]
+    #[Groups(['organizationLink:organization:read', 'organizationLink:read', 'organizationLink:write'])]
     #[ORM\ManyToOne(inversedBy: 'organizationLinks')]
     private ?Organization $organization = null;
 
-    #[Groups(['organizationLink:socialNetworks:read'])]
+    #[Groups(['organizationLink:socialNetworks:read', 'organizationLink:read', 'organizationLink:write'])]
     #[ORM\ManyToOne(inversedBy: 'organizationLinks')]
     private ?SocialNetworks $socialNetworks = null;
 
-    #[Groups(['organizationLink:read'])]
+    #[Groups(['organizationLink:read', 'organizationLink:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $link = null;
 
