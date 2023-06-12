@@ -39,13 +39,13 @@ export default function ({
                 }
                 style={_style}
             >
-                <div>
+                <ul>
                     {list.map(({ content, _to, active }, index) => (
                         <li key={index} className={active ? style.active : ''}>
                             <Link to={_to}>{content}</Link>
                         </li>
                     ))}
-                </div>
+                </ul>
             </div>
         </>
     );

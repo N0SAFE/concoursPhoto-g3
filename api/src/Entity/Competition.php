@@ -196,6 +196,10 @@ class Competition
     #[ORM\Column(nullable: true)]
     private ?int $consultationCount = null;
 
+    #[Groups(['competition:read', 'user:current:read'])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $competitionResults = null;
+
     public function __construct()
     {
         $this->theme = new ArrayCollection();
@@ -833,6 +837,18 @@ class Competition
     public function setConsultationCount(?int $consultationCount): self
     {
         $this->consultationCount = $consultationCount;
+
+        return $this;
+    }
+
+    public function getCompetitionResults(): ?string
+    {
+        return $this->competitionResults;
+    }
+
+    public function setCompetitionResults(?string $competitionResults): static
+    {
+        $this->competitionResults = $competitionResults;
 
         return $this;
     }

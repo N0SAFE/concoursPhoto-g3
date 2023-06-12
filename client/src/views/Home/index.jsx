@@ -240,7 +240,7 @@ export default function Home() {
                                     },
                                     {
                                         name: competition.numberOfPictures,
-                                        icon: 'camera1',
+                                        icon: 'camera',
                                     },
                                     {
                                         name: competition.numberOfVotes,

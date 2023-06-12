@@ -34,6 +34,12 @@ export default function () {
                     'user:read',
                     'organization:organizationType:read',
                     'organizationType:read',
+                    'organization:organizationLinks:read',
+                    'organizationLink:read',
+                    'organizationLink:socialNetworks:read',
+                    'socialNetworks:read',
+                    'organization:logo:read',
+                    'file:read',
                 ],
             },
             method: 'GET',
@@ -48,6 +54,18 @@ export default function () {
                               value: res.organizationType['@id'],
                           }
                         : null,
+                    organizationLinks: new Map(
+                        res.organizationLinks.map(l => {
+                            return [
+                                l?.socialNetworks?.['@id'],
+                                {
+                                    organization: l.organization,
+                                    socialNetworks: l?.socialNetworks?.['@id'],
+                                    link: l.link,
+                                },
+                            ];
+                        })
+                    ),
                 };
 
                 setSelectedOrganisation(_organisation);
@@ -81,7 +99,7 @@ export default function () {
                     <Input
                         type="select"
                         name="organisation"
-                        label="selectionner une organisation"
+                        label="Sélectionner une organisation"
                         extra={{
                             options: me.Manage.map(function ({
                                 organizerName,

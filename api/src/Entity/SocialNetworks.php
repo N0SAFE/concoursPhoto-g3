@@ -36,12 +36,7 @@ class SocialNetworks
     #[Groups('socialNetworks:userLinks:read')]
     private Collection $userLinks;
 
-    #[
-        ORM\OneToMany(
-            mappedBy: 'socialNetworks',
-            targetEntity: OrganizationLink::class
-        )
-    ]
+    #[ORM\OneToMany(mappedBy: 'socialNetworks', targetEntity: OrganizationLink::class)]
     #[Groups('socialNetworks:organizationLinks:read')]
     private Collection $organizationLinks;
 

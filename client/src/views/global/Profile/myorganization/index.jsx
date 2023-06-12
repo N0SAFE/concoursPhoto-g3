@@ -30,7 +30,7 @@ export default function () {
                 page: page,
                 itemsPerPage: itemsPerPage,
                 admins: [me['@id']],
-                groups: ['organization:admins:read', 'user:read'],
+                groups: ['organization:admins:read', 'user:read', "organization:organizationLinks:read"],
             },
             method: 'GET',
             params: {

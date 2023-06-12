@@ -31,13 +31,7 @@ class UserLink
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
     private ?User $user = null;
 
-    #[
-        Groups([
-            'userLink:socialNetworks:read',
-            'user:current:read',
-            'userLink:write',
-        ])
-    ]
+    #[Groups(['userLink:socialNetworks:read', 'user:current:read', 'userLink:write'])]
     #[ORM\ManyToOne(inversedBy: 'userLinks')]
     private ?SocialNetworks $socialNetworks = null;
 

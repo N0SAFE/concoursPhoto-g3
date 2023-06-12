@@ -2,7 +2,7 @@
     @extend .margin-title;
 
     &.vertical {
-        & > div {
+        & > ul {
             flex-direction: column;
             & > li {
                 &::after {
@@ -28,7 +28,7 @@
         }
     }
 
-    & > div {
+    & > ul {
         display: flex;
         flex-direction: row;
         gap: $gapBetweenElement;

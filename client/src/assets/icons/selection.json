@@ -432,7 +432,7 @@
             "attrs": [],
             "properties": {
                 "ligatures": "camera, photo",
-                "name": "camera1",
+                "name": "camera",
                 "id": 15,
                 "order": 14,
                 "prevSize": 32,
