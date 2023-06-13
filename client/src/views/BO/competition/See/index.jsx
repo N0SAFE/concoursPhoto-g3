@@ -245,7 +245,6 @@ export default function () {
                                 display: 'photographes',
                                 name: 'photographers',
                                 customData({ entity, property }) {
-                                    console.log(entity);
                                     return entity?.photographers?.map(
                                         photographer => (
                                             <Chip
