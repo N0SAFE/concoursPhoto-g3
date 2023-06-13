@@ -53,6 +53,7 @@ export default function CompetitionEdit() {
         participantCategories: [],
         organizers: [],
         themes: [],
+        sponsors: [],
     });
     const [updatedFile, setUpdatedFile] = useState({
         competitionVisual: null,
@@ -67,6 +68,7 @@ export default function CompetitionEdit() {
         participantCategories: [],
         organizer: null,
         themes: [],
+        sponsors: [],
         creationDate: null,
         publicationDate: null,
         submissionStartDate: null,
@@ -121,7 +123,20 @@ export default function CompetitionEdit() {
                 });
             });
     };
-
+    const getSponsor = controller => {
+        return apiFetch('/sponsors', {
+            method: 'GET',
+            signal: controller?.signal,
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member'].map(function (item) {
+                    console.debug(item);
+                    return { label: item.sponsorName, value: item['@id'] };
+                });
+            });
+    };
     const getThemes = controller => {
         return apiFetch('/themes', {
             method: 'GET',
@@ -148,6 +163,8 @@ export default function CompetitionEdit() {
                     'theme:read',
                     'competition:competitionVisual:read',
                     'file:read',
+                    'competition:sponsors:read',
+                    'sponsor:read',
                 ],
             },
             method: 'GET',
@@ -155,7 +172,6 @@ export default function CompetitionEdit() {
         })
             .then(r => r.json())
             .then(async data => {
-                console.debug(data);
                 return await Promise.all([
                     Promise.all(
                         data.cityCriteria.map(c => c && getCityByCode(c))
@@ -186,6 +202,10 @@ export default function CompetitionEdit() {
                         themes: data.theme.map(t => ({
                             label: t.label,
                             value: t['@id'],
+                        })),
+                        sponsors: data.sponsors.map(s => ({
+                            label: s.sponsorName,
+                            value: s['@id'],
                         })),
                         creationDate: new Date(data.creationDate),
                         publicationDate: new Date(data.publicationDate),
@@ -219,6 +239,7 @@ export default function CompetitionEdit() {
                               }
                             : null,
                     };
+                    console.debug(_competition);
                     setUpdatedFile(_updatedFile);
                     setEntity(_competition);
                 });
@@ -254,9 +275,15 @@ export default function CompetitionEdit() {
             getParticipantCategories(controller),
             getOrganizationsName(controller),
             getThemes(controller),
+            getSponsor(controller),
             getCompetitions(controller),
-        ]).then(([participantCategories, organizers, themes]) => {
-            setEntityPossibility({ participantCategories, organizers, themes });
+        ]).then(([participantCategories, organizers, themes, sponsors]) => {
+            setEntityPossibility({
+                participantCategories,
+                organizers,
+                themes,
+                sponsors,
+            });
         });
         promise.then(function () {
             setIsLoading(false);
@@ -301,6 +328,7 @@ export default function CompetitionEdit() {
                                     ),
                                 organization: entity.organizer.value,
                                 theme: entity.themes.map(t => t.value),
+                                sponsors: entity.sponsors.map(s => s.value),
                                 description: editorRef.current.getContent(),
                                 rules: entity.rules,
                                 creationDate: new Date(
@@ -750,6 +778,19 @@ export default function CompetitionEdit() {
                             onChange={d => updateEntityState('themes', d)}
                         />
                     </div>
+                    <Input
+                        type="select"
+                        name="sponsors"
+                        label="Sponsors"
+                        extra={{
+                            isMulti: true,
+                            options: entityPossibility.sponsors,
+                            closeMenuOnSelect: false,
+                            menuPlacement: 'top',
+                            value: entity.sponsors,
+                        }}
+                        onChange={d => updateEntityState('sponsors', d)}
+                    />
                 </div>
             </BOCreate>
             <Button onClick={() => navigate('/BO/competition')}>Retour</Button>
