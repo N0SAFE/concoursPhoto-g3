@@ -31,7 +31,8 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
             new Patch(),
             new Delete(),
         ],
-        normalizationContext: ['groups' => ['organization:read']]
+        normalizationContext: ['groups' => ['organization:read']],
+        denormalizationContext: ['groups' => ['organization:write', 'organizationLink:write']]
     )
 ]
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
@@ -44,58 +45,58 @@ class Organization
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $organizerName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $address = null;
 
     #[ORM\Column]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $postcode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $citycode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $websiteUrl = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $numberPhone = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $country = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizations')]
-    #[Groups(['organization:organizationType:read', 'user:current:read'])]
+    #[Groups(['organization:organizationType:read', 'user:current:read', 'organization:write'])]
     private ?OrganizationType $organizationType = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Manage')]
-    #[Groups(['organization:admins:read', 'organization:admin:read'])]
+    #[Groups(['organization:admins:read', 'organization:admin:read', 'organization:write'])]
     private Collection $admins;
 
-    #[Groups(['organization:rents:read'])]
+    #[Groups(['organization:rents:read', 'organization:write'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Rent::class)]
     private Collection $rents;
 
-    #[Groups(['organization:competitions:read', 'user:current:read'])]
+    #[Groups(['organization:competitions:read', 'user:current:read', 'organization:write'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Competition::class)]
     private Collection $competitions;
 
@@ -103,32 +104,27 @@ class Organization
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     #[ORM\Column(length: 255)]
     private ?string $intraCommunityVat = null;
 
-    #[Groups(['organization:read', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     #[ORM\Column(length: 255)]
     private ?string $numberSiret = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['organization:logo:read', 'user:current:read'])]
+    #[Groups(['organization:logo:read', 'user:current:read', 'organization:write'])]
     private ?File $logo = null;
 
-    #[Groups(['organization:organizationLinks:read'])]
-    #[
-        ORM\OneToMany(
-            mappedBy: 'organization',
-            targetEntity: OrganizationLink::class
-        )
-    ]
+    #[Groups(['organization:read', 'organization:organizationLink:read', 'organization:organizationLinks:read', 'organization:write'])]
+    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: OrganizationLink::class, cascade: ['persist', 'remove'])]
     private Collection $organizationLinks;
 
     #[Groups(['organization:read', 'user:current:read'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $lastUpdateDate = null;
 
-    #[Groups(['organization:organizationVisual:read', 'user:current:read'])]
+    #[Groups(['organization:organizationVisual:read', 'user:current:read', 'organization:write'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?File $organizationVisual = null;
 
