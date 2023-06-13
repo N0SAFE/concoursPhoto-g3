@@ -35,11 +35,10 @@ export default function () {
                     'file:read',
                     'organization:admins:read',
                     'user:read',
-                    'organization:sponsors:read',
                     'sponsor:read',
                     'sponsor:logo:read',
                     'competition:photographer:read',
-                    'competition:photovote:read',
+                    'competition:sponsors:read',
                 ],
             },
             method: 'GET',
@@ -291,11 +290,11 @@ export default function () {
                             },
                             {
                                 display: 'sponsors',
-                                name: 'organization',
+                                name: 'sponsors',
                                 customData({ entity, property }) {
-                                    return entity?.organization?.sponsors?.map(
-                                        sponsor =>
-                                            sponsor.logo.path ? (
+                                    return entity?.sponsors?.map(sponsor => (
+                                        <Chip>
+                                            {sponsor.logo?.path ? (
                                                 <img
                                                     src={toApiPath(
                                                         sponsor.logo.path
@@ -309,9 +308,10 @@ export default function () {
                                                     }}
                                                 />
                                             ) : (
-                                                sponsor.logo.defaultName
-                                            )
-                                    );
+                                                sponsor.name
+                                            )}
+                                        </Chip>
+                                    ));
                                 },
                             },
                         ]}
