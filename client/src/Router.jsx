@@ -43,6 +43,7 @@ import { useEffect, useState } from 'react';
 import PhotographerList from './views/FO/photographer/index.jsx';
 import ListOrganization from './views/FO/organization/list/index.jsx';
 import OrganisationLayout from './views/FO/organization/details/index.jsx';
+import PhotographerBOList from './views/BO/user/photographer/index.jsx';
 
 function Router() {
     const { setModalContent, showModal } = useModal();
@@ -72,6 +73,10 @@ function Router() {
                     <Route element={<BO />} />
                     <Route path="user">
                         <Route path="" element={<UserList />} />
+                        <Route
+                            path="photographer"
+                            element={<PhotographerBOList />}
+                        />
                         <Route path=":id" element={<UserSee />} />
                         <Route path="edit/:id" element={<UserEdit />} />
                         <Route path="create" element={<UserCreate />} />
