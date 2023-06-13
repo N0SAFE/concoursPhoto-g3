@@ -9,6 +9,7 @@ import useApiPath from '@/hooks/useApiPath.js';
 import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import style from './style.module.scss';
+import Chip from '@/components/atoms/Chip';
 
 export default function () {
     const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +33,12 @@ export default function () {
                     'theme:read',
                     'competition:competitionVisual:read',
                     'file:read',
+                    'organization:admins:read',
+                    'user:read',
+                    'sponsor:read',
+                    'sponsor:logo:read',
+                    'competition:photographer:read',
+                    'competition:sponsors:read',
                 ],
             },
             method: 'GET',
@@ -83,10 +90,8 @@ export default function () {
         }
         return () => setTimeout(() => controller.abort());
     }, []);
-
     return (
         <>
-            <Button onClick={() => navigate('/BO/competition')}>Retour</Button>
             <Loader active={isLoading}>
                 <div className={style.all}>
                     <BOSee
@@ -236,8 +241,86 @@ export default function () {
                                 display: 'réglement',
                                 name: 'rules',
                             },
+                            {
+                                display: 'photographes',
+                                name: 'photographers',
+                                customData({ entity, property }) {
+                                    return entity?.photographers?.map(
+                                        photographer => (
+                                            <Chip
+                                                backgroundColor={'#78a2ff'}
+                                                color={'white'}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/BO/user/${photographer.id}`
+                                                    )
+                                                }
+                                            >
+                                                {photographer.firstname +
+                                                    ' ' +
+                                                    photographer.lastname}
+                                            </Chip>
+                                        )
+                                    );
+                                },
+                            },
+                            {
+                                display: 'administrateurs',
+                                name: 'organization',
+                                customData({ entity, property }) {
+                                    return entity?.organization?.admins?.map(
+                                        admin => (
+                                            <Chip
+                                                backgroundColor={'#78a2ff'}
+                                                color={'white'}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/BO/user/${admin.id}`
+                                                    )
+                                                }
+                                            >
+                                                {admin.firstname +
+                                                    ' ' +
+                                                    admin.lastname}
+                                            </Chip>
+                                        )
+                                    );
+                                },
+                            },
+                            {
+                                display: 'sponsors',
+                                name: 'sponsors',
+                                customData({ entity, property }) {
+                                    return entity?.sponsors?.map(sponsor => (
+                                        <Chip>
+                                            {sponsor.logo?.path ? (
+                                                <img
+                                                    src={toApiPath(
+                                                        sponsor.logo.path
+                                                    )}
+                                                    alt={
+                                                        sponsor.logo.defaultName
+                                                    }
+                                                    style={{
+                                                        minHeight: '50px',
+                                                        maxHeight: '50px',
+                                                    }}
+                                                />
+                                            ) : (
+                                                sponsor.name
+                                            )}
+                                        </Chip>
+                                    ));
+                                },
+                            },
                         ]}
                     />
+                    <Button
+                        style={{ marginTop: '3%' }}
+                        onClick={() => navigate('/BO/competition')}
+                    >
+                        Retour
+                    </Button>
                 </div>
             </Loader>
         </>

@@ -303,7 +303,27 @@ class Competition
         }
         return count($userDistinct);
     }
-
+    #[Groups(['competition:photographer:read'])]
+    public function getPhotographers(): Collection
+    {
+        $pictures = $this->getPictures();
+        $userDistinct = [];
+        foreach ($pictures as $picture) {
+            $userDistinct[] = $picture->getUser();
+        }
+        return new ArrayCollection($userDistinct);
+    }
+    #[Groups(['competition:photovote:read'])]
+    public function getPicturesMostVoted(): Collection
+    {
+        $pictures = $this->getPictures();
+        $pictures = $pictures->toArray();
+        usort($pictures, function ($a, $b) {
+            return $b->getVotes()->count() <=> $a->getVotes()->count();
+        });
+        $pictures = array_slice($pictures, 0, 5);
+        return new ArrayCollection($pictures);
+    }
     #[Groups(['competition:read'])]
     public function getNumberOfVotes(): int
     {
@@ -387,7 +407,6 @@ class Competition
             // return 6;
         }
     }
-
     public function getCompetitionName(): ?string
     {
         return $this->competitionName;
