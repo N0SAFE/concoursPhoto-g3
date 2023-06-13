@@ -159,6 +159,28 @@ class Organization
         return $count;
     }
 
+    #[Groups(['organization:lastCompetition:read'])]
+    public function getLastCompetition(): ?Competition
+    {
+        $competitions = $this->getCompetitions();
+        $lastCompetition = $competitions->reduce(function (
+            $lastCompetition,
+            $competition
+        ) {
+            if (
+                $competition->getCreationDate() >
+                $lastCompetition->getCreationDate()
+            ) {
+                return $competition;
+            }
+            return $lastCompetition;
+        }, $competitions->first());
+        if ($lastCompetition == false) {
+            return null;
+        }
+        return $lastCompetition;
+    }
+
     #[Groups(['organization:read'])]
     public function getRentCount(): int
     {

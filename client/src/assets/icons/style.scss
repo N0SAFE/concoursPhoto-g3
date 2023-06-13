@@ -27,6 +27,24 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-tiktok:before {
+    content: '\e918';
+}
+.icon-twitter:before {
+    content: '\e913';
+}
+.icon-youtube:before {
+    content: '\e914';
+}
+.icon-instagram:before {
+    content: '\e915';
+}
+.icon-facebook:before {
+    content: '\e916';
+}
+.icon-linkedin:before {
+    content: '\e917';
+}
 .icon-sign-out:before {
     content: '\e900';
 }
