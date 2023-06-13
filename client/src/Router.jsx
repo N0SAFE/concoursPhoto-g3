@@ -42,7 +42,8 @@ import useApiFetch from './hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
 import PhotographerList from './views/FO/photographer/index.jsx';
 import ListOrganization from './views/FO/organization/list/index.jsx';
-import OrganisationLayout from './views/FO/organization/details/index.jsx';
+import OrganisationDetails from './views/FO/organization/details/index.jsx';
+import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
 
 function Router() {
     const { setModalContent, showModal } = useModal();
@@ -189,8 +190,11 @@ function Router() {
                 </Route>
                 <Route
                     path="/organization/:id"
-                    element={<OrganisationLayout />}
-                ></Route>
+                    element={<OrganizationLayout />}
+                >
+                    <Route path="" element={<OrganisationDetails />}></Route>
+                </Route>
+
                 <Route path="photographer">
                     <Route path="" element={<PhotographerList />} />
                 </Route>
