@@ -47,7 +47,11 @@ export default function Header(environment) {
         });
     } else {
         listLeft.push({ type: 'classic', title: 'Accueil', to: '/' });
-        listLeft.push({ type: 'classic', title: 'Concours photo', to: '/' });
+        listLeft.push({
+            type: 'classic',
+            title: 'Concours photo',
+            to: '/competitiondetails',
+        });
         listLeft.push({
             type: 'classic',
             title: 'Photographes',

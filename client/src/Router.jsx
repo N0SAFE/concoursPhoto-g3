@@ -44,6 +44,7 @@ import PhotographerList from './views/FO/photographer/index.jsx';
 import ListOrganization from './views/FO/organization/list/index.jsx';
 import OrganisationDetails from './views/FO/organization/details/index.jsx';
 import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
+import ListCompetition from './views/FO/competition/details/index.jsx';
 
 function Router() {
     const { setModalContent, showModal } = useModal();
@@ -181,6 +182,7 @@ function Router() {
                         />
                     </Route>
                 </Route>
+
                 <Route
                     path="/createcompetition"
                     element={<CreateCompetitions />}
@@ -202,6 +204,11 @@ function Router() {
                     path="/createorganization"
                     element={<CreateOrganization />}
                 />
+                <Route
+                    path="competitiondetails"
+                    element={<ListCompetition />}
+                ></Route>
+
                 <Route path="/competition/:id" element={<CompetitionLayout />}>
                     <Route path="" element={<CompetitionView />} />
                     <Route path="rules" element={<CompetitionRules />} />
