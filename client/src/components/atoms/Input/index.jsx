@@ -290,6 +290,7 @@ export default function Input({
     type,
     name,
     defaultValue,
+    placeholder,
     extra,
     label,
     labelDisposition,
@@ -389,6 +390,7 @@ export default function Input({
                     <input
                         className={style.componentInput}
                         label={label}
+                        placeholder={placeholder}
                         type="text"
                         {...extra}
                         name={name}

@@ -5,13 +5,13 @@ import FOPortalList from '@/components/organisms/FO/FOPortalList';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import { useEffect, useState } from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
-import { toast } from 'react-toastify';
-import { format } from 'date-fns';
-import Icon from '@/components/atoms/Icon/index.jsx';
-import { useRef } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import Card from '@/components/molecules/Card/index.jsx';
+import Input from '@/components/atoms/Input/index.jsx';
+import Dropdown from '@/components/atoms/Dropdown';
+import Button from '@/components/atoms/Button';
+import Icon from '@/components/atoms/Icon';
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_ITEMS_PER_PAGE = 9;
@@ -19,6 +19,7 @@ const DEFAULT_ITEMS_PER_PAGE = 9;
 export default function ListCompetition() {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
+    const [isSubMenuActif, setIsSubMenuActif] = useState(false);
     const [stats, setStats] = useState({});
     const apiFetch = useApiFetch();
     const [competition, setCompetition] = useState([]);
@@ -53,6 +54,9 @@ export default function ListCompetition() {
             });
     };
 
+    const toggleSubMenu = () => {
+        setIsSubMenuActif(!isSubMenuActif);
+    };
     useEffect(() => {
         setSearchParams({
             page: page || DEFAULT_PAGE,
@@ -124,6 +128,68 @@ export default function ListCompetition() {
                 <div className={style.homeBanner}>
                     <div>
                         <h1>Rechercher un concours</h1>
+                    </div>
+                </div>
+                <div style={{ display: 'Flex', flexDirection: 'row' }}>
+                    <Icon size="6%" icon={'search'} />
+                    <Input
+                        type="text"
+                        name="recherche"
+                        placeholder="Rechercher"
+                    />
+
+                    <Button
+                        style={{
+                            borderRadius: '5px',
+                            border: '1px solid #000000',
+                            padding: '5px',
+                        }}
+                    >
+                        Rechercher
+                    </Button>
+                    <Input type="select" name="" label="" />
+                    <Input type="select" name="" label="" />
+                    <button
+                        onClick={toggleSubMenu}
+                        style={{
+                            borderRadius: '5px',
+                            border: '1px solid #000000',
+                            padding: '5px',
+                        }}
+                    >
+                        critères
+                        <Icon
+                            size="20%"
+                            icon={'arrow-thin-down'}
+                            style={{
+                                transform: isSubMenuActif
+                                    ? 'rotate(-180deg)'
+                                    : 'none',
+                                transitionDuration: '0.5s',
+                            }}
+                        />
+                    </button>
+                </div>
+                <div
+                    style={{
+                        display: isSubMenuActif ? 'block' : 'none',
+                        overflow: 'hidden',
+                    }}
+                >
+                    <div
+                        style={{
+                            display: 'Flex',
+                            flexDirection: 'row',
+                            backgroundColor: '#cccccc',
+                            padding: '1%',
+                        }}
+                    >
+                        <Input type="select" name="" label="Pays" />
+                        <Input type="select" name="" label="Région" />
+                        <Input type="select" name="" label="Département" />
+                        <Input type="select" name="" label="Catégorie" />
+                        <Input type="select" name="" label="Age" />
+                        <Input type="select" name="" label="Prix/Dotation" />
                     </div>
                 </div>
                 <Pagination
