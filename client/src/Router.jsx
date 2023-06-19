@@ -35,10 +35,11 @@ import MyorganizationAdmin from './views/global/Profile/myorganization/admin/ind
 import MyorganizationCompetiton from './views/global/Profile/myorganization/competitions/index.jsx';
 import PhotographerList from './views/FO/photographer/index.jsx';
 import ListOrganization from './views/FO/organization/list/index.jsx';
-import OrganisationLayout from './views/FO/organization/details/index.jsx';
+import OrganisationDetails from './views/FO/organization/details/index.jsx';
 import AuthMiddleware from '@/middleware/AuthMiddleware.jsx';
 import ProfileMyorganizationMiddleware from './middleware/ProfileMyorganizationMiddleware.jsx';
 import CompetitionMiddleware from './middleware/CompetitionMiddleware.jsx';
+import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
 
 function Router() {
     return (
@@ -119,8 +120,11 @@ function Router() {
                 </Route>
                 <Route
                     path="/organization/:id"
-                    element={<OrganisationLayout />}
-                ></Route>
+                    element={<OrganizationLayout />}
+                >
+                    <Route path="" element={<OrganisationDetails />}></Route>
+                </Route>
+
                 <Route path="photographer">
                     <Route path="" element={<PhotographerList />} />
                 </Route>

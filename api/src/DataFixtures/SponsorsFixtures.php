@@ -31,6 +31,7 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
 
             $sponsors->setStartDate($faker->dateTime());
             $sponsors->setEndDate($faker->dateTime());
+            $sponsors->setSponsorName($faker->name());
             $sponsors->setSponsorRank($faker->randomDigit());
             $sponsors->setOrganization(
                 $this->getReference(

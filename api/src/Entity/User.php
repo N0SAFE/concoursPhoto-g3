@@ -45,7 +45,12 @@ use Symfony\Component\Validator\Constraints as Assert;
     )
 ]
 #[ApiFilter(PropertyFilter::class)]
-#[ApiFilter(SearchFilter::class, properties: ['roles' => 'partial', 'Manage' => 'exact'])]
+#[
+    ApiFilter(
+        SearchFilter::class,
+        properties: ['roles' => 'partial', 'Manage' => 'exact']
+    )
+]
 #[ApiFilter(GroupFilter::class)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
@@ -68,12 +73,24 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
-    #[Groups(['user:read', 'user:current:read', 'user:write'])]
+    #[
+        Groups([
+            'user:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $firstname = null;
 
-    #[Groups(['user:read', 'user:current:read', 'user:write'])]
+    #[
+        Groups([
+            'user:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $lastname = null;

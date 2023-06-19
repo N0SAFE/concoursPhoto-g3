@@ -12,7 +12,6 @@
 
     &Wrapper {
         display: flex;
-        margin-top: 3%;
         gap: 50px;
         flex-direction: row;
 
@@ -53,7 +52,6 @@
 
         // override Input component
         & > div {
-            width: 100%;
             gap: $gapBetweenElement;
         }
     }

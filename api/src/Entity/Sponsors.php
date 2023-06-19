@@ -17,7 +17,7 @@ use ApiPlatform\Metadata\Post;
 #[
     ApiResource(
         operations: [new GetCollection(), new Get(), new Post(), new Patch()],
-        normalizationContext: ['groups' => ['sponsors:read']]
+        normalizationContext: ['groups' => ['sponsor:read']]
     )
 ]
 #[ORM\Entity(repositoryClass: SponsorsRepository::class)]
@@ -56,6 +56,10 @@ class Sponsors
     #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'sponsors')]
     #[Groups(['sponsor:competitions:read'])]
     private Collection $competitions;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['sponsor:read'])]
+    private ?string $sponsorName = null;
 
     public function __construct()
     {
@@ -162,6 +166,18 @@ class Sponsors
         if ($this->competitions->removeElement($competition)) {
             $competition->removeSponsor($this);
         }
+
+        return $this;
+    }
+
+    public function getSponsorName(): ?string
+    {
+        return $this->sponsorName;
+    }
+
+    public function setSponsorName(string $sponsorName): static
+    {
+        $this->sponsorName = $sponsorName;
 
         return $this;
     }
