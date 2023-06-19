@@ -7,15 +7,17 @@ import { useNavigate } from 'react-router-dom';
 export default function AuthMiddleware({ roles }) {
     const { setModalContent, showModal } = useModal();
     const navigate = useNavigate();
-    
+
     return (
         <GuardedRoute
             verify={({ isLogged, me }) =>
-                isLogged &&
-                roles &&
-                roles.reduce(
-                    (acc, role) => acc || me.roles.includes(role),
-                    false
+                !!(
+                    isLogged &&
+                    roles &&
+                    roles.reduce(
+                        (acc, role) => acc || me.roles.includes(role),
+                        false
+                    )
                 )
             }
             fallback={() => {

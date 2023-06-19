@@ -111,7 +111,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setPseudonym('admin');
         $user->setIsVerified(true);
         $user->setLastConnectionDate($faker->dateTime());
-        $user->setState(true);
+        $user->setActif(true);
         $user->setRegistrationDate($faker->dateTime());
         $user->setDeleteDate($faker->dateTime());
         $user->setUpdateDate($faker->dateTime());
@@ -221,7 +221,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setPhoneNumber($phoneNumber);
 
             $user->setDateOfBirth($faker->dateTime());
-            $user->setState($faker->boolean());
+            $user->setActif($faker->boolean());
             $user->setCreationDate($faker->dateTime());
             $user->setFirstname($faker->firstName());
             $user->setLastname($faker->lastName());

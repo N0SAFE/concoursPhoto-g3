@@ -106,7 +106,7 @@ function ModalProvider({ children }) {
                 <div
                     className={style.modalOutlet}
                     style={{
-                        overflow: active ? 'hidden' : 'scroll',
+                        overflow: active ? 'hidden' : 'auto',
                         height: '100vh',
                     }}
                 >
