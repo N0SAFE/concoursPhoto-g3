@@ -87,6 +87,7 @@ export default function ListCompetition() {
                     'numberOfVotes',
                     'numberOfParticipants',
                     'numberOfPictures',
+                    'id',
                 ],
                 groups: [
                     'file:read',
