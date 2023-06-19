@@ -45,6 +45,16 @@ export default function Header(environment) {
                 { title: "Ajout d'un concours", to: '/BO/competition/create' },
             ],
         });
+        listLeft.push({
+            type: 'dropdown',
+            title: 'Photographes',
+            links: [
+                {
+                    title: 'Liste des photographes',
+                    to: '/BO/user/photographer',
+                },
+            ],
+        });
     } else {
         listLeft.push({ type: 'classic', title: 'Accueil', to: '/' });
         listLeft.push({ type: 'classic', title: 'Concours photo', to: '/' });

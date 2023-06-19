@@ -42,6 +42,7 @@ import useApiFetch from './hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
 import PhotographerList from './views/FO/photographer/index.jsx';
 import ListOrganization from './views/FO/organization/list/index.jsx';
+import PhotographerBOList from './views/BO/user/photographer/index.jsx';
 import OrganisationDetails from './views/FO/organization/details/index.jsx';
 import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
 
@@ -73,6 +74,10 @@ function Router() {
                     <Route element={<BO />} />
                     <Route path="user">
                         <Route path="" element={<UserList />} />
+                        <Route
+                            path="photographer"
+                            element={<PhotographerBOList />}
+                        />
                         <Route path=":id" element={<UserSee />} />
                         <Route path="edit/:id" element={<UserEdit />} />
                         <Route path="create" element={<UserCreate />} />
