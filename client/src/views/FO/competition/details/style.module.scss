@@ -67,3 +67,22 @@
         }
     }
 }
+
+.slider {
+    &Track {
+        margin-left: 0.5rem; /* 8px */
+        margin-right: 0.5rem; /* 8px */
+        margin-top: 1.25rem; /* 20px */
+        height: 0.25rem; /* 4px */
+        background-color: rgb(156 163 175);
+        border-radius: 9999px;
+    }
+    background-color: rgb(243 244 246/1);
+    background-color: rgb(243 244 246 / 1);
+    border: none;
+    width: 100%;
+
+    & svg {
+        color: black;
+    }
+}

@@ -330,6 +330,7 @@ export default function Input({
                     <Select
                         {...extra}
                         name={name}
+                        placeholder={placeholder}
                         label={label}
                         onChange={e => onChange(e)}
                         defaultValue={defaultValue}

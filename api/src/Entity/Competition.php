@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Metaclass\FilterBundle\Filter\FilterLogic;
 use ApiPlatform\Metadata\ApiFilter;
@@ -21,7 +22,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiFilter(DateFilter::class, properties: ['resultsDate'])]
+#[ApiFilter(DateFilter::class, properties: ['resultsDate', 'creationDate'])]
 #[ApiFilter(PropertyFilter::class)]
 #[
     ApiFilter(
@@ -29,10 +30,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
         properties: [
             'pictures.user' => 'exact',
             'organization' => 'exact',
+            'theme' => 'exact',
+            'participantCategory' => 'exact',
+            'competitionName' => 'partial',
+            'theme.label' => 'partial',
+            'participantCategory.label' => 'partial',
+            'regionCriteria' => 'partial',
+            'departmentCriteria' => 'partial',
         ]
     )
 ]
 #[ApiFilter(GroupFilter::class)]
+#[ApiFilter(RangeFilter::class)]
 #[ApiFilter(FilterLogic::class)]
 #[
     ApiResource(
