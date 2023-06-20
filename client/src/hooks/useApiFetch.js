@@ -15,7 +15,7 @@ function createQueryParams(params) {
         if (typeof obj === 'object' && obj !== null) {
             if (Array.isArray(obj)) {
                 obj.forEach((value, index) => {
-                    recursive(value, `${key}[]`);
+                    recursive(value, `${key}[${index}]`);
                 });
             } else {
                 Reflect.ownKeys(obj).forEach(subKey => {
