@@ -3,13 +3,16 @@ import Navlink from '@/components/molecules/Navlink';
 import PicturesAside from '@/components/organisms/FO/PicturesAside';
 import style from './style.module.scss';
 import React, { useRef, useState } from 'react';
-import { Editor } from '@tinymce/tinymce-react';
 import { toast } from 'react-toastify';
+import Button from "@/components/atoms/Button/index.jsx";
+import {useModal} from "@/contexts/ModalContext/index.jsx";
+import CompetitionEndowmentsEdit from "@/components/organisms/Modals/competition/CompetitionEndowmentsEdit";
 
 export default function () {
     const { competition: _competition } = useOutletContext();
     const asidePictures = _competition.aside;
     const asideLabel = _competition.asideLabel;
+    const { showModal, setModalContent } = useModal();
 
     const [competition, setCompetition] = useState(_competition);
 
@@ -47,60 +50,24 @@ export default function () {
                         base="/competition/:id"
                         list={competitionRouteList}
                     />
+                    <div className={style.endowmentsEdit}>
+                        <h2>Prix à gagner</h2>
+                        {competition?.userCanEdit && (
+                            <Button textColor={"#fff"} color={"#000"} borderRadius={"25px"} onClick={(e) => {
+                                e.preventDefault();
+                                setModalContent(<CompetitionEndowmentsEdit competition={competition} />);
+                                showModal();
+                            }}>
+                                éditer
+                            </Button>
+                        )}
+                    </div>
                     <div
                         className={style.description}
                         dangerouslySetInnerHTML={{
                             __html: competition.endowments,
                         }}
                     ></div>
-                    <Editor
-                        onEditorChange={s => {
-                            setCompetition({ ...competition, endowments: s });
-                        }}
-                        onInit={(evt, editor) => (editorRef.current = editor)}
-                        initialValue={_competition.endowments}
-                        init={{
-                            height: 500,
-                            menubar: false,
-                            plugins: [
-                                'advlist',
-                                'autolink',
-                                'lists',
-                                'link',
-                                'image',
-                                'charmap',
-                                'preview',
-                                'anchor',
-                                'searchreplace',
-                                'visualblocks',
-                                'code',
-                                'fullscreen',
-                                'insertdatetime',
-                                'table',
-                                'code',
-                                'help',
-                                'wordcount',
-                                'emoticons',
-                                'charmap',
-                                'insertdatetime',
-                            ],
-                            toolbar:
-                                'undo redo | blocks | ' +
-                                'bold italic forecolor | alignleft aligncenter ' +
-                                'alignright alignjustify | bullist numlist outdent indent | ' +
-                                'removeformat | help' +
-                                ' | emoticons' +
-                                ' insertdatetime | code | preview',
-                            content_style:
-                                'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                        }}
-                    />
-                    <button
-                        style={{ borderRadius: '10%' }}
-                        onClick={updateCompetition}
-                    >
-                        Editer
-                    </button>
                 </div>
                 <PicturesAside
                     pictures={asidePictures}

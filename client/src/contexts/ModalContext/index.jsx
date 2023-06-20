@@ -16,7 +16,7 @@ function ModalProvider({ children }) {
     const [active, setActive] = useState(false);
     const [modalContent, setModalContent] = useState(null);
 
-    const showModal = closeCallback => {
+    const showModal = (closeCallback = function(){}) => {
         setActive(true);
         setCloseCallbacks([...closeCallbacks, closeCallback]);
     };

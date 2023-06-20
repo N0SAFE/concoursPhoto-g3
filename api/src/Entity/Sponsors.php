@@ -49,21 +49,11 @@ class Sponsors
     #[Groups(['sponsor:read'])]
     private ?float $price = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['sponsor:logo:read', 'user:current:read'])]
-    private ?File $logo = null;
-
-    #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'sponsors')]
+    #[ORM\ManyToOne(inversedBy: 'sponsors')]
     #[Groups(['sponsor:competitions:read'])]
-    private Collection $competitions;
+    private ?Competition $competition = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['sponsor:read'])]
-    private ?string $sponsorName = null;
-
-    public function __construct()
-    {
-        $this->competitions = new ArrayCollection();
+    public function __construct() {
     }
 
     public function getId(): ?int
@@ -131,53 +121,14 @@ class Sponsors
         return $this;
     }
 
-    public function getLogo(): ?File
+    public function getCompetition(): ?Competition
     {
-        return $this->logo;
+        return $this->competition;
     }
 
-    public function setLogo(?File $logo): self
+    public function setCompetition(?Competition $competition): static
     {
-        $this->logo = $logo;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Competition>
-     */
-    public function getCompetitions(): Collection
-    {
-        return $this->competitions;
-    }
-
-    public function addCompetition(Competition $competition): self
-    {
-        if (!$this->competitions->contains($competition)) {
-            $this->competitions->add($competition);
-            $competition->addSponsor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCompetition(Competition $competition): self
-    {
-        if ($this->competitions->removeElement($competition)) {
-            $competition->removeSponsor($this);
-        }
-
-        return $this;
-    }
-
-    public function getSponsorName(): ?string
-    {
-        return $this->sponsorName;
-    }
-
-    public function setSponsorName(string $sponsorName): static
-    {
-        $this->sponsorName = $sponsorName;
+        $this->competition = $competition;
 
         return $this;
     }

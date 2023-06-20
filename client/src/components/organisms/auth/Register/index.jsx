@@ -47,6 +47,7 @@ export default function UserRegister() {
                 });
             });
     };
+
     const getPersonalstatus = () => {
         return apiFetch('/personal_statuts', {
             method: 'GET',
@@ -177,7 +178,7 @@ export default function UserRegister() {
                         name="genre"
                         onChange={d => updateEntity('gender', d)}
                         extra={{
-                            value: entity.gender,
+                            value: entity.gender.value,
                             options: entityPossibility.gender,
                         }}
                         defaultValue={entity.gender}

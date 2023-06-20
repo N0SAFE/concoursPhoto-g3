@@ -21,8 +21,7 @@ class FileUploader
     ) {
     }
 
-    public function upload(UploadedFile $file): array
-    {
+    public function getMetadata(UploadedFile $file): array {
         $originalFilename = $file->getClientOriginalName();
         $fileName =
             sha1(uniqid(mt_rand(), true)) .
@@ -42,15 +41,23 @@ class FileUploader
             $extension = '';
         }
 
-        $file->move($this->getTargetDirectory(), $fileName);
-
         return [
             'path' => sprintf('uploads/%s', $fileName),
             'size' => $size,
             'extension' => $extension,
             'type' => $mimeType,
             'default_name' => $originalFilename,
+            'file_name' => $fileName,
         ];
+    }
+
+    public function upload(UploadedFile $file): array
+    {
+        $metadata = $this->getMetadata($file);
+
+        $file->move($this->getTargetDirectory(), $metadata['file_name']);
+
+        return $metadata;
     }
 
     public function getTargetDirectory(): string

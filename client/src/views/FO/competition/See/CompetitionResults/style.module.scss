@@ -1,28 +1,43 @@
-.resultsContainer {
-    display: flex;
-    flex-direction: row;
-    gap: $gapBetweenElement;
-
-    .description {
-        margin: 25px 0;
-    }
-
-    & > div:first-child {
-        padding: 20px 0;
-        flex: 0 66%;
-    }
-
-    & > div:last-child {
-        flex: 0 33%;
-        justify-content: center;
-    }
-
-    @include below(xl) {
+.results {
+    &Container {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        gap: $gapBetweenElement;
+
+        .description {
+            margin: 25px 0;
+        }
+
+        & > div:first-child {
+            padding: 20px 0;
+            flex: 0 66%;
+        }
+
+        & > div:last-child {
+            flex: 0 33%;
+            justify-content: center;
+        }
+
+        @include below(xl) {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @include below(sm) {
+            display: block;
+        }
     }
 
-    @include below(sm) {
-        display: block;
+    &Edit {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        button {
+            text-transform: uppercase;
+            font-size: 15px;
+            font-weight: 700;
+        }
     }
+
 }

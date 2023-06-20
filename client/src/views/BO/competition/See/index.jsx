@@ -39,6 +39,7 @@ export default function () {
                     'sponsor:logo:read',
                     'competition:photographer:read',
                     'competition:sponsors:read',
+                    'organization:logo:read'
                 ],
             },
             method: 'GET',
@@ -293,13 +294,13 @@ export default function () {
                                 customData({ entity, property }) {
                                     return entity?.sponsors?.map(sponsor => (
                                         <Chip>
-                                            {sponsor.logo?.path ? (
+                                            {sponsor?.organization?.logo?.path ? (
                                                 <img
                                                     src={toApiPath(
-                                                        sponsor.logo.path
+                                                        sponsor.organization.logo.path
                                                     )}
                                                     alt={
-                                                        sponsor.logo.defaultName
+                                                        sponsor.organization.logo.defaultName
                                                     }
                                                     style={{
                                                         minHeight: '50px',

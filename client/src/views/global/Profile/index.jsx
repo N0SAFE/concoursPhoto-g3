@@ -143,6 +143,8 @@ export default function Profile() {
         });
     }, []);
 
+    console.log(gendersPossibility)
+
     useEffect(() => {
         updateLocationPossibility({
             args: {
@@ -297,7 +299,7 @@ export default function Profile() {
                         name="genre"
                         onChange={d => updateEntity('gender', d)}
                         extra={{
-                            value: entity.gender,
+                            value: entity.gender.value,
                             options: gendersPossibility.list,
                         }}
                     />

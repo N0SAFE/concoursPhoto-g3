@@ -20,6 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         operations: [
             new GetCollection(),
             new Post(controller: FileController::class, deserialize: false),
+            new Post(name: FileController::PICTURES_FILE_SIZE, controller: FileController::class, uriTemplate: '/files/pictures', deserialize: false),
             new Get(),
             new Delete(),
         ],

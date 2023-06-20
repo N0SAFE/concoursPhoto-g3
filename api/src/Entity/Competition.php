@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use App\Controller\FileController;
 use Metaclass\FilterBundle\Filter\FilterLogic;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
@@ -53,6 +54,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 uriTemplate: '/competitions/view/{id}'
             ),
             new Post(name: 'CompetitionCreate'),
+            new Post(name: FileController::COMPETITION_FILE_SIZE, controller: FileController::class, uriTemplate: '/files/competitions', deserialize: false),
             new Patch(),
             new Delete(),
         ],
@@ -121,6 +123,10 @@ class Competition
     #[ORM\Column]
     #[Groups(['competition:read', 'user:current:read'])]
     private ?int $numberOfMaxVotes = null;
+
+    #[ORM\Column]
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?int $numberOfMaxPictures = null;
 
     #[ORM\Column]
     #[Groups(['competition:read', 'user:current:read'])]
@@ -197,10 +203,6 @@ class Competition
     ]
     private Collection $notificationsSended;
 
-    #[Groups(['competition:sponsors:read', 'user:current:read'])]
-    #[ORM\ManyToMany(targetEntity: Sponsors::class, inversedBy: 'competitions')]
-    private Collection $sponsors;
-
     #[Groups(['competition:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $consultationCount = null;
@@ -208,6 +210,21 @@ class Competition
     #[Groups(['competition:read', 'user:current:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $competitionResults = null;
+
+    #[Groups(['competition:read', 'user:current:read'])]
+    private ?bool $userCanEdit = false;
+
+    #[Groups(['competition:read'])]
+    #[ORM\Column(nullable: true)]
+    private ?bool $isPublished = null;
+
+    #[Groups(['competition:read'])]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $activationDate = null;
+
+    #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
+    #[Groups(['competition:sponsors:read', 'user:current:read'])]
+    private Collection $sponsors;
 
     public function __construct()
     {
@@ -217,6 +234,18 @@ class Competition
         $this->pictures = new ArrayCollection();
         $this->notificationsSended = new ArrayCollection();
         $this->sponsors = new ArrayCollection();
+    }
+
+    public function getUserCanEdit(): bool
+    {
+        return $this->userCanEdit;
+    }
+
+    public function setUserCanEdit(bool $userCanEdit): Competition
+    {
+        $this->userCanEdit = $userCanEdit;
+
+        return $this;
     }
 
     #[Groups(['competition:read'])]
@@ -294,6 +323,19 @@ class Competition
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    #[Groups(['competition:read'])]
+    public function getOrganizers(): Collection
+    {
+        $users = new ArrayCollection();
+        foreach ($this->getPictures() as $picture) {
+            if ($picture->getUser()->getRoles()[0] === 'ROLE_ORGANIZER' && !$users->contains($picture->getUser())) {
+                $users->add($picture->getUser());
+            }
+        }
+
+        return $users;
     }
 
     #[Groups(['competition:read'])]
@@ -380,6 +422,7 @@ class Competition
             return 6;
         }
     }
+
     #[Groups(['competition:read'])]
     public function getStateLabel(): string
     {
@@ -483,7 +526,8 @@ class Competition
 
     public function setPublicationDate(
         \DateTimeInterface $publicationDate
-    ): self {
+    ): self
+    {
         $this->publicationDate = $publicationDate;
 
         return $this;
@@ -496,7 +540,8 @@ class Competition
 
     public function setSubmissionStartDate(
         \DateTimeInterface $submissionStartDate
-    ): self {
+    ): self
+    {
         $this->submissionStartDate = $submissionStartDate;
 
         return $this;
@@ -509,7 +554,8 @@ class Competition
 
     public function setSubmissionEndDate(
         \DateTimeInterface $submissionEndDate
-    ): self {
+    ): self
+    {
         $this->submissionEndDate = $submissionEndDate;
 
         return $this;
@@ -522,7 +568,8 @@ class Competition
 
     public function setVotingStartDate(
         \DateTimeInterface $votingStartDate
-    ): self {
+    ): self
+    {
         $this->votingStartDate = $votingStartDate;
 
         return $this;
@@ -572,6 +619,18 @@ class Competition
     public function setNumberOfMaxVotes(int $numberOfMaxVotes): self
     {
         $this->numberOfMaxVotes = $numberOfMaxVotes;
+
+        return $this;
+    }
+
+    public function getNumberOfMaxPictures(): ?int
+    {
+        return $this->numberOfMaxPictures;
+    }
+
+    public function setNumberOfMaxPictures(int $numberOfMaxPictures): self
+    {
+        $this->numberOfMaxPictures = $numberOfMaxPictures;
 
         return $this;
     }
@@ -646,7 +705,8 @@ class Competition
 
     public function addParticipantCategory(
         ParticipantCategory $participantCategory
-    ): self {
+    ): self
+    {
         if (!$this->participantCategory->contains($participantCategory)) {
             $this->participantCategory->add($participantCategory);
         }
@@ -656,7 +716,8 @@ class Competition
 
     public function removeParticipantCategory(
         ParticipantCategory $participantCategory
-    ): self {
+    ): self
+    {
         $this->participantCategory->removeElement($participantCategory);
 
         return $this;
@@ -694,7 +755,8 @@ class Competition
 
     public function removeMemberOfTheJury(
         MemberOfTheJury $memberOfTheJury
-    ): self {
+    ): self
+    {
         if ($this->memberOfTheJuries->removeElement($memberOfTheJury)) {
             // set the owning side to null (unless already changed)
             if ($memberOfTheJury->getCompetition() === $this) {
@@ -817,7 +879,8 @@ class Competition
 
     public function addNotificationsSended(
         NotificationType $notificationsSended
-    ): self {
+    ): self
+    {
         if (!$this->notificationsSended->contains($notificationsSended)) {
             $this->notificationsSended->add($notificationsSended);
         }
@@ -827,32 +890,9 @@ class Competition
 
     public function removeNotificationsSended(
         NotificationType $notificationsSended
-    ): self {
+    ): self
+    {
         $this->notificationsSended->removeElement($notificationsSended);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Sponsors>
-     */
-    public function getSponsors(): Collection
-    {
-        return $this->sponsors;
-    }
-
-    public function addSponsor(Sponsors $sponsor): self
-    {
-        if (!$this->sponsors->contains($sponsor)) {
-            $this->sponsors->add($sponsor);
-        }
-
-        return $this;
-    }
-
-    public function removeSponsor(Sponsors $sponsor): self
-    {
-        $this->sponsors->removeElement($sponsor);
 
         return $this;
     }
@@ -877,6 +917,62 @@ class Competition
     public function setCompetitionResults(?string $competitionResults): static
     {
         $this->competitionResults = $competitionResults;
+
+        return $this;
+    }
+
+    public function isIsPublished(): ?bool
+    {
+        return $this->isPublished;
+    }
+
+    public function setIsPublished(?bool $isPublished): static
+    {
+        $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function getActivationDate(): ?\DateTimeInterface
+    {
+        return $this->activationDate;
+    }
+
+    public function setActivationDate(
+        \DateTimeInterface $activationDate
+    ): self
+    {
+        $this->activationDate = $activationDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sponsors>
+     */
+    public function getSponsors(): Collection
+    {
+        return $this->sponsors;
+    }
+
+    public function addSponsor(Sponsors $sponsor): static
+    {
+        if (!$this->sponsors->contains($sponsor)) {
+            $this->sponsors->add($sponsor);
+            $sponsor->setCompetition($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSponsor(Sponsors $sponsor): static
+    {
+        if ($this->sponsors->removeElement($sponsor)) {
+            // set the owning side to null (unless already changed)
+            if ($sponsor->getCompetition() === $this) {
+                $sponsor->setCompetition(null);
+            }
+        }
 
         return $this;
     }
