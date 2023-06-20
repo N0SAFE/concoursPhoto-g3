@@ -12,7 +12,7 @@ function createQueryParams(params) {
     if (keys.length === 0) return '';
     let query = '?';
     const recursive = (obj, key) => {
-        if (typeof obj === 'object') {
+        if (typeof obj === 'object' && obj !== null) {
             if (Array.isArray(obj)) {
                 obj.forEach((value, index) => {
                     recursive(value, `${key}[]`);

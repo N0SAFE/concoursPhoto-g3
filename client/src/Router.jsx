@@ -35,11 +35,13 @@ import MyorganizationAdmin from './views/global/Profile/myorganization/admin/ind
 import MyorganizationCompetiton from './views/global/Profile/myorganization/competitions/index.jsx';
 import PhotographerList from './views/FO/photographer/index.jsx';
 import ListOrganization from './views/FO/organization/list/index.jsx';
+import PhotographerBOList from './views/BO/user/photographer/index.jsx';
 import OrganisationDetails from './views/FO/organization/details/index.jsx';
 import AuthMiddleware from '@/middleware/AuthMiddleware.jsx';
 import ProfileMyorganizationMiddleware from './middleware/ProfileMyorganizationMiddleware.jsx';
 import CompetitionMiddleware from './middleware/CompetitionMiddleware.jsx';
 import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
+import ListCompetition from './views/FO/competition/details/index.jsx';
 
 function Router() {
     return (
@@ -52,6 +54,10 @@ function Router() {
                     <Route element={<BO />} />
                     <Route path="user">
                         <Route path="" element={<UserList />} />
+                        <Route
+                            path="photographer"
+                            element={<PhotographerBOList />}
+                        />
                         <Route path=":id" element={<UserSee />} />
                         <Route path="edit/:id" element={<UserEdit />} />
                         <Route path="create" element={<UserCreate />} />
@@ -111,6 +117,7 @@ function Router() {
                         />
                     </Route>
                 </Route>
+
                 <Route
                     path="/createcompetition"
                     element={<CreateCompetitions />}
@@ -132,6 +139,11 @@ function Router() {
                     path="/createorganization"
                     element={<CreateOrganization />}
                 />
+                <Route
+                    path="competitiondetails"
+                    element={<ListCompetition />}
+                ></Route>
+
                 <Route
                     path="/competition/:id"
                     element={<CompetitionMiddleware />}

@@ -290,6 +290,7 @@ export default function Input({
     type,
     name,
     defaultValue,
+    placeholder,
     extra,
     label,
     labelDisposition,
@@ -329,6 +330,7 @@ export default function Input({
                     <Select
                         {...extra}
                         name={name}
+                        placeholder={placeholder}
                         label={label}
                         onChange={e => onChange(e)}
                         defaultValue={defaultValue}
@@ -389,6 +391,7 @@ export default function Input({
                     <input
                         className={style.componentInput}
                         label={label}
+                        placeholder={placeholder}
                         type="text"
                         {...extra}
                         name={name}
