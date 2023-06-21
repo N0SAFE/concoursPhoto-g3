@@ -23,7 +23,7 @@ export default function ({ fallback, verify = () => true }) {
         if (typeof fallback === 'function' && !state) {
             setFallback(fallback(auth, { context }));
         }
-    }, []);
+    }, [ret]);
 
     if (state) {
         return <Outlet context={context} />;

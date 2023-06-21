@@ -79,7 +79,8 @@ class MailProcessCommand extends Command
 
             if ($competition->getVotingStartDate() < new \DateTime()) {
                 $notificationType = $this->notificationTypeRepository->findOneBy(
-                    ['notification_code' => 2]
+                    ['notification_c
+                    ode' => 2]
                 );
                 if (
                     !$competition

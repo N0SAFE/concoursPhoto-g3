@@ -98,7 +98,7 @@ export default function Header(environment) {
                             });
                         },
                     },
-                    { title: 'Mon profil', to: '/profile/me' },
+                    { title: 'Mon profil', to: '/profile' },
                 ],
             });
         } else {
@@ -114,7 +114,7 @@ export default function Header(environment) {
                 type: 'button',
                 title: 'Mon compte',
                 icon: 'user-plus',
-                to: '/profile/me',
+                to: '/profile',
             });
             listRight.push({
                 type: 'button',

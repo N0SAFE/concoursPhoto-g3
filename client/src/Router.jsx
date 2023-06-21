@@ -1,5 +1,4 @@
-import { Route, Routes, redirect, useParams } from 'react-router-dom';
-import Login from '@/components/organisms/auth/Login';
+import { Route, Routes } from 'react-router-dom';
 import UserList from '@/views/BO/user/List';
 import UserEdit from '@/views/BO/user/Edit';
 import UserCreate from '@/views/BO/user/Create';
@@ -11,15 +10,11 @@ import OrganizationList from '@/views/BO/organization/List';
 import CompetitionList from '@/views/BO/competition/List';
 import OrganizationCreate from '@/views/BO/organization/Create';
 import CompetitionCreate from '@/views/BO/competition/Create';
-import GuardedRoute from '@/layout/GuardedRoute.jsx';
-import { Navigate } from 'react-router-dom';
 import Profile from '@/views/global/Profile';
 import OrganizationEdit from '@/views/BO/organization/Edit';
 import CompetitionSee from '@/views/BO/competition/See';
 import OrganizationSee from '@/views/BO/organization/See';
 import CompetitionEdit from '@/views/BO/competition/Edit';
-import { useModal } from '@/contexts/ModalContext/index.jsx';
-import { toast } from 'react-toastify';
 import MyorganizationInfo from '@/views/global/Profile/myorganization/info/index.jsx';
 import MyorganizationList from '@/views/global/Profile/myorganization/index.jsx';
 import ProfileNotification from '@/views/global/Profile/notification';
@@ -38,36 +33,20 @@ import CreateOrganization from '@/views/FO/organization/index.jsx';
 import MyorganizationLayout from '@/layout/ProfileLayout/MyorganizationLayout';
 import MyorganizationAdmin from './views/global/Profile/myorganization/admin/index.jsx';
 import MyorganizationCompetiton from './views/global/Profile/myorganization/competitions/index.jsx';
-import useApiFetch from './hooks/useApiFetch.js';
-import { useEffect, useState } from 'react';
 import PhotographerList from './views/FO/photographer/index.jsx';
 import ListOrganization from './views/FO/organization/list/index.jsx';
 import PhotographerBOList from './views/BO/user/photographer/index.jsx';
 import OrganisationDetails from './views/FO/organization/details/index.jsx';
+import AuthMiddleware from '@/middleware/AuthMiddleware.jsx';
+import ProfileMyorganizationMiddleware from './middleware/ProfileMyorganizationMiddleware.jsx';
+import CompetitionMiddleware from './middleware/CompetitionMiddleware.jsx';
 import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
 import ListCompetition from './views/FO/competition/details/index.jsx';
 
 function Router() {
-    const { setModalContent, showModal } = useModal();
-    const apiFetch = useApiFetch();
     return (
         <Routes>
-            <Route
-                path="/BO"
-                element={
-                    <GuardedRoute
-                        verify={({ isLogged, me }) =>
-                            isLogged && me.roles.includes('ROLE_ADMIN')
-                        }
-                        fallback={() => {
-                            toast.info('Veuillez vous connecter');
-                            setModalContent(<Login />);
-                            showModal();
-                            return <Navigate to="/" replace={true} />;
-                        }}
-                    />
-                }
-            >
+            <Route path="/BO" element={<AuthMiddleware roles={["ROLE_ADMIN"]} />}>
                 <Route
                     path=""
                     element={<PageLayout environment={'backoffice'} />}
@@ -99,24 +78,9 @@ function Router() {
                 </Route>
             </Route>
             <Route path="/" element={<PageLayout />}>
-                <Route
-                    path="profile"
-                    element={
-                        <GuardedRoute
-                            verify={({ isLogged }) => isLogged}
-                            fallback={() => {
-                                toast.info('Veuillez vous connecter');
-                                setModalContent(
-                                    <Login forceRedirect="/profile" />
-                                );
-                                showModal();
-                            }}
-                        />
-                    }
-                >
+                <Route path="profile" element={<AuthMiddleware />}>
                     <Route path="" element={<ProfileLayout />}>
-                        <Route path="" element={<Navigate to="me" />} />
-                        <Route path="me" element={<Profile />} />
+                        <Route path="" element={<Profile />} />
                         <Route
                             path="preference"
                             element={<ProfileNotification />}
@@ -125,41 +89,7 @@ function Router() {
                             <Route path="" element={<MyorganizationList />} />
                             <Route
                                 path=":id"
-                                element={
-                                    <GuardedRoute
-                                        verify={({ me }) => {
-                                            const { id: _idOrganisation } =
-                                                useParams();
-                                            const idOrganisation =
-                                                parseInt(_idOrganisation);
-                                            if (isNaN(idOrganisation)) {
-                                                return false;
-                                            }
-                                            return {
-                                                state: !!me.Manage.find(
-                                                    o => o.id === idOrganisation
-                                                ),
-                                                context: {
-                                                    idOrganisation,
-                                                },
-                                            };
-                                        }}
-                                        fallback={({ me }) => {
-                                            if (me.Manage.length > 0) {
-                                                return (
-                                                    <Navigate
-                                                        to={
-                                                            '/profile/myorganization/' +
-                                                            me.Manage[0].id
-                                                        }
-                                                    />
-                                                );
-                                            } else {
-                                                return <NotFound />;
-                                            }
-                                        }}
-                                    />
-                                }
+                                element={<ProfileMyorganizationMiddleware />}
                             >
                                 <Route
                                     path=""
@@ -214,17 +144,29 @@ function Router() {
                     element={<ListCompetition />}
                 ></Route>
 
-                <Route path="/competition/:id" element={<CompetitionLayout />}>
-                    <Route path="" element={<CompetitionView />} />
-                    <Route path="rules" element={<CompetitionRules />} />
-                    <Route
-                        path="endowments"
-                        element={<CompetitionEndowments />}
-                    />
-                    <Route path="jury" element={<CompetitionJury />} />
-                    <Route path="pictures" element={<CompetitionPictures />} />
-                    <Route path="results" element={<CompetitionResults />} />
+                <Route
+                    path="/competition/:id"
+                    element={<CompetitionMiddleware />}
+                >
+                    <Route path="" element={<CompetitionLayout />}>
+                        <Route path="" element={<CompetitionView />} />
+                        <Route path="rules" element={<CompetitionRules />} />
+                        <Route
+                            path="endowments"
+                            element={<CompetitionEndowments />}
+                        />
+                        <Route path="jury" element={<CompetitionJury />} />
+                        <Route
+                            path="pictures"
+                            element={<CompetitionPictures />}
+                        />
+                        <Route
+                            path="results"
+                            element={<CompetitionResults />}
+                        />
+                    </Route>
                 </Route>
+
                 <Route path="" element={<Home />} />
             </Route>
             <Route path="*" element={<NotFound />} />
