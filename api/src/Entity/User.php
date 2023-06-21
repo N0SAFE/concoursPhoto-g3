@@ -63,7 +63,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column]
-    private ?bool $actif = null;
+    private ?bool $active = null;
 
     #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -277,14 +277,14 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this->id;
     }
 
-    public function isActif(): ?bool
+    public function isActive(): ?bool
     {
-        return $this->actif;
+        return $this->active;
     }
 
-    public function setActif(bool $actif): self
+    public function setActive(bool $active): self
     {
-        $this->actif = $actif;
+        $this->active = $active;
 
         return $this;
     }
