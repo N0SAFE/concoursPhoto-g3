@@ -12,22 +12,29 @@ const modalContext = createContext({
 });
 
 function ModalProvider({ children }) {
-    const [closeCallbacks, setCloseCallbacks] = useState([]);
+    const [outerCloseCallbacks, setOuterCloseCallbacks] = useState([]); // [closeCallback]
+    const [innerCloseCallbacks, setInnerCloseCallbacks] = useState([]); // [closeCallback]
     const [active, setActive] = useState(false);
     const [modalContent, setModalContent] = useState(null);
 
-    const showModal = (closeCallback = function(){}) => {
+    const showModal = ({close = () => {}} = {}) => {
         setActive(true);
-        setCloseCallbacks([...closeCallbacks, closeCallback]);
+        setInnerCloseCallbacks([...innerCloseCallbacks, close]);
     };
 
-    const hideModal = () => {
+    const innerClose = () => {
         setActive(false);
-        closeCallbacks.forEach(callback => callback());
-        setCloseCallbacks([]);
+        innerCloseCallbacks.forEach(callback => callback());
+        setInnerCloseCallbacks([]);
+        setOuterCloseCallbacks([]);
     };
 
-    console.log(modalContent);
+    const outerClose = () => {
+        setActive(false);
+        outerCloseCallbacks.forEach(callback => callback());
+        setOuterCloseCallbacks([]);
+        setInnerCloseCallbacks([]);
+    }
 
     return (
         <>
@@ -35,12 +42,12 @@ function ModalProvider({ children }) {
                 value={{
                     active,
                     showModal,
-                    hideModal,
+                    hideModal: outerClose,
                     modalContent,
                     setModalContent,
                     onModalClose: function (callback) {
                         closeCallbacks.push(callback);
-                    },
+                    }
                 }}
             >
                 <div>
@@ -50,7 +57,7 @@ function ModalProvider({ children }) {
                                 ? style.modalBackground
                                 : style.modalBackgroundHidden
                         }
-                        onClick={hideModal}
+                        onClick={innerClose}
                     />
 
                     <div
@@ -62,7 +69,7 @@ function ModalProvider({ children }) {
                             <div className={style.modalContent}>
                                 <Icon
                                     className={style.modalClose}
-                                    onClick={hideModal}
+                                    onClick={innerClose}
                                     icon="close"
                                     size={15}
                                 />
@@ -99,7 +106,7 @@ function ModalProvider({ children }) {
                 <div
                     className={style.modalOutlet}
                     style={{
-                        overflow: active ? 'hidden' : 'scroll',
+                        overflow: active ? 'hidden' : 'auto',
                         height: '100vh',
                     }}
                 >
