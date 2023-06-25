@@ -23,7 +23,7 @@ export default function () {
                 <Navlink base="/competition/:id" list={competitionRouteList} />
                 {competition.memberOfTheJuries &&
                 competition.memberOfTheJuries.length > 0 ? (
-                    <div>
+                    <div className={style.memberList}>
                         <h2>
                             {competition.memberOfTheJuries.length} membre(s) du
                             jury

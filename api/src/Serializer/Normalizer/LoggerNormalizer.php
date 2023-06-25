@@ -15,7 +15,7 @@ class LoggerNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
     use NormalizerAwareTrait;
 
-    private const ALREADY_CALLED = 'COMPETITION_NORMALIZER_ALREADY_CALLED';
+    private const ALREADY_CALLED = 'LOGGER_NORMALIZER_ALREADY_CALLED';
 
     public function __construct(private LoggerInterface $logger)
     {

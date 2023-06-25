@@ -4,10 +4,14 @@ import Chip from '@/components/atoms/Chip';
 import Navlink from '@/components/molecules/Navlink';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import { useEffect, useState } from 'react';
-import useApiFetch, { queryListSymbol } from '@/hooks/useApiFetch.js';
+import useApiFetch from '@/hooks/useApiFetch.js';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import useApiPath from '@/hooks/useApiPath.js';
 import Picture from '@/components/atoms/Picture/index.jsx';
+import Button from "@/components/atoms/Button/index.jsx";
+import {useModal} from "@/contexts/ModalContext/index.jsx";
+import CompetitionPicturesAdd from "@/components/organisms/Modals/competition/CompetitionPicturesAdd.jsx";
+import {useAuthContext} from "@/contexts/AuthContext.jsx";
 
 export default function () {
     const apiPath = useApiPath();
@@ -21,6 +25,8 @@ export default function () {
     const [controller, setController] = useState(new AbortController());
     const [isPageLoading, setIsPageLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const { showModal, setModalContent } = useModal();
+    const { me } = useAuthContext();
 
     const getPictures = async (page, itemsPerPage) => {
         setIsPageLoading(true);
@@ -186,6 +192,24 @@ export default function () {
                                                 </div>
                                             </div>
                                         ))}
+                                        {me && (
+                                            <div className={style.picturesSubmission}>
+                                                <Button
+                                                    textColor={"white"}
+                                                    color={"black"}
+                                                    borderRadius={'30px'}
+                                                    padding={'20px'}
+                                                    iconPosition={'left'}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setModalContent(<CompetitionPicturesAdd competition={competition} />);
+                                                        showModal();
+                                                    }}
+                                                >
+                                                    Soumettre une photo
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </Loader>

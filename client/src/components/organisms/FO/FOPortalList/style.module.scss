@@ -8,8 +8,15 @@
         justify-content: inherit;
     }
 
+    button {
+        text-transform: uppercase;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
     .boxSingle {
         @extend .unselectable;
+        position: relative;
         flex-direction: column;
         display: flex;
         width: calc((100% - $gapBetweenElement) / 1.5);
@@ -20,24 +27,39 @@
             width: 100%;
             object-fit: cover;
         }
+
+        &Secondary {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+        }
     }
 
     .boxDuo {
         display: flex;
+        position: relative;
         gap: $gapBetweenElement;
         flex-direction: column;
         width: calc((100% - $gapBetweenElement) / 3);
         aspect-ratio: 16/9;
 
-        & > div {
-            height: 100%;
-        }
-
-        & > img {
+        img {
             height: 100%;
             width: 100%;
             object-fit: cover;
             aspect-ratio: 16/9;
+        }
+
+        .boxDown {
+            position: relative;
+
+            &Secondary {
+                position: absolute;
+                right: 15px;
+                bottom: 15px;
+                // add z-index to make sure it's on before the image
+                z-index: 10;
+            }
         }
     }
 
@@ -49,14 +71,14 @@
         .boxDuo {
             flex-direction: row;
             gap: $gapBetweenElement;
-            aspect-ratio: 16/9;
 
             // for pictures
             width: calc((100% - $gapBetweenElement) / 2);
 
             // for slider
-            & > div {
+            & > .boxUp, .boxDown {
                 width: 100%;
+                aspect-ratio: 16/9;
             }
         }
     }

@@ -488,7 +488,6 @@ export default function CompetitionEdit() {
                                 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                         }}
                     />
-
                     <Input
                         type="text"
                         name="rules"
@@ -497,7 +496,6 @@ export default function CompetitionEdit() {
                         defaultValue={entity.rules}
                         extra={{ require: true }}
                     />
-
                     <Input
                         type="text"
                         name="endowments"

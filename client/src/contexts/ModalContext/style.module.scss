@@ -1,6 +1,5 @@
 .modal {
     &Container {
-        width: 40%;
         max-height: 0;
         position: fixed;
         z-index: 100;
@@ -10,14 +9,6 @@
         transform: translate(-50%, -50%);
         display: flex;
         flex-direction: row;
-
-        @include below(xl) {
-            width: 50%;
-        }
-
-        @include below(md) {
-            width: 100%;
-        }
     }
 
     &ContentContainer {

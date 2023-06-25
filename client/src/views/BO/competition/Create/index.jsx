@@ -54,6 +54,7 @@ export default function CompetitionCreate() {
         themes: null,
         creationDate: null,
         publicationDate: null,
+        activationDate: null,
         submissionStartDate: null,
         submissionEndDate: null,
         votingStartDate: null,
@@ -198,6 +199,9 @@ export default function CompetitionCreate() {
                                 publicationDate: new Date(
                                     entity.publicationDate
                                 ).toISOString(),
+                                activationDate: new Date(
+                                    entity.activationDate
+                                ).toISOString(),
                                 submissionStartDate: new Date(
                                     entity.submissionStartDate
                                 ).toISOString(),
@@ -325,6 +329,14 @@ export default function CompetitionCreate() {
                         label="Date de publication"
                         onChange={d => updateEntityState('publicationDate', d)}
                         defaultValue={entity.publicationDate}
+                    />
+
+                    <Input
+                        type="date"
+                        name="activationDate"
+                        label="Date d'activation"
+                        onChange={d => updateEntityState('activationDate', d)}
+                        defaultValue={entity.activationDate}
                     />
 
                     <Input
