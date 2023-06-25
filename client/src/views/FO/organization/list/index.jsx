@@ -9,9 +9,12 @@ import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import Icon from '@/components/atoms/Icon/index.jsx';
 import { useRef } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import Card from '@/components/molecules/Card/index.jsx';
+import Button from '@/components/atoms/Button/index.jsx';
+import Input from '@/components/atoms/Input/index.jsx';
+import useLocation from '@/hooks/useLocation';
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_ITEMS_PER_PAGE = 9;
@@ -25,6 +28,8 @@ export default function ListOrganization() {
     const [totalitems, setTotalItems] = useState(0);
     const [paginationOptions, setPaginationOptions] = useState({});
     const [searchParams, setSearchParams] = useSearchParams({});
+    const { getCityByName, getDepartmentByName, getRegionByName } =
+        useLocation();
     const [page, setPage] = useState(
         isNaN(parseInt(searchParams.get('page'))) ||
             searchParams.get('page') < 1
@@ -40,7 +45,29 @@ export default function ListOrganization() {
     const [cardLoading, setCardLoading] = useState(false);
     const [cardDisposition, setCardDisposition] = useState('grid');
     const [controller, setController] = useState();
-
+    const [elasticSearch, setElasticSearch] = useState('');
+    const [filter, setFilter] = useState({
+        elasticSearch: '',
+        regions: [],
+        departments: [],
+        state: null,
+    });
+    const [locationPossibility, setLocationPossibility] = useState({
+        regions: { isLoading: true, data: [] },
+        departments: { isLoading: true, data: [] },
+    });
+    const updateLocationPossibility = (key, { data, isLoading } = {}) => {
+        if (isLoading !== undefined) {
+            locationPossibility[key].isLoading = isLoading;
+        }
+        if (data !== undefined) {
+            locationPossibility[key].data = data.map(item => ({
+                label: item.nom,
+                value: item.code,
+            }));
+        }
+        setLocationPossibility({ ...locationPossibility });
+    };
     const getStats = controller => {
         return apiFetch('/stats', {
             method: 'GET',
@@ -52,7 +79,31 @@ export default function ListOrganization() {
                 setStats(data);
             });
     };
-
+    useEffect(() => {
+        const controller = new AbortController();
+        Promise.all([
+            getRegionByName(null, { controller }),
+            getDepartmentByName(null, { controller }),
+        ]).then(([regions, departments]) => {
+            console.debug({ regions, departments });
+            return setLocationPossibility({
+                regions: {
+                    isLoading: false,
+                    data: regions.map(d => ({ label: d.nom, value: d.code })),
+                },
+                departments: {
+                    isLoading: false,
+                    data: departments.map(d => ({
+                        label: d.nom,
+                        value: d.code,
+                    })),
+                },
+            });
+        });
+        return () => {
+            setTimeout(() => controller?.abort());
+        };
+    }, []);
     useEffect(() => {
         setSearchParams({
             page: page || DEFAULT_PAGE,
@@ -66,9 +117,11 @@ export default function ListOrganization() {
         return () => {
             setTimeout(() => controller?.abort());
         };
-    }, [page, itemsPerPage]);
+    }, [page, itemsPerPage, filter]);
 
-    function getListOraganization() {
+    async function getListOraganization() {
+        const cities = await getCityByName(elasticSearch, { limit: 60 });
+        console.debug(cities);
         const now = new Date();
         const pageToLoad = page === null ? DEFAULT_PAGE : page;
         const itemsPerPageToLoad =
@@ -87,6 +140,24 @@ export default function ListOrganization() {
                     'id',
                 ],
                 groups: ['file:read', 'organization:organizationVisual:read'],
+                and: {
+                    organizerName: elasticSearch,
+                    and: {
+                        or: [
+                            {
+                                regionCriteria: filter.regions.map(
+                                    r => r.value
+                                ),
+                            },
+                            {
+                                departmentCriteria: filter.departments.map(
+                                    d => d.value
+                                ),
+                            },
+                        ],
+                        ...(filter.state !== null && { state: filter.state }),
+                    },
+                },
             },
             method: 'GET',
             headers: {
@@ -118,6 +189,138 @@ export default function ListOrganization() {
                     <div>
                         <h1>Rechercher un organisateur de concours</h1>
                     </div>
+                </div>
+                <div
+                    style={{
+                        display: 'Flex',
+                        flexDirection: 'row',
+                        gap: '10px',
+                        width: '100%',
+                    }}
+                >
+                    <Icon size="6%" icon={'search'} />
+                    <Input
+                        type="text"
+                        name="recherche"
+                        placeholder="Rechercher"
+                        onChange={v => {
+                            setElasticSearch(v);
+                        }}
+                    />
+                    <Button
+                        style={{
+                            borderRadius: '5px',
+                            border: '1px solid #000000',
+                            padding: '5px',
+                        }}
+                        onClick={() => {
+                            setFilter({
+                                ...filter,
+                                elasticSearch: elasticSearch,
+                            });
+                        }}
+                    >
+                        Rechercher
+                    </Button>
+                    <Input
+                        type="select"
+                        name=""
+                        placeholder="Région"
+                        extra={{
+                            isLoading: locationPossibility.regions.loading,
+                            clearable: true,
+                            options: locationPossibility.regions.data,
+                            isMulti: true,
+                            closeMenuOnSelect: false,
+                            onInputChange: (name, { action }) => {
+                                if (action === 'input-change') {
+                                    getRegionByName(name).then(function (p) {
+                                        updateLocationPossibility('regions', {
+                                            data: p,
+                                        });
+                                    });
+                                }
+                                if (action === 'menu-close') {
+                                    updateLocationPossibility('regions', {
+                                        loading: true,
+                                    });
+                                    getRegionByName().then(function (p) {
+                                        updateLocationPossibility('regions', {
+                                            data: p,
+                                            loading: false,
+                                        });
+                                    });
+                                }
+                            },
+                        }}
+                        onChange={t => {
+                            setFilter({
+                                ...filter,
+                                regions: t,
+                            });
+                        }}
+                    />
+                    <Input
+                        type="select"
+                        name="department"
+                        placeholder="Département"
+                        extra={{
+                            isLoading: locationPossibility.departments.loading,
+                            clearable: true,
+                            options: locationPossibility.departments.data,
+                            isMulti: true,
+                            closeMenuOnSelect: false,
+                            onInputChange: (name, { action }) => {
+                                if (action === 'input-change') {
+                                    getDepartmentByName(name).then(function (
+                                        p
+                                    ) {
+                                        updateLocationPossibility(
+                                            'departments',
+                                            { data: p }
+                                        );
+                                    });
+                                }
+                                if (action === 'menu-close') {
+                                    updateLocationPossibility('departments', {
+                                        loading: true,
+                                    });
+                                    getDepartmentByName().then(function (p) {
+                                        updateLocationPossibility(
+                                            'departments',
+                                            { data: p, loading: false }
+                                        );
+                                    });
+                                }
+                            },
+                        }}
+                        onChange={d => {
+                            setFilter({
+                                ...filter,
+                                departments: d,
+                            });
+                        }}
+                    />
+                    <Input
+                        type="select"
+                        name=""
+                        label=""
+                        defaultValue={{ value: null, label: 'tous' }}
+                        extra={{
+                            options: [
+                                { value: null, label: 'tous' },
+                                { value: 1, label: 'actif' },
+                                { value: 0, label: 'inactif' },
+                            ],
+                        }}
+                        onChange={t => {
+                            console.log(t);
+                            setFilter({
+                                ...filter,
+                                state: t.value,
+                            });
+                        }}
+                    />
                 </div>
                 <Pagination
                     items={organization}

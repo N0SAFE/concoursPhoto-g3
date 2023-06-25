@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use App\Repository\OrganizationRepository;
@@ -18,9 +19,23 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Serializer\Filter\PropertyFilter;
 use ApiPlatform\Serializer\Filter\GroupFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use Metaclass\FilterBundle\Filter\FilterLogic;
 
 #[ApiFilter(PropertyFilter::class)]
-#[ApiFilter(SearchFilter::class)]
+#[ApiFilter(FilterLogic::class)]
+#[ApiFilter(BooleanFilter::class)]
+#[
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'organizerName' => 'partial',
+            'citycode' => 'exact',
+            'regionCriteria' => 'partial',
+            'departmentCriteria' => 'partial',
+            'state' => 'exact',
+        ]
+    )
+]
 #[ApiFilter(GroupFilter::class)]
 #[
     ApiResource(
@@ -32,7 +47,9 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
             new Delete(),
         ],
         normalizationContext: ['groups' => ['organization:read']],
-        denormalizationContext: ['groups' => ['organization:write', 'organizationLink:write']]
+        denormalizationContext: [
+            'groups' => ['organization:write', 'organizationLink:write'],
+        ]
     )
 ]
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
@@ -85,18 +102,36 @@ class Organization
     private ?string $country = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizations')]
-    #[Groups(['organization:organizationType:read', 'user:current:read', 'organization:write'])]
+    #[
+        Groups([
+            'organization:organizationType:read',
+            'user:current:read',
+            'organization:write',
+        ])
+    ]
     private ?OrganizationType $organizationType = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Manage')]
-    #[Groups(['organization:admins:read', 'organization:admin:read', 'organization:write'])]
+    #[
+        Groups([
+            'organization:admins:read',
+            'organization:admin:read',
+            'organization:write',
+        ])
+    ]
     private Collection $admins;
 
     #[Groups(['organization:rents:read', 'organization:write'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Rent::class)]
     private Collection $rents;
 
-    #[Groups(['organization:competitions:read', 'user:current:read', 'organization:write'])]
+    #[
+        Groups([
+            'organization:competitions:read',
+            'user:current:read',
+            'organization:write',
+        ])
+    ]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Competition::class)]
     private Collection $competitions;
 
@@ -113,20 +148,53 @@ class Organization
     private ?string $numberSiret = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['organization:logo:read', 'user:current:read', 'organization:write'])]
+    #[
+        Groups([
+            'organization:logo:read',
+            'user:current:read',
+            'organization:write',
+        ])
+    ]
     private ?File $logo = null;
 
-    #[Groups(['organization:read', 'organization:organizationLink:read', 'organization:organizationLinks:read', 'organization:write'])]
-    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: OrganizationLink::class, cascade: ['persist', 'remove'])]
+    #[
+        Groups([
+            'organization:read',
+            'organization:organizationLink:read',
+            'organization:organizationLinks:read',
+            'organization:write',
+        ])
+    ]
+    #[
+        ORM\OneToMany(
+            mappedBy: 'organization',
+            targetEntity: OrganizationLink::class,
+            cascade: ['persist', 'remove']
+        )
+    ]
     private Collection $organizationLinks;
 
     #[Groups(['organization:read', 'user:current:read'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $lastUpdateDate = null;
 
-    #[Groups(['organization:organizationVisual:read', 'user:current:read', 'organization:write'])]
+    #[
+        Groups([
+            'organization:organizationVisual:read',
+            'user:current:read',
+            'organization:write',
+        ])
+    ]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?File $organizationVisual = null;
+
+    #[ORM\Column(type: 'json')]
+    #[Groups(['organizattion:read', 'user:current:read'])]
+    private array $regionCriteria = [];
+
+    #[ORM\Column(type: 'json')]
+    #[Groups(['organization:read', 'user:current:read'])]
+    private array $departmentCriteria = [];
 
     public function __construct()
     {
@@ -538,6 +606,30 @@ class Organization
     public function setOrganizationVisual(?File $organizationVisual): self
     {
         $this->organizationVisual = $organizationVisual;
+
+        return $this;
+    }
+
+    public function getRegionCriteria(): array
+    {
+        return $this->regionCriteria;
+    }
+
+    public function setRegionCriteria(array $regionCriteria): static
+    {
+        $this->regionCriteria = $regionCriteria;
+
+        return $this;
+    }
+
+    public function getDepartmentCriteria(): array
+    {
+        return $this->departmentCriteria;
+    }
+
+    public function setDepartmentCriteria(array $departmentCriteria): static
+    {
+        $this->departmentCriteria = $departmentCriteria;
 
         return $this;
     }

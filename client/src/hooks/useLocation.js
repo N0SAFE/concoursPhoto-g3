@@ -1,3 +1,5 @@
+import { is } from 'date-fns/locale';
+
 export default function () {
     async function getCityByCode(code, { limit = 30, controller } = {}) {
         console.debug('https://geo.api.gouv.fr/communes/' + code);
@@ -6,7 +8,9 @@ export default function () {
         })
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -21,7 +25,9 @@ export default function () {
         )
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -33,7 +39,9 @@ export default function () {
         })
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -48,7 +56,9 @@ export default function () {
         )
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -60,7 +70,9 @@ export default function () {
         })
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -75,7 +87,9 @@ export default function () {
         )
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }

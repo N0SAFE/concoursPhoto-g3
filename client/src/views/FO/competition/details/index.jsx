@@ -52,7 +52,7 @@ export default function ListCompetition() {
         participants: [],
         selectedAge: [0, 100],
         elasticSearch: '',
-        isActif: null,
+        isActive: null,
         regions: [],
         departments: [],
     });
@@ -183,7 +183,7 @@ export default function ListCompetition() {
         controller?.abort();
         const _controller = new AbortController();
         setController(_controller);
-        const isActif = filter.isActif;
+        const isActive = filter.isActive;
         const currentDate = format(new Date(), 'yyyy-MM-dd');
         return apiFetch(`/competitions`, {
             query: {
@@ -203,33 +203,50 @@ export default function ListCompetition() {
                     'competition:read',
                     'competition:competitionVisual:read',
                 ],
-                theme: filter.themes.map(t => t.value),
-                participantCategory: filter.participants.map(p => p.value),
-                minAgeCriteria: {
-                    gte: filter.selectedAge[0],
+                and: {
+                    and: [
+                        {
+                            or: {
+                                regionCriteria: filter.regions.map(
+                                    r => r.value
+                                ),
+                                departmentCriteria: filter.departments.map(
+                                    d => d.value
+                                ),
+                            },
+                        },
+                        {
+                            or: {
+                                competitionName: filter.elasticSearch,
+                                'theme.label': filter.elasticSearch,
+                                'participantCategory.label':
+                                    filter.elasticSearch,
+                            },
+                        },
+                    ],
+                    theme: filter.themes.map(t => t.value),
+                    participantCategory: filter.participants.map(p => p.value),
+                    minAgeCriteria: {
+                        gte: filter.selectedAge[0],
+                    },
+                    maxAgeCriteria: {
+                        lte: filter.selectedAge[1],
+                    },
+
+                    ...(isActive === null
+                        ? {}
+                        : isActive === true
+                        ? {
+                              resultsDate: { after: currentDate },
+                              creationDate: { before: currentDate },
+                          }
+                        : {
+                              or: {
+                                  resultsDate: { before: currentDate },
+                                  creationDate: { after: currentDate },
+                              },
+                          }),
                 },
-                maxAgeCriteria: {
-                    lte: filter.selectedAge[1],
-                },
-                regionCriteria: filter.regions.map(r => r.value),
-                departmentCriteria: filter.departments.map(d => d.value),
-                or: {
-                    competitionName: filter.elasticSearch,
-                    'theme.label': filter.elasticSearch,
-                    'participantCategory.label': filter.elasticSearch,
-                },
-                resultsDate:
-                    isActif === true
-                        ? { after: currentDate }
-                        : isActif === false
-                        ? { before: currentDate }
-                        : null,
-                creationDate:
-                    isActif === true
-                        ? { before: currentDate }
-                        : isActif === false
-                        ? { after: currentDate }
-                        : null,
             },
             method: 'GET',
             headers: {
@@ -351,7 +368,7 @@ export default function ListCompetition() {
                             console.log(t);
                             setFilter({
                                 ...filter,
-                                isActif: t.value,
+                                isActive: t.value,
                             });
                         }}
                     />
