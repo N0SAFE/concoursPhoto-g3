@@ -100,7 +100,7 @@ export default function CompetitionLayout() {
                     'competition:participantCategory:read',
                     'participantCategory:read',
                     'theme:read',
-                    'competition:sponsors:read',
+                    'competition:sponsor:read',
                     'sponsor:read',
                     'sponsor:logo:read',
                     'picture:user:read',
@@ -315,7 +315,7 @@ export default function CompetitionLayout() {
                         type: 'slider',
                     }}
                     boxDownContents={entity.sponsors?.map(
-                        sponsor => sponsor.organization.logo.path
+                        sponsor => sponsor.organization?.logo.path
                     )}
                     entity={entity}
                     modalContentSingle={<CompetitionVisualEdit competition={entity}/>}

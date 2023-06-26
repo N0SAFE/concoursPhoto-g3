@@ -143,8 +143,6 @@ export default function Profile() {
         });
     }, []);
 
-    console.log(gendersPossibility)
-
     useEffect(() => {
         updateLocationPossibility({
             args: {

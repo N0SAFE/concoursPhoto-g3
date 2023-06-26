@@ -16,6 +16,7 @@ class FileController extends AbstractController
 {
     const PICTURES_FILE_SIZE = 'picturesFileSize';
     const COMPETITION_FILE_SIZE = 'competitionFileSize';
+    const SPONSOR_FILE_SIZE = 'sponsorsFileSize';
 
     public function __invoke(Request $request, FileUploader $fileUploader): File
     {
@@ -36,7 +37,7 @@ class FileController extends AbstractController
             self::PICTURES_FILE_SIZE => $fileOptions['size'] < 1000000 ? $file->setSize($fileOptions['size']) : throw new \RuntimeException(
                 sprintf('File size is too big.')
             ),
-            self::COMPETITION_FILE_SIZE => $fileOptions['size'] < 2000000 ? $file->setSize($fileOptions['size']) : throw new \RuntimeException(
+            self::COMPETITION_FILE_SIZE || self::SPONSOR_FILE_SIZE => $fileOptions['size'] < 2000000 ? $file->setSize($fileOptions['size']) : throw new \RuntimeException(
                 sprintf('File size is too big.')
             ),
             default => $file->setSize($fileOptions['size']),
@@ -47,7 +48,7 @@ class FileController extends AbstractController
         $file->setDefaultName($fileOptions['default_name']);
 
         match ($fileOptions['extension']) {
-            'jpg', 'png' => $file->setExtension($fileOptions['extension']),
+            'jpg', 'png', 'gif' => $file->setExtension($fileOptions['extension']),
             default => throw new \RuntimeException(
                 sprintf('File extension is not allowed.')
             ),

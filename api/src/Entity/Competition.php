@@ -223,7 +223,7 @@ class Competition
     private ?\DateTimeInterface $activationDate = null;
 
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: Sponsors::class)]
-    #[Groups(['competition:sponsors:read', 'user:current:read'])]
+    #[Groups(['competition:sponsor:read', 'user:current:read', 'competition:read'])]
     private Collection $sponsors;
 
     public function __construct()

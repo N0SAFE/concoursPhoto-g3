@@ -203,33 +203,50 @@ export default function ListCompetition() {
                     'competition:read',
                     'competition:competitionVisual:read',
                 ],
-                theme: filter.themes.map(t => t.value),
-                participantCategory: filter.participants.map(p => p.value),
-                minAgeCriteria: {
-                    gte: filter.selectedAge[0],
+                and: {
+                    and: [
+                        {
+                            or: {
+                                regionCriteria: filter.regions.map(
+                                    r => r.value
+                                ),
+                                departmentCriteria: filter.departments.map(
+                                    d => d.value
+                                ),
+                            },
+                        },
+                        {
+                            or: {
+                                competitionName: filter.elasticSearch,
+                                'theme.label': filter.elasticSearch,
+                                'participantCategory.label':
+                                    filter.elasticSearch,
+                            },
+                        },
+                    ],
+                    theme: filter.themes.map(t => t.value),
+                    participantCategory: filter.participants.map(p => p.value),
+                    minAgeCriteria: {
+                        gte: filter.selectedAge[0],
+                    },
+                    maxAgeCriteria: {
+                        lte: filter.selectedAge[1],
+                    },
+
+                    ...(isActif === null
+                        ? {}
+                        : isActif === true
+                        ? {
+                              resultsDate: { after: currentDate },
+                              creationDate: { before: currentDate },
+                          }
+                        : {
+                              or: {
+                                  resultsDate: { before: currentDate },
+                                  creationDate: { after: currentDate },
+                              },
+                          }),
                 },
-                maxAgeCriteria: {
-                    lte: filter.selectedAge[1],
-                },
-                regionCriteria: filter.regions.map(r => r.value),
-                departmentCriteria: filter.departments.map(d => d.value),
-                or: {
-                    competitionName: filter.elasticSearch,
-                    'theme.label': filter.elasticSearch,
-                    'participantCategory.label': filter.elasticSearch,
-                },
-                resultsDate:
-                    isActif === true
-                        ? { after: currentDate }
-                        : isActif === false
-                        ? { before: currentDate }
-                        : null,
-                creationDate:
-                    isActif === true
-                        ? { before: currentDate }
-                        : isActif === false
-                        ? { after: currentDate }
-                        : null,
             },
             method: 'GET',
             headers: {

@@ -6,10 +6,7 @@ import {useRef, useState} from 'react'
 import useApiFetch from "@/hooks/useApiFetch.js";
 import useFilesUpdater from "@/hooks/useFilesUploader.js";
 
-export default function PicturesLines({
-                                          entity, onChange = function () {
-    }
-                                      }) {
+export default function PicturesLines({entity, onChange = function () {}}) {
     const inputFileRef = useRef();
     const [pictureName, setPictureName] = useState(entity.pictureName)
     const [file, setFile] = useState(entity.file)
@@ -40,8 +37,6 @@ export default function PicturesLines({
         });
         FR.readAsDataURL(file);
     }
-
-    console.log(file)
 
     const updateData = async function () {
         const fileId = await (async function () {

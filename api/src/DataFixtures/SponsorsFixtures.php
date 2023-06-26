@@ -38,6 +38,9 @@ class SponsorsFixtures extends Fixture implements DependentFixtureInterface
             $sponsors->setPrice(
                 $faker->randomFloat(3, 0, self::COUNT_REFERENCE)
             );
+            $sponsors->setDestinationUrl(
+                $faker->url()
+            );
 
             $manager->persist($sponsors);
 

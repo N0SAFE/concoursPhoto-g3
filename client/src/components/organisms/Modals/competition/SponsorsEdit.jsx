@@ -7,204 +7,194 @@ import useApiFetch from "@/hooks/useApiFetch.js";
 import Input from "@/components/atoms/Input/index.jsx";
 import useApiPath from "@/hooks/useApiPath.js";
 import useFilesUpdater from "@/hooks/useFilesUploader.js";
+import SponsorsLines from "@/components/molecules/SponsorsLines/SponsorsLines.jsx";
+import Loader from "@/components/atoms/Loader/index.jsx";
 
 export default function SponsorsEdit({competition: _competition}) {
     const apiFetch = useApiFetch()
     const [competition, setCompetition] = useState(_competition)
-    const apiPathComplete = useApiPath();
-
-    const [possibilities, setPossibilities] = useState({
-        sponsors: [],
+    const [competitionSponsors, setCompetitionSponsors] = useState([])
+    const [sponsorsPossibility, setStatusPossibility] = useState({
+        list: [],
+        isLoading: true
     });
+    const {uploadFile} = useFilesUpdater();
+    const [isLoading, setIsLoading] = useState(true)
+    const [sponsors, setSponsors] = useState([])
 
-    const getSponsors = controller => {
-        return apiFetch('/sponsors', {
-            method: 'GET',
-            signal: controller?.signal,
-        })
-            .then(r => r.json())
-            .then(data => {
-                console.debug(data);
-                return data['hydra:member'].map(function (item) {
-                    return {label: item.label, value: item['@id']};
-                });
-            });
-    };
-
-    console.log(new Map(
-        competition.sponsors.map(l => {
-            return [
-                l?.logo?.['@id'],
-                {
-                    path: l.logo?.['path'],
-                    defaultName: l.logo?.['defaultName'],
-                },
-            ];
-        }
-    )))
-
-    const [updatedFile, setUpdatedFile] = useState({
-        sponsors:
-            competition.sponsors.map(l => {
-                return [
-                    l?.logo?.['@id'],
-                    {
-                        path: l.logo?.['path'],
-                        defaultName: l.logo?.['defaultName'],
-                    },
-                ];
-            })
-    });
-    const { uploadFile, deleteFile } = useFilesUpdater();
-
-    const updateFileState = (key, value) => {
-        setUpdatedFile({ ...updatedFile, [key]: value });
-    };
 
     useEffect(() => {
-        getSponsors().then(data => {
-            setPossibilities({ sponsors: data });
+        getSponsorsInCompetition().then(data => {
+            setStatusPossibility({ list: data, isLoading: false });
         });
-        const controller = new AbortController();
-        const promise = Promise.all([])
-        if (import.meta.env.MODE === 'development') {
-            toast.promise(promise, {
-                pending: 'Chargement du concours',
-                success: 'Concours chargé',
-                error: 'Erreur lors du chargement du concours',
-            });
-        }
+        getSponsors();
+    }, [])
 
-        return () => setTimeout(() => controller.abort());
-    }, []);
+    const getSponsorsInCompetition = function () {
+        const promise = apiFetch('/sponsors', {
+            query: {
+                competition: competition['@id'],
+                groups: [
+                    'sponsor:competition:read',
+                    'sponsor:organization:read',
+                    'organization:read',
+                    'organization:logo:read',
+                    'file:read'
+                ],
+            }
+        }).then(r => r.json()).then(function (d) {
+            console.debug(d)
+            setCompetitionSponsors(d['hydra:member'])
+            setIsLoading(false)
+            return d['hydra:member']
+        })
 
-    const updateCompetition = (key, value) => {
-        setCompetition({ ...competition, [key]: value });
+        toast.promise(promise, {
+            pending: 'Chargement des sponsors',
+            success: 'Sponsors chargés',
+            error: 'Erreur lors du chargement des sponsors',
+        })
+        return promise
+    }
+
+    const getSponsors = function () {
+        const promise = apiFetch('/sponsors', {
+            query: {
+                groups: [
+                    'sponsor:competition:read',
+                    'sponsor:organization:read',
+                    'organization:read'
+                ],
+            }
+        }).then(r => r.json()).then(function (d) {
+            console.debug(d)
+            setSponsors(d['hydra:member'])
+            setIsLoading(false)
+            return d['hydra:member']
+        })
+
+        toast.promise(promise, {
+            pending: 'Chargement des sponsors',
+            success: 'Sponsors chargés',
+            error: 'Erreur lors du chargement des sponsors',
+        })
+        return promise
+    }
+
+    const updateEntityState = (key, value) => {
+        setEntity({ ...entity, [key]: value });
     };
 
-    console.log(competition.sponsors)
+    const [entity, setEntity] = useState({
+        competition: competition['@id'],
+        organization: "",
+        logo: "",
+        destinationUrl: "",
+        startDate: new Date().toISOString(),
+        endDate: new Date().toISOString(),
+        sponsorRank: 0,
+        price: 0,
+    });
 
     return (
-        <div className={style.competitionModalContent}>
-            <h2>Concours {">"} sponsors : édition</h2>
-            <div>
-                <b>Vous pouvez télécharger plusieurs visuels de sponsors, voici les formats, poids et tailles à respecter :</b>
-                <p>Formats supportés : JPG, PNG, GIF | Taille : 840x525 pixels minimum | Poids : 2 Mo max</p>
-                <p>Pour modifier l’ordre d’affichage, utilisez les flèches ou le glisser-déposer :</p>
-            </div>
-            <Form
-                hasSubmit={true}
-                handleSubmit={function () {
-                    const promise = new Promise(async (resolve, reject) => {
-                        try {
-                            const newVisualId = await (async () => {
-                                Array.from(competition.sponsors).map(sponsor => {
-                                    if (sponsor === null) {
-                                        return null;
-                                    } else if (sponsor.file) {
-                                        return uploadFile({
-                                            file: sponsor.file,
-                                        }).then(r => r['@id']);
-                                    }
-                                    return sponsor['@id'];
-                                });
-                            })().catch(e => {
-                                reject(e);
-                                throw e;
-                            });
-                            const data = {
-                                sponsors: newVisualId || null,
-                            };
-                            const _updatedFile = {
-                                sponsors: competition.sponsors.map(([key, value]) => {
-                                        return [
-                                            key,
-                                            {
-                                                path: value.path,
-                                                defaultName: value.defaultName,
-                                            },
-                                        ];
-                                    })
-                            };
-                            setUpdatedFile(_updatedFile);
-                            const res = await apiFetch(
-                                `/competitions/${competition.id}`,
-                                {
-                                    method: 'PATCH',
-                                    body: JSON.stringify(data),
-                                    headers: {
-                                        'Content-Type':
-                                            'application/merge-patch+json',
-                                    },
-                                }
-                            )
-                                .then(r => r.json())
-                                .then(async data => {
-                                    console.debug(data);
-                                    if (data['@type'] === 'hydra:Error') {
-                                        throw new Error(data.description);
-                                    }
-                                })
-                                .catch(e => {
-                                    reject(e);
-                                    throw e;
-                                });
-                            resolve(res);
-                        } catch (e) {
-                            console.error(e);
-                            reject(e);
-                        }
-                    });
-                    toast.promise(promise, {
-                        pending: 'Modification du visuel',
-                        success: 'Visuel modifié',
-                        error: 'Erreur lors de la modification du visuel',
-                    });
-                }}
-            >
+        <Loader takeInnerContent={true} active={isLoading} style={{background: "white"}}>
+            <div className={style.competitionModalContent}>
+                <h2>Concours {">"} sponsors : édition</h2>
+                <div>
+                    <b>Vous pouvez télécharger plusieurs visuels de sponsors, voici les formats, poids et tailles à
+                        respecter :</b>
+                    <p>Formats supportés : JPG, PNG, GIF | Taille : 840x525 pixels minimum | Poids : 2 Mo max</p>
+                    <p>Pour modifier l’ordre d’affichage, utilisez les flèches ou le glisser-déposer :</p>
+                </div>
                 <div className={style.sponsorList}>
-                    {competition.sponsors.map((sponsor, index) => {
-                        console.log(sponsor.organization.logo.path);
-
-                        console.log(updatedFile.sponsors)
+                    {competitionSponsors.map(sponsor => {
                         return (
-                            <div className={style.sponsorListItems} key={index}>
-                                <Input
-                                    type="imageContent"
-                                    onChange={d => {
-                                        const map = competition.sponsors;
-                                        map.set(sponsor['@id'], {
-                                            sponsors: sponsor['@id'],
-                                            path: d.path,
-                                            defaultName: d.defaultName,
-                                        });
-                                        updateFileState('sponsors', map);
-                                    }}
-                                    extra={{
-                                        value: updatedFile.sponsors,
-                                        type: 'image',
-                                    }}
-                                />
-                            </div>
-                        );
+                            <SponsorsLines entity={sponsor} onChange={function () {
+                                getSponsorsInCompetition();
+                            }}/>
+                        )
                     })}
                 </div>
-                <div style={{color: "red"}}><p>not implemented yet</p></div>
+                <div className={style.sponsorPropositions}>
+                    <b>Sélectionnez le sponsor dans la liste ci-dessous puis cliquez sur ajouter</b>
+                    <Form
+                        handleSubmit={function () {
+                            const promise = new Promise(async (resolve, reject) => {
+                                try {
+                                    const data = {
+                                        organization: '/organizations/' + entity.organization.value,
+                                        competition: competition['@id'],
+                                        startDate: new Date().toISOString(),
+                                        endDate: new Date().toISOString(),
+                                        sponsorRank: 0,
+                                        price: 0,
+                                    };
+                                    console.debug('data', data);
+                                    const res = await apiFetch('/sponsors', {
+                                        method: 'POST',
+                                        body: JSON.stringify(data),
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                    })
+                                        .then(r => r.json())
+                                        .then(data => {
+                                            if (data['@type'] === 'hydra:Error') {
+                                                throw new Error(data.description);
+                                            }
+                                            getSponsorsInCompetition();
+                                            return data;
+                                        });
+                                    console.debug('res', res);
+                                    resolve(res);
+                                } catch (e) {
+                                    console.error(e);
+                                    reject(e);
+                                }
+                            });
 
-                <div className={style.registerSubmit}>
-                    <Button
-                        type="submit"
-                        color={'black'}
-                        textColor={'white'}
-                        padding={'14px 30px'}
-                        border={false}
-                        borderRadius={'44px'}
-                        width={'245px'}
+                            toast.promise(promise, {
+                                pending: "Ajout d'un sponsor",
+                                success: 'Sponsor ajouté',
+                                error: "Erreur lors de l'ajout du sponsor",
+                            });
+                        }}
+                        hasSubmit={true}
                     >
-                        Sauvegarder
-                    </Button>
+                        <div className={style.sponsorAdd}>
+                            <Input
+                                className={style.formSelect}
+                                type="select"
+                                extra={{
+                                    options: sponsors.map(sponsor => {
+                                        return {
+                                            value: sponsor.id,
+                                            label: sponsor.organization.organizerName
+                                        }
+                                    }),
+                                }}
+                                onChange={d => updateEntityState('organization', d)}
+                            />
+                            <Button
+                                type="submit"
+                                color={'black'}
+                                textColor={'white'}
+                                padding={'14px 0'}
+                                border={false}
+                                borderRadius={'44px'}
+                                width={'150px'}
+                            >
+                                Ajouter
+                            </Button>
+                        </div>
+                    </Form>
+                    <p>
+                        Si vous trouvez pas le sponsor dans la liste proposée, merci de le demander
+                        à <u>l’administrateur</u>, il sera ajouté avec son logo. L’URL de destination au clic est à
+                        définir.
+                    </p>
                 </div>
-            </Form>
-        </div>
-    )
+            </div>
+        </Loader>
+    );
 }

@@ -2,7 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Serializer\Filter\GroupFilter;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
+use App\Controller\FileController;
 use App\Repository\SponsorsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,9 +20,18 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 
+#[ApiFilter(GroupFilter::class)]
+#[ApiFilter(SearchFilter::class)]
+#[ApiFilter(PropertyFilter::class)]
 #[
     ApiResource(
-        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        operations: [
+            new GetCollection(),
+            new Get(),
+            new Post(),
+            new Patch(),
+            new Delete()
+        ],
         normalizationContext: ['groups' => ['sponsor:read']]
     )
 ]
@@ -30,7 +45,7 @@ class Sponsors
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'sponsors')]
-    #[Groups(['sponsor:read'])]
+    #[Groups(['sponsor:organization:read', 'sponsor:read'])]
     private ?Organization $organization = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -50,8 +65,12 @@ class Sponsors
     private ?float $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'sponsors')]
-    #[Groups(['sponsor:competitions:read'])]
+    #[Groups(['sponsor:competition:read'])]
     private ?Competition $competition = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['sponsor:read'])]
+    private ?string $destinationUrl = null;
 
     public function __construct() {
     }
@@ -129,6 +148,18 @@ class Sponsors
     public function setCompetition(?Competition $competition): static
     {
         $this->competition = $competition;
+
+        return $this;
+    }
+
+    public function getDestinationUrl(): ?string
+    {
+        return $this->destinationUrl;
+    }
+
+    public function setDestinationUrl(?string $destinationUrl): static
+    {
+        $this->destinationUrl = $destinationUrl;
 
         return $this;
     }
