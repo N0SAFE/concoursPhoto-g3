@@ -52,7 +52,7 @@ export default function ListCompetition() {
         participants: [],
         selectedAge: [0, 100],
         elasticSearch: '',
-        isActif: null,
+        isActive: null,
         regions: [],
         departments: [],
     });
@@ -183,7 +183,7 @@ export default function ListCompetition() {
         controller?.abort();
         const _controller = new AbortController();
         setController(_controller);
-        const isActif = filter.isActif;
+        const isActive = filter.isActive;
         const currentDate = format(new Date(), 'yyyy-MM-dd');
         return apiFetch(`/competitions`, {
             query: {
@@ -233,9 +233,9 @@ export default function ListCompetition() {
                         lte: filter.selectedAge[1],
                     },
 
-                    ...(isActif === null
+                    ...(isActive === null
                         ? {}
-                        : isActif === true
+                        : isActive === true
                         ? {
                               resultsDate: { after: currentDate },
                               creationDate: { before: currentDate },
@@ -368,7 +368,7 @@ export default function ListCompetition() {
                             console.log(t);
                             setFilter({
                                 ...filter,
-                                isActif: t.value,
+                                isActive: t.value,
                             });
                         }}
                     />
