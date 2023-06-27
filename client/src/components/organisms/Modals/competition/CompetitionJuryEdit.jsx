@@ -156,14 +156,15 @@ export default function CompetitionJuryEdit({competition: _competition}) {
                         />
                         <Button
                             type="submit"
-                            color={'black'}
-                            textColor={'white'}
+                            color={'#D9D9D9'}
+                            textColor={'black'}
                             padding={'14px 0'}
                             border={false}
                             borderRadius={'44px'}
-                            width={'150px'}
+                            width={'250px'}
+                            style={{fontWeight: 'bold'}}
                         >
-                            Ajouter
+                            Ajouter un membre du jury
                         </Button>
                     </div>
                 </Form>
