@@ -29,7 +29,7 @@
         "dev:client": "cd client && npm run dev",
         "pretty": "prettier --write \"**/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml,php}\"",
         "clear:cache": "cd api && php bin/console cache:clear",
-        "force:reset": "cd api && php bin/console doctrine:database:drop --force && php bin/console doctrine:database:create && php bin/console doctrine:schema:update --force --complete && php bin/console doctrine:fixtures:load --no-interaction && php bin/console doctrine:fixtures:load --no-interaction"
+        "force:reset": "cd api && php bin/console doctrine:database:drop --force && php bin/console doctrine:database:create && php bin/console app:reset-auto-increment && php bin/console doctrine:schema:update --force --complete && php bin/console doctrine:fixtures:load --no-interaction"
     },
     "repository": {
         "type": "git",

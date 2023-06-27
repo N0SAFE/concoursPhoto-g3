@@ -28,7 +28,7 @@ function ModalProvider({ children }) {
         setInnerCloseCallbacks([]);
         setOuterCloseCallbacks([]);
     };
-    
+
     const outerClose = () => {
         setActive(false);
         outerCloseCallbacks.forEach(callback => callback());

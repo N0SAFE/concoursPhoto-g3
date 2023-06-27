@@ -51,16 +51,6 @@ class FileFixtures
         '93795348_109679020542294_1944115282404285593_n.jpg',
     ];
 
-    const SPONSOR_LOGO_ARRAY = [
-        'coca.png',
-        'pepsi.png',
-        'ytb.png',
-        'adidas.png',
-        'amazon.png',
-    ];
-
-    const SPONSOR_LOGO_ARRAY_COUNT = 5;
-
     const USER_LOGO_ARRAY = [
         'user-icon-in-trendy-flat-style-isolated-on-grey-background-user-symbol-for-your-web-site-design-logo-app-ui-illustration-eps10-free-vector.jpg',
         '5550850.jfif',
@@ -75,10 +65,14 @@ class FileFixtures
         'pngegg.png',
         'pngwing.com.png',
         'vecteezy_social-organization-logo-social-community-logo-template_15277729.jpg',
-        '27210784.jpg',
+        '27210784.jpg', 'coca.png',
+        'pepsi.png',
+        'ytb.png',
+        'adidas.png',
+        'amazon.png',
     ];
 
-    const ORGANISATION_VIUAL_ARRAY = [
+    const ORGANISATION_VISUAL_ARRAY = [
         'maxresdefault.jpg',
         'inspiring-company-mission-statements-1.webp',
         'images.png',
