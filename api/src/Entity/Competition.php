@@ -54,7 +54,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 uriTemplate: '/competitions/view/{id}'
             ),
             new Post(name: 'CompetitionCreate'),
-            new Post(name: FileController::COMPETITION_FILE_SIZE, controller: FileController::class, uriTemplate: '/files/competitions', deserialize: false),
             new Patch(),
             new Delete(),
         ],

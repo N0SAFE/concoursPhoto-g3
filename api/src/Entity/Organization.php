@@ -44,7 +44,6 @@ use Metaclass\FilterBundle\Filter\FilterLogic;
             new GetCollection(),
             new Get(),
             new Post(),
-            new Post(name: FileController::SPONSOR_FILE_SIZE, controller: FileController::class, uriTemplate: '/files/sponsors', deserialize: false),
             new Patch(),
             new Delete(),
         ],
