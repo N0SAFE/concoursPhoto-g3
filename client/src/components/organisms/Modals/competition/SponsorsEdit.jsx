@@ -168,7 +168,7 @@ export default function SponsorsEdit({competition: _competition}) {
                                 extra={{
                                     options: sponsors.map(sponsor => {
                                         return {
-                                            value: sponsor.id,
+                                            value: sponsor.organization.id,
                                             label: sponsor.organization.organizerName
                                         }
                                     }),
