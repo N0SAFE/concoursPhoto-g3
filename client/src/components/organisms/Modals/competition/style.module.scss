@@ -175,4 +175,23 @@
             }
         }
     }
+
+    .jury {
+        &Add {
+            display: flex;
+            align-items: center;
+            gap: $gapBetweenElement;
+
+            .formSelect {
+                @extend .select-style;
+            }
+        }
+
+        &Propositions {
+            display: flex;
+            padding: 15px 0;
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
 }

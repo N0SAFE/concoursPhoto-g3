@@ -96,6 +96,7 @@ export default function CompetitionLayout() {
                     'picture:file:read',
                     'competition:memberOfTheJuries:read',
                     'memberOfTheJury:user:read',
+                    'memberOfTheJury:read',
                     'competition:theme:read',
                     'competition:participantCategory:read',
                     'participantCategory:read',
