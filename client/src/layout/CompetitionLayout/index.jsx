@@ -322,7 +322,7 @@ export default function CompetitionLayout() {
                     modalContentSingle={<CompetitionVisualEdit competition={entity}/>}
                     modalContentDown={<SponsorsEdit competition={entity} />}
                 />
-                <Outlet context={{competition: entity}}/>
+                <Outlet context={{competition: entity, refreshCompetition: getCompetitions}}/>
                 <Button
                     borderRadius={'30px'}
                     padding={'20px'}

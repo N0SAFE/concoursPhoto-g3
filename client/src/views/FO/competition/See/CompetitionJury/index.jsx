@@ -7,7 +7,7 @@ import {useModal} from "@/contexts/ModalContext/index.jsx";
 import CompetitionJuryEdit from "@/components/organisms/Modals/competition/CompetitionJuryEdit";
 
 export default function () {
-    const { competition } = useOutletContext();
+    const { competition, refreshCompetition } = useOutletContext();
     const asidePictures = competition.aside;
     const asideLabel = competition.asideLabel;
     const { showModal, setModalContent } = useModal();
@@ -30,7 +30,7 @@ export default function () {
                     {competition?.userCanEdit && (
                         <Button textColor={"#fff"} color={"#000"} borderRadius={"25px"} onClick={(e) => {
                             e.preventDefault();
-                            setModalContent(<CompetitionJuryEdit competition={competition} />);
+                            setModalContent(<CompetitionJuryEdit competition={competition} refreshCompetition={refreshCompetition} />);
                             showModal();
                         }}>
                             éditer

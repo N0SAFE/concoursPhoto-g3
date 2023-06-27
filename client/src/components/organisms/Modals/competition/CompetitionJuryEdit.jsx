@@ -8,7 +8,7 @@ import Input from "@/components/atoms/Input/index.jsx";
 import Button from "@/components/atoms/Button/index.jsx";
 import useApiFetch from "@/hooks/useApiFetch.js";
 
-export default function CompetitionJuryEdit({competition: _competition}) {
+export default function CompetitionJuryEdit({competition: _competition, refreshCompetition}) {
     const [competition, setCompetition] = useState(_competition)
     const apiFetch = useApiFetch();
     const [user, setUser] = useState('');
@@ -133,6 +133,7 @@ export default function CompetitionJuryEdit({competition: _competition}) {
                                             return data;
                                         });
                                     console.debug('res', res);
+                                    refreshCompetition();
                                     resolve(res);
                                 }
                             } catch (e) {
