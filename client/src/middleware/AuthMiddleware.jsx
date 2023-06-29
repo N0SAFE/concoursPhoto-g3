@@ -10,16 +10,21 @@ export default function AuthMiddleware({ roles }) {
 
     return (
         <GuardedRoute
-            verify={({ isLogged, me }) =>
-                !!(
-                    isLogged &&
-                    roles &&
-                    roles.reduce(
+            verify={({ isLogged, me }) => {
+                if (!isLogged) {
+                    return false;
+                }
+                if (Array.isArray(roles)) {
+                    if (roles.length === 0) {
+                        throw new Error('the roles array must not be empty');
+                    }
+                    return roles.reduce(
                         (acc, role) => acc || me.roles.includes(role),
                         false
-                    )
-                )
-            }
+                    );
+                }
+                return true;
+            }}
             fallback={() => {
                 toast.info('Veuillez vous connecter');
                 setModalContent(<Login forceRedirect={false} />);
