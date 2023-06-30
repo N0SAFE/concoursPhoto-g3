@@ -124,13 +124,7 @@ export default function UserList() {
 
     return (
         <Loader active={isLoading}>
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '15px',
-                }}
-            >
+            <div className={style.container}>
                 <h1>Liste des utilisateurs</h1>
                 <Button
                     color="green"

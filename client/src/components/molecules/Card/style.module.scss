@@ -1,5 +1,6 @@
 $paddingBorder: 15px;
 $containerWidth: calc((100% - ($gapBetweenElement) * 2));
+$containerWidthMobile: calc((100% - $gapBetweenElement));
 $borderRadius: 10px;
 
 .cardContainer {
@@ -20,7 +21,7 @@ $borderRadius: 10px;
     }
 
     @include mobile() {
-        width: calc($containerWidth / 2);
+        width: calc($containerWidthMobile / 2);
     }
 
     @include small-mobile() {

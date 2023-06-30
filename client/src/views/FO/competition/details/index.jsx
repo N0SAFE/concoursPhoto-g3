@@ -1,7 +1,4 @@
 import style from './style.module.scss';
-import FOCompetitionList from '@/components/organisms/FO/FOCompetitionList';
-import FOStats from '@/components/organisms/FO/FOStats';
-import FOPortalList from '@/components/organisms/FO/FOPortalList';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import { useEffect, useState } from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
@@ -9,7 +6,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import Card from '@/components/molecules/Card/index.jsx';
 import Input from '@/components/atoms/Input/index.jsx';
-import Dropdown from '@/components/atoms/Dropdown';
 import Button from '@/components/atoms/Button';
 import Icon from '@/components/atoms/Icon';
 import { toast } from 'react-toastify';
@@ -77,18 +73,6 @@ export default function ListCompetition() {
             }));
         }
         setLocationPossibility({ ...locationPossibility });
-    };
-
-    const getStats = controller => {
-        return apiFetch('/stats', {
-            method: 'GET',
-            signal: controller?.signal,
-        })
-            .then(r => r.json())
-            .then(data => {
-                console.debug(data);
-                setStats(data);
-            });
     };
 
     const toggleSubMenu = () => {
@@ -176,7 +160,6 @@ export default function ListCompetition() {
     }
 
     function getListCompetition() {
-        const now = new Date();
         const pageToLoad = page === null ? DEFAULT_PAGE : page;
         const itemsPerPageToLoad =
             itemsPerPage === null ? DEFAULT_ITEMS_PER_PAGE : itemsPerPage;
@@ -295,49 +278,40 @@ export default function ListCompetition() {
 
     return (
         <Loader active={isLoading}>
-            <div className={style.homeContainer}>
-                <div className={style.homeBanner}>
+            <div className={style.searchContainer}>
+                <div className={style.searchBanner}>
                     <div>
                         <h1>Rechercher un concours</h1>
                     </div>
                 </div>
-                <div
-                    style={{
-                        display: 'Flex',
-                        flexDirection: 'row',
-                        gap: '10px',
-                    }}
-                >
-                    <Icon size="6%" icon={'search'} />
+                <div className={style.searchBar}>
+                    <div className={style.searcher}>
+                        <div className={style.searcherIcon}>
+                            <Icon icon={'search'} />
+                        </div>
+                        <Input
+                            type="text"
+                            name="recherche"
+                            placeholder="Nom du concours, thème, catégorie..."
+                            onChange={v => {
+                                setElasticSearch(v);
+                            }}
+                        />
+                        <Button
+                            onClick={() => {
+                                setFilter({
+                                    ...filter,
+                                    elasticSearch: elasticSearch,
+                                });
+                            }}
+                        >
+                            Rechercher
+                        </Button>
+                    </div>
                     <Input
-                        type="text"
-                        name="recherche"
-                        placeholder="Rechercher"
-                        onChange={v => {
-                            setElasticSearch(v);
-                        }}
-                    />
-
-                    <Button
-                        style={{
-                            borderRadius: '5px',
-                            border: '1px solid #000000',
-                            padding: '5px',
-                        }}
-                        onClick={() => {
-                            setFilter({
-                                ...filter,
-                                elasticSearch: elasticSearch,
-                            });
-                        }}
-                    >
-                        Rechercher
-                    </Button>
-                    <Input
+                        className={style.searchBarSelect}
                         type="select"
-                        name=""
-                        label=""
-                        placeholder="themes : "
+                        placeholder="Themes : "
                         defaultValue={[]}
                         extra={{
                             options: filterPossibilities.themes,
@@ -353,13 +327,12 @@ export default function ListCompetition() {
                         }}
                     />
                     <Input
+                        className={style.searchBarSelect}
                         type="select"
-                        name=""
-                        label=""
-                        defaultValue={{ value: null, label: 'tous' }}
+                        defaultValue={{ value: null, label: 'Organisateurs actifs uniquement' }}
                         extra={{
                             options: [
-                                { value: null, label: 'tous' },
+                                { value: null, label: 'Organisateurs actifs uniquement' },
                                 { value: true, label: 'actif' },
                                 { value: false, label: 'inactif' },
                             ],
@@ -372,44 +345,34 @@ export default function ListCompetition() {
                             });
                         }}
                     />
-                    <button
-                        onClick={toggleSubMenu}
-                        style={{
-                            borderRadius: '5px',
-                            border: '1px solid #000000',
-                            padding: '5px',
-                        }}
-                    >
-                        critères
-                        <Icon
-                            size="20%"
-                            icon={'arrow-thin-down'}
-                            style={{
-                                transform: isSubMenuActif
-                                    ? 'rotate(-180deg)'
-                                    : 'none',
-                                transitionDuration: '0.5s',
-                            }}
-                        />
-                    </button>
+                    <div className={style.searchBarButton}>
+                        <Button
+                            onClick={toggleSubMenu}
+                        >
+                            Critères
+                            <div className={style.searchBarIconCriteria}>
+                                <Icon
+                                    icon={'arrow-thin-down'}
+                                    style={{
+                                        transform: isSubMenuActif
+                                            ? 'rotate(-180deg)'
+                                            : 'none',
+                                        transitionDuration: '0.5s',
+                                    }}
+                                />
+                            </div>
+                        </Button>
+                    </div>
                 </div>
-                <div
+                <div className={style.searchSubMenu}
                     style={{
-                        display: isSubMenuActif ? 'block' : 'none',
+                        display: isSubMenuActif ? 'flex' : 'none',
                     }}
                 >
-                    <div
-                        style={{
-                            display: 'Flex',
-                            flexDirection: 'row',
-                            backgroundColor: '#cccccc',
-                            padding: '1%',
-                            gap: '10px',
-                        }}
-                    >
+                    <div className={style.searchRow}>
                         <Input
+                            className={style.searchBarSelect}
                             type="select"
-                            name=""
                             label="Pays"
                             extra={{
                                 options: [{ value: 'France', label: 'France' }],
@@ -417,8 +380,8 @@ export default function ListCompetition() {
                             defaultValue={{ value: 'France', label: 'France' }}
                         />
                         <Input
+                            className={style.searchBarSelect}
                             type="select"
-                            name=""
                             label="Région"
                             extra={{
                                 isLoading: locationPossibility.regions.loading,
@@ -458,8 +421,8 @@ export default function ListCompetition() {
                             }}
                         />
                         <Input
+                            className={style.searchBarSelect}
                             type="select"
-                            name="department"
                             label="Département"
                             extra={{
                                 isLoading:
@@ -503,8 +466,8 @@ export default function ListCompetition() {
                             }}
                         />
                         <Input
+                            className={style.searchBarSelect}
                             type="select"
-                            name=""
                             label="Catégorie"
                             extra={{
                                 options: filterPossibilities.participants,
@@ -519,42 +482,45 @@ export default function ListCompetition() {
                                 });
                             }}
                         />
-                        <Slider
-                            value={filter.selectedAge}
-                            className={style.slider}
-                            renderThumb={(props, state) => (
-                                <div
-                                    {...props}
-                                    style={{
-                                        ...props.style,
-                                        transform:
-                                            state.index === 1
-                                                ? 'translateX(-10px)'
-                                                : '',
-                                    }}
-                                >
-                                    {state.valueNow}
-                                </div>
-                            )}
-                            pearling
-                            min={0}
-                            max={100}
-                            ariaValuetext={state =>
-                                `Thumb value ${state.valueNow}`
-                            }
-                            renderTrack={props => (
-                                <div {...props} className={style.sliderTrack} />
-                            )}
-                            minDistance={1}
-                            withTracks
-                            onAfterChange={value => {
-                                setFilter({
-                                    ...filter,
-                                    selectedAge: value,
-                                });
-                            }}
-                        />
-                        <Input type="select" name="" label="Prix/Dotation" />
+                        <div className={style.searchBarSlider}>
+                            <label>Âge</label>
+                            <Slider
+                                value={filter.selectedAge}
+                                className={style.slider}
+                                renderThumb={(props, state) => (
+                                    <div
+                                        {...props}
+                                        style={{
+                                            ...props.style,
+                                            transform:
+                                                state.index === 1
+                                                    ? 'translateX(-10px)'
+                                                    : '',
+                                        }}
+                                    >
+                                        {state.valueNow}
+                                    </div>
+                                )}
+                                pearling
+                                min={0}
+                                max={100}
+                                ariaValuetext={state =>
+                                    `Thumb value ${state.valueNow}`
+                                }
+                                renderTrack={props => (
+                                    <div {...props} className={style.sliderTrack} />
+                                )}
+                                minDistance={1}
+                                withTracks
+                                onAfterChange={value => {
+                                    setFilter({
+                                        ...filter,
+                                        selectedAge: value,
+                                    });
+                                }}
+                            />
+                        </div>
+                        <Input className={style.searchBarSelect} type="select" name="" label="Prix/Dotation" />
                     </div>
                 </div>
                 <Pagination
@@ -604,7 +570,7 @@ export default function ListCompetition() {
                     {(page, { pageCurrent }) => {
                         return (
                             <div>
-                                <div className={style.homeDisposition}>
+                                <div className={style.searchDisposition}>
                                     <div>
                                         <h2>{totalitems} résultats</h2>
                                     </div>
@@ -630,7 +596,7 @@ export default function ListCompetition() {
                                         </div>
                                     </div>
                                 </div>
-                                <div style={{ position: 'relative' }}>
+                                <div className={style.searchList}>
                                     <Loader
                                         active={cardLoading}
                                         takeInnerContent={true}
@@ -638,27 +604,11 @@ export default function ListCompetition() {
                                     >
                                         {page.length === 0 ? (
                                             pageCurrent === 1 ? (
-                                                <div
-                                                    style={{
-                                                        height: '250px',
-                                                        display: 'flex',
-                                                        justifyContent:
-                                                            'center',
-                                                        alignItems: 'center',
-                                                    }}
-                                                >
+                                                <div className={style.searchListNotFound}>
                                                     <h3>not found</h3>
                                                 </div>
                                             ) : (
-                                                <div
-                                                    style={{
-                                                        height: '250px',
-                                                        display: 'flex',
-                                                        justifyContent:
-                                                            'center',
-                                                        alignItems: 'center',
-                                                    }}
-                                                >
+                                                <div className={style.searchListPageNotFound}>
                                                     <h3>
                                                         page {pageCurrent} not
                                                         found
@@ -668,7 +618,7 @@ export default function ListCompetition() {
                                         ) : (
                                             <div
                                                 className={
-                                                    style.homeLastCompetition
+                                                    style.searchLastCompetition
                                                 }
                                             >
                                                 <div>
