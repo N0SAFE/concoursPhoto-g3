@@ -9,15 +9,22 @@ import { Editor } from '@tinymce/tinymce-react';
 import useApiFetch from '@/hooks/useApiFetch';
 import Card from '@/components/molecules/Card/index.jsx';
 import Icon from '@/components/atoms/Icon';
+import {GoogleMap, LoadScript, MarkerF, PolygonF} from "@react-google-maps/api";
+import useLocation from "@/hooks/useLocation.js";
 
 export default function OrganisationDetails() {
     const { organization: _organization } = useOutletContext();
     const navigate = useNavigate();
-    const [cardLoading, setCardLoading] = useState(false);
     const [cardDisposition, setCardDisposition] = useState('grid');
     const apiFetch = useApiFetch();
     const [organization, setOrganization] = useState(_organization);
     const editorRef = useRef(null);
+    const apiKey = 'AIzaSyCrCR_Qf2Aze3fdl5ZoGFZ4qV4BoM1Ml6g';
+    const { getPolygonByCityCode } = useLocation();
+    const [coordinate, setCoordinate] = useState({
+        polygon: [],
+        center: [],
+    });
 
     function updateOrganization() {
         const res = apiFetch(`/organizations/${organization.id}`, {
@@ -36,7 +43,31 @@ export default function OrganisationDetails() {
         });
     }
 
-    console.log(organization);
+    const getCoordinates = async (code) => {
+        try {
+            const coordinates = await getPolygonByCityCode(code);
+            const polygon = coordinates[0].contour.coordinates[0].map(([lng, lat]) => ({ lat, lng }));
+            const center = {
+                lat: coordinates[0].centre.coordinates[1],
+                lng: coordinates[0].centre.coordinates[0]
+            };
+
+            return {
+                polygon,
+                center
+            };
+        } catch (error) {
+            console.error("Une erreur s'est produite lors de la récupération du polygone :", error);
+            return {
+                polygon: [],
+                center: []
+            }; // Retourner un tableau vide en cas d'erreur
+        }
+    };
+
+    useEffect( () => {
+        getCoordinates(organization.citycode).then(coordinate => setCoordinate(coordinate));
+    }, [organization]);
 
     return (
         <div className={style.wrapper}>
@@ -52,11 +83,32 @@ export default function OrganisationDetails() {
                     alt: 'Logo du concours',
                 }}
                 boxDown={{
-                    type: 'picture',
+                    type: 'component',
+                    component: (
+                        <LoadScript googleMapsApiKey={apiKey}>
+                            <GoogleMap
+                                mapContainerStyle={{ height: '100%', width: '100%' }}
+                                zoom={12}
+                                center={coordinate.center}
+                            >
+                                <MarkerF
+                                    title={organization.organizerName}
+                                    position={coordinate.center}
+                                />
+                                <PolygonF
+                                    paths={coordinate.polygon}
+                                    options={{
+                                        fillColor: "red",
+                                        fillOpacity: 0.4,
+                                        strokeColor: "#d35400",
+                                        strokeOpacity: 0.8,
+                                        strokeWeight: 3
+                                    }}
+                                />
+                            </GoogleMap>
+                        </LoadScript>
+                    )
                 }}
-                // boxDownContents={
-
-                // )}
             />
 
             <div className={style.formWrapper}>
@@ -150,7 +202,7 @@ export default function OrganisationDetails() {
                             {
                                 name: organization.lastCompetition
                                     .numberOfPictures,
-                                icon: 'camera1',
+                                icon: 'camera',
                             },
                             {
                                 name: organization.lastCompetition
