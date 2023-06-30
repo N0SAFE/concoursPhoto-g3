@@ -10,8 +10,6 @@ import Icon from '@/components/atoms/Icon/index.jsx';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import Card from '@/components/molecules/Card/index.jsx';
-import {GoogleMap, LoadScript, MarkerF, PolygonF} from '@react-google-maps/api';
-import useLocation from "@/hooks/useLocation.js";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_ITEMS_PER_PAGE = 9;
