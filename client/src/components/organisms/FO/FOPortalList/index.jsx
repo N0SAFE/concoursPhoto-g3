@@ -77,6 +77,9 @@ export default function FOPortalList({
                     {boxDown.type === 'picture' && (
                         <img src={apiPath(boxDown.path)} alt={boxDown.alt} />
                     )}
+                    {boxDown.type === 'component' && (
+                        boxDown.component
+                    )}
                     <div className={style.boxDownSecondary}>
                         {entity?.userCanEdit && (
                             <Button textColor={"#fff"} color={"#000"} borderRadius={"25px"} onClick={(e) => {

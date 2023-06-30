@@ -94,6 +94,20 @@ export default function () {
             });
     }
 
+    async function getPolygonByCityCode(code, { limit = 30, controller } = {}) {
+        console.debug(`https://geo.api.gouv.fr/communes?code=${code}&fields=contour,centre`);
+        return await fetch(`https://geo.api.gouv.fr/communes?code=${code}&fields=contour,centre`, {
+            signal: controller?.signal,
+        })
+            .then(r => r.json())
+            .then(d => {
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
+                return d;
+            });
+    }
+
     return {
         getCityByCode,
         getCityByName,
@@ -101,5 +115,6 @@ export default function () {
         getDepartmentByName,
         getRegionByName,
         getRegionByCode,
+        getPolygonByCityCode,
     };
 }

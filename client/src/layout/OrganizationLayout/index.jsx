@@ -77,8 +77,8 @@ export default function OrganizationLayout() {
 
     return (
         <Loader active={isLoading}>
-            <div className={style.competitionContainer}>
-                <div className={style.competitionBanner}>
+            <div className={style.organizationContainer}>
+                <div className={style.organizationBanner}>
                     <Breadcrumb
                         items={[
                             { label: 'Accueil', link: '/' },
