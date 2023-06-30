@@ -1,5 +1,5 @@
 import Input from '@/components/atoms/Input/index.jsx';
-import BOCreate from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useState, useEffect } from 'react';
 import useLocation from '@/hooks/useLocation';
@@ -300,7 +300,7 @@ export default function CompetitionEdit() {
 
     return (
         <Loader active={isLoading}>
-            <BOCreate
+            <Form
                 title="Création d'un concours"
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
@@ -790,7 +790,7 @@ export default function CompetitionEdit() {
                         onChange={d => updateEntityState('sponsors', d)}
                     />
                 </div>
-            </BOCreate>
+            </Form>
             <Button onClick={() => navigate('/BO/competition')}>Retour</Button>
         </Loader>
     );

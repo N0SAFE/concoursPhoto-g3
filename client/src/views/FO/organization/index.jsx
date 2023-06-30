@@ -1,5 +1,5 @@
 import Input from '@/components/atoms/Input/index.jsx';
-import BOCreate from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useState, useEffect } from 'react';
 import useLocationPosibility from '@/hooks/useLocationPosibility.js';
@@ -129,7 +129,7 @@ export default function CreateOrganization() {
     console.debug('entity', entity);
     return (
         <Loader active={isLoading}>
-            <BOCreate
+            <Form
                 title="Création d'une organisation"
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
@@ -385,7 +385,7 @@ export default function CreateOrganization() {
                         />
                     </div>
                 </div>
-            </BOCreate>
+            </Form>
             <Button onClick={() => navigate('/profile/myorganization')}>
                 Retour
             </Button>

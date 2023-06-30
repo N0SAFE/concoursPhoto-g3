@@ -1,50 +1,55 @@
-.pagination {
+.container {
     display: flex;
+    flex-direction: column;
 
-    &Container {
+    .pagination {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 0;
-        flex-wrap: wrap;
 
-        @include below(sm) {
-            flex-direction: column;
-        }
-
-        & > div {
-            flex-direction: inherit;
+        &Container {
+            display: flex;
             align-items: center;
-            width: inherit;
+            justify-content: space-between;
+            padding: 10px 0;
+            flex-wrap: wrap;
 
             @include below(sm) {
-                flex-direction: row;
+                flex-direction: column;
             }
 
-            &:first-child {
-                gap: 15px;
-            }
+            & > div {
+                flex-direction: inherit;
+                align-items: center;
+                width: inherit;
 
-            & > form {
-                display: flex;
-                flex-direction: row;
-                padding: inherit;
+                @include below(sm) {
+                    flex-direction: row;
+                }
 
-                // override component Input type text
-                & > div {
+                &:first-child {
+                    gap: 15px;
+                }
+
+                & > form {
                     display: flex;
                     flex-direction: row;
-                    align-items: center;
+                    padding: inherit;
 
-                    & > input {
-                        width: 25px;
+                    // override component Input type text
+                    & > div {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+
+                        & > input {
+                            width: 25px;
+                        }
                     }
                 }
             }
         }
-    }
 
-    &Select {
-        @extend .select-style;
+        &Select {
+            @extend .select-style;
+        }
     }
 }

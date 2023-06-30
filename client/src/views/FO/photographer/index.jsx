@@ -1,9 +1,6 @@
-import { useAuthContext } from '@/contexts/AuthContext.jsx';
 import Table from '@/components/molecules/Table';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
-import style from './style.module.scss';
-import Chip from '@/components/atoms/Chip/index.jsx';
 import useApiPath from '@/hooks/useApiPath';
 import Loader from '@/components/atoms/Loader/index.jsx';
 

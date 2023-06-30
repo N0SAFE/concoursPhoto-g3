@@ -81,13 +81,7 @@ export default function OrganizationList() {
 
     return (
         <Loader active={isLoading}>
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '15px',
-                }}
-            >
+            <div className={style.container}>
                 <h1>Liste des organisations</h1>
                 <Button
                     color="green"

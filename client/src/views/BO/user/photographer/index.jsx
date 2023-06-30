@@ -125,13 +125,7 @@ export default function PhotographerBOList() {
 
     return (
         <Loader active={isLoading}>
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '15px',
-                }}
-            >
+            <div className={style.container}>
                 <h1>Liste des photographes</h1>
                 <Button
                     color="green"

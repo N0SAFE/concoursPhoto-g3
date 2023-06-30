@@ -59,7 +59,7 @@ export default function Pagination({
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className={style.container}>
             <div className={classListInnerContainer}>
                 {children(items.map(renderItem), {
                     pageCurrent: _pageCurrent,

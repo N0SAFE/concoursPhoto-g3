@@ -1,9 +1,9 @@
-.home {
+.search {
     &Container {
         @extend .margin-title;
     }
 
-    &LastCompetition {
+    &LastOrganization {
         & > div {
             display: flex;
             gap: $gapBetweenElement;
@@ -45,6 +45,62 @@
         }
     }
 
+    &Bar {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        gap: $gapBetweenElement;
+        width: 100%;
+
+        .searcher {
+            width: 100%;
+            display: flex;
+            align-items: center;
+
+            &Icon {
+                display: flex;
+                height: 35px;
+                width: 35px;
+
+                & > svg {
+                    padding: 6px;
+                    background-color: $background-color-lightgrey-2;
+                }
+            }
+
+            // override component Input
+            div {
+                &:nth-child(2) {
+                    input {
+                        border-radius: inherit;
+                        border: none;
+                        transform: none;
+                        padding: 10px;
+                        box-shadow: none;
+                    }
+                }
+
+                &:last-child {
+                    display: flex;
+                    height: 35px;
+
+                    button {
+                        font-weight: 600;
+                        background-color: $background-color-lightgrey-3;
+                    }
+                }
+            }
+        }
+
+        @include below(md) {
+            flex-direction: column;
+        }
+
+        &Select {
+            @extend .select-style;
+        }
+    }
+
     &Icon {
         cursor: pointer;
     }
@@ -64,6 +120,24 @@
                     background-color: $background-color-darkgrey;
                 }
             }
+        }
+    }
+
+    &List {
+        position: relative;
+
+        &NotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &PageNotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 }

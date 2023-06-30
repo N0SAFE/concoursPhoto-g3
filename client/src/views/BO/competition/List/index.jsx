@@ -72,13 +72,7 @@ export default function CompetitionsList() {
 
     return (
         <Loader active={isLoading}>
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '15px',
-                }}
-            >
+            <div className={style.container}>
                 <h1>Liste des concours</h1>
                 <Button
                     color="green"

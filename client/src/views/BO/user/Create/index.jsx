@@ -145,6 +145,7 @@ export default function UserCreate() {
     return (
         <Loader active={isLoading}>
             <Form
+                className={style.formContainer}
                 title="Ajouter un utilisateur"
                 handleSubmit={async function () {
                     const { codeRegion, codeDepartement } = await fetch(
@@ -215,7 +216,7 @@ export default function UserCreate() {
                     });
                 }}
             >
-                <div className={style.all}>
+                <div className={style.formWrapper}>
                     <Input
                         type="text"
                         name="Prénom"
@@ -224,7 +225,6 @@ export default function UserCreate() {
                         onChange={d => updateEntityState('firstname', d)}
                         defaultValue={entity.firstname}
                     />
-
                     <Input
                         type="text"
                         name="lastname"
@@ -255,7 +255,6 @@ export default function UserCreate() {
                         }}
                         onChange={d => updateEntityState('statut', d)}
                     />
-
                     <Input
                         type="date"
                         name="dateOfBirth"
@@ -264,7 +263,6 @@ export default function UserCreate() {
                         onChange={d => updateEntityState('dateOfBirth', d)}
                         defaultValue={entity.dateOfBirth}
                     />
-
                     <Input
                         type="email"
                         name="email"
@@ -273,7 +271,6 @@ export default function UserCreate() {
                         onChange={d => updateEntityState('email', d)}
                         defaultValue={entity.email}
                     />
-
                     <Input
                         type="checkbox"
                         name="state"
@@ -297,7 +294,7 @@ export default function UserCreate() {
                         extra={{ required: true }}
                         onChange={d => updateEntityState('address', d)}
                     />
-                    <div style={{ display: 'flex', gap: '30px' }}>
+                    <div className={style.formRow}>
                         <Input
                             type="select"
                             name="city"

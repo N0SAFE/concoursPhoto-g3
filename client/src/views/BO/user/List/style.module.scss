@@ -1,4 +1,11 @@
-.containerList {
+.container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
     @extend .margin-title;
-    overflow-x: scroll;
+
+    &List {
+        overflow-x: scroll;
+    }
 }

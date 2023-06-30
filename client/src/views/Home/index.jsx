@@ -207,7 +207,6 @@ export default function Home() {
                         alt: "Photo de la page d'accueil",
                     }}
                 />
-
                 <Pagination
                     items={competitions}
                     totalPageCount={paginationOptions['Max-Page']}
@@ -298,7 +297,7 @@ export default function Home() {
                                         </div>
                                     </div>
                                 </div>
-                                <div style={{ position: 'relative' }}>
+                                <div className={style.homeList}>
                                     <Loader
                                         active={cardLoading}
                                         takeInnerContent={true}
@@ -306,27 +305,11 @@ export default function Home() {
                                     >
                                         {page.length === 0 ? (
                                             pageCurrent === 1 ? (
-                                                <div
-                                                    style={{
-                                                        height: '250px',
-                                                        display: 'flex',
-                                                        justifyContent:
-                                                            'center',
-                                                        alignItems: 'center',
-                                                    }}
-                                                >
+                                                <div className={style.homeListNotFound}>
                                                     <h3>not found</h3>
                                                 </div>
                                             ) : (
-                                                <div
-                                                    style={{
-                                                        height: '250px',
-                                                        display: 'flex',
-                                                        justifyContent:
-                                                            'center',
-                                                        alignItems: 'center',
-                                                    }}
-                                                >
+                                                <div className={style.homeListPageNotFound}>
                                                     <h3>
                                                         page {pageCurrent} not
                                                         found
