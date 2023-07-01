@@ -19,14 +19,20 @@ export default function CompetitionParticipation() {
         return apiFetch(`/competitions`, {
             query: {
                 'pictures.user': `/users/${me.id}`,
+                groups: [
+                    'competition:pictures:read',
+                    'picture:read',
+                    'picture:user:read',
+                    'user:read',
+                ],
                 properties: [
                     'id',
                     'competitionName',
                     'submissionStartDate',
                     'submissionEndDate',
                     'state',
-                    'numberOfPictures',
                     'resultsDate',
+                    'pictures',
                 ],
             },
             method: 'GET',
@@ -57,6 +63,8 @@ export default function CompetitionParticipation() {
         return () => setTimeout(() => controller.abort());
     }, []);
 
+    console.log(userCompetitions)
+
     return (
         <div>
             <p className={style.participationsCounter}>
@@ -74,8 +82,8 @@ export default function CompetitionParticipation() {
                     list={userCompetitions}
                     fields={[
                         'Nom du concours',
-                        'Date de début du concours',
-                        'Date de fin du concours',
+                        'Début du concours',
+                        'Fin du concours',
                         'Statut',
                         'Mes photos',
                         'Résultat',
@@ -129,7 +137,9 @@ export default function CompetitionParticipation() {
                                     </Chip>
                                 ),
                             },
-                            { content: competition.numberOfPictures },
+                            {
+                                content: competition.pictures.filter(picture => picture.user.id === me.id).length
+                            },
                             {
                                 content: new Date(
                                     competition.resultsDate

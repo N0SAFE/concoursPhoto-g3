@@ -25,8 +25,8 @@ export default function CompetitionAdministration() {
                     'submissionStartDate',
                     'submissionEndDate',
                     'state',
+                    'numberOfParticipants',
                     'numberOfPictures',
-                    'resultsDate',
                 ],
             },
             method: 'GET',
@@ -76,11 +76,11 @@ export default function CompetitionAdministration() {
                     list={userCompetitions}
                     fields={[
                         'Nom du concours',
-                        'Date de début du concours',
-                        'Date de fin du concours',
+                        'Début du concours',
+                        'Fin du concours',
                         'Statut',
-                        'Mes photos',
-                        'Résultat',
+                        'Participants',
+                        'Photos',
                     ]}
                 >
                     {function (competition) {
@@ -131,16 +131,8 @@ export default function CompetitionAdministration() {
                                     </Chip>
                                 ),
                             },
+                            { content: competition.numberOfParticipants },
                             { content: competition.numberOfPictures },
-                            {
-                                content: new Date(
-                                    competition.resultsDate
-                                ).toLocaleDateString('fr-FR', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                }),
-                            },
                         ];
                     }}
                 </Table>
