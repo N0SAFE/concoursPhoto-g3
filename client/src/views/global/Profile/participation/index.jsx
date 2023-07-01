@@ -63,8 +63,6 @@ export default function CompetitionParticipation() {
         return () => setTimeout(() => controller.abort());
     }, []);
 
-    console.log(userCompetitions)
-
     return (
         <div>
             <p className={style.participationsCounter}>
