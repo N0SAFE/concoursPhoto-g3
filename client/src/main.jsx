@@ -27,7 +27,7 @@ async function main() {
                     justifyContent: 'center',
                 }}
             >
-                <h1>developement healthcheck...</h1>
+                <h1>Development healthcheck...</h1>
             </div>
         );
 
