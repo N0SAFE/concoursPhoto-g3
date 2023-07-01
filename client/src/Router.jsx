@@ -42,11 +42,15 @@ import ProfileMyorganizationMiddleware from './middleware/ProfileMyorganizationM
 import CompetitionMiddleware from './middleware/CompetitionMiddleware.jsx';
 import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
 import ListCompetition from './views/FO/competition/details/index.jsx';
+import DetailsPhotographer from './views/FO/photographer/details/index.jsx';
 
 function Router() {
     return (
         <Routes>
-            <Route path="/BO" element={<AuthMiddleware roles={["ROLE_ADMIN"]} />}>
+            <Route
+                path="/BO"
+                element={<AuthMiddleware roles={['ROLE_ADMIN']} />}
+            >
                 <Route
                     path=""
                     element={<PageLayout environment={'backoffice'} />}
@@ -135,6 +139,10 @@ function Router() {
                 <Route path="photographer">
                     <Route path="" element={<PhotographerList />} />
                 </Route>
+                <Route path="photographer/:id">
+                    <Route path="" element={<DetailsPhotographer />} />
+                </Route>
+
                 <Route
                     path="/createorganization"
                     element={<CreateOrganization />}

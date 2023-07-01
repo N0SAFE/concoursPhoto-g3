@@ -18,7 +18,7 @@ export default function PhotographerList() {
             query: {
                 roles: 'ROLE_PHOTOGRAPHER',
                 groups: ['user:read', 'user:pictureProfil:read', 'file:read'],
-                properties: ['firstname', 'lastname', 'pictureProfil'],
+                properties: ['firstname', 'lastname', 'pictureProfil', 'id'],
             },
             method: 'GET',
             headers: {
@@ -52,6 +52,7 @@ export default function PhotographerList() {
                 <p style={{ fontWeight: 'bold', marginBottom: '1%' }}>
                     {userPhotographer.length} photographes
                 </p>
+
                 <Table
                     list={userPhotographer}
                     fields={['Photo de profil', 'Nom', 'Prénom']}
@@ -62,6 +63,10 @@ export default function PhotographerList() {
                                 content: (
                                     <img
                                         src={apipath(user.pictureProfil.path)}
+                                        onClick={() => {
+                                            window.location.href =
+                                                '/photographer/' + user.id;
+                                        }}
                                         style={{
                                             width: '100px',
                                             height: '100px',
