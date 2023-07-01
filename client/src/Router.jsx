@@ -42,6 +42,7 @@ import ProfileMyorganizationMiddleware from './middleware/ProfileMyorganizationM
 import CompetitionMiddleware from './middleware/CompetitionMiddleware.jsx';
 import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
 import ListCompetition from './views/FO/competition/details/index.jsx';
+import CompetitionAdministration from "@/views/global/Profile/administration";
 
 function Router() {
     return (
@@ -114,6 +115,10 @@ function Router() {
                         <Route
                             path="participations"
                             element={<CompetitionParticipation />}
+                        />
+                        <Route
+                            path="administrations"
+                            element={<CompetitionAdministration />}
                         />
                     </Route>
                 </Route>

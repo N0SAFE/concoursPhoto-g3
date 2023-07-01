@@ -9,7 +9,7 @@ const profileRouteList = [
     { content: 'Mon profil', to: '/' },
     { content: 'Mes préférences', to: '/preference' },
     { content: 'Mes organisations', to: '/myorganization', type: 'startwith' },
-    { content: 'Concours créés par mon organisation', to: '/' },
+    { content: "Concours que j'administre", to: '/administrations' },
     { content: 'Concours auxquels j’ai participé', to: '/participations' },
 ];
 

@@ -7,7 +7,7 @@ import Chip from '@/components/atoms/Chip/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import { useNavigate } from 'react-router-dom';
 
-export default function CompetitionParticipation() {
+export default function CompetitionAdministration() {
     const navigate = useNavigate();
     const { me } = useAuthContext();
     const apiFetch = useApiFetch();
@@ -18,7 +18,7 @@ export default function CompetitionParticipation() {
         setIsLoading(true);
         return apiFetch(`/competitions`, {
             query: {
-                'pictures.user': `/users/${me.id}`,
+                'organization.admins': `/users/${me.id}`,
                 properties: [
                     'id',
                     'competitionName',
@@ -48,6 +48,8 @@ export default function CompetitionParticipation() {
             });
     };
 
+    console.log(userCompetitions)
+
     useEffect(() => {
         const controller = new AbortController();
 
@@ -59,7 +61,7 @@ export default function CompetitionParticipation() {
 
     return (
         <div>
-            <p className={style.participationsCounter}>
+            <p className={style.administrationsCounter}>
                 {userCompetitions.length} concours
             </p>
             <Loader

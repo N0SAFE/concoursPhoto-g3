@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ApiFilter(
         SearchFilter::class,
         properties: [
+            'organization.admins' => 'exact',
             'pictures.user' => 'exact',
             'organization' => 'exact',
             'theme' => 'exact',
