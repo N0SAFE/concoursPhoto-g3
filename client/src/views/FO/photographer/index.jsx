@@ -16,7 +16,7 @@ export default function PhotographerList() {
             query: {
                 roles: 'ROLE_PHOTOGRAPHER',
                 groups: ['user:read', 'user:pictureProfil:read', 'file:read'],
-                properties: ['firstname', 'lastname', 'pictureProfil'],
+                properties: ['firstname', 'lastname', 'pictureProfil', 'id'],
             },
             method: 'GET',
             headers: {
@@ -62,6 +62,10 @@ export default function PhotographerList() {
                                         src={apipath(user.pictureProfil.path)}
                                         className={style.photographerPicture}
                                         alt="Photo de profil"
+                                        onClick={() => {
+                                            window.location.href =
+                                                '/photographer/' + user.id;
+                                        }}
                                     />
                                 ),
                             },
