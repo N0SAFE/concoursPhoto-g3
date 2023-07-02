@@ -409,7 +409,6 @@ class Organization
     {
         return $this->admins;
     }
-
     public function addAdmins(User $user): self
     {
         if (!$this->admins->contains($user)) {

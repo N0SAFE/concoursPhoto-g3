@@ -160,7 +160,7 @@ export default function CreateOrganization() {
                                 logo: logoId,
                                 numberSiret: entity.numberSiret,
                                 intraCommunityVat: entity.intraCommunityVat,
-                                users: [me['@id']],
+                                admins: [me['@id']],
                             };
                             console.debug('data', data);
                             const res = await apiFetch('/organizations', {

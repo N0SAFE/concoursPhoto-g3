@@ -42,8 +42,10 @@ import ProfileMyorganizationMiddleware from './middleware/ProfileMyorganizationM
 import CompetitionMiddleware from './middleware/CompetitionMiddleware.jsx';
 import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
 import ListCompetition from './views/FO/competition/details/index.jsx';
-import CompetitionAdministration from "@/views/global/Profile/administration";
+import CompetitionAdministration from '@/views/global/Profile/administration';
 import DetailsPhotographer from './views/FO/photographer/details/index.jsx';
+import PubCreate from './views/BO/pub/create/index.jsx';
+import PubList from './views/BO/pub/list/index.jsx';
 
 function Router() {
     return (
@@ -79,6 +81,10 @@ function Router() {
                         <Route path=":id" element={<CompetitionSee />} />
                         <Route path="create" element={<CompetitionCreate />} />
                         <Route path="edit/:id" element={<CompetitionEdit />} />
+                    </Route>
+                    <Route path="pub">
+                        <Route path="" element={<PubList />} />
+                        <Route path="create" element={<PubCreate />} />
                     </Route>
                 </Route>
             </Route>
