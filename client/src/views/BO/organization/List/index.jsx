@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import Loader from '@/components/atoms/Loader';
 import Table from '@/components/molecules/Table';
+import {CSVLink} from "react-csv";
 
 export default function OrganizationList() {
     const [isLoading, setIsLoading] = useState(true);
@@ -203,6 +204,17 @@ export default function OrganizationList() {
                     ]}
                 </Table>
             </div>
+            <Button
+                borderRadius={'30px'}
+                padding={'20px'}
+                icon={'download'}
+            >
+                <CSVLink
+                    filename={"organizations_exported.csv"}
+                    data={organizations}>
+                    Exporter les organisations
+                </CSVLink>
+            </Button>
         </Loader>
     );
 }
