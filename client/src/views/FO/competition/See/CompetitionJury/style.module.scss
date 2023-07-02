@@ -14,7 +14,7 @@
     }
 
     &Container {
-        & > div {
+        & > .memberList {
             width: 100%;
 
             & > ul {
@@ -41,5 +41,17 @@
 
     @include below(sm) {
         display: block;
+    }
+
+    &Edit {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        button {
+            text-transform: uppercase;
+            font-size: 15px;
+            font-weight: 700;
+        }
     }
 }

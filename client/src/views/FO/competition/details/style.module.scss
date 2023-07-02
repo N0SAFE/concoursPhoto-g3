@@ -1,4 +1,4 @@
-.home {
+.search {
     &Container {
         @extend .margin-title;
     }
@@ -45,8 +45,101 @@
         }
     }
 
-    &Icon {
-        cursor: pointer;
+    &SubMenu {
+        margin-top: 15px;
+    }
+
+    &Bar {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        gap: $gapBetweenElement;
+        width: 100%;
+
+        .searcher {
+            width: 100%;
+            display: flex;
+            align-items: center;
+
+            &Icon {
+                display: flex;
+                height: 35px;
+                width: 35px;
+
+                & > svg {
+                    padding: 6px;
+                    background-color: $background-color-lightgrey-2;
+                }
+            }
+
+            // override component Input
+            div {
+                &:nth-child(2) {
+                    input {
+                        border-radius: inherit;
+                        border: none;
+                        transform: none;
+                        padding: 10px;
+                        box-shadow: none;
+                    }
+                }
+
+                &:last-child {
+                    display: flex;
+                    height: 35px;
+
+                    button {
+                        font-weight: 600;
+                        background-color: $background-color-lightgrey-3;
+                    }
+                }
+            }
+        }
+
+        &Button {
+            button {
+                background-color: $background-color-lightgrey-3;
+            }
+        }
+
+        &IconCriteria {
+            display: flex;
+            height: 35px;
+            width: 35px;
+
+            & > svg {
+                padding: 6px;
+            }
+        }
+
+        @include below(md) {
+            flex-direction: column;
+        }
+
+        &Select {
+            @extend .select-style;
+        }
+
+        &Slider {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            @include below(md) {
+                height: 50px;
+            }
+
+            // override react-slider
+            & > div > div {
+                &:first-child {
+                    background-color: white;
+                }
+
+                &:nth-child(3) {
+                    background-color: white;
+                }
+            }
+        }
     }
 
     &Disposition {
@@ -65,6 +158,41 @@
                 }
             }
         }
+    }
+
+    &List {
+        position: relative;
+
+        &NotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &PageNotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    &Row {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        gap: $gapBetweenElement;
+        background-color: $background-color-lightgrey-3;
+        padding: 15px;
+
+        @include below(md) {
+            flex-direction: column;
+        }
+    }
+
+    &Select {
+        @extend .select-style;
     }
 }
 

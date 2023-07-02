@@ -39,4 +39,8 @@ export default defineConfig({
     server: {
         port: 8001,
     },
+    // google-react-maps not working with vite, exclude it for working
+    optimizeDeps: {
+        exclude: ['js-big-decimal']
+    }
 });

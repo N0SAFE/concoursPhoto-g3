@@ -68,4 +68,22 @@
             }
         }
     }
+
+    &List {
+        position: relative;
+
+        &NotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &PageNotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
 }

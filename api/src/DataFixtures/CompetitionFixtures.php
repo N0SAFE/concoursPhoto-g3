@@ -20,6 +20,7 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
     const COMPETITION_COUNT_REFERENCE = 60;
     const MAX_WEIGHTING_OF_JURY_VOTES = 100;
     const MAX_NUMBER_OF_MAX_VOTES = 10;
+    const MAX_NUMBER_OF_MAX_PICTURES = 3;
     const MAX_NUMBER_OF_PRICES = 20;
     const MIN_AGE_CRITERIA = 6;
     const MAX_AGE_CRITERIA = 99;
@@ -112,9 +113,13 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
                 '-1 year',
                 $submissionStartDate
             );
-            $creationDate = $faker->dateTimeBetween(
+            $activationDate = $faker->dateTimeBetween(
                 '-1 year',
                 $publicationDate
+            );
+            $creationDate = $faker->dateTimeBetween(
+                '-1 year',
+                $activationDate
             );
 
             $competition->setCompetitionName($faker->sentence(rand(3, 9)));
@@ -129,6 +134,7 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
                 $this->getRandomElements(self::ENDOWMENTS_ARRAY, 1)
             );
             $competition->setCreationDate($creationDate);
+            $competition->setActivationDate($activationDate);
             $competition->setPublicationDate($publicationDate);
             $competition->setSubmissionStartDate($submissionStartDate);
             $competition->setSubmissionEndDate($submissionEndDate);
@@ -139,10 +145,13 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
                 $faker->randomFloat(3, 0, self::MAX_WEIGHTING_OF_JURY_VOTES)
             );
             $competition->setNumberOfMaxVotes(
-                random_int(0, self::MAX_NUMBER_OF_MAX_VOTES)
+                random_int(1, self::MAX_NUMBER_OF_MAX_VOTES)
+            );
+            $competition->setNumberOfMaxPictures(
+                random_int(1, self::MAX_NUMBER_OF_MAX_PICTURES)
             );
             $competition->setNumberOfPrices(
-                random_int(0, self::MAX_NUMBER_OF_PRICES)
+                random_int(1, self::MAX_NUMBER_OF_PRICES)
             );
             $competition->setMinAgeCriteria($minAge);
             $competition->setMaxAgeCriteria($maxAge);
@@ -150,6 +159,7 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
             $competition->setIsPromoted($faker->boolean());
             $competition->setConsultationCount(0);
             $competition->setCompetitionResults($faker->text());
+            $competition->setIsPublished(rand(0, 1));
 
             $cities = [];
             $cityNumber = rand(1, 3);
@@ -234,15 +244,6 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
                 );
             }
 
-            for ($j = 0; $j < rand(1, 3); $j++) {
-                $competition->addSponsor(
-                    $this->getReference(
-                        SponsorsFixtures::SPONSORS_REFERENCE .
-                            rand(1, SponsorsFixtures::SPONSORS_COUNT_REFERENCE)
-                    )
-                );
-            }
-
             $manager->persist($competition);
 
             $this->addReference(
@@ -260,7 +261,6 @@ class CompetitionFixtures extends Fixture implements DependentFixtureInterface
             OrganizationFixtures::class,
             ParticipantCategoryFixtures::class,
             ThemeFixtures::class,
-            SponsorsFixtures::class,
         ];
     }
 }

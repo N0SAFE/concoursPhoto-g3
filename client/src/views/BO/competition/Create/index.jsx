@@ -1,5 +1,5 @@
 import Input from '@/components/atoms/Input/index.jsx';
-import BOCreate from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useState, useEffect } from 'react';
 import useLocation from '@/hooks/useLocation';
@@ -54,6 +54,7 @@ export default function CompetitionCreate() {
         themes: null,
         creationDate: null,
         publicationDate: null,
+        activationDate: null,
         submissionStartDate: null,
         submissionEndDate: null,
         votingStartDate: null,
@@ -165,7 +166,8 @@ export default function CompetitionCreate() {
 
     return (
         <Loader active={isLoading}>
-            <BOCreate
+            <Form
+                className={style.formContainer}
                 title="Création d'un concours"
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
@@ -197,6 +199,9 @@ export default function CompetitionCreate() {
                                 ).toISOString(),
                                 publicationDate: new Date(
                                     entity.publicationDate
+                                ).toISOString(),
+                                activationDate: new Date(
+                                    entity.activationDate
                                 ).toISOString(),
                                 submissionStartDate: new Date(
                                     entity.submissionStartDate
@@ -262,7 +267,7 @@ export default function CompetitionCreate() {
                     });
                 }}
             >
-                <div className={style.all}>
+                <div className={style.formWrapper}>
                     <Input
                         type="checkbox"
                         name="state"
@@ -270,7 +275,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('state', d)}
                         defaultValue={entity.state}
                     />
-
                     <Input
                         type="text"
                         name="name"
@@ -278,7 +282,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('name', d)}
                         defaultValue={entity.name}
                     />
-
                     <Input
                         type="file"
                         name="visual"
@@ -286,7 +289,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('visual', d)}
                         extra={{ value: entity.visual, type: 'image' }}
                     />
-
                     <Input
                         type="text"
                         name="description"
@@ -294,7 +296,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('description', d)}
                         defaultValue={entity.description}
                     />
-
                     <Input
                         type="text"
                         name="rules"
@@ -302,7 +303,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('rules', d)}
                         defaultValue={entity.rules}
                     />
-
                     <Input
                         type="text"
                         name="endowments"
@@ -310,7 +310,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('endowments', d)}
                         defaultValue={entity.endowments}
                     />
-
                     <Input
                         type="date"
                         name="creationDate"
@@ -318,7 +317,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('creationDate', d)}
                         defaultValue={entity.creationDate}
                     />
-
                     <Input
                         type="date"
                         name="publicationDate"
@@ -326,7 +324,13 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('publicationDate', d)}
                         defaultValue={entity.publicationDate}
                     />
-
+                    <Input
+                        type="date"
+                        name="activationDate"
+                        label="Date d'activation"
+                        onChange={d => updateEntityState('activationDate', d)}
+                        defaultValue={entity.activationDate}
+                    />
                     <Input
                         type="date"
                         name="submissionStartDate"
@@ -336,7 +340,6 @@ export default function CompetitionCreate() {
                         }
                         defaultValue={entity.submissionStartDate}
                     />
-
                     <Input
                         type="date"
                         name="submissionEndDate"
@@ -346,7 +349,6 @@ export default function CompetitionCreate() {
                         }
                         defaultValue={entity.submissionEndDate}
                     />
-
                     <Input
                         type="date"
                         name="votingStartDate"
@@ -354,7 +356,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('votingStartDate', d)}
                         defaultValue={entity.votingStartDate}
                     />
-
                     <Input
                         type="date"
                         name="votingEndDate"
@@ -362,7 +363,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('votingEndDate', d)}
                         defaultValue={entity.votingEndDate}
                     />
-
                     <Input
                         type="date"
                         name="resultsDate"
@@ -370,7 +370,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('resultsDate', d)}
                         defaultValue={entity.resultsDate}
                     />
-
                     <Input
                         type="number"
                         extra={{ step: 0.01 }}
@@ -381,7 +380,6 @@ export default function CompetitionCreate() {
                             updateEntityState('weightingOfJuryVotes', d)
                         }
                     />
-
                     <Input
                         type="number"
                         name="numberOfMaxVotes"
@@ -389,7 +387,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('numberOfMaxVotes', d)}
                         defaultValue={entity.numberOfMaxVotes}
                     />
-
                     <Input
                         type="number"
                         name="numberOfPrices"
@@ -397,7 +394,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('numberOfPrices', d)}
                         defaultValue={entity.numberOfPrices}
                     />
-
                     <Input
                         type="number"
                         name="minAgeCriteria"
@@ -405,7 +401,6 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('minAgeCriteria', d)}
                         defaultValue={entity.minAgeCriteria}
                     />
-
                     <Input
                         type="number"
                         name="maxAgeCriteria"
@@ -413,8 +408,7 @@ export default function CompetitionCreate() {
                         onChange={d => updateEntityState('maxAgeCriteria', d)}
                         defaultValue={entity.maxAgeCriteria}
                     />
-
-                    <div style={{ display: 'flex', gap: '30px' }}>
+                    <div className={style.formRow}>
                         <Input
                             type="select"
                             name="region"
@@ -455,7 +449,6 @@ export default function CompetitionCreate() {
                                 updateEntityState('regionCriteria', d);
                             }}
                         />
-
                         <Input
                             type="select"
                             name="department"
@@ -500,7 +493,6 @@ export default function CompetitionCreate() {
                                 updateEntityState('departmentCriteria', d);
                             }}
                         />
-
                         <Input
                             type="select"
                             name="city"
@@ -540,7 +532,7 @@ export default function CompetitionCreate() {
                             }}
                         />
                     </div>
-                    <div style={{ display: 'flex', gap: '30px' }}>
+                    <div className={style.formRow}>
                         <Input
                             type="select"
                             name="participantCategory"
@@ -558,7 +550,6 @@ export default function CompetitionCreate() {
                                 updateEntityState('participantCategories', d)
                             }
                         />
-
                         <Input
                             type="select"
                             name="organizer"
@@ -571,7 +562,6 @@ export default function CompetitionCreate() {
                             }}
                             onChange={d => updateEntityState('organizer', d)}
                         />
-
                         <Input
                             type="select"
                             name="themes"
@@ -588,7 +578,7 @@ export default function CompetitionCreate() {
                         />
                     </div>
                 </div>
-            </BOCreate>
+            </Form>
             <Button onClick={() => navigate('/BO/competition')}>Retour</Button>
         </Loader>
     );

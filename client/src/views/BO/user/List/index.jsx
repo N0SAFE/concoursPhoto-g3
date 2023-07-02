@@ -6,6 +6,7 @@ import Button from '@/components/atoms/Button';
 import style from './style.module.scss';
 import Loader from '@/components/atoms/Loader';
 import Table from '@/components/molecules/Table';
+import { CSVLink } from "react-csv";
 
 export default function UserList() {
     const apiFetch = useApiFetch();
@@ -124,13 +125,7 @@ export default function UserList() {
 
     return (
         <Loader active={isLoading}>
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '15px',
-                }}
-            >
+            <div className={style.container}>
                 <h1>Liste des utilisateurs</h1>
                 <Button
                     color="green"
@@ -286,6 +281,17 @@ export default function UserList() {
                     ]}
                 </Table>
             </div>
+            <Button
+                borderRadius={'30px'}
+                padding={'20px'}
+                icon={'download'}
+            >
+                <CSVLink
+                    filename={"users_exported.csv"}
+                    data={users}>
+                    Exporter les utilisateurs
+                </CSVLink>
+            </Button>
         </Loader>
     );
 }

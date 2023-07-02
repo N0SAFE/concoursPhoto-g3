@@ -3,6 +3,7 @@ import Select from 'react-select';
 import { useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '@/components/atoms/Button/index.jsx';
+import Icon from "@/components/atoms/Icon/index.jsx";
 
 function FileInput({ name, extra, label, onChange, error }) {
     if (!extra?.multiple) {
@@ -34,7 +35,7 @@ function FileInput({ name, extra, label, onChange, error }) {
                                 type="button"
                                 onClick={() => inputRef.current.click()}
                             >
-                                ajouter un fichier
+                                {name}
                             </button>
                         </>
                     )}
@@ -286,6 +287,150 @@ function ProfileInput({ name, extra, onChange, error }) {
     }
 }
 
+function CompetitionVisualInput({ name, extra, onChange, error }) {
+    if (!extra?.multiple) {
+        const inputRef = useRef();
+        return (
+            <div className={style.componentVisual}>
+                <div className={style.buttonWrapper}>
+                    {extra?.value ? (
+                        <>
+                            <Button
+                                icon={"download"}
+                                iconPosition={"right"}
+                                color={'#F1F1F1'}
+                                width={'250px'}
+                                height={'50px'}
+                                borderRadius={'25px'}
+                                type="button"
+                                onClick={() => inputRef.current.click()}
+                            >
+                                Télécharger
+                            </Button>
+                            <Button
+                                color={'#F1F1F1'}
+                                width={'150px'}
+                                height={'50px'}
+                                padding={'0 20px'}
+                                borderRadius={'25px'}
+                                type="button"
+                                onClick={() => onChange(null)}
+                            >
+                                Supprimer
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                color={'#F1F1F1'}
+                                width={'250px'}
+                                height={'50px'}
+                                padding={'0 20px'}
+                                borderRadius={'25px'}
+                                type="button"
+                                onClick={() => inputRef.current.click()}
+                            >
+                                Télécharger ma photo
+                            </Button>
+                        </>
+                    )}
+
+                    <input
+                        style={{ display: 'none' }}
+                        ref={inputRef}
+                        className={style.componentInput}
+                        type="file"
+                        name={name}
+                        onChange={async e => {
+                            if (e.target.files.length === 0) {
+                                onChange(null);
+                                return;
+                            }
+                            const file = e.target.files[0];
+                            const FR = new FileReader();
+                            FR.addEventListener('load', function (evt) {
+                                onChange({
+                                    file: file,
+                                    to: URL.createObjectURL(file),
+                                    name: file.name,
+                                    blob: evt.target.result,
+                                });
+                            });
+                            FR.addEventListener('error', function (evt) {
+                                console.error('file reader error', evt);
+                            });
+                            FR.readAsDataURL(file);
+                        }}
+                    />
+                </div>
+                <Link to={extra?.value?.to} target="_blank">
+                    {extra.value && (
+                        <p>Fichier actuel :
+                            <span>{' ' + extra?.value?.name}</span>
+                        </p>
+                    )}
+                </Link>
+                <div className={style.imageWrapper}>
+                {extra?.type === 'image' && extra?.value && (
+                    <Link to={extra?.value?.to} target="_blank">
+                        <img
+                            className={style.image}
+                            src={
+                                extra.type === 'image'
+                                    ? extra?.value?.blob
+                                        ? extra?.value?.blob
+                                        : extra?.value?.to
+                                    : null
+                            }
+                            onClick={function () {}}
+                        />
+                    </Link>
+                )}
+            </div>
+            </div>
+        );
+    } else {
+        throw new Error('not implemented yet');
+        const imageUrl = useMemo(() => {
+            if (defaultValue) {
+                return defaultValue;
+            } else {
+                return 'https://via.placeholder.com/150';
+            }
+        }, [defaultValue]);
+        const inputRef = useRef();
+        return (
+            <div className={style.componentCompetitionVisual}>
+                <button onClick={() => inputRef.current.click()}>
+                    Télécharger ma photo
+                </button>
+                <input
+                    ref={inputRef}
+                    className={style.componentInput}
+                    type="file"
+                    {...extra}
+                    name={name}
+                    onChange={e => onChange(e.target.files)}
+                    defaultValue={defaultValue}
+                />
+                <div className={style.componentImagePreview}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <div>left</div>
+                        <div>right</div>
+                    </div>
+                    <div>bottom</div>
+                </div>
+            </div>
+        );
+    }
+}
+
 export default function Input({
     type,
     name,
@@ -442,6 +587,15 @@ export default function Input({
                         onChange={onChange}
                     />
                 );
+            case 'competition_visual':
+                return (
+                    <CompetitionVisualInput
+                        type="image"
+                        extra={extra}
+                        name={name}
+                        onChange={onChange}
+                    />
+                );
             case 'custom':
                 return extra.component;
             case 'radio':
@@ -473,7 +627,7 @@ export default function Input({
                                         name={name}
                                         onChange={e => onChange(option)}
                                         checked={
-                                            extra?.value?.value === option.value
+                                            extra?.value === option.value
                                         }
                                     />
                                 </div>

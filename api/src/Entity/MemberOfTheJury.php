@@ -40,7 +40,7 @@ class MemberOfTheJury
     private ?\DateTimeInterface $acceptanceDate = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('memberOfTheJury:read')]
+    #[Groups(['memberOfTheJury:read'])]
     private ?string $theFunction = null;
 
     #[ORM\ManyToOne(inversedBy: 'memberOfTheJuries')]

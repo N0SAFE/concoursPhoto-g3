@@ -98,7 +98,7 @@ class OrganizationFixtures extends Fixture implements DependentFixtureInterface
             $organization->setNumberSiret($faker->creditCardNumber());
             $organization->setOrganizationVisual(
                 (new FileFixtures())->createFileFromArray(
-                    FileFixtures::ORGANISATION_VIUAL_ARRAY
+                    FileFixtures::ORGANISATION_VISUAL_ARRAY
                 )
             );
             $regions = [];

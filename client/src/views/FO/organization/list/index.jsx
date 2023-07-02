@@ -1,14 +1,8 @@
-import style, { homeDisposition } from './style.module.scss';
-import FOCompetitionList from '@/components/organisms/FO/FOCompetitionList';
-import FOStats from '@/components/organisms/FO/FOStats';
-import FOPortalList from '@/components/organisms/FO/FOPortalList';
+import style  from './style.module.scss';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import { useEffect, useState } from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
-import { toast } from 'react-toastify';
-import { format } from 'date-fns';
 import Icon from '@/components/atoms/Icon/index.jsx';
-import { useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import Card from '@/components/molecules/Card/index.jsx';
@@ -68,17 +62,7 @@ export default function ListOrganization() {
         }
         setLocationPossibility({ ...locationPossibility });
     };
-    const getStats = controller => {
-        return apiFetch('/stats', {
-            method: 'GET',
-            signal: controller?.signal,
-        })
-            .then(r => r.json())
-            .then(data => {
-                console.debug(data);
-                setStats(data);
-            });
-    };
+
     useEffect(() => {
         const controller = new AbortController();
         Promise.all([
@@ -104,6 +88,7 @@ export default function ListOrganization() {
             setTimeout(() => controller?.abort());
         };
     }, []);
+
     useEffect(() => {
         setSearchParams({
             page: page || DEFAULT_PAGE,
@@ -184,47 +169,39 @@ export default function ListOrganization() {
 
     return (
         <Loader active={isLoading}>
-            <div className={style.homeContainer}>
-                <div className={style.homeBanner}>
+            <div className={style.searchContainer}>
+                <div className={style.searchBanner}>
                     <div>
                         <h1>Rechercher un organisateur de concours</h1>
                     </div>
                 </div>
-                <div
-                    style={{
-                        display: 'Flex',
-                        flexDirection: 'row',
-                        gap: '10px',
-                        width: '100%',
-                    }}
-                >
-                    <Icon size="6%" icon={'search'} />
+                <div className={style.searchBar}>
+                    <div className={style.searcher}>
+                        <div className={style.searcherIcon}>
+                            <Icon icon={'search'} />
+                        </div>
+                        <Input
+                            type="text"
+                            name="recherche"
+                            placeholder="Nom de l'organisation, ville..."
+                            onChange={v => {
+                                setElasticSearch(v);
+                            }}
+                        />
+                        <Button
+                            onClick={() => {
+                                setFilter({
+                                    ...filter,
+                                    elasticSearch: elasticSearch,
+                                });
+                            }}
+                        >
+                            Rechercher
+                        </Button>
+                    </div>
                     <Input
-                        type="text"
-                        name="recherche"
-                        placeholder="Rechercher"
-                        onChange={v => {
-                            setElasticSearch(v);
-                        }}
-                    />
-                    <Button
-                        style={{
-                            borderRadius: '5px',
-                            border: '1px solid #000000',
-                            padding: '5px',
-                        }}
-                        onClick={() => {
-                            setFilter({
-                                ...filter,
-                                elasticSearch: elasticSearch,
-                            });
-                        }}
-                    >
-                        Rechercher
-                    </Button>
-                    <Input
+                        className={style.searchBarSelect}
                         type="select"
-                        name=""
                         placeholder="Région"
                         extra={{
                             isLoading: locationPossibility.regions.loading,
@@ -261,6 +238,7 @@ export default function ListOrganization() {
                         }}
                     />
                     <Input
+                        className={style.searchBarSelect}
                         type="select"
                         name="department"
                         placeholder="Département"
@@ -302,13 +280,12 @@ export default function ListOrganization() {
                         }}
                     />
                     <Input
+                        className={style.searchBarSelect}
                         type="select"
-                        name=""
-                        label=""
-                        defaultValue={{ value: null, label: 'tous' }}
+                        defaultValue={{ value: null, label: 'Concours actifs uniquement' }}
                         extra={{
                             options: [
-                                { value: null, label: 'tous' },
+                                { value: null, label: 'Concours actifs uniquement' },
                                 { value: 1, label: 'actif' },
                                 { value: 0, label: 'inactif' },
                             ],
@@ -365,14 +342,14 @@ export default function ListOrganization() {
                     {(page, { pageCurrent }) => {
                         return (
                             <div>
-                                <div className={style.homeDisposition}>
+                                <div className={style.searchDisposition}>
                                     <div>
                                         <h2>{totalitems} résultats</h2>
                                     </div>
                                     <div>
                                         <div>
                                             <Icon
-                                                className={style.homeIcon}
+                                                className={style.searchIcon}
                                                 icon="grid"
                                                 size={30}
                                                 onClick={e =>
@@ -380,7 +357,7 @@ export default function ListOrganization() {
                                                 }
                                             />
                                             <Icon
-                                                className={style.homeIcon}
+                                                className={style.searchIcon}
                                                 icon="list"
                                                 size={30}
                                                 onClick={e =>
@@ -391,7 +368,7 @@ export default function ListOrganization() {
                                         </div>
                                     </div>
                                 </div>
-                                <div style={{ position: 'relative' }}>
+                                <div className={style.searchList}>
                                     <Loader
                                         active={cardLoading}
                                         takeInnerContent={true}
@@ -399,27 +376,11 @@ export default function ListOrganization() {
                                     >
                                         {page.length === 0 ? (
                                             pageCurrent === 1 ? (
-                                                <div
-                                                    style={{
-                                                        height: '250px',
-                                                        display: 'flex',
-                                                        justifyContent:
-                                                            'center',
-                                                        alignItems: 'center',
-                                                    }}
-                                                >
+                                                <div className={style.searchListNotFound}>
                                                     <h3>not found</h3>
                                                 </div>
                                             ) : (
-                                                <div
-                                                    style={{
-                                                        height: '250px',
-                                                        display: 'flex',
-                                                        justifyContent:
-                                                            'center',
-                                                        alignItems: 'center',
-                                                    }}
-                                                >
+                                                <div className={style.searchListPageNotFound}>
                                                     <h3>
                                                         page {pageCurrent} not
                                                         found
@@ -429,7 +390,7 @@ export default function ListOrganization() {
                                         ) : (
                                             <div
                                                 className={
-                                                    style.homeLastCompetition
+                                                    style.searchLastOrganization
                                                 }
                                             >
                                                 <div>

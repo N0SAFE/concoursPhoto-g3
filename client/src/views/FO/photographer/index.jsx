@@ -1,11 +1,9 @@
-import { useAuthContext } from '@/contexts/AuthContext.jsx';
 import Table from '@/components/molecules/Table';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
-import style from './style.module.scss';
-import Chip from '@/components/atoms/Chip/index.jsx';
 import useApiPath from '@/hooks/useApiPath';
 import Loader from '@/components/atoms/Loader/index.jsx';
+import style from './style.module.scss';
 
 export default function PhotographerList() {
     const apipath = useApiPath();
@@ -45,14 +43,13 @@ export default function PhotographerList() {
 
     return (
         <Loader active={isLoading}>
-            <>
-                <h1 style={{ textAlign: 'center', marginBottom: '3%' }}>
+            <div className={style.photographerContainer}>
+                <h1>
                     Liste des photographes
                 </h1>
-                <p style={{ fontWeight: 'bold', marginBottom: '1%' }}>
+                <p className={style.photographerCount}>
                     {userPhotographer.length} photographes
                 </p>
-
                 <Table
                     list={userPhotographer}
                     fields={['Photo de profil', 'Nom', 'Prénom']}
@@ -63,14 +60,11 @@ export default function PhotographerList() {
                                 content: (
                                     <img
                                         src={apipath(user.pictureProfil.path)}
+                                        className={style.photographerPicture}
+                                        alt="Photo de profil"
                                         onClick={() => {
                                             window.location.href =
                                                 '/photographer/' + user.id;
-                                        }}
-                                        style={{
-                                            width: '100px',
-                                            height: '100px',
-                                            borderRadius: '50%',
                                         }}
                                     />
                                 ),
@@ -84,14 +78,7 @@ export default function PhotographerList() {
                         ];
                     }}
                 </Table>
-                <div
-                    style={{
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'row',
-                    }}
-                ></div>
-            </>
+            </div>
         </Loader>
     );
 }

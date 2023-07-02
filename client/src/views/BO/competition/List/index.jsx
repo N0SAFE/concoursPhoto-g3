@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import Table from '@/components/molecules/Table';
+import {CSVLink} from "react-csv";
 
 export default function CompetitionsList() {
     const [isLoading, setIsLoading] = useState(true);
@@ -72,13 +73,7 @@ export default function CompetitionsList() {
 
     return (
         <Loader active={isLoading}>
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '15px',
-                }}
-            >
+            <div className={style.container}>
                 <h1>Liste des concours</h1>
                 <Button
                     color="green"
@@ -215,6 +210,17 @@ export default function CompetitionsList() {
                     ]}
                 </Table>
             </div>
+            <Button
+                borderRadius={'30px'}
+                padding={'20px'}
+                icon={'download'}
+            >
+                <CSVLink
+                    filename={"competitions_exported.csv"}
+                    data={competitions}>
+                    Exporter les concours
+                </CSVLink>
+            </Button>
         </Loader>
     );
 }

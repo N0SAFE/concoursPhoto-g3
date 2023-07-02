@@ -2,7 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Serializer\Filter\GroupFilter;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
+use App\Controller\FileController;
 use App\Repository\SponsorsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,9 +20,18 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 
+#[ApiFilter(GroupFilter::class)]
+#[ApiFilter(SearchFilter::class)]
+#[ApiFilter(PropertyFilter::class)]
 #[
     ApiResource(
-        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        operations: [
+            new GetCollection(),
+            new Get(),
+            new Post(),
+            new Patch(),
+            new Delete()
+        ],
         normalizationContext: ['groups' => ['sponsor:read']]
     )
 ]
@@ -30,7 +45,7 @@ class Sponsors
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'sponsors')]
-    #[Groups(['sponsor:read'])]
+    #[Groups(['sponsor:organization:read', 'sponsor:read'])]
     private ?Organization $organization = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -49,21 +64,15 @@ class Sponsors
     #[Groups(['sponsor:read'])]
     private ?float $price = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['sponsor:logo:read', 'user:current:read'])]
-    private ?File $logo = null;
+    #[ORM\ManyToOne(inversedBy: 'sponsors')]
+    #[Groups(['sponsor:competition:read'])]
+    private ?Competition $competition = null;
 
-    #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'sponsors')]
-    #[Groups(['sponsor:competitions:read'])]
-    private Collection $competitions;
-
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['sponsor:read'])]
-    private ?string $sponsorName = null;
+    private ?string $destinationUrl = null;
 
-    public function __construct()
-    {
-        $this->competitions = new ArrayCollection();
+    public function __construct() {
     }
 
     public function getId(): ?int
@@ -131,53 +140,26 @@ class Sponsors
         return $this;
     }
 
-    public function getLogo(): ?File
+    public function getCompetition(): ?Competition
     {
-        return $this->logo;
+        return $this->competition;
     }
 
-    public function setLogo(?File $logo): self
+    public function setCompetition(?Competition $competition): static
     {
-        $this->logo = $logo;
+        $this->competition = $competition;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Competition>
-     */
-    public function getCompetitions(): Collection
+    public function getDestinationUrl(): ?string
     {
-        return $this->competitions;
+        return $this->destinationUrl;
     }
 
-    public function addCompetition(Competition $competition): self
+    public function setDestinationUrl(?string $destinationUrl): static
     {
-        if (!$this->competitions->contains($competition)) {
-            $this->competitions->add($competition);
-            $competition->addSponsor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCompetition(Competition $competition): self
-    {
-        if ($this->competitions->removeElement($competition)) {
-            $competition->removeSponsor($this);
-        }
-
-        return $this;
-    }
-
-    public function getSponsorName(): ?string
-    {
-        return $this->sponsorName;
-    }
-
-    public function setSponsorName(string $sponsorName): static
-    {
-        $this->sponsorName = $sponsorName;
+        $this->destinationUrl = $destinationUrl;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Serializer\Filter\GroupFilter;
 use App\Repository\PictureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,7 +24,7 @@ use ApiPlatform\Serializer\Filter\PropertyFilter;
 #[ApiFilter(PropertyFilter::class)]
 #[
     ApiResource(
-        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        operations: [new GetCollection(), new Get(), new Post(), new Patch(), new Delete()],
         normalizationContext: ['groups' => ['picture:read']]
     )
 ]
@@ -61,7 +62,7 @@ class Picture
     private ?int $priceRank = null;
 
     #[Groups(['picture:votes:read'])]
-    #[ORM\OneToMany(mappedBy: 'picture', targetEntity: Vote::class)]
+    #[ORM\OneToMany(mappedBy: 'picture', targetEntity: Vote::class, cascade: ['persist', 'remove'])]
     private Collection $votes;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
