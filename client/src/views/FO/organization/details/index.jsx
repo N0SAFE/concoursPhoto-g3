@@ -69,6 +69,13 @@ export default function OrganisationDetails() {
         getCoordinates(organization.citycode).then(coordinate => setCoordinate(coordinate));
     }, [organization]);
 
+    const organizer = organization.lastCompetition.organizers.map(
+        user => user.firstname + ' ' + user.lastname || null
+    );
+    const themes = organization.lastCompetition?.theme.map(
+        item => item.label
+    );
+
     return (
         <div className={style.wrapper}>
             <PortalList
@@ -180,9 +187,8 @@ export default function OrganisationDetails() {
                         Retour
                     </Button>
                 </div>
-                <div style={{ flex: '33%' }} className={style.formColumn}>
+                <div className={style.formColumn}>
                     <Card
-                        style={{ width: '100%' }}
                         onClick={() => {
                             navigate(
                                 `/competition/${organization.lastCompetition.id}`
@@ -193,6 +199,11 @@ export default function OrganisationDetails() {
                         imagePath={
                             organization.lastCompetition.competitionVisual.path
                         }
+                        filters={[
+                            ...organizer,
+                            ...themes,
+                            organization.lastCompetition.state ? 'En cours' : 'Terminé',
+                        ].filter(i => i !== null)}
                         stats={[
                             {
                                 name: organization.lastCompetition
