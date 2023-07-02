@@ -94,12 +94,13 @@ export default function () {
     return (
         <>
             <Loader active={isLoading}>
-                <div className={style.all}>
+                <div className={style.fileContainer}>
+                    <h1>Fiche du concours</h1>
                     <BOSee
                         entity={entity}
                         properties={[
                             {
-                                display: 'nom',
+                                display: 'Nom du concours',
                                 name: 'competitionName',
                             },
                             {
@@ -112,73 +113,68 @@ export default function () {
                                 type: 'date',
                             },
                             {
-                                display: 'endowments',
+                                display: 'Dotation',
                                 name: 'endowments',
                             },
                             {
-                                display: 'max age',
+                                display: 'Âge maximum',
                                 name: 'maxAgeCriteria',
                             },
                             {
-                                display: 'min age',
+                                display: 'Âge minimum',
                                 name: 'minAgeCriteria',
                             },
                             {
-                                display: 'nombre de vote max',
+                                display: 'Nombre maximum de votes',
                                 name: 'numberOfMaxVotes',
                             },
                             {
-                                display: 'nombre de prix',
+                                display: 'Nombre de prix',
                                 name: 'numberOfPrices',
                             },
                             {
-                                display: 'organisation',
+                                display: 'Organisation(s)',
                                 name: 'organization',
                                 customData({ entity, property }) {
                                     return entity?.organization?.organizerName;
                                 },
                             },
                             {
-                                display: 'date de publication',
+                                display: 'Date de publication',
                                 name: 'publicationDate',
                                 type: 'date',
                             },
                             {
-                                display: 'date début publication',
-                                name: 'publicationStartDate',
-                                type: 'date',
-                            },
-                            {
-                                display: 'date début de soummision',
+                                display: 'Date de début de soummision',
                                 name: 'submissionStartDate',
                                 type: 'date',
                             },
                             {
-                                display: 'date de fin de soummision',
+                                display: 'Date de fin de soummision',
                                 name: 'submissionEndDate',
                                 type: 'date',
                             },
                             {
-                                display: 'date de début de vote',
+                                display: 'Date de début de vote',
                                 name: 'votingStartDate',
                                 type: 'date',
                             },
                             {
-                                display: 'date de fin de vote',
+                                display: 'Date de fin de vote',
                                 name: 'votingEndDate',
                                 type: 'date',
                             },
                             {
-                                display: 'date résultat',
+                                display: 'Date des résultats',
                                 name: 'resultsDate',
                                 type: 'date',
                             },
                             {
-                                display: 'pondération vote jury',
+                                display: 'Pondération des votes jury',
                                 name: 'weightingOfJuryVotes',
                             },
                             {
-                                display: 'thème',
+                                display: 'Thème(s)',
                                 name: 'theme',
                                 customData({ entity, property }) {
                                     return entity?.theme
@@ -187,7 +183,7 @@ export default function () {
                                 },
                             },
                             {
-                                display: 'Visuel',
+                                display: 'Visuel du concours',
                                 name: 'competitionVisual',
                                 type: 'img',
                                 customData: ({ entity }) => {
@@ -208,7 +204,7 @@ export default function () {
                                 name: 'countryCriteria',
                             },
                             {
-                                display: 'status',
+                                display: 'Status',
                                 name: 'state',
                             },
                             {
@@ -221,7 +217,7 @@ export default function () {
                                 },
                             },
                             {
-                                display: 'département',
+                                display: 'Département',
                                 name: 'departmentCriteria',
                                 customData({ entity, property }) {
                                     return entity?.departmentCriteria
@@ -230,7 +226,7 @@ export default function () {
                                 },
                             },
                             {
-                                display: 'région',
+                                display: 'Région',
                                 name: 'regionCriteria',
                                 customData({ entity, property }) {
                                     return entity?.regionCriteria
@@ -239,11 +235,11 @@ export default function () {
                                 },
                             },
                             {
-                                display: 'réglement',
+                                display: 'Règlement',
                                 name: 'rules',
                             },
                             {
-                                display: 'photographes',
+                                display: 'Photographe(s)',
                                 name: 'photographers',
                                 customData({ entity, property }) {
                                     return entity?.photographers?.map(
@@ -266,7 +262,7 @@ export default function () {
                                 },
                             },
                             {
-                                display: 'administrateurs',
+                                display: 'Administrateur(s)',
                                 name: 'organization',
                                 customData({ entity, property }) {
                                     return entity?.organization?.admins?.map(
@@ -289,7 +285,7 @@ export default function () {
                                 },
                             },
                             {
-                                display: 'sponsors',
+                                display: 'Sponsor(s)',
                                 name: 'sponsors',
                                 customData({ entity, property }) {
                                     return entity?.sponsors?.map(sponsor => (

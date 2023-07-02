@@ -8,4 +8,10 @@
     &List {
         overflow-x: scroll;
     }
+
+    &State {
+        display: flex;
+        margin-bottom: 15px;
+        gap: $gapBetweenElement;
+    }
 }

@@ -106,7 +106,7 @@ export default function UserList() {
     const userFiltering = () => {
         let filteredUsers = users.filter(user => {
             if (filterState !== 'all') {
-                if (filterVerified && user.state !== (filterState === 'true')) {
+                if (filterVerified && user.active !== (filterState === 'true')) {
                     return false;
                 }
             }
@@ -126,39 +126,58 @@ export default function UserList() {
     return (
         <Loader active={isLoading}>
             <div className={style.container}>
-                <h1>Liste des utilisateurs</h1>
-                <Button
-                    color="green"
-                    textColor="white"
-                    borderRadius={'30px'}
-                    onClick={() => navigate('/BO/user/create')}
-                >
-                    Créer un utilisateur
-                </Button>
+                <div>
+                    <h1>Liste des utilisateurs</h1>
+                    <Button
+                        color="green"
+                        textColor="white"
+                        borderRadius={'30px'}
+                        onClick={() => navigate('/BO/user/create')}
+                    >
+                        Créer un utilisateur
+                    </Button>
+                </div>
+                <div>
+                    <Button
+                        borderRadius={'30px'}
+                        padding={'20px'}
+                        icon={'download'}
+                    >
+                        <CSVLink
+                            filename={"users_exported.csv"}
+                            data={users}>
+                            Exporter les utilisateurs
+                        </CSVLink>
+                    </Button>
+                </div>
             </div>
-            <div>
-                <label htmlFor="state-filter">Filtrer par état :</label>
-                <select
-                    id="state-filter"
-                    value={filterState}
-                    onChange={handleFilterChange}
-                >
-                    <option value="all">Tous</option>
-                    <option value="true">Actif</option>
-                    <option value="false">Inactif</option>
-                </select>
-                <label htmlFor="state-verifiedFilter">
-                    Filtrer par vérification :
-                </label>
-                <select
-                    id="state-verifiedFilter"
-                    value={filterVerified}
-                    onChange={handleFilterChange}
-                >
-                    <option value="all">Tous</option>
-                    <option value="true">Vérifié</option>
-                    <option value="false">Non vérifié</option>
-                </select>
+            <div className={style.containerState}>
+                <div>
+                    <label htmlFor="state-filter">Filtrer par état :</label>
+                    <select
+                        id="state-filter"
+                        value={filterState}
+                        onChange={handleFilterChange}
+                    >
+                        <option value="all">Tous</option>
+                        <option value="true">Actif</option>
+                        <option value="false">Inactif</option>
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="state-verifiedFilter">
+                        Filtrer par vérification :
+                    </label>
+                    <select
+                        id="state-verifiedFilter"
+                        value={filterVerified}
+                        onChange={handleFilterChange}
+                    >
+                        <option value="all">Tous</option>
+                        <option value="true">Vérifié</option>
+                        <option value="false">Non vérifié</option>
+                    </select>
+                </div>
             </div>
             <div className={style.containerList}>
                 <Table
@@ -240,7 +259,7 @@ export default function UserList() {
                 >
                     {user => [
                         { content: user.id },
-                        { content: user.state ? 'Actif' : 'Inactif' },
+                        { content: user.active ? 'Actif' : 'Inactif' },
                         { content: user.email },
                         {
                             content: user.roles.map((role, index) => (
@@ -281,17 +300,6 @@ export default function UserList() {
                     ]}
                 </Table>
             </div>
-            <Button
-                borderRadius={'30px'}
-                padding={'20px'}
-                icon={'download'}
-            >
-                <CSVLink
-                    filename={"users_exported.csv"}
-                    data={users}>
-                    Exporter les utilisateurs
-                </CSVLink>
-            </Button>
         </Loader>
     );
 }

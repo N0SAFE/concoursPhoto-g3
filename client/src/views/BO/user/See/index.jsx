@@ -63,7 +63,8 @@ export default function () {
 
     return (
         <Loader active={isLoading}>
-            <div className={style.all}>
+            <div className={style.fileContainer}>
+                <h1>Fiche de l'utilisateur</h1>
                 <BOSee
                     entity={entity}
                     properties={[
@@ -76,11 +77,11 @@ export default function () {
                             name: 'firstname',
                         },
                         {
-                            display: 'Email',
+                            display: 'Adresse mail',
                             name: 'email',
                         },
                         {
-                            display: 'Téléphone',
+                            display: 'Numéro de téléphone',
                             name: 'phoneNumber',
                         },
                         {
@@ -92,7 +93,7 @@ export default function () {
                             name: 'postcode',
                         },
                         {
-                            display: 'Statut',
+                            display: 'Status',
                             name: 'personalStatut',
                             customData({ entity, property }) {
                                 return entity?.personalStatut?.label;
@@ -127,7 +128,7 @@ export default function () {
                             },
                         },
                         {
-                            display: 'Roles',
+                            display: 'Role(s)',
                             name: 'roles',
                             customData({ entity, property }) {
                                 return (

@@ -74,15 +74,30 @@ export default function CompetitionsList() {
     return (
         <Loader active={isLoading}>
             <div className={style.container}>
-                <h1>Liste des concours</h1>
-                <Button
-                    color="green"
-                    textColor="white"
-                    borderRadius={'30px'}
-                    onClick={() => navigate('/BO/competition/create')}
-                >
-                    Créer un concours
-                </Button>
+                <div>
+                    <h1>Liste des concours</h1>
+                    <Button
+                        color="green"
+                        textColor="white"
+                        borderRadius={'30px'}
+                        onClick={() => navigate('/BO/competition/create')}
+                    >
+                        Créer un concours
+                    </Button>
+                </div>
+                <div>
+                    <Button
+                        borderRadius={'30px'}
+                        padding={'20px'}
+                        icon={'download'}
+                    >
+                        <CSVLink
+                            filename={"competitions_exported.csv"}
+                            data={competitions}>
+                            Exporter les concours
+                        </CSVLink>
+                    </Button>
+                </div>
             </div>
             <div className={style.containerList}>
                 <Table
@@ -210,17 +225,6 @@ export default function CompetitionsList() {
                     ]}
                 </Table>
             </div>
-            <Button
-                borderRadius={'30px'}
-                padding={'20px'}
-                icon={'download'}
-            >
-                <CSVLink
-                    filename={"competitions_exported.csv"}
-                    data={competitions}>
-                    Exporter les concours
-                </CSVLink>
-            </Button>
         </Loader>
     );
 }

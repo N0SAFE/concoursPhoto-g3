@@ -11,6 +11,7 @@ import Card from '@/components/molecules/Card/index.jsx';
 import Icon from '@/components/atoms/Icon';
 import {GoogleMap, LoadScript, MarkerF, PolygonF} from "@react-google-maps/api";
 import useLocation from "@/hooks/useLocation.js";
+import {useAuthContext} from "@/contexts/AuthContext.jsx";
 
 export default function OrganisationDetails() {
     const { organization: _organization } = useOutletContext();
@@ -25,6 +26,7 @@ export default function OrganisationDetails() {
         polygon: [],
         center: [],
     });
+    const { me } = useAuthContext();
 
     function updateOrganization() {
         const res = apiFetch(`/organizations/${organization.id}`, {
@@ -117,7 +119,6 @@ export default function OrganisationDetails() {
                     )
                 }}
             />
-
             <div className={style.formWrapper}>
                 <div style={{ flex: '66%' }} className={style.formColumn}>
                     <h2>Qui sommes-nous ?</h2>
@@ -126,57 +127,61 @@ export default function OrganisationDetails() {
                             __html: organization.description,
                         }}
                     ></div>
-                    <Editor
-                        onEditorChange={s => {
-                            setOrganization({
-                                ...organization,
-                                description: s,
-                            });
-                        }}
-                        onInit={(evt, editor) => (editorRef.current = editor)}
-                        initialValue={organization.description}
-                        init={{
-                            height: 500,
-                            menubar: false,
-                            plugins: [
-                                'advlist',
-                                'autolink',
-                                'lists',
-                                'link',
-                                'image',
-                                'charmap',
-                                'preview',
-                                'anchor',
-                                'searchreplace',
-                                'visualblocks',
-                                'code',
-                                'fullscreen',
-                                'insertdatetime',
-                                'table',
-                                'code',
-                                'help',
-                                'wordcount',
-                                'emoticons',
-                                'charmap',
-                                'insertdatetime',
-                            ],
-                            toolbar:
-                                'undo redo | blocks | ' +
-                                'bold italic forecolor | alignleft aligncenter ' +
-                                'alignright alignjustify | bullist numlist outdent indent | ' +
-                                'removeformat | help' +
-                                ' | emoticons' +
-                                ' insertdatetime | code | preview',
-                            content_style:
-                                'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                        }}
-                    />
-                    <button
-                        style={{ borderRadius: '10%' }}
-                        onClick={updateOrganization}
-                    >
-                        Editer
-                    </button>
+                    {((organization.admins.map(user => user.id).includes(me.id)) || (me.roles.includes("ROLE_ADMIN"))) && (
+                        <>
+                            <Editor
+                                onEditorChange={s => {
+                                    setOrganization({
+                                        ...organization,
+                                        description: s,
+                                    });
+                                }}
+                                onInit={(evt, editor) => (editorRef.current = editor)}
+                                initialValue={organization.description}
+                                init={{
+                                    height: 500,
+                                    menubar: false,
+                                    plugins: [
+                                        'advlist',
+                                        'autolink',
+                                        'lists',
+                                        'link',
+                                        'image',
+                                        'charmap',
+                                        'preview',
+                                        'anchor',
+                                        'searchreplace',
+                                        'visualblocks',
+                                        'code',
+                                        'fullscreen',
+                                        'insertdatetime',
+                                        'table',
+                                        'code',
+                                        'help',
+                                        'wordcount',
+                                        'emoticons',
+                                        'charmap',
+                                        'insertdatetime',
+                                    ],
+                                    toolbar:
+                                        'undo redo | blocks | ' +
+                                        'bold italic forecolor | alignleft aligncenter ' +
+                                        'alignright alignjustify | bullist numlist outdent indent | ' +
+                                        'removeformat | help' +
+                                        ' | emoticons' +
+                                        ' insertdatetime | code | preview',
+                                    content_style:
+                                        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                                }}
+                            />
+                            <button
+                                style={{ borderRadius: '10%' }}
+                                onClick={updateOrganization}
+                            >
+                                Editer
+                            </button>
+                        </>
+                    )}
                     <Button
                         borderRadius={'30px'}
                         padding={'20px'}

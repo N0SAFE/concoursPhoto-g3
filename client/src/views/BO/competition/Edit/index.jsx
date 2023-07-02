@@ -163,7 +163,7 @@ export default function CompetitionEdit() {
                     'theme:read',
                     'competition:competitionVisual:read',
                     'file:read',
-                    'competition:sponsors:read',
+                    'competition:sponsor:read',
                     'sponsor:read',
                 ],
             },
@@ -188,7 +188,7 @@ export default function CompetitionEdit() {
                     const _competition = {
                         state: data.state,
                         name: data.competitionName,
-                        visual: data.competitionVisual || null,
+                        competitionVisual: data.competitionVisual || null,
                         description: data.description,
                         rules: data.rules,
                         endowments: data.endowments ? data.endowments : null,
@@ -230,7 +230,7 @@ export default function CompetitionEdit() {
                             .filter(r => r),
                     };
                     const _updatedFile = {
-                        visual: data.competitionVisual
+                        competitionVisual: data.competitionVisual
                             ? {
                                   to: apiPathComplete(
                                       data.competitionVisual.path
