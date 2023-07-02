@@ -34,6 +34,7 @@ use Metaclass\FilterBundle\Filter\FilterLogic;
             'regionCriteria' => 'partial',
             'departmentCriteria' => 'partial',
             'state' => 'exact',
+            'admins' => 'exact',
         ]
     )
 ]
