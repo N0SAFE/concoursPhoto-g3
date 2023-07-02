@@ -18,6 +18,16 @@ export default function () {
 
     const getOrganizations = controller => {
         return apiFetch('/organizations/' + organizationId, {
+            query: {
+                groups: [
+                    'organization:organizationType:read',
+                    'organizationType:read',
+                    'organization:competitions:read',
+                    'competition:read',
+                    'organization:logo:read',
+                    'file:read',
+                ],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -55,87 +65,88 @@ export default function () {
     return (
         <Loader active={isLoading}>
             <div className={style.all}>
-            <BOSee
-                entity={entity}
-                properties={[
-                    {
-                        display: 'Nom',
-                        name: 'organizer_name',
-                    },
-                    {
-                        display: 'Ville',
-                        name: 'city',
-                    },
-                    {
-                        display: 'Adresse',
-                        name: 'address',
-                    },
-                    {
-                        display: 'Code postal',
-                        name: 'postcode',
-                    },
-                    {
-                        display: 'pays',
-                        name: 'country',
-                    },
-                    {
-                        display: 'Téléphone',
-                        name: 'number_phone',
-                    },
-                    {
-                        display: 'Email',
-                        name: 'email',
-                    },
-                    {
-                        display: 'Numero de SIRET',
-                        name: 'number_siret',
-                    },
-                    {
-                        display: 'Numéro de TVA',
-                        name: 'intra_community_vat',
-                    },
-                    {
-                        display: 'Site web',
-                        name: 'website_url',
-                    },
-                    {
-                        display: 'Description',
-                        name: 'description',
-                    },
-                    {
-                        display: 'Logo',
-                        name: 'logo',
-                        type: 'img',
-                        customData: ({ entity }) => {
-                            return entity?.logo?.path
-                                ? {
-                                      to: toApiPath(entity?.logo?.path),
-                                      name: entity?.logo?.default_name,
-                                  }
-                                : null;
+                <BOSee
+                    entity={entity}
+                    properties={[
+                        {
+                            display: 'Nom',
+                            name: 'organizerName',
                         },
-                    },
-                    {
-                        display: "Type d'organisation",
-                        name: 'type_organization',
-                        customData: ({ entity }) => {
-                            return entity?.organization_type?.label;
+                        {
+                            display: 'Ville',
+                            name: 'city',
                         },
-                    },
-                    {
-                        display: 'Competitions',
-                        name: 'competitions',
-                        customData: ({ entity }) => {
-                            return entity?.competitions
-                                ?.map(
-                                    competition => competition.competition_name
-                                )
-                                .join(', ');
+                        {
+                            display: 'Adresse',
+                            name: 'address',
                         },
-                    },
-                ]}
+                        {
+                            display: 'Code postal',
+                            name: 'postcode',
+                        },
+                        {
+                            display: 'pays',
+                            name: 'country',
+                        },
+                        {
+                            display: 'Téléphone',
+                            name: 'numberPhone',
+                        },
+                        {
+                            display: 'Email',
+                            name: 'email',
+                        },
+                        {
+                            display: 'Numero de SIRET',
+                            name: 'numberSiret',
+                        },
+                        {
+                            display: 'Numéro de TVA',
+                            name: 'intraCommunityVat',
+                        },
+                        {
+                            display: 'Site web',
+                            name: 'websiteUrl',
+                        },
+                        {
+                            display: 'Description',
+                            name: 'description',
+                        },
+                        {
+                            display: 'Logo',
+                            name: 'logo',
+                            type: 'img',
+                            customData: ({ entity }) => {
+                                return entity?.logo?.path
+                                    ? {
+                                          to: toApiPath(entity?.logo?.path),
+                                          name: entity?.logo?.defaultName,
+                                      }
+                                    : null;
+                            },
+                        },
+                        {
+                            display: "Type d'organisation",
+                            name: 'organizationType',
+                            customData: ({ entity }) => {
+                                return entity?.organizationType?.label;
+                            },
+                        },
+                        {
+                            display: 'Competitions',
+                            name: 'competitions',
+                            customData: ({ entity }) => {
+                                return entity?.competitions
+                                    ?.map(
+                                        competition =>
+                                            competition.competitionName
+                                    )
+                                    .join(', ');
+                            },
+                        },
+                    ]}
                 />
-                </div>
+            </div>
         </Loader>
     );
 }

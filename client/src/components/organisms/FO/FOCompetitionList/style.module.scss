@@ -1,7 +1,6 @@
 .lastCompetition {
     & > div {
         display: flex;
-        justify-content: center;
         gap: $gapBetweenElement;
         flex-wrap: wrap;
     }

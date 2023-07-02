@@ -5,6 +5,8 @@ import Login from '@/components/organisms/auth/Login';
 import Register from '@/components/organisms/auth/Register';
 import useAuth from '@/hooks/useAuth';
 import { toast } from 'react-toastify';
+import style from './style.module.scss';
+import logoSite from '@/assets/logo-concoursPhoto.png';
 
 export default function Header(environment) {
     const { logout } = useAuth();
@@ -43,15 +45,37 @@ export default function Header(environment) {
                 { title: "Ajout d'un concours", to: '/BO/competition/create' },
             ],
         });
+        listLeft.push({
+            type: 'dropdown',
+            title: 'Photographes',
+            links: [
+                {
+                    title: 'Liste des photographes',
+                    to: '/BO/user/photographer',
+                },
+            ],
+        });
     } else {
-        listLeft.push({ type: 'classic', title: 'Accueil', to: '/BO' });
-        listLeft.push({ type: 'classic', title: 'Concours photo', to: '/' });
-        listLeft.push({ type: 'classic', title: 'Photographes', to: '/' });
-        listLeft.push({ type: 'classic', title: 'Organisateurs', to: '/' });
+        listLeft.push({ type: 'classic', title: 'Accueil', to: '/' });
+        listLeft.push({
+            type: 'classic',
+            title: 'Concours photo',
+            to: '/competitiondetails',
+        });
+        listLeft.push({
+            type: 'classic',
+            title: 'Photographes',
+            to: '/photographer',
+        });
+        listLeft.push({
+            type: 'classic',
+            title: 'Organisateurs',
+            to: '/organization',
+        });
         listLeft.push({
             type: 'classic',
             title: 'Créer votre concours',
-            to: '/',
+            to: '/CreateCompetition',
         });
     }
 
@@ -74,7 +98,7 @@ export default function Header(environment) {
                             });
                         },
                     },
-                    { title: 'Mon profil', to: '/profile/me' },
+                    { title: 'Mon profil', to: '/profile' },
                 ],
             });
         } else {
@@ -85,13 +109,13 @@ export default function Header(environment) {
             });
         }
     } else {
-        listRight.push({
-            type: 'modal',
-            component: <Register />,
-            title: "S'inscrire",
-            icon: 'user-plus',
-        });
         if (isLogged) {
+            listRight.push({
+                type: 'button',
+                title: 'Mon compte',
+                icon: 'user-plus',
+                to: '/profile',
+            });
             listRight.push({
                 type: 'button',
                 action: function () {
@@ -110,6 +134,12 @@ export default function Header(environment) {
         } else {
             listRight.push({
                 type: 'modal',
+                component: <Register />,
+                title: "S'inscrire",
+                icon: 'user-plus',
+            });
+            listRight.push({
+                type: 'modal',
                 component: <Login />,
                 title: 'Se connecter',
                 icon: 'sign-in',
@@ -119,8 +149,18 @@ export default function Header(environment) {
 
     return (
         <>
-            <header>
-                <Navbar listLeft={listLeft} listRight={listRight} />
+            <header className={style.headerContainer}>
+                <Navbar
+                    icon={
+                        <img
+                            src={logoSite}
+                            className={style.logoSite}
+                            alt="logo de concoursPhoto"
+                        />
+                    }
+                    listLeft={listLeft}
+                    listRight={listRight}
+                />
             </header>
         </>
     );

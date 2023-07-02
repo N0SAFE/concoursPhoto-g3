@@ -17,28 +17,34 @@ class JWTNotFoundListener
      * @var EventDispatcherInterface
      */
     private $dispatcher;
-    public function __construct(RequestStack $requestStack, EventDispatcherInterface $dispatcher)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->requestStack = $requestStack;
         $this->dispatcher = $dispatcher;
     }
     public function onJWTNotFound(JWTNotFoundEvent $event)
     {
-        if ($this->requestStack->getCurrentRequest()->cookies->get('REFRESH_TOKEN')) {
+        if (
+            $this->requestStack
+                ->getCurrentRequest()
+                ->cookies->get('REFRESH_TOKEN')
+        ) {
             // TODO: dispatch the expired JWT event ??
             // TODO: this needs to be put inside the expired listener and not here
-//            $expiredEvent = new JWTExpiredEvent($event->getException(), $event->getResponse());
+            //            $expiredEvent = new JWTExpiredEvent($event->getException(), $event->getResponse());
             $data = [
-                'status'  => Response::HTTP_UNAUTHORIZED . ' Unauthorized',
+                'status' => Response::HTTP_UNAUTHORIZED . ' Unauthorized',
                 'message' => 'Expired token',
             ];
             $response = new JsonResponse($data, 401);
             return $event->setResponse($response);
-//            $this->dispatcher->dispatch('lexik_jwt_authentication.on_jwt_expired', $expiredEvent);
-//            return false;
+            //            $this->dispatcher->dispatch('lexik_jwt_authentication.on_jwt_expired', $expiredEvent);
+            //            return false;
         }
         $data = [
-            'status'  => Response::HTTP_FORBIDDEN . ' Forbidden',
+            'status' => Response::HTTP_FORBIDDEN . ' Forbidden',
             'message' => 'Missing token',
         ];
         $response = new JsonResponse($data, 401);

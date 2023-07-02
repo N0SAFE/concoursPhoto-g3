@@ -2,28 +2,111 @@ import style from './style.module.scss';
 import PortalList from '@/components/organisms/FO/FOPortalList';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import useLocation from '@/hooks/useLocation.js';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {toast} from 'react-toastify';
 import Breadcrumb from '@/components/atoms/Breadcrumb';
 import Chip from '@/components/atoms/Chip/index.jsx';
-import Dropdown from '@/components/atoms/Dropdown/index.jsx';
 import Icon from '@/components/atoms/Icon/index.jsx';
-import { Outlet } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import Button from '@/components/atoms/Button/index.jsx';
+import CompetitionVisualEdit from "@/components/organisms/Modals/competition/CompetitionVisualEdit.jsx";
+import SponsorsEdit from "@/components/organisms/Modals/competition/SponsorsEdit.jsx";
 
 export default function CompetitionLayout() {
     const [isLoading, setIsLoading] = useState(true);
     const apiFetch = useApiFetch();
-    const { getCityByCode, getDepartmentByCode, getRegionByCode } =
-        useLocation();
+    const {
+        getCityByCode,
+        getDepartmentByCode,
+        getRegionByCode,
+    } = useLocation();
     const [entity, setEntity] = useState({});
-    const { id: competitionId } = useParams();
+    const updateEntityState = (key, value) => {
+        setEntity({...entity, [key]: value});
+    };
+    const {id: competitionId} = useParams();
     const navigate = useNavigate();
 
+    const [entityPossibility, setEntityPossibility] = useState({
+        themes: [],
+        participantCategories: [],
+    });
+    const [locationPossibility, setLocationPossibility] = useState({
+        regions: {isLoading: true, data: []},
+        departments: {isLoading: true, data: []},
+        cities: {isLoading: true, data: []},
+    });
+
+    const updateLocationPossibility = (key, {data, isLoading}) => {
+        if (isLoading !== undefined) {
+            locationPossibility[key].isLoading = isLoading;
+        }
+        if (data !== undefined) {
+            locationPossibility[key].data = data.map(item => ({
+                label: item.nom,
+                value: item.code,
+            }));
+        }
+        setLocationPossibility({...locationPossibility});
+    };
+
+    const getThemes = controller => {
+        return apiFetch('/themes', {
+            method: 'GET',
+            signal: controller?.signal,
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member'].map(function (item) {
+                    return {label: item.label, value: item['@id']};
+                });
+            });
+    };
+
+    const getParticipantCategories = controller => {
+        return apiFetch('/participant_categories', {
+            method: 'GET',
+            headers: {'Content-Type': 'multipart/form-data'},
+            signal: controller?.signal,
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member'].map(function (item) {
+                    return {label: item.label, value: item['@id']};
+                });
+            });
+    };
+
     const getCompetitions = controller => {
-        return apiFetch('/competitions/' + competitionId, {
+        return apiFetch('/competitions/view/' + competitionId, {
+            query: {
+                groups: [
+                    'file:read',
+                    'competition:competitionVisual:read',
+                    'competitionVisual:read',
+                    'competition:competitionPictures:read',
+                    'competition:organization:read',
+                    'organization:logo:read',
+                    'organization:admins:read',
+                    'user:read',
+                    'picture:file:read',
+                    'competition:memberOfTheJuries:read',
+                    'memberOfTheJury:user:read',
+                    'memberOfTheJury:read',
+                    'competition:theme:read',
+                    'competition:participantCategory:read',
+                    'participantCategory:read',
+                    'theme:read',
+                    'competition:sponsor:read',
+                    'sponsor:read',
+                    'sponsor:logo:read',
+                    'picture:user:read',
+                ],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -37,31 +120,34 @@ export default function CompetitionLayout() {
                     throw new Error(data.message);
                 }
                 return await Promise.all([
-                    Promise.all(data.city_criteria.map(getCityByCode)),
+                    Promise.all(data.cityCriteria.map(async function (c) {
+                        const city = await getCityByCode(c)
+                        return {...city, label: city.nom, value: city.code}
+                    })),
                     Promise.all(
-                        data.department_criteria.map(getDepartmentByCode)
+                        data.departmentCriteria.map(async function (d) {
+                            const department = await getDepartmentByCode(d)
+                            return {...department, label: department.nom, value: department.code}
+                        })
                     ),
-                    Promise.all(data.region_criteria.map(getRegionByCode)),
+                    Promise.all(data.regionCriteria.map(async function (r) {
+                        const region = await getRegionByCode(r)
+                        return {...region, label: region.nom, value: region.code}
+                    }))
                 ]).then(([cities, departments, regions]) => {
                     const _competition = {
                         ...data,
-                        city_criteria: cities,
-                        department_criteria: departments,
-                        region_criteria: regions,
-                        numberOfUser: data.pictures.reduce(
-                            (set, p) => set.add(p.user.id),
-                            new Set()
-                        ).size,
-                        numberOfVotes: data.pictures.reduce(
-                            (sum, p) => sum + p.votes.length,
-                            0
-                        ),
-                        numberOfPhotograph: data.pictures.reduce((set, p) => {
-                            if (p.user.roles.includes('ROLE_PHOTOGRAPHER')) {
-                                set.add(p.user.id);
-                            }
-                            return set;
-                        }, new Set()).size,
+                        theme: data.theme.map((theme) => ({
+                            value: theme['@id'],
+                            label: theme.label
+                        })),
+                        participantCategory: data.participantCategory.map((participantCategory) => ({
+                            value: participantCategory['@id'],
+                            label: participantCategory.label
+                        })),
+                        cityCriteria: cities,
+                        departmentCriteria: departments,
+                        regionCriteria: regions,
                     };
                     setEntity(_competition);
                     return _competition;
@@ -82,6 +168,7 @@ export default function CompetitionLayout() {
                 error: 'Erreur lors du chargement du concours',
             });
         }
+
         return () => setTimeout(() => controller.abort());
     }, []);
 
@@ -91,10 +178,10 @@ export default function CompetitionLayout() {
                 <div className={style.competitionBanner}>
                     <Breadcrumb
                         items={[
-                            { label: 'Accueil', link: '/' },
-                            { label: 'Concours photo', link: location },
+                            {label: 'Accueil', link: '/'},
+                            {label: 'Concours photo', link: location},
                             {
-                                label: `Concours photo ${entity.competition_name}`,
+                                label: `Concours photo ${entity.competitionName}`,
                             },
                         ]}
                     />
@@ -102,62 +189,40 @@ export default function CompetitionLayout() {
                         <div className={style.viewFilter}>
                             <div>
                                 <h1>
-                                    Concours photo "{entity.competition_name}"
+                                    Concours photo "{entity.competitionName}"
                                 </h1>
                             </div>
                             <div>
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={
-                                        <Dropdown
-                                            title="Thème(s) :"
-                                            links={entity.theme?.map(theme => ({
-                                                title: theme.label,
-                                            }))}
-                                            iconColor={'#000'}
-                                        />
-                                    }
-                                />
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={`Pays : ${entity.country_criteria}`}
-                                />
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={
-                                        <Dropdown
-                                            title="Région(s) :"
-                                            links={entity.region_criteria?.map(
-                                                region => ({
-                                                    title: region.nom,
-                                                })
-                                            )}
-                                            iconColor={'#000'}
-                                        />
-                                    }
-                                />
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={
-                                        <Dropdown
-                                            title="Catégorie(s) :"
-                                            links={entity.participant_category?.map(
-                                                category => ({
-                                                    title: category.label,
-                                                })
-                                            )}
-                                            iconColor={'#000'}
-                                        />
-                                    }
-                                />
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={`Âge : de ${entity.min_age_criteria} à ${entity.max_age_criteria} ans`}
-                                />
-                                <Chip
-                                    backgroundColor={'#F5F5F5'}
-                                    title={`Dotation : ${entity.endowments}`}
-                                />
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Pays : {entity.countryCriteria}
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Département(s) :{' '}
+                                    {entity.departmentCriteria?.map(
+                                        department => ' ' + department.nom
+                                    )}
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Région(s) :{' '}
+                                    {entity.regionCriteria?.map(
+                                        region => ' ' + region.nom
+                                    )}
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Thème(s) :{' '}
+                                    {entity.theme?.map(
+                                        theme => ' ' + theme.label
+                                    )}
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    Âge : de {entity.minAgeCriteria} à{' '}
+                                    {entity.maxAgeCriteria} ans
+                                </Chip>
+                                <Chip backgroundColor={'#F5F5F5'}>
+                                    <p dangerouslySetInnerHTML={{
+                                        __html: 'Dotation : ' + entity.endowments,
+                                    }}></p>
+                                </Chip>
                             </div>
                         </div>
                         <div className={style.viewOrganizer}>
@@ -166,7 +231,7 @@ export default function CompetitionLayout() {
                                     <p className={style.titleOrganizer}>
                                         Organisateur :{' '}
                                         <span>
-                                            {entity.organization?.users
+                                            {entity.organization?.admins
                                                 .map(
                                                     user =>
                                                         user.firstname +
@@ -180,43 +245,59 @@ export default function CompetitionLayout() {
                                 <div className={style.viewOrganizerTwo}>
                                     <div>
                                         <Chip
-                                            title={'Phase de vote'}
                                             backgroundColor={'#000'}
                                             color={'#fff'}
-                                        />
+                                        >
+                                            {entity.stateLabel}
+                                        </Chip>
                                     </div>
                                     <div>
                                         <p>
                                             Fin le{' '}
                                             {new Date(
-                                                entity.voting_end_date
+                                                entity.votingEndDate
                                             ).toLocaleDateString('fr-FR', {
                                                 year: 'numeric',
                                                 month: 'long',
                                                 day: 'numeric',
                                             })}
                                         </p>
-                                        <Icon icon="time" size="20" />
+                                        <Icon icon="time" size="20"/>
                                     </div>
                                 </div>
                             </div>
                             <div className={style.viewOrganizerStats}>
+                                {entity.state >= 2 && (
+                                    <>
+                                        <Chip
+                                            icon={'user-plus'}
+                                            backgroundColor={'#F5F5F5'}
+                                        >
+                                            {entity.numberOfParticipants}
+                                        </Chip>
+                                        <Chip
+                                            title={entity.numberOfPictures}
+                                            icon={'camera'}
+                                            backgroundColor={'#F5F5F5'}
+                                        >
+                                            {entity.numberOfPictures}
+                                        </Chip>
+                                    </>
+                                )}
+                                {entity.state >= 4 && (
+                                    <Chip
+                                        icon={'like'}
+                                        backgroundColor={'#F5F5F5'}
+                                    >
+                                        {entity.numberOfVotes}
+                                    </Chip>
+                                )}
                                 <Chip
-                                    title={entity.numberOfUser}
-                                    icon={'user-plus'}
+                                    icon={'view-show'}
                                     backgroundColor={'#F5F5F5'}
-                                />
-                                <Chip
-                                    title={entity.pictures?.length}
-                                    icon={'camera'}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                                <Chip
-                                    title={entity.numberOfVotes}
-                                    icon={'like'}
-                                    backgroundColor={'#F5F5F5'}
-                                />
-                                <Chip />
+                                >
+                                    {entity.consultationCount}
+                                </Chip>
                             </div>
                         </div>
                     </div>
@@ -224,7 +305,7 @@ export default function CompetitionLayout() {
                 <PortalList
                     boxSingle={{
                         type: 'picture',
-                        path: entity.competition_visual?.path,
+                        path: entity.competitionVisual?.path,
                         alt: 'Photo du concours',
                     }}
                     boxUp={{
@@ -235,18 +316,22 @@ export default function CompetitionLayout() {
                         type: 'slider',
                     }}
                     boxDownContents={entity.sponsors?.map(
-                        image => image.logo.path
+                        sponsor => sponsor.organization?.logo.path
                     )}
+                    entity={entity}
+                    modalContentSingle={<CompetitionVisualEdit competition={entity}/>}
+                    modalContentDown={<SponsorsEdit competition={entity} />}
                 />
-                <Outlet context={{ competition: entity }} />
+                <Outlet context={{competition: entity, refreshCompetition: getCompetitions}}/>
                 <Button
-                    name={'Retour'}
                     borderRadius={'30px'}
                     padding={'20px'}
                     icon={'arrow-thin-left'}
                     iconPosition={'left'}
                     onClick={() => navigate('/')}
-                />
+                >
+                    Retour
+                </Button>
             </div>
         </Loader>
     );

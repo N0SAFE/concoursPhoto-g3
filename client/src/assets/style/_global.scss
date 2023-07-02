@@ -13,6 +13,10 @@ body {
 
 .limited-content {
     padding: 0 100px;
+
+    @include below(md) {
+        padding: 0 50px;
+    }
 }
 
 .margin-title {
@@ -38,4 +42,15 @@ body {
             display: none;
         }
     }
+}
+
+.break-long-words {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+// hide registration pop-up TINY MCE
+.tox-notifications-container {
+    display: none;
 }

@@ -6,43 +6,62 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\RentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['rent:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: RentRepository::class)]
 class Rent
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $announcement_id = null;
+    #[Groups(['rent:read'])]
+    private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'rents')]
+    #[Groups(['rent:organization:read'])]
     private ?Organization $organization = null;
 
     #[ORM\ManyToOne(inversedBy: 'rents')]
+    #[Groups(['rent:advertising:read'])]
     private ?AdvertisingSpace $advertising = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $start_date = null;
+    #[Groups(['rent:read'])]
+    private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $end_date = null;
+    #[Groups(['rent:read'])]
+    private ?\DateTimeInterface $endDate = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $url_click = null;
+    #[Groups(['rent:read'])]
+    private ?string $urlClick = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $alt_tag = null;
+    #[Groups(['rent:read'])]
+    private ?string $altTag = null;
 
     #[ORM\Column]
-    private ?int $price_sold = null;
+    #[Groups(['rent:read'])]
+    private ?int $priceSold = null;
 
     #[ORM\Column]
-    private ?int $number_of_clicks = null;
+    #[Groups(['rent:read'])]
+    private ?int $numberOfClicks = null;
 
     public function getId(): ?int
     {
-        return $this->announcement_id;
+        return $this->id;
     }
 
     public function getOrganization(): ?Organization
@@ -71,72 +90,72 @@ class Rent
 
     public function getStartDate(): ?\DateTimeInterface
     {
-        return $this->start_date;
+        return $this->startDate;
     }
 
-    public function setStartDate(\DateTimeInterface $start_date): self
+    public function setStartDate(\DateTimeInterface $startDate): self
     {
-        $this->start_date = $start_date;
+        $this->startDate = $startDate;
 
         return $this;
     }
 
     public function getEndDate(): ?\DateTimeInterface
     {
-        return $this->end_date;
+        return $this->endDate;
     }
 
-    public function setEndDate(\DateTimeInterface $end_date): self
+    public function setEndDate(\DateTimeInterface $endDate): self
     {
-        $this->end_date = $end_date;
+        $this->endDate = $endDate;
 
         return $this;
     }
 
     public function getUrlClick(): ?string
     {
-        return $this->url_click;
+        return $this->urlClick;
     }
 
-    public function setUrlClick(string $url_click): self
+    public function setUrlClick(string $urlClick): self
     {
-        $this->url_click = $url_click;
+        $this->urlClick = $urlClick;
 
         return $this;
     }
 
     public function getAltTag(): ?string
     {
-        return $this->alt_tag;
+        return $this->altTag;
     }
 
-    public function setAltTag(string $alt_tag): self
+    public function setAltTag(string $altTag): self
     {
-        $this->alt_tag = $alt_tag;
+        $this->altTag = $altTag;
 
         return $this;
     }
 
     public function getPriceSold(): ?int
     {
-        return $this->price_sold;
+        return $this->priceSold;
     }
 
-    public function setPriceSold(int $price_sold): self
+    public function setPriceSold(int $priceSold): self
     {
-        $this->price_sold = $price_sold;
+        $this->priceSold = $priceSold;
 
         return $this;
     }
 
     public function getNumberOfClicks(): ?int
     {
-        return $this->number_of_clicks;
+        return $this->numberOfClicks;
     }
 
-    public function setNumberOfClicks(int $number_of_clicks): self
+    public function setNumberOfClicks(int $numberOfClicks): self
     {
-        $this->number_of_clicks = $number_of_clicks;
+        $this->numberOfClicks = $numberOfClicks;
 
         return $this;
     }

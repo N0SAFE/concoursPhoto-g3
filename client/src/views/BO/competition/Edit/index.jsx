@@ -1,5 +1,5 @@
 import Input from '@/components/atoms/Input/index.jsx';
-import BOCreate from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useState, useEffect } from 'react';
 import useLocation from '@/hooks/useLocation';
@@ -11,6 +11,8 @@ import useApiPath from '@/hooks/useApiPath.js';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import Button from '@/components/atoms/Button';
 import style from './style.module.scss';
+import React, { useRef } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 
 export default function CompetitionEdit() {
     const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +29,7 @@ export default function CompetitionEdit() {
         getRegionByName,
         getRegionByCode,
     } = useLocation();
-
+    const editorRef = useRef(null);
     const [locationPossibility, setLocationPossibility] = useState({
         regions: { isLoading: true, data: [] },
         departments: { isLoading: true, data: [] },
@@ -51,20 +53,22 @@ export default function CompetitionEdit() {
         participantCategories: [],
         organizers: [],
         themes: [],
+        sponsors: [],
     });
     const [updatedFile, setUpdatedFile] = useState({
-        visual: null,
+        competitionVisual: null,
     });
     const [entity, setEntity] = useState({
         state: false,
         name: null,
-        visual: null,
+        competitionVisual: null,
         description: null,
         rules: null,
         endowments: null,
         participantCategories: [],
         organizer: null,
         themes: [],
+        sponsors: [],
         creationDate: null,
         publicationDate: null,
         submissionStartDate: null,
@@ -115,11 +119,24 @@ export default function CompetitionEdit() {
             .then(data => {
                 console.debug(data);
                 return data['hydra:member'].map(function (item) {
-                    return { label: item.organizer_name, value: item['@id'] };
+                    return { label: item.organizerName, value: item['@id'] };
                 });
             });
     };
-
+    const getSponsor = controller => {
+        return apiFetch('/sponsors', {
+            method: 'GET',
+            signal: controller?.signal,
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member'].map(function (item) {
+                    console.debug(item);
+                    return { label: item.sponsorName, value: item['@id'] };
+                });
+            });
+    };
     const getThemes = controller => {
         return apiFetch('/themes', {
             method: 'GET',
@@ -136,57 +153,72 @@ export default function CompetitionEdit() {
 
     const getCompetitions = controller => {
         return apiFetch(`/competitions/${competitionId}`, {
+            query: {
+                groups: [
+                    'competition:participantCategory:read',
+                    'participantCategory:read',
+                    'competition:organization:read',
+                    'organization:read',
+                    'competition:theme:read',
+                    'theme:read',
+                    'competition:competitionVisual:read',
+                    'file:read',
+                    'competition:sponsors:read',
+                    'sponsor:read',
+                ],
+            },
             method: 'GET',
             signal: controller?.signal,
         })
             .then(r => r.json())
             .then(async data => {
-                console.debug(data);
                 return await Promise.all([
                     Promise.all(
-                        data.city_criteria.map(c => c && getCityByCode(c))
+                        data.cityCriteria.map(c => c && getCityByCode(c))
                     ),
                     Promise.all(
-                        data.department_criteria.map(
+                        data.departmentCriteria.map(
                             d => d && getDepartmentByCode(d)
                         )
                     ),
                     Promise.all(
-                        data.region_criteria.map(r => r && getRegionByCode(r))
+                        data.regionCriteria.map(r => r && getRegionByCode(r))
                     ),
                 ]).then(([cities, departments, regions]) => {
                     const _competition = {
                         state: data.state,
-                        name: data.competition_name,
-                        visual: data.competition_visual || null,
+                        name: data.competitionName,
+                        visual: data.competitionVisual || null,
                         description: data.description,
                         rules: data.rules,
                         endowments: data.endowments ? data.endowments : null,
-                        participantCategories: data.participant_category.map(
+                        participantCategories: data.participantCategory.map(
                             pc => ({ label: pc.label, value: pc['@id'] })
                         ),
                         organizer: {
-                            label: data.organization.organizer_name,
+                            label: data.organization.organizerName,
                             value: data.organization['@id'],
                         },
                         themes: data.theme.map(t => ({
                             label: t.label,
                             value: t['@id'],
                         })),
-                        creationDate: new Date(data.creation_date),
-                        publicationDate: new Date(data.publication_date),
-                        submissionStartDate: new Date(
-                            data.submission_start_date
-                        ),
-                        submissionEndDate: new Date(data.submission_end_date),
-                        votingStartDate: new Date(data.voting_start_date),
-                        votingEndDate: new Date(data.voting_end_date),
-                        resultsDate: new Date(data.results_date),
-                        weightingOfJuryVotes: data.weighting_of_jury_votes,
-                        numberOfMaxVotes: data.number_of_max_votes,
-                        numberOfPrices: data.number_of_prices,
-                        minAgeCriteria: data.min_age_criteria,
-                        maxAgeCriteria: data.max_age_criteria,
+                        sponsors: data.sponsors.map(s => ({
+                            label: s.sponsorName,
+                            value: s['@id'],
+                        })),
+                        creationDate: new Date(data.creationDate),
+                        publicationDate: new Date(data.publicationDate),
+                        submissionStartDate: new Date(data.submissionStartDate),
+                        submissionEndDate: new Date(data.submissionEndDate),
+                        votingStartDate: new Date(data.votingStartDate),
+                        votingEndDate: new Date(data.votingEndDate),
+                        resultsDate: new Date(data.resultsDate),
+                        weightingOfJuryVotes: data.weightingOfJuryVotes,
+                        numberOfMaxVotes: data.numberOfMaxVotes,
+                        numberOfPrices: data.numberOfPrices,
+                        minAgeCriteria: data.minAgeCriteria,
+                        maxAgeCriteria: data.maxAgeCriteria,
                         cityCriteria: cities
                             .map(c => c && { label: c.nom, value: c.code })
                             .filter(c => c),
@@ -198,15 +230,16 @@ export default function CompetitionEdit() {
                             .filter(r => r),
                     };
                     const _updatedFile = {
-                        visual: data.competition_visual
+                        visual: data.competitionVisual
                             ? {
                                   to: apiPathComplete(
-                                      data.competition_visual.path
+                                      data.competitionVisual.path
                                   ),
-                                  name: data.competition_visual.default_name,
+                                  name: data.competitionVisual.defaultName,
                               }
                             : null,
                     };
+                    console.debug(_competition);
                     setUpdatedFile(_updatedFile);
                     setEntity(_competition);
                 });
@@ -242,9 +275,15 @@ export default function CompetitionEdit() {
             getParticipantCategories(controller),
             getOrganizationsName(controller),
             getThemes(controller),
+            getSponsor(controller),
             getCompetitions(controller),
-        ]).then(([participantCategories, organizers, themes]) => {
-            setEntityPossibility({ participantCategories, organizers, themes });
+        ]).then(([participantCategories, organizers, themes, sponsors]) => {
+            setEntityPossibility({
+                participantCategories,
+                organizers,
+                themes,
+                sponsors,
+            });
         });
         promise.then(function () {
             setIsLoading(false);
@@ -261,17 +300,18 @@ export default function CompetitionEdit() {
 
     return (
         <Loader active={isLoading}>
-            <BOCreate
+            <Form
                 title="Création d'un concours"
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
                         try {
                             const newVisualId = await (async () => {
-                                if (updatedFile.visual === null) {
+                                if (updatedFile.competitionVisual === null) {
                                     return null;
-                                } else if (updatedFile.visual.file) {
+                                } else if (updatedFile.competitionVisual.file) {
                                     return await uploadFile({
-                                        file: updatedFile.visual.file,
+                                        file: updatedFile.competitionVisual
+                                            .file,
                                     }).then(r => r['@id']);
                                 }
                             })().catch(e => {
@@ -288,7 +328,8 @@ export default function CompetitionEdit() {
                                     ),
                                 organization: entity.organizer.value,
                                 theme: entity.themes.map(t => t.value),
-                                description: entity.description,
+                                sponsors: entity.sponsors.map(s => s.value),
+                                description: editorRef.current.getContent(),
                                 rules: entity.rules,
                                 creationDate: new Date(
                                     entity.creationDate
@@ -349,11 +390,14 @@ export default function CompetitionEdit() {
                                         throw new Error(data.description);
                                     }
                                     if (
-                                        updatedFile.visual === null &&
-                                        entity.visual
+                                        updatedFile.competitionVisual ===
+                                            null &&
+                                        entity.competitionVisual
                                     ) {
                                         await deleteFile({
-                                            path: entity.visual['@id'],
+                                            path: entity.competitionVisual[
+                                                '@id'
+                                            ],
                                         });
                                     }
                                 })
@@ -400,19 +444,50 @@ export default function CompetitionEdit() {
                         type="file"
                         name="visual"
                         label="Visuel"
-                        onChange={d => updateFileState('visual', d)}
-                        extra={{ value: updatedFile.visual, type: 'image' }}
+                        onChange={d => {
+                            updateFileState('competitionVisual', d);
+                        }}
+                        extra={{
+                            value: updatedFile.competitionVisual,
+                            type: 'image',
+                        }}
                     />
-
-                    <Input
-                        type="text"
-                        name="description"
-                        label="Description"
-                        onChange={d => updateEntityState('description', d)}
-                        defaultValue={entity.description}
-                        extra={{ require: true }}
+                    <label>Description</label>
+                    <Editor
+                        onInit={(evt, editor) => (editorRef.current = editor)}
+                        initialValue={entity.description}
+                        init={{
+                            height: 500,
+                            menubar: false,
+                            plugins: [
+                                'advlist',
+                                'autolink',
+                                'lists',
+                                'link',
+                                'image',
+                                'charmap',
+                                'preview',
+                                'anchor',
+                                'searchreplace',
+                                'visualblocks',
+                                'code',
+                                'fullscreen',
+                                'insertdatetime',
+                                'media',
+                                'table',
+                                'code',
+                                'help',
+                                'wordcount',
+                            ],
+                            toolbar:
+                                'undo redo | blocks | ' +
+                                'bold italic forecolor | alignleft aligncenter ' +
+                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                'removeformat | help',
+                            content_style:
+                                'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                        }}
                     />
-
                     <Input
                         type="text"
                         name="rules"
@@ -421,7 +496,6 @@ export default function CompetitionEdit() {
                         defaultValue={entity.rules}
                         extra={{ require: true }}
                     />
-
                     <Input
                         type="text"
                         name="endowments"
@@ -702,9 +776,22 @@ export default function CompetitionEdit() {
                             onChange={d => updateEntityState('themes', d)}
                         />
                     </div>
+                    <Input
+                        type="select"
+                        name="sponsors"
+                        label="Sponsors"
+                        extra={{
+                            isMulti: true,
+                            options: entityPossibility.sponsors,
+                            closeMenuOnSelect: false,
+                            menuPlacement: 'top',
+                            value: entity.sponsors,
+                        }}
+                        onChange={d => updateEntityState('sponsors', d)}
+                    />
                 </div>
-            </BOCreate>
-            <Button name="Retour" onClick={() => navigate('/BO/competition')} />
+            </Form>
+            <Button onClick={() => navigate('/BO/competition')}>Retour</Button>
         </Loader>
     );
 }

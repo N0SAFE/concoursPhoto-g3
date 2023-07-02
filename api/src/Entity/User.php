@@ -2,11 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Serializer\Filter\GroupFilter;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Controller\UserController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,167 +21,245 @@ use App\State\UserStateProcessor;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
-#[ApiResource(
-    operations: [
-        new GetCollection(),
-        new Post(processor: UserStateProcessor::class),
-        new Get(),
-        new Get(
-            name: UserController::USER_COMPETITIONS,
-            uriTemplate: '/users/{id}/user-competitions',
-            controller: UserController::class
-        ),
-        new Patch(processor: UserStateProcessor::class),
-        new Delete()
-    ],
-    normalizationContext: ['groups' => ['user:read']]
-    
-)]
+#[
+    ApiResource(
+        operations: [
+            new GetCollection(),
+            new Post(processor: UserStateProcessor::class),
+            new Get(),
+            new Get(
+                name: UserController::USER_COMPETITIONS,
+                uriTemplate: '/users/{id}/user-competitions',
+                controller: UserController::class
+            ),
+            new Patch(processor: UserStateProcessor::class),
+            new Delete(),
+        ],
+        normalizationContext: ['groups' => ['user:read']],
+        denormalizationContext: ['groups' => ['user:write', 'userLink:write']]
+    )
+]
+#[ApiFilter(PropertyFilter::class)]
+#[
+    ApiFilter(
+        SearchFilter::class,
+        properties: ['roles' => 'partial', 'Manage' => 'exact']
+    )
+]
+#[ApiFilter(GroupFilter::class)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
-    #[Groups(['user:read', 'competition', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column]
-    private ?bool $state = null;
+    private ?bool $active = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $creation_date = null;
+    private ?\DateTimeInterface $creationDate = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:gender:read', 'user:current:read', 'user:write'])]
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Gender $gender = null;
 
-    #[Groups(['user:read', 'competition', 'user:current:read'])]
+    #[
+        Groups([
+            'user:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $firstname = null;
 
-    #[Groups(['user:read', 'competition', 'user:current:read'])]
+    #[
+        Groups([
+            'user:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     private ?string $lastname = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank]
-    private ?\DateTimeInterface $date_of_birth = null;
+    private ?\DateTimeInterface $dateOfBirth = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $postcode = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $citycode = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
     private $email;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Length(10, minMessage: 'Le numéro de téléphone doit avoir au moins 10 caractères')]
-    #[Assert\Regex(pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/', message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00')]
-    private ?string $phone_number = null;
+    #[
+        Assert\Length(
+            10,
+            minMessage: 'Le numéro de téléphone doit avoir au moins 10 caractères'
+        )
+    ]
+    #[
+        Assert\Regex(
+            pattern: '/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/',
+            message: 'Le numéro de téléphone doit être au format 06 00 00 00 00 ou +33 6 00 00 00 00'
+        )
+    ]
+    private ?string $phoneNumber = null;
 
     #[ORM\Column(type: 'string')]
     private $password;
 
-    #[Groups(['user:read', 'user:current:read'])]
-    #[Assert\Length(min: 8, minMessage: 'Le mot de passe doit avoir au moins 8 caractères')]
-    #[Assert\Regex(pattern: '/^(?=.*[A-Z])(?=.*\d).+$/', message: 'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre')]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
+    #[
+        Assert\Length(
+            min: 8,
+            minMessage: 'Le mot de passe doit avoir au moins 8 caractères'
+        )
+    ]
+    #[
+        Assert\Regex(
+            pattern: '/^(?=.*[A-Z])(?=.*\d).+$/',
+            message: 'Le mot de passe doit contenir au moins une lettre majuscule et un chiffre'
+        )
+    ]
     private ?string $plainPassword = null;
 
-    #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'users')]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'admins')]
+    #[Groups(['user:manage:read', 'user:current:read', 'user:write'])]
     private Collection $Manage;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Groups(['user:read', 'user:current:read'])]
-    private ?PhotographerCategory $photographer_category = null;
+    #[
+        Groups([
+            'user:photographerCategory:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
+    private ?PhotographerCategory $photographerCategory = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[
+        Groups([
+            'user:memberOfTheJuries:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MemberOfTheJury::class)]
     private Collection $memberOfTheJuries;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Picture::class)]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:pictures:read', 'user:current:read', 'user:write'])]
     private Collection $pictures;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:votes:read', 'user:current:read', 'user:write'])]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vote::class)]
     private Collection $votes;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $registration_date = null;
+    private ?\DateTimeInterface $registrationDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $delete_date = null;
+    private ?\DateTimeInterface $deleteDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $update_date = null;
+    private ?\DateTimeInterface $updateDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $last_connection_date = null;
+    private ?\DateTimeInterface $lastConnectionDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:current:read'])]
-    private ?string $photographer_description = null;
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
+    private ?string $photographerDescription = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:current:read'])]
-    private ?string $website_url = null;
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
+    private ?string $websiteUrl = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     private ?string $pseudonym = null;
 
-    #[Groups(['user:read', 'user:current:read', 'competition'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column]
-    private ?bool $is_verified = null;
+    private ?bool $isVerified = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[Assert\NotBlank]
-    private ?PersonalStatut $personal_statut = null;
+    private ?PersonalStatut $personalStatut = null;
 
-    #[Groups(['user:read', 'user:current:read'])]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?File $picture_profil = null;
+    private ?File $pictureProfil = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $region = null;
 
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $department = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLink::class)]
+    #[Groups(['user:read', 'user:current:read', 'user:write'])]
+    #[
+        ORM\OneToMany(
+            mappedBy: 'user',
+            targetEntity: UserLink::class,
+            cascade: ['persist', 'remove']
+        )
+    ]
     private Collection $userLinks;
+
+    #[
+        ORM\ManyToMany(
+            targetEntity: NotificationType::class,
+            inversedBy: 'subscribedUsers'
+        )
+    ]
+    #[
+        Groups([
+            'user:notificationEnabled:read',
+            'user:current:read',
+            'user:write',
+        ])
+    ]
+    private Collection $notificationEnabled;
 
     public function __construct()
     {
@@ -187,6 +269,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->votes = new ArrayCollection();
         $this->roles = new ArrayCollection();
         $this->userLinks = new ArrayCollection();
+        $this->notificationEnabled = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -194,26 +277,26 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this->id;
     }
 
-    public function isState(): ?bool
+    public function isActive(): ?bool
     {
-        return $this->state;
+        return $this->active;
     }
 
-    public function setState(bool $state): self
+    public function setActive(bool $active): self
     {
-        $this->state = $state;
+        $this->active = $active;
 
         return $this;
     }
 
     public function getCreationDate(): ?\DateTimeInterface
     {
-        return $this->creation_date;
+        return $this->creationDate;
     }
 
-    public function setCreationDate(\DateTimeInterface $creation_date): self
+    public function setCreationDate(\DateTimeInterface $creationDate): self
     {
-        $this->creation_date = $creation_date;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
@@ -256,12 +339,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getDateOfBirth(): ?\DateTimeInterface
     {
-        return $this->date_of_birth;
+        return $this->dateOfBirth;
     }
 
-    public function setDateOfBirth(\DateTimeInterface $date_of_birth): self
+    public function setDateOfBirth(\DateTimeInterface $dateOfBirth): self
     {
-        $this->date_of_birth = $date_of_birth;
+        $this->dateOfBirth = $dateOfBirth;
 
         return $this;
     }
@@ -328,12 +411,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getPhoneNumber(): ?string
     {
-        return $this->phone_number;
+        return $this->phoneNumber;
     }
 
-    public function setPhoneNumber(string $phone_number): self
+    public function setPhoneNumber(string $phoneNumber): self
     {
-        $this->phone_number = $phone_number;
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }
@@ -372,7 +455,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string)$this->email;
+        return (string) $this->email;
     }
 
     /**
@@ -409,12 +492,13 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getPhotographerCategory(): ?PhotographerCategory
     {
-        return $this->photographer_category;
+        return $this->photographerCategory;
     }
 
-    public function setPhotographerCategory(?PhotographerCategory $photographer_category): self
-    {
-        $this->photographer_category = $photographer_category;
+    public function setPhotographerCategory(
+        ?PhotographerCategory $photographerCategory
+    ): self {
+        $this->photographerCategory = $photographerCategory;
 
         return $this;
     }
@@ -437,8 +521,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function removeMemberOfTheJury(MemberOfTheJury $memberOfTheJury): self
-    {
+    public function removeMemberOfTheJury(
+        MemberOfTheJury $memberOfTheJury
+    ): self {
         if ($this->memberOfTheJuries->removeElement($memberOfTheJury)) {
             // set the owning side to null (unless already changed)
             if ($memberOfTheJury->getUser() === $this) {
@@ -511,72 +596,75 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getRegistrationDate(): ?\DateTimeInterface
     {
-        return $this->registration_date;
+        return $this->registrationDate;
     }
 
-    public function setRegistrationDate(\DateTimeInterface $registration_date): self
-    {
-        $this->registration_date = $registration_date;
+    public function setRegistrationDate(
+        \DateTimeInterface $registrationDate
+    ): self {
+        $this->registrationDate = $registrationDate;
 
         return $this;
     }
 
     public function getDeleteDate(): ?\DateTimeInterface
     {
-        return $this->delete_date;
+        return $this->deleteDate;
     }
 
-    public function setDeleteDate(\DateTimeInterface $delete_date): self
+    public function setDeleteDate(\DateTimeInterface $deleteDate): self
     {
-        $this->delete_date = $delete_date;
+        $this->deleteDate = $deleteDate;
 
         return $this;
     }
 
     public function getUpdateDate(): ?\DateTimeInterface
     {
-        return $this->update_date;
+        return $this->updateDate;
     }
 
-    public function setUpdateDate(\DateTimeInterface $update_date): self
+    public function setUpdateDate(\DateTimeInterface $updateDate): self
     {
-        $this->update_date = $update_date;
+        $this->updateDate = $updateDate;
 
         return $this;
     }
 
     public function getLastConnectionDate(): ?\DateTimeInterface
     {
-        return $this->last_connection_date;
+        return $this->lastConnectionDate;
     }
 
-    public function setLastConnectionDate(\DateTimeInterface $last_connection_date): self
-    {
-        $this->last_connection_date = $last_connection_date;
+    public function setLastConnectionDate(
+        \DateTimeInterface $lastConnectionDate
+    ): self {
+        $this->lastConnectionDate = $lastConnectionDate;
 
         return $this;
     }
 
     public function getPhotographerDescription(): ?string
     {
-        return $this->photographer_description;
+        return $this->photographerDescription;
     }
 
-    public function setPhotographerDescription(string $photographer_description): self
-    {
-        $this->photographer_description = $photographer_description;
+    public function setPhotographerDescription(
+        string $photographerDescription
+    ): self {
+        $this->photographerDescription = $photographerDescription;
 
         return $this;
     }
 
     public function getWebsiteUrl(): ?string
     {
-        return $this->website_url;
+        return $this->websiteUrl;
     }
 
-    public function setWebsiteUrl(string $website_url): self
+    public function setWebsiteUrl(string $websiteUrl): self
     {
-        $this->website_url = $website_url;
+        $this->websiteUrl = $websiteUrl;
 
         return $this;
     }
@@ -599,8 +687,8 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user:read at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // guarantee every user:read at least has ROLE_MEMBER
+        $roles[] = 'ROLE_MEMBER';
 
         return array_unique($roles);
     }
@@ -614,36 +702,36 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function isIsVerified(): ?bool
     {
-        return $this->is_verified;
+        return $this->isVerified;
     }
 
-    public function setIsVerified(bool $is_verified): self
+    public function setIsVerified(bool $isVerified): self
     {
-        $this->is_verified = $is_verified;
+        $this->isVerified = $isVerified;
 
         return $this;
     }
 
     public function getPersonalStatut(): ?PersonalStatut
     {
-        return $this->personal_statut;
+        return $this->personalStatut;
     }
 
-    public function setPersonalStatut(?PersonalStatut $personal_statut): self
+    public function setPersonalStatut(?PersonalStatut $personalStatut): self
     {
-        $this->personal_statut = $personal_statut;
+        $this->personalStatut = $personalStatut;
 
         return $this;
     }
 
     public function getPictureProfil(): ?File
     {
-        return $this->picture_profil;
+        return $this->pictureProfil;
     }
 
-    public function setPictureProfil(?File $picture_profil): self
+    public function setPictureProfil(?File $pictureProfil): self
     {
-        $this->picture_profil = $picture_profil;
+        $this->pictureProfil = $pictureProfil;
 
         return $this;
     }
@@ -702,4 +790,29 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
+    /**
+     * @return Collection<int, NotificationType>
+     */
+    public function getNotificationEnabled(): Collection
+    {
+        return $this->notificationEnabled;
+    }
+
+    public function addNotificationEnabled(
+        NotificationType $notificationEnabled
+    ): self {
+        if (!$this->notificationEnabled->contains($notificationEnabled)) {
+            $this->notificationEnabled->add($notificationEnabled);
+        }
+
+        return $this;
+    }
+
+    public function removeNotificationEnabled(
+        NotificationType $notificationEnabled
+    ): self {
+        $this->notificationEnabled->removeElement($notificationEnabled);
+
+        return $this;
+    }
 }

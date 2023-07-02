@@ -1,0 +1,216 @@
+.search {
+    &Container {
+        @extend .margin-title;
+    }
+
+    &LastCompetition {
+        & > div {
+            display: flex;
+            gap: $gapBetweenElement;
+            flex-wrap: wrap;
+        }
+    }
+
+    &Banner {
+        display: flex;
+        align-items: center;
+
+        & > div {
+            width: 50%;
+
+            &:last-child {
+                justify-content: end;
+            }
+        }
+
+        @include below(xl) {
+            flex-direction: column;
+
+            h1 {
+                font-size: 25px;
+            }
+
+            & > div {
+                display: flex;
+                justify-content: center;
+
+                &:last-child {
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    width: 100%;
+                    margin-bottom: 15px;
+                }
+            }
+        }
+    }
+
+    &SubMenu {
+        margin-top: 15px;
+    }
+
+    &Bar {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        gap: $gapBetweenElement;
+        width: 100%;
+
+        .searcher {
+            width: 100%;
+            display: flex;
+            align-items: center;
+
+            &Icon {
+                display: flex;
+                height: 35px;
+                width: 35px;
+
+                & > svg {
+                    padding: 6px;
+                    background-color: $background-color-lightgrey-2;
+                }
+            }
+
+            // override component Input
+            div {
+                &:nth-child(2) {
+                    input {
+                        border-radius: inherit;
+                        border: none;
+                        transform: none;
+                        padding: 10px;
+                        box-shadow: none;
+                    }
+                }
+
+                &:last-child {
+                    display: flex;
+                    height: 35px;
+
+                    button {
+                        font-weight: 600;
+                        background-color: $background-color-lightgrey-3;
+                    }
+                }
+            }
+        }
+
+        &Button {
+            button {
+                background-color: $background-color-lightgrey-3;
+            }
+        }
+
+        &IconCriteria {
+            display: flex;
+            height: 35px;
+            width: 35px;
+
+            & > svg {
+                padding: 6px;
+            }
+        }
+
+        @include below(md) {
+            flex-direction: column;
+        }
+
+        &Select {
+            @extend .select-style;
+        }
+
+        &Slider {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            @include below(md) {
+                height: 50px;
+            }
+
+            // override react-slider
+            & > div > div {
+                &:first-child {
+                    background-color: white;
+                }
+
+                &:nth-child(3) {
+                    background-color: white;
+                }
+            }
+        }
+    }
+
+    &Disposition {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        & > div:last-child > div {
+            & > svg {
+                // adapt icon size compared with competition title
+                transform: translateY(3px);
+
+                &:hover {
+                    color: $text-color-primary;
+                    background-color: $background-color-darkgrey;
+                }
+            }
+        }
+    }
+
+    &List {
+        position: relative;
+
+        &NotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &PageNotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    &Row {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        gap: $gapBetweenElement;
+        background-color: $background-color-lightgrey-3;
+        padding: 15px;
+
+        @include below(md) {
+            flex-direction: column;
+        }
+    }
+
+    &Select {
+        @extend .select-style;
+    }
+}
+
+.slider {
+    &Track {
+        margin-left: 0.5rem; /* 8px */
+        margin-right: 0.5rem; /* 8px */
+        margin-top: 1.25rem; /* 20px */
+        height: 0.25rem; /* 4px */
+        background-color: rgb(156 163 175);
+        border-radius: 9999px;
+    }
+    background-color: rgb(243 244 246/1);
+    background-color: rgb(243 244 246 / 1);
+    border: none;
+    width: 100%;
+
+    & svg {
+        color: black;
+    }
+}

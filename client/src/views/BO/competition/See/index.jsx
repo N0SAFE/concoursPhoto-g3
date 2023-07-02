@@ -9,6 +9,7 @@ import useApiPath from '@/hooks/useApiPath.js';
 import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import style from './style.module.scss';
+import Chip from '@/components/atoms/Chip';
 
 export default function () {
     const [isLoading, setIsLoading] = useState(true);
@@ -22,6 +23,25 @@ export default function () {
 
     const getCompetitions = controller => {
         return apiFetch('/competitions/' + competitionId, {
+            query: {
+                groups: [
+                    'competition:participantCategory:read',
+                    'participantCategory:read',
+                    'competition:organization:read',
+                    'organization:read',
+                    'competition:theme:read',
+                    'theme:read',
+                    'competition:competitionVisual:read',
+                    'file:read',
+                    'organization:admins:read',
+                    'user:read',
+                    'sponsor:read',
+                    'sponsor:logo:read',
+                    'competition:photographer:read',
+                    'competition:sponsors:read',
+                    'organization:logo:read'
+                ],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -35,17 +55,17 @@ export default function () {
                     throw new Error(data.message);
                 }
                 Promise.all([
-                    Promise.all(data.city_criteria.map(getCityByCode)),
+                    Promise.all(data.cityCriteria.map(getCityByCode)),
                     Promise.all(
-                        data.department_criteria.map(getDepartmentByCode)
+                        data.departmentCriteria.map(getDepartmentByCode)
                     ),
-                    Promise.all(data.region_criteria.map(getRegionByCode)),
+                    Promise.all(data.regionCriteria.map(getRegionByCode)),
                 ]).then(([cities, departments, regions]) => {
                     const _competition = {
                         ...data,
-                        city_criteria: cities,
-                        department_criteria: departments,
-                        region_criteria: regions,
+                        cityCriteria: cities,
+                        departmentCriteria: departments,
+                        regionCriteria: regions,
                     };
                     setEntity(_competition);
                     return _competition;
@@ -71,161 +91,238 @@ export default function () {
         }
         return () => setTimeout(() => controller.abort());
     }, []);
-
     return (
         <>
-            <Button name="Retour" onClick={() => navigate('/BO/competition')} />
             <Loader active={isLoading}>
-            <div className={style.all}>
-                <BOSee
-                    entity={entity}
-                    properties={[
-                        {
-                            display: 'nom',
-                            name: 'competition_name',
-                        },
-                        {
-                            display: 'Description',
-                            name: 'description',
-                        },
-                        {
-                            display: 'Date de création',
-                            name: 'creation_date',
-                            type: 'date',
-                        },
-                        {
-                            display: 'endowments',
-                            name: 'endowments',
-                        },
-                        {
-                            display: 'max age',
-                            name: 'max_age_criteria',
-                        },
-                        {
-                            display: 'min age',
-                            name: 'min_age_criteria',
-                        },
-                        {
-                            display: 'nombre de vote max',
-                            name: 'number_of_max_votes',
-                        },
-                        {
-                            display: 'nombre de prix',
-                            name: 'number_of_prices',
-                        },
-                        {
-                            display: 'organisation',
-                            name: 'organization',
-                            customData({ entity, property }) {
-                                return entity?.organization?.organizer_name;
+                <div className={style.all}>
+                    <BOSee
+                        entity={entity}
+                        properties={[
+                            {
+                                display: 'nom',
+                                name: 'competitionName',
                             },
-                        },
-                        {
-                            display: 'date de publication',
-                            name: 'publication_date',
-                            type: 'date',
-                        },
-                        {
-                            display: 'date début publication',
-                            name: 'publication_start_date',
-                            type: 'date',
-                        },
-                        {
-                            display: 'date début de soummision',
-                            name: 'submission_start_date',
-                            type: 'date',
-                        },
-                        {
-                            display: 'date de fin de soummision',
-                            name: 'submission_end_date',
-                            type: 'date',
-                        },
-                        {
-                            display: 'date de début de vote',
-                            name: 'voting_start_date',
-                            type: 'date',
-                        },
-                        {
-                            display: 'date de fin de vote',
-                            name: 'voting_end_date',
-                            type: 'date',
-                        },
-                        {
-                            display: 'date résultat',
-                            name: 'results_date',
-                            type: 'date',
-                        },
-                        {
-                            display: 'pondération vote jury',
-                            name: 'weighting_of_jury_votes',
-                        },
-                        {
-                            display: 'thème',
-                            name: 'theme',
-                            customData({ entity, property }) {
-                                return entity?.theme
-                                    ?.map(theme => theme.label)
-                                    .join(', ');
+                            {
+                                display: 'Description',
+                                name: 'description',
                             },
-                        },
-                        {
-                            display: 'Visuel',
-                            name: 'competition_visual',
-                            type: 'img',
-                            customData: ({ entity }) => {
-                                return entity?.competition_visual?.path
-                                    ? {
-                                          to: toApiPath(
-                                              entity?.competition_visual?.path
-                                          ),
-                                          name: entity?.competition_visual
-                                              ?.default_name,
-                                      }
-                                    : null;
+                            {
+                                display: 'Date de création',
+                                name: 'creationDate',
+                                type: 'date',
                             },
-                        },
-                        {
-                            display: 'Pays',
-                            name: 'country_criteria',
-                        },
-                        {
-                            display: 'status',
-                            name: 'state',
-                        },
-                        {
-                            display: 'Ville',
-                            name: 'city_criteria',
-                            customData({ entity, property }) {
-                                return entity?.city_criteria
-                                    ?.map(city => city.nom)
-                                    .join(', ');
+                            {
+                                display: 'endowments',
+                                name: 'endowments',
                             },
-                        },
-                        {
-                            display: 'département',
-                            name: 'department_criteria',
-                            customData({ entity, property }) {
-                                return entity?.department_criteria
-                                    ?.map(department => department.nom)
-                                    .join(', ');
+                            {
+                                display: 'max age',
+                                name: 'maxAgeCriteria',
                             },
-                        },
-                        {
-                            display: 'région',
-                            name: 'region_criteria',
-                            customData({ entity, property }) {
-                                return entity?.region_criteria
-                                    ?.map(region => region.nom)
-                                    .join(', ');
+                            {
+                                display: 'min age',
+                                name: 'minAgeCriteria',
                             },
-                        },
-                        {
-                            display: 'réglement',
-                            name: 'rules',
-                        },
-                    ]}
+                            {
+                                display: 'nombre de vote max',
+                                name: 'numberOfMaxVotes',
+                            },
+                            {
+                                display: 'nombre de prix',
+                                name: 'numberOfPrices',
+                            },
+                            {
+                                display: 'organisation',
+                                name: 'organization',
+                                customData({ entity, property }) {
+                                    return entity?.organization?.organizerName;
+                                },
+                            },
+                            {
+                                display: 'date de publication',
+                                name: 'publicationDate',
+                                type: 'date',
+                            },
+                            {
+                                display: 'date début publication',
+                                name: 'publicationStartDate',
+                                type: 'date',
+                            },
+                            {
+                                display: 'date début de soummision',
+                                name: 'submissionStartDate',
+                                type: 'date',
+                            },
+                            {
+                                display: 'date de fin de soummision',
+                                name: 'submissionEndDate',
+                                type: 'date',
+                            },
+                            {
+                                display: 'date de début de vote',
+                                name: 'votingStartDate',
+                                type: 'date',
+                            },
+                            {
+                                display: 'date de fin de vote',
+                                name: 'votingEndDate',
+                                type: 'date',
+                            },
+                            {
+                                display: 'date résultat',
+                                name: 'resultsDate',
+                                type: 'date',
+                            },
+                            {
+                                display: 'pondération vote jury',
+                                name: 'weightingOfJuryVotes',
+                            },
+                            {
+                                display: 'thème',
+                                name: 'theme',
+                                customData({ entity, property }) {
+                                    return entity?.theme
+                                        ?.map(theme => theme.label)
+                                        .join(', ');
+                                },
+                            },
+                            {
+                                display: 'Visuel',
+                                name: 'competitionVisual',
+                                type: 'img',
+                                customData: ({ entity }) => {
+                                    return entity?.competitionVisual?.path
+                                        ? {
+                                              to: toApiPath(
+                                                  entity?.competitionVisual
+                                                      ?.path
+                                              ),
+                                              name: entity?.competitionVisual
+                                                  ?.defaultName,
+                                          }
+                                        : null;
+                                },
+                            },
+                            {
+                                display: 'Pays',
+                                name: 'countryCriteria',
+                            },
+                            {
+                                display: 'status',
+                                name: 'state',
+                            },
+                            {
+                                display: 'Ville',
+                                name: 'cityCriteria',
+                                customData({ entity, property }) {
+                                    return entity?.cityCriteria
+                                        ?.map(city => city.nom)
+                                        .join(', ');
+                                },
+                            },
+                            {
+                                display: 'département',
+                                name: 'departmentCriteria',
+                                customData({ entity, property }) {
+                                    return entity?.departmentCriteria
+                                        ?.map(department => department.nom)
+                                        .join(', ');
+                                },
+                            },
+                            {
+                                display: 'région',
+                                name: 'regionCriteria',
+                                customData({ entity, property }) {
+                                    return entity?.regionCriteria
+                                        ?.map(region => region.nom)
+                                        .join(', ');
+                                },
+                            },
+                            {
+                                display: 'réglement',
+                                name: 'rules',
+                            },
+                            {
+                                display: 'photographes',
+                                name: 'photographers',
+                                customData({ entity, property }) {
+                                    return entity?.photographers?.map(
+                                        photographer => (
+                                            <Chip
+                                                backgroundColor={'#78a2ff'}
+                                                color={'white'}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/BO/user/${photographer.id}`
+                                                    )
+                                                }
+                                            >
+                                                {photographer.firstname +
+                                                    ' ' +
+                                                    photographer.lastname}
+                                            </Chip>
+                                        )
+                                    );
+                                },
+                            },
+                            {
+                                display: 'administrateurs',
+                                name: 'organization',
+                                customData({ entity, property }) {
+                                    return entity?.organization?.admins?.map(
+                                        admin => (
+                                            <Chip
+                                                backgroundColor={'#78a2ff'}
+                                                color={'white'}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/BO/user/${admin.id}`
+                                                    )
+                                                }
+                                            >
+                                                {admin.firstname +
+                                                    ' ' +
+                                                    admin.lastname}
+                                            </Chip>
+                                        )
+                                    );
+                                },
+                            },
+                            {
+                                display: 'sponsors',
+                                name: 'sponsors',
+                                customData({ entity, property }) {
+                                    return entity?.sponsors?.map(sponsor => (
+                                        <Chip>
+                                            {sponsor?.organization?.logo?.path ? (
+                                                <img
+                                                    src={toApiPath(
+                                                        sponsor.organization.logo.path
+                                                    )}
+                                                    alt={
+                                                        sponsor.organization.logo.defaultName
+                                                    }
+                                                    style={{
+                                                        minHeight: '50px',
+                                                        maxHeight: '50px',
+                                                    }}
+                                                />
+                                            ) : (
+                                                sponsor.name
+                                            )}
+                                        </Chip>
+                                    ));
+                                },
+                            },
+                        ]}
                     />
-                    </div>
+                    <Button
+                        style={{ marginTop: '3%' }}
+                        onClick={() => navigate('/BO/competition')}
+                    >
+                        Retour
+                    </Button>
+                </div>
             </Loader>
         </>
     );

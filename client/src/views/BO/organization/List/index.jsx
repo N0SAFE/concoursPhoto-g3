@@ -6,15 +6,24 @@ import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import Loader from '@/components/atoms/Loader';
 import Table from '@/components/molecules/Table';
+import {CSVLink} from "react-csv";
 
 export default function OrganizationList() {
     const [isLoading, setIsLoading] = useState(true);
-    const [Organizations, setOrganizations] = useState([]);
+    const [organizations, setOrganizations] = useState([]);
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
 
     function getOrganizations(controller) {
         return apiFetch('/organizations', {
+            query: {
+                groups: [
+                    'organization:organizationType:read',
+                    'organizationType:read',
+                    'organization:competitions:read',
+                    'competition:read',
+                ],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,100 +82,139 @@ export default function OrganizationList() {
 
     return (
         <Loader active={isLoading}>
-              <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '15px',
-                    }}
+            <div className={style.container}>
+                <h1>Liste des organisations</h1>
+                <Button
+                    color="green"
+                    textColor="white"
+                    borderRadius={'30px'}
+                    onClick={() => navigate('/BO/organization/create')}
                 >
-                    <h1>Liste des organisations</h1>
-                    <Button
-                        color="green"
-                        textColor="white"
-                        name="Créer une organisation"
-                        borderRadius={'30px'}
-                        onClick={() => navigate('/BO/organization/create')}
-                    ></Button>
-                </div>
+                    Créer une organisation
+                </Button>
+            </div>
             <div className={style.containerList}>
-              
                 <Table
-                    entityList={Organizations}
+                    list={organizations}
                     fields={[
-                        { property: 'id', display: 'ID' },
-                        { property: 'state', display: 'Statut' },
-                        {
-                            property: 'organizer_name',
-                            display: "Nom de l'organisation",
-                        },
-                        { property: 'description', display: 'Description' },
-                        { property: 'address', display: 'Addresse' },
-                        { property: 'postcode', display: 'Code postal' },
-                        { property: 'citycode', display: 'Ville' },
-                        { property: 'number_phone', display: 'Téléphone' },
-                        { property: 'email', display: 'Adresse mail' },
-                        { property: 'website_url', display: 'Site web' },
-                        {
-                            property: 'organization_type',
-                            display: "Type d'organisation",
-                        },
-                        { property: 'country', display: 'Pays' },
-                        {
-                            property: 'competitions',
-                            display: 'Nom du concours',
-                        },
+                        'ID',
+                        'Statut',
+                        'Nom',
+                        'Description',
+                        'Address',
+                        'Code postal',
+                        'Ville',
+                        'Téléphone',
+                        'Adresse mails',
+                        'Site web',
+                        "Type d'organisation",
+                        'Pays',
+                        'Nom des concours',
                     ]}
-                    customAction={({ entity, property }) => {
-                        if (property === 'organization_type') {
-                            return entity.organization_type.label;
-                        }
-                        if (property === 'competitions') {
-                            return entity.competitions
-                                .map(
-                                    competition => competition.competition_name
-                                )
-                                .join(', ');
-                        }
-                        if (property === 'state') {
-                            return entity.state === 'validated'
-                                ? 'Validée'
-                                : 'En attente';
-                        }
-                        return entity[property];
-                    }}
                     actions={[
                         {
-                            label: 'Modifier',
-                            color: 'blue',
-                            textColor: 'white',
-                            action: ({ entity }) => {
-                                navigate('/BO/organization/edit/' + entity.id);
+                            name: 'Modifier',
+                            action: organization =>
+                                navigate(
+                                    '/BO/organization/edit/' + organization.id
+                                ),
+                            component: (organization, callback, index) => {
+                                return (
+                                    <Button
+                                        color="blue"
+                                        textColor="white"
+                                        borderRadius={'30px'}
+                                        onClick={() => callback(organization)}
+                                    >
+                                        Modifier
+                                    </Button>
+                                );
                             },
                         },
                         {
-                            label: 'Supprimer',
-                            color: 'red',
-                            textColor: 'white',
-                            action: ({ entity }) => {
+                            name: 'Supprimer',
+                            action: organization => {
                                 if (
                                     confirm(
-                                        'Êtes-vous sûr de vouloir supprimer cette organisation ?'
+                                        'Êtes-vous sûr de vouloir supprimer cet utilisateur ?'
                                     )
                                 ) {
-                                    return handleDelete(entity.id);
+                                    return handleDelete(organization.id);
                                 }
+                            },
+                            component: (organization, callback, index) => {
+                                return (
+                                    <Button
+                                        color="red"
+                                        textColor="white"
+                                        borderRadius={'30px'}
+                                        onClick={() => {
+                                            callback(organization);
+                                        }}
+                                    >
+                                        Supprimer
+                                    </Button>
+                                );
                             },
                         },
                         {
-                            label: 'Voir',
-                            action: ({ entity }) => {
-                                navigate('/BO/organization/' + entity.id);
-                            },
+                            name: 'Voir',
+                            action: organization =>
+                                navigate('/BO/organization/' + organization.id),
+                            component: (organization, callback, index) => (
+                                <Button
+                                    borderRadius={'30px'}
+                                    onClick={() => callback(organization)}
+                                >
+                                    Voir
+                                </Button>
+                            ),
                         },
                     ]}
-                />
+                >
+                    {organization => [
+                        { content: organization.id },
+                        {
+                            content:
+                                organization.state === 'validated'
+                                    ? 'Validée'
+                                    : 'En attente',
+                        },
+                        { content: organization.organizerName },
+                        {
+                            content: organization.description,
+                        },
+                        { content: organization.address },
+                        { content: organization.postcode },
+                        {
+                            content: organization.citycode,
+                        },
+                        {
+                            content: organization.numberPhone,
+                        },
+                        { content: organization.email },
+                        { content: organization.websiteUrl },
+                        { content: organization.organizationType.label },
+                        { content: organization.country },
+                        {
+                            content: organization.competitions
+                                .map(competition => competition.competitionName)
+                                .join(', '),
+                        },
+                    ]}
+                </Table>
             </div>
+            <Button
+                borderRadius={'30px'}
+                padding={'20px'}
+                icon={'download'}
+            >
+                <CSVLink
+                    filename={"organizations_exported.csv"}
+                    data={organizations}>
+                    Exporter les organisations
+                </CSVLink>
+            </Button>
         </Loader>
     );
 }

@@ -1,0 +1,44 @@
+.organization {
+    &Container {
+        @extend .margin-title;
+
+        .organizationBanner {
+            .filter {
+                display: flex;
+                gap: $gapBetweenElement;
+                padding-bottom: 20px;
+
+                .viewFilter {
+                    flex-direction: column;
+                    flex: 0 66%;
+                    display: flex;
+                    gap: $gapBetweenElement;
+                    width: 66%;
+
+                    & > div:last-child {
+                        display: flex;
+                        gap: $gapBetweenElement;
+                        flex-wrap: wrap;
+                    }
+
+                    h1 {
+                        @extend .break-long-words;
+
+                        @include below(md) {
+                            white-space: normal;
+                        }
+                    }
+
+                    @include below(md) {
+                        width: 100%;
+                    }
+                }
+
+                @include below(md) {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+        }
+    }
+}

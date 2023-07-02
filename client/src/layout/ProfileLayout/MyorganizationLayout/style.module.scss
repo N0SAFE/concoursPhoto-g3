@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    gap: 40px;
+
+    @include below(md) {
+        gap: 20px;
+        flex-direction: column;
+    }
+}
+
+.navlinkContainer {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    min-width: 200px;
+}
+
+.navlink {
+    margin-top: 20px;
+}
+
+.content {
+    flex-grow: 1;
+}

@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
-import BOForm from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import { useState } from 'react';
 import style from './style.module.scss';
 import { Link } from 'react-router-dom';
 import { useModal } from '@/contexts/ModalContext';
 import Register from '@/components/organisms/auth/Register';
 
-export default function Login() {
+export default function Login({ forceRedirect }) {
     const { setModalContent, hideModal } = useModal();
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -25,17 +25,32 @@ export default function Login() {
                 <span>
                     Veuillez vous identifier pour pouvoir voter et participer.
                 </span>
-                <span>
-                    Si vous n'avez pas de compte, <a>inscrivez-vous</a>, c'est
-                    gratuit.
-                </span>
+                <p className={style.loginProposition}>
+                    Si vous n'avez pas de compte,{' '}
+                    <Link
+                        onClick={e => {
+                            e.preventDefault();
+                            setModalContent(<Register />);
+                        }}
+                    >
+                        inscrivez-vous
+                    </Link>
+                    , c'est gratuit.
+                </p>
             </div>
-            <BOForm
+            <Form
                 handleSubmit={async function () {
                     const promise = login({
                         identifier: identifier,
                         password: password,
                     }).then(function (me) {
+                        if (forceRedirect) {
+                            navigate(forceRedirect);
+                            return;
+                        }
+                        if(forceRedirect === false) {
+                            return;
+                        }   
                         if (me.roles.includes('ROLE_ADMIN')) {
                             navigate('/BO');
                         } else {
@@ -75,16 +90,19 @@ export default function Login() {
                     <div className={style.loginSubmit}>
                         <Button
                             type="submit"
-                            name="Se connecter"
                             color={'black'}
                             textColor={'white'}
                             padding={'14px 30px'}
                             border={false}
                             borderRadius={'44px'}
                             width={'245px'}
-                        />
+                        >
+                            Se connecter
+                        </Button>
                     </div>
-                    <p className={style.loginProposition}>
+                    <p
+                        className={`${style.loginProposition} ${style.loginPropositionExtra}`}
+                    >
                         Vous avez oublié votre mot de passe ?{' '}
                         <Link
                             onClick={e => {
@@ -96,7 +114,7 @@ export default function Login() {
                         </Link>
                     </p>
                 </div>
-            </BOForm>
+            </Form>
         </div>
     );
 }

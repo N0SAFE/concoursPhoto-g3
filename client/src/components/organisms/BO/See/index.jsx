@@ -27,7 +27,7 @@ export default function ({ properties = [], entity }) {
         if (type === 'text') {
             return (
                 <div key={key}>
-                    <label>{display} : </label>
+                    <label className={style.label}>{display} : </label>
                     <span>{data}</span>
                 </div>
             );
@@ -35,7 +35,7 @@ export default function ({ properties = [], entity }) {
         if (type === 'img') {
             return (
                 <div key={key}>
-                    <label>{display} : </label>
+                    <label className={style.label}>{display} : </label>
                     {data && (
                         <Link to={data?.to} target="_blank">
                             {data?.name}
@@ -47,7 +47,7 @@ export default function ({ properties = [], entity }) {
         if (type === 'custom') {
             return (
                 <div key={key}>
-                    <label>{display}</label>
+                    <label className={style.label}>{display}</label>
                     {data}
                 </div>
             );
@@ -55,7 +55,7 @@ export default function ({ properties = [], entity }) {
         if (type === 'list') {
             return (
                 <div key={key}>
-                    <label>{display}</label>
+                    <label className={style.label}>{display}</label>
                     <ul>
                         {data.map((item, index) => (
                             <li key={index}>{item}</li>
@@ -67,7 +67,7 @@ export default function ({ properties = [], entity }) {
         if (type === 'list-dropdown') {
             return (
                 <div key={key}>
-                    <label>{display}</label>
+                    <label className={style.label}>{display}</label>
                     <ul>
                         {data.map((item, index) => (
                             <li key={index}>{item}</li>
@@ -79,7 +79,7 @@ export default function ({ properties = [], entity }) {
         if (type === 'date') {
             return (
                 <div key={key}>
-                    <label>{display} : </label>
+                    <label className={style.label}>{display} : </label>
                     <span>
                         {new Date(data).toLocaleDateString('fr-FR', {
                             year: 'numeric',

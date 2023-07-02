@@ -1,9 +1,13 @@
 .chipContainer {
+    width: fit-content;
     cursor: pointer;
     border-radius: 20px;
-    padding: 5px;
     gap: 5px;
     display: flex;
     align-items: center;
     font-weight: 700;
+    padding: 5px 15px;
+    span {
+        white-space: nowrap;
+    }
 }

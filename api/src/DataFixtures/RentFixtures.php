@@ -26,10 +26,22 @@ class RentFixtures extends Fixture implements DependentFixtureInterface
             $rent->setEndDate($faker->dateTime());
             $rent->setUrlClick($faker->url());
             $rent->setAltTag($faker->text());
-            $rent->setPriceSold($faker->randomFloat(3, 0, self::COUNT_REFERENCE));
+            $rent->setPriceSold(
+                $faker->randomFloat(3, 0, self::COUNT_REFERENCE)
+            );
             $rent->setNumberOfClicks(random_int(0, self::COUNT_REFERENCE));
-            $rent->setOrganization($this->getReference(OrganizationFixtures::ORGANIZATION_REFERENCE . rand(1, self::RENT_COUNT_REFERENCE)));
-            $rent->setAdvertising($this->getReference(AdvertisingSpaceFixtures::ADVERTISING_SPACE_REFERENCE . rand(1, self::RENT_COUNT_REFERENCE)));
+            $rent->setOrganization(
+                $this->getReference(
+                    OrganizationFixtures::ORGANIZATION_REFERENCE .
+                        rand(1, self::RENT_COUNT_REFERENCE)
+                )
+            );
+            $rent->setAdvertising(
+                $this->getReference(
+                    AdvertisingSpaceFixtures::ADVERTISING_SPACE_REFERENCE .
+                        rand(1, self::RENT_COUNT_REFERENCE)
+                )
+            );
 
             $manager->persist($rent);
         }
@@ -39,9 +51,6 @@ class RentFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [
-            OrganizationFixtures::class,
-            AdvertisingSpaceFixtures::class
-        ];
+        return [OrganizationFixtures::class, AdvertisingSpaceFixtures::class];
     }
 }

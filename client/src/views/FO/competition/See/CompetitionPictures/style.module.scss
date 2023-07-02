@@ -1,0 +1,62 @@
+.pictures {
+    padding: 20px 0;
+
+    &Container {
+        display: flex;
+        gap: $gapBetweenElement;
+        flex-wrap: wrap;
+
+        &Items {
+            width: calc((100% - 30px) / 3);
+            height: auto;
+
+            & > div > img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                aspect-ratio: 1/1;
+            }
+        }
+
+        .picturesStats {
+            display: flex;
+            justify-content: space-between;
+            gap: 3px;
+
+            & > .picturesStatsTags {
+                width: 100%;
+                overflow-x: scroll;
+
+                &::-webkit-scrollbar {
+                    display: none;
+                }
+            }
+
+            & > .picturesActions {
+                flex-grow: 1;
+            }
+
+            & > div {
+                display: flex;
+            }
+        }
+
+        @include below(md) {
+            & > div {
+                width: calc((100% - 20px) / 2);
+            }
+        }
+
+        @include below(sm) {
+            & > div {
+                width: 100%;
+            }
+        }
+    }
+
+    &Submission {
+        margin: 0 auto;
+        width: 100%;
+        padding: 20px 0;
+    }
+}

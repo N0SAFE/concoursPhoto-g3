@@ -1,15 +1,14 @@
-import Input from "@/components/atoms/Input/index.jsx";
-import BOCreate from "@/components/organisms/BO/Form";
-import useApiFetch from "@/hooks/useApiFetch.js";
-import { useState, useEffect } from "react";
-import useLocationPosibility from "@/hooks/useLocationPosibility.js";
-import { toast } from "react-toastify";
-import useFilesUploader from "@/hooks/useFilesUploader.js";
-import Button from "@/components/atoms/Button";
+import Input from '@/components/atoms/Input/index.jsx';
+import Form from '@/components/organisms/BO/Form';
+import useApiFetch from '@/hooks/useApiFetch.js';
+import { useState, useEffect } from 'react';
+import useLocationPosibility from '@/hooks/useLocationPosibility.js';
+import { toast } from 'react-toastify';
+import useFilesUploader from '@/hooks/useFilesUploader.js';
+import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import style from './style.module.scss';
-
 
 export default function OrganizationCreate() {
     const [isLoading, setIsLoading] = useState(true);
@@ -55,8 +54,6 @@ export default function OrganizationCreate() {
     const updateEntityState = (key, value) => {
         setEntity({ ...entity, [key]: value });
     };
-
-    const [errors, setErrors] = useState({});
 
     const getOrganizationTypePossibility = controller => {
         return apiFetch('/organization_types', {
@@ -126,9 +123,11 @@ export default function OrganizationCreate() {
         });
     }, [entity.postcode, entity.city]);
     console.debug('entity', entity);
+
     return (
         <Loader active={isLoading}>
-            <BOCreate
+            <Form
+                className={style.formContainer}
                 title="Création d'une organisation"
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
@@ -193,7 +192,7 @@ export default function OrganizationCreate() {
                     });
                 }}
             >
-                <div className={style.all}>
+                <div className={style.formWrapper}>
                     <Input
                         type="text"
                         name="organizerName"
@@ -202,7 +201,6 @@ export default function OrganizationCreate() {
                         onChange={d => updateEntityState('organizerName', d)}
                         defaultValue={entity.organizerName}
                     />
-
                     <Input
                         type="text"
                         name="description"
@@ -211,7 +209,6 @@ export default function OrganizationCreate() {
                         onChange={d => updateEntityState('description', d)}
                         defaultValue={entity.description}
                     />
-
                     <Input
                         type="text"
                         name="phoneNumber"
@@ -220,7 +217,6 @@ export default function OrganizationCreate() {
                         onChange={d => updateEntityState('phoneNumber', d)}
                         defaultValue={entity.phoneNumber}
                     />
-
                     <Input
                         type="file"
                         name="logo"
@@ -228,7 +224,6 @@ export default function OrganizationCreate() {
                         onChange={d => updateEntityState('logo', d)}
                         extra={{ value: entity.logo, type: 'image' }}
                     />
-
                     <Input
                         type="checkbox"
                         name="state"
@@ -291,8 +286,7 @@ export default function OrganizationCreate() {
                         }}
                         onChange={d => updateEntityState('organizationType', d)}
                     />
-
-                    <div style={{ display: 'flex', gap: '30px' }}>
+                    <div className={style.formRow}>
                         <Input
                             type="select"
                             name="city"
@@ -326,7 +320,6 @@ export default function OrganizationCreate() {
                                 updateEntityState('city', d);
                             }}
                         />
-
                         <Input
                             type="select"
                             name="postalCode"
@@ -363,8 +356,8 @@ export default function OrganizationCreate() {
                         />
                     </div>
                 </div>
-            </BOCreate>
-            <Button name="Retour" onClick={() => navigate("/BO/organization")} />
+            </Form>
+            <Button onClick={() => navigate('/BO/organization')}>Retour</Button>
         </Loader>
     );
 }

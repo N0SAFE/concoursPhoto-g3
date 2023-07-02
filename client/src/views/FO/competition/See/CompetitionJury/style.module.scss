@@ -1,0 +1,57 @@
+.jury {
+    display: flex;
+    flex-direction: row;
+    gap: $gapBetweenElement;
+
+    & > div:first-child {
+        padding: 20px 0;
+        flex: 0 66%;
+    }
+
+    & > div:last-child {
+        flex: 0 33%;
+        justify-content: center;
+    }
+
+    &Container {
+        & > .memberList {
+            width: 100%;
+
+            & > ul {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                padding: 0;
+                margin: 0;
+                list-style: none;
+
+                & > li {
+                    font-weight: 700;
+                    background-color: $background-color-lightgrey-2;
+                    padding: 15px;
+                }
+            }
+        }
+    }
+
+    @include below(xl) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    @include below(sm) {
+        display: block;
+    }
+
+    &Edit {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        button {
+            text-transform: uppercase;
+            font-size: 15px;
+            font-weight: 700;
+        }
+    }
+}

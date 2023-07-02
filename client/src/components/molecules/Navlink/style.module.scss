@@ -1,11 +1,39 @@
 .navLinkContainer {
     @extend .margin-title;
 
-    & > div {
+    &.vertical {
+        & > ul {
+            flex-direction: column;
+            & > li {
+                &::after {
+                    content: '';
+                    height: 100%;
+                    border-left: 2px solid $text-color-darkgrey;
+                    border-bottom: inherit;
+                    width: 0;
+                    top: 0;
+                    left: 0;
+                }
+
+                &.active::after {
+                    content: '';
+                    height: 100%;
+                    border-left: 2px solid $text-color-secondary;
+                    border-bottom: inherit;
+                    width: 0;
+                    top: 0;
+                    left: 0;
+                }
+            }
+        }
+    }
+
+    & > ul {
         display: flex;
         flex-direction: row;
         gap: $gapBetweenElement;
-        margin-bottom: 30px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
 
         & > li {
             position: relative;

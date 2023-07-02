@@ -1,14 +1,13 @@
-import Input from "@/components/atoms/Input/index.jsx";
-import BOForm from "@/components/organisms/BO/Form";
-import useApiFetch from "@/hooks/useApiFetch.js";
-import useLocationPosibility from "@/hooks/useLocationPosibility.js";
-import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import Button from "@/components/atoms/Button";
+import Input from '@/components/atoms/Input/index.jsx';
+import Form from '@/components/organisms/BO/Form';
+import useApiFetch from '@/hooks/useApiFetch.js';
+import useLocationPosibility from '@/hooks/useLocationPosibility.js';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import style from './style.module.scss';
-
 
 export default function UserCreate() {
     const [isLoading, setIsLoading] = useState(true);
@@ -145,7 +144,8 @@ export default function UserCreate() {
 
     return (
         <Loader active={isLoading}>
-            <BOForm
+            <Form
+                className={style.formContainer}
                 title="Ajouter un utilisateur"
                 handleSubmit={async function () {
                     const { codeRegion, codeDepartement } = await fetch(
@@ -216,7 +216,7 @@ export default function UserCreate() {
                     });
                 }}
             >
-                <div className={style.all}>
+                <div className={style.formWrapper}>
                     <Input
                         type="text"
                         name="Prénom"
@@ -225,7 +225,6 @@ export default function UserCreate() {
                         onChange={d => updateEntityState('firstname', d)}
                         defaultValue={entity.firstname}
                     />
-
                     <Input
                         type="text"
                         name="lastname"
@@ -238,8 +237,12 @@ export default function UserCreate() {
                         type="select"
                         name="gender"
                         label="Genre"
-                        extra={{ value: entity.gender, options: entityPossibility.genders, required: true }}
-                        onChange={(d) => updateEntityState("gender", d)}
+                        extra={{
+                            value: entity.gender,
+                            options: entityPossibility.genders,
+                            required: true,
+                        }}
+                        onChange={d => updateEntityState('gender', d)}
                     />
                     <Input
                         type="select"
@@ -252,7 +255,6 @@ export default function UserCreate() {
                         }}
                         onChange={d => updateEntityState('statut', d)}
                     />
-
                     <Input
                         type="date"
                         name="dateOfBirth"
@@ -261,7 +263,6 @@ export default function UserCreate() {
                         onChange={d => updateEntityState('dateOfBirth', d)}
                         defaultValue={entity.dateOfBirth}
                     />
-
                     <Input
                         type="email"
                         name="email"
@@ -270,7 +271,6 @@ export default function UserCreate() {
                         onChange={d => updateEntityState('email', d)}
                         defaultValue={entity.email}
                     />
-
                     <Input
                         type="checkbox"
                         name="state"
@@ -294,7 +294,7 @@ export default function UserCreate() {
                         extra={{ required: true }}
                         onChange={d => updateEntityState('address', d)}
                     />
-                    <div style={{ display: 'flex', gap: '30px' }}>
+                    <div className={style.formRow}>
                         <Input
                             type="select"
                             name="city"
@@ -388,9 +388,8 @@ export default function UserCreate() {
                         defaultValue={entity.passwordConfirm}
                     />
                 </div>
-                
-            </BOForm>
-            <Button name="Retour" onClick={() => navigate("/BO/user")} />
+            </Form>
+            <Button onClick={() => navigate('/BO/user')}>Retour</Button>
         </Loader>
     );
 }

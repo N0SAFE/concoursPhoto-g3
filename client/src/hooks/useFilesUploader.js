@@ -13,10 +13,10 @@ export default function useFilesUpdater() {
         );
     }
 
-    function uploadFile({ file }) {
+    function uploadFile({ file, path = "/files" }) {
         const formData = new FormData();
         formData.append('file', file);
-        return apiFetch('/files', {
+        return apiFetch(path, {
             method: 'POST',
             body: formData,
         }).then(r => r.json());

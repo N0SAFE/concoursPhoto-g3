@@ -10,46 +10,62 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FileUploader
 {
-    CONST USERS = 'users';
-    CONST COMPETITIONS = 'competitions';
-    CONST ORGANIZATIONS = 'organizations';
-    CONST SPONSORS = 'sponsors';
+    const USERS = 'users';
+    const COMPETITIONS = 'competitions';
+    const ORGANIZATIONS = 'organizations';
+    const SPONSORS = 'sponsors';
 
     public function __construct(
         private SluggerInterface $slugger,
         private ParameterBagInterface $params
-    ){
+    ) {
     }
 
-    public function upload(UploadedFile $file): array
-    {
+    public function getMetadata(UploadedFile $file): array {
         $originalFilename = $file->getClientOriginalName();
-        $fileName = sha1(uniqid(mt_rand(), true)).'.'.$file->getClientOriginalName();
+        $fileName =
+            sha1(uniqid(mt_rand(), true)) .
+            '.' .
+            $file->getClientOriginalName();
 
         $mimeType = $file->getMimeType();
         $size = $file->getSize();
         $extension = $file->guessExtension();
         if (!$extension) {
-            $extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);;
+            $extension = pathinfo(
+                $file->getClientOriginalName(),
+                PATHINFO_EXTENSION
+            );
         }
         if (!$extension) {
             $extension = '';
         }
-
-        $file->move($this->getTargetDirectory(), $fileName);
 
         return [
             'path' => sprintf('uploads/%s', $fileName),
             'size' => $size,
             'extension' => $extension,
             'type' => $mimeType,
-            'default_name' => $originalFilename
+            'default_name' => $originalFilename,
+            'file_name' => $fileName,
         ];
+    }
+
+    public function upload(UploadedFile $file): array
+    {
+        $metadata = $this->getMetadata($file);
+
+        $file->move($this->getTargetDirectory(), $metadata['file_name']);
+
+        return $metadata;
     }
 
     public function getTargetDirectory(): string
     {
-        return sprintf('%s/public/uploads', $this->params->get('kernel.project_dir'));
+        return sprintf(
+            '%s/public/uploads',
+            $this->params->get('kernel.project_dir')
+        );
     }
 
     public function getAlloweds(): array
@@ -58,7 +74,7 @@ class FileUploader
             self::USERS,
             self::COMPETITIONS,
             self::ORGANIZATIONS,
-            self::SPONSORS
+            self::SPONSORS,
         ];
     }
 

@@ -1,4 +1,5 @@
 .register {
+    background-color: $background-color-primary;
     @extend .limited-content;
     padding-top: 15px;
 
@@ -44,12 +45,22 @@
             display: inherit;
             align-items: inherit;
         }
+
+        & > a {
+            text-decoration: underline;
+            color: $text-color-secondary;
+        }
     }
 
     &Rule {
         flex-direction: row;
         display: flex;
         gap: $gapBetweenElement;
+
+        // override component Form to delete default width
+        & > div {
+            width: inherit;
+        }
 
         & > p > span {
             text-decoration: underline;
@@ -67,8 +78,8 @@
             border: 2px solid $background-color-secondary;
 
             &:checked {
-                background-color: #2196f3;
-                border-color: #2196f3;
+                background-color: $background-color-secondary;
+                border-color: $background-color-secondary;
 
                 &::before {
                     content: '';
@@ -88,6 +99,7 @@
 
         & > a {
             text-decoration: underline;
+            color: $background-color-secondary;
         }
     }
 

@@ -2,58 +2,79 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Serializer\Filter\GroupFilter;
 use App\Repository\PictureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 
-#[ApiResource]
+#[ApiFilter(GroupFilter::class)]
+#[ApiFilter(SearchFilter::class)]
+#[ApiFilter(PropertyFilter::class)]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch(), new Delete()],
+        normalizationContext: ['groups' => ['picture:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: PictureRepository::class)]
 class Picture
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    
-    #[Groups(['competition', 'user:read'])]
+    #[Groups(['picture:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['picture:read'])]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('competition')]
-    private ?string $picture_name = null;
+    #[Groups(['picture:read'])]
+    private ?string $pictureName = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $submission_date = null;
+    #[Groups(['picture:read'])]
+    private ?\DateTimeInterface $submissionDate = null;
 
     #[ORM\Column]
-    private ?int $number_of_votes = null;
+    #[Groups(['picture:read'])]
+    private ?int $numberOfVotes = null;
 
     #[ORM\Column]
-    private ?bool $price_won = null;
+    #[Groups(['picture:read'])]
+    private ?bool $priceWon = null;
 
     #[ORM\Column]
-    private ?int $price_rank = null;
+    #[Groups(['picture:read'])]
+    private ?int $priceRank = null;
 
-    #[Groups('competition')]
-    #[ORM\OneToMany(mappedBy: 'picture', targetEntity: Vote::class)]
+    #[Groups(['picture:votes:read'])]
+    #[ORM\OneToMany(mappedBy: 'picture', targetEntity: Vote::class, cascade: ['persist', 'remove'])]
     private Collection $votes;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
-    #[Groups(['competition', 'user:read', 'user:current:read'])]
+    #[Groups(['picture:competition:read', 'user:current:read'])]
     private ?Competition $competition = null;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
-    #[Groups('competition')]
+    #[Groups('picture:user:read')]
     private ?User $user = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups('competition')]
+    #[Groups('picture:file:read')]
     private ?File $file = null;
 
     public function __construct()
@@ -80,60 +101,60 @@ class Picture
 
     public function getPictureName(): ?string
     {
-        return $this->picture_name;
+        return $this->pictureName;
     }
 
-    public function setPictureName(string $picture_name): self
+    public function setPictureName(string $pictureName): self
     {
-        $this->picture_name = $picture_name;
+        $this->pictureName = $pictureName;
 
         return $this;
     }
 
     public function getSubmissionDate(): ?\DateTimeInterface
     {
-        return $this->submission_date;
+        return $this->submissionDate;
     }
 
-    public function setSubmissionDate(\DateTimeInterface $submission_date): self
+    public function setSubmissionDate(\DateTimeInterface $submissionDate): self
     {
-        $this->submission_date = $submission_date;
+        $this->submissionDate = $submissionDate;
 
         return $this;
     }
 
     public function getNumberOfVotes(): ?int
     {
-        return $this->number_of_votes;
+        return $this->numberOfVotes;
     }
 
-    public function setNumberOfVotes(int $number_of_votes): self
+    public function setNumberOfVotes(int $numberOfVotes): self
     {
-        $this->number_of_votes = $number_of_votes;
+        $this->numberOfVotes = $numberOfVotes;
 
         return $this;
     }
 
     public function isPriceWon(): ?bool
     {
-        return $this->price_won;
+        return $this->priceWon;
     }
 
-    public function setPriceWon(bool $price_won): self
+    public function setPriceWon(bool $priceWon): self
     {
-        $this->price_won = $price_won;
+        $this->priceWon = $priceWon;
 
         return $this;
     }
 
     public function getPriceRank(): ?int
     {
-        return $this->price_rank;
+        return $this->priceRank;
     }
 
-    public function setPriceRank(int $price_rank): self
+    public function setPriceRank(int $priceRank): self
     {
-        $this->price_rank = $price_rank;
+        $this->priceRank = $priceRank;
 
         return $this;
     }

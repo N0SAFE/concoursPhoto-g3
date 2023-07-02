@@ -8,23 +8,37 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 
-#[ApiResource]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['participantCategory:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: ParticipantCategoryRepository::class)]
 class ParticipantCategory
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups('participantCategory:read')]
     private ?int $id = null;
 
+    #[Groups('participantCategory:read')]
     #[ORM\Column(length: 255)]
-    #[Groups('competition')]
     private ?string $label = null;
 
-    #[ORM\ManyToMany(targetEntity: Competition::class, mappedBy: 'participant_category')]
-    #[Groups('competition')]
+    #[Groups('participantCategory:competitions:read')]
+    #[
+        ORM\ManyToMany(
+            targetEntity: Competition::class,
+            mappedBy: 'participantCategory'
+        )
+    ]
     private Collection $competitions;
 
     public function __construct()

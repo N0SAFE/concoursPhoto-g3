@@ -1,14 +1,14 @@
-import Input from "@/components/atoms/Input/index.jsx";
-import BOForm from "@/components/organisms/BO/Form";
-import useApiFetch from "@/hooks/useApiFetch.js";
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import useLocationPosibility from "@/hooks/useLocationPosibility.js";
-import useLocation from "@/hooks/useLocation.js";
-import { toast } from "react-toastify";
-import useApiPath from "@/hooks/useApiPath.js";
-import useFilesUploader from "@/hooks/useFilesUploader.js";
-import Button from "@/components/atoms/Button";
+import Input from '@/components/atoms/Input/index.jsx';
+import Form from '@/components/organisms/BO/Form';
+import useApiFetch from '@/hooks/useApiFetch.js';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import useLocationPosibility from '@/hooks/useLocationPosibility.js';
+import useLocation from '@/hooks/useLocation.js';
+import { toast } from 'react-toastify';
+import useApiPath from '@/hooks/useApiPath.js';
+import useFilesUploader from '@/hooks/useFilesUploader.js';
+import Button from '@/components/atoms/Button';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import style from './style.module.scss';
 
@@ -83,6 +83,16 @@ export default function OrganizationEdit() {
 
     function getOrganizations(controller) {
         return apiFetch('/organizations/' + organizationId, {
+            query: {
+                groups: [
+                    'organization:organizationType:read',
+                    'organizationType:read',
+                    'organization:competitions:read',
+                    'competition:read',
+                    'organization:logo:read',
+                    'file:read',
+                ],
+            },
             method: 'GET',
             signal: controller?.signal,
         })
@@ -92,33 +102,33 @@ export default function OrganizationEdit() {
                 return Promise.all([getCityByCode(data.citycode)]).then(
                     ([city]) => {
                         const _organization = {
-                            organizerName: data.organizer_name,
+                            organizerName: data.organizerName,
                             description: data.description,
                             address: data.address,
-                            phoneNumber: data.number_phone,
+                            phoneNumber: data.numberPhone,
                             email: data.email,
                             state: data.state,
                             logo: data.logo || null,
                             country: data.country,
-                            creationDate: data.creation_date,
-                            websiteUrl: data.website_url,
+                            creationDate: data.creationDate,
+                            websiteUrl: data.websiteUrl,
                             city: { label: city.nom, value: city.code },
                             postcode: {
                                 value: data.postcode,
                                 label: data.postcode,
                             },
                             organizationType: {
-                                value: data.organization_type['@id'],
-                                label: data.organization_type.label,
+                                value: data.organizationType['@id'],
+                                label: data.organizationType.label,
                             },
-                            numberSiret: data.number_siret,
-                            intraCommunityVat: data.intra_community_vat,
+                            numberSiret: data.numberSiret,
+                            intraCommunityVat: data.intraCommunityVat,
                         };
                         const _organizationFile = {
                             logo: data.logo
                                 ? {
                                       to: apiPathComplete(data.logo.path),
-                                      name: data.logo.default_name,
+                                      name: data.logo.defaultName,
                                   }
                                 : null,
                         };
@@ -187,7 +197,7 @@ export default function OrganizationEdit() {
 
     return (
         <Loader active={isLoading}>
-            <BOForm
+            <Form
                 title="Modifier une organisation"
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
@@ -431,8 +441,8 @@ export default function OrganizationEdit() {
                         />
                     </div>
                 </div>
-            </BOForm>
-            <Button name="Retour" onClick={() => navigate("/BO/organization")} />
+            </Form>
+            <Button onClick={() => navigate('/BO/organization')}>Retour</Button>
         </Loader>
     );
 }

@@ -1,0 +1,16 @@
+.photographer {
+    &Container {
+        @extend .margin-title;
+    }
+
+    &Count {
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    &Picture {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+    }
+}

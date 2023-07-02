@@ -2,6 +2,7 @@ import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import sassDts from 'vite-plugin-sass-dts';
 import path from 'path';
+import ViteRestart from 'vite-plugin-restart'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,6 +12,13 @@ export default defineConfig({
             enabledMode: ['development', 'production'],
         }),
         splitVendorChunkPlugin(),
+        ViteRestart({
+            reload: [
+              '../api/src/**/*',
+              '../api/config/**/*',
+              '../api/templates/**/*',
+            ]
+          })
     ],
     resolve: {
         alias: {
@@ -31,4 +39,8 @@ export default defineConfig({
     server: {
         port: 8001,
     },
+    // google-react-maps not working with vite, exclude it for working
+    optimizeDeps: {
+        exclude: ['js-big-decimal']
+    }
 });

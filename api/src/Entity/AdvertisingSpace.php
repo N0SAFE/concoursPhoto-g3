@@ -3,36 +3,53 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\AdvertisingSpaceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['advertisingSpace:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: AdvertisingSpaceRepository::class)]
 class AdvertisingSpace
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['advertisingSpace:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['advertisingSpace:read'])]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $location_name = null;
+    #[Groups(['advertisingSpace:read'])]
+    private ?string $locationName = null;
 
     #[ORM\Column]
-    private ?int $height_px = null;
+    #[Groups(['advertisingSpace:read'])]
+    private ?int $heightPx = null;
 
     #[ORM\Column]
-    private ?int $width_px = null;
+    #[Groups(['advertisingSpace:read'])]
+    private ?int $widthPx = null;
 
     #[ORM\Column]
-    private ?int $reference_price = null;
+    #[Groups(['advertisingSpace:read'])]
+    private ?int $referencePrice = null;
 
     #[ORM\OneToMany(mappedBy: 'advertising', targetEntity: Rent::class)]
+    #[Groups(['advertisingSpace:rents:read'])]
     private Collection $rents;
 
     public function __construct()
@@ -59,48 +76,48 @@ class AdvertisingSpace
 
     public function getLocationName(): ?string
     {
-        return $this->location_name;
+        return $this->locationName;
     }
 
-    public function setLocationName(string $location_name): self
+    public function setLocationName(string $locationName): self
     {
-        $this->location_name = $location_name;
+        $this->locationName = $locationName;
 
         return $this;
     }
 
     public function getHeightPx(): ?int
     {
-        return $this->height_px;
+        return $this->heightPx;
     }
 
-    public function setHeightPx(int $height_px): self
+    public function setHeightPx(int $heightPx): self
     {
-        $this->height_px = $height_px;
+        $this->heightPx = $heightPx;
 
         return $this;
     }
 
     public function getWidthPx(): ?int
     {
-        return $this->width_px;
+        return $this->widthPx;
     }
 
-    public function setWidthPx(int $width_px): self
+    public function setWidthPx(int $widthPx): self
     {
-        $this->width_px = $width_px;
+        $this->widthPx = $widthPx;
 
         return $this;
     }
 
     public function getReferencePrice(): ?int
     {
-        return $this->reference_price;
+        return $this->referencePrice;
     }
 
-    public function setReferencePrice(int $reference_price): self
+    public function setReferencePrice(int $referencePrice): self
     {
-        $this->reference_price = $reference_price;
+        $this->referencePrice = $referencePrice;
 
         return $this;
     }

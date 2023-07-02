@@ -12,19 +12,24 @@
         "build:client": "cd client && npm run build",
         "build:dev": "npm run build:client:dev",
         "build:client:dev": "cd client && npm run build:dev",
-        "init": "npm install --ignore-scripts && npm run install:new && cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:fixtures",
-        "init:prod": "npm install --ignore-scripts && npm run install:new && cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:migration",
-        "install": "concurrently \"npm run install:api\" \"npm run install:client\"",
-        "install:new": "concurrently \"npm run install:api:new\" \"npm run install:client\"",
+        "preview": "concurrently --prefix-colors \"blue.bold,green.bold\" --names \"preview API,preview Frontend\" \"npm run preview:api\" \"npm run preview:client\"",
+        "preview:client": "cd client && npm run preview",
+        "preview:api": "npm run dev:api",
+        "init": "npm install --ignore-scripts && npm run install:new && concurrently --prefix-colors \"blue.bold,green.bold\" --names \"load database,build Frontend\" \"cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:fixtures\" \"npm run build:dev\"",
+        "init:prod": "npm install --ignore-scripts && npm run install:new && concurrently --prefix-colors \"blue.bold,green.bold\" --names \"load database,build Frontend\" \"cd api && php bin/console doctrine:database:create --if-not-exists && cd .. && npm run load:migration\" \"npm run build\"",
+        "install": "concurrently --prefix-colors \"blue.bold,green.bold\" --names \"install API,install Frontend\" \"npm run install:api\" \"npm run install:client\"",
+        "install:new": "concurrently --prefix-colors \"blue.bold,green.bold\" --names \"install new API,install new Frontend\" \"npm run install:api:new\" \"npm run install:client\"",
         "install:api": "cd api && composer install",
         "install:api:new": "npm run install:api && cd api && php bin/console lexik:jwt:generate-keypair --no-interaction --overwrite",
         "install:client": "cd client && npm install",
-        "install:prod": "npm install --ignore-scripts && concurrently \"npm run install:api:prod\" \"npm run install:client\"",
+        "install:prod": "npm install --ignore-scripts && concurrently --prefix-colors \"blue.bold,green.bold\" --names \"install prod API,install prod Frontend\" \"npm run install:api:prod\" \"npm run install:client\"",
         "install:api:prod": "cd api && composer install --no-dev --optimize-autoloader && php bin/console doctrine:database:create --if-not-exists && npm run load:migration",
-        "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\"",
+        "dev": "concurrently --prefix-colors \"blue.bold,green.bold\" --names \"API,Frontend\" \"npm run dev:api\" \"npm run dev:client\"",
         "dev:api": "cd api && symfony server:stop && symfony server:start --port=8000",
         "dev:client": "cd client && npm run dev",
-        "pretty": "prettier --write \"**/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml}\""
+        "pretty": "prettier --write \"**/*.{js,md,jsx,ts,tsx,json,css,scss,html,yml,yaml,php}\"",
+        "clear:cache": "cd api && php bin/console cache:clear",
+        "force:reset": "cd api && php bin/console doctrine:database:drop --force && php bin/console doctrine:database:create && php bin/console app:reset-auto-increment && php bin/console doctrine:schema:update --force --complete && php bin/console doctrine:fixtures:load --no-interaction"
     },
     "repository": {
         "type": "git",
@@ -38,7 +43,11 @@
     },
     "homepage": "https://github.com/N0SAFE/concoursPhoto-g3#readme",
     "devDependencies": {
-        "prettier": "^2.8.8",
-        "concurrently": "^7.6.0"
+        "concurrently": "^7.6.0",
+        "prettier": "^2.8.8"
+    },
+    "dependencies": {
+        "@prettier/plugin-php": "^0.19.5",
+        "vite-plugin-restart": "^0.3.1"
     }
 }

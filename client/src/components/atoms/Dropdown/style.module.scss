@@ -1,4 +1,6 @@
 .dropdownContainer {
+    display: flex;
+    align-items: center;
     position: relative;
     list-style: none;
 
@@ -32,7 +34,7 @@
         border-radius: 5px;
         list-style: none;
 
-        @include below(md) {
+        @include below(xl) {
             position: inherit;
             top: 0;
         }

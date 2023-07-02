@@ -6,6 +6,7 @@ import Button from '@/components/atoms/Button';
 import style from './style.module.scss';
 import Loader from '@/components/atoms/Loader';
 import Table from '@/components/molecules/Table';
+import { CSVLink } from "react-csv";
 
 export default function UserList() {
     const apiFetch = useApiFetch();
@@ -30,11 +31,14 @@ export default function UserList() {
         }
         if (filterVerified) {
             params.params = {
-                is_verified: filterVerified,
+                isVerified: filterVerified,
             };
         }
 
         return apiFetch('/users', {
+            query: {
+                groups: ['user:gender:read', 'gender:read'],
+            },
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -109,7 +113,7 @@ export default function UserList() {
             if (filterVerified !== 'all') {
                 if (
                     filterState &&
-                    user.is_verified !== (filterVerified === 'true')
+                    user.isVerified !== (filterVerified === 'true')
                 ) {
                     return false;
                 }
@@ -121,151 +125,173 @@ export default function UserList() {
 
     return (
         <Loader active={isLoading}>
-             <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '15px',
-                    }}
+            <div className={style.container}>
+                <h1>Liste des utilisateurs</h1>
+                <Button
+                    color="green"
+                    textColor="white"
+                    borderRadius={'30px'}
+                    onClick={() => navigate('/BO/user/create')}
                 >
-                    <h1>Liste des utilisateurs</h1>
-                    <Button
-                        color="green"
-                        textColor="white"
-                        name="Créer un utilisateur"
-                        borderRadius={'30px'}
-                        onClick={() => navigate('/BO/user/create')}
-                    ></Button>
-                </div>
-                <div>
-                    <label htmlFor="state-filter">Filtrer par état :</label>
-                    <select
-                        id="state-filter"
-                        value={filterState}
-                        onChange={handleFilterChange}
-                    >
-                        <option value="all">Tous</option>
-                        <option value="true">Actif</option>
-                        <option value="false">Inactif</option>
-                    </select>
-                    <label htmlFor="state-verifiedFilter">
-                        Filtrer par vérification :
-                    </label>
-                    <select
-                        id="state-verifiedFilter"
-                        value={filterVerified}
-                        onChange={handleFilterChange}
-                    >
-                        <option value="all">Tous</option>
-                        <option value="true">Vérifié</option>
-                        <option value="false">Non vérifié</option>
-                    </select>
-                </div>
+                    Créer un utilisateur
+                </Button>
+            </div>
+            <div>
+                <label htmlFor="state-filter">Filtrer par état :</label>
+                <select
+                    id="state-filter"
+                    value={filterState}
+                    onChange={handleFilterChange}
+                >
+                    <option value="all">Tous</option>
+                    <option value="true">Actif</option>
+                    <option value="false">Inactif</option>
+                </select>
+                <label htmlFor="state-verifiedFilter">
+                    Filtrer par vérification :
+                </label>
+                <select
+                    id="state-verifiedFilter"
+                    value={filterVerified}
+                    onChange={handleFilterChange}
+                >
+                    <option value="all">Tous</option>
+                    <option value="true">Vérifié</option>
+                    <option value="false">Non vérifié</option>
+                </select>
+            </div>
             <div className={style.containerList}>
-               
                 <Table
-                    entityList={userFiltering()}
+                    list={userFiltering()}
                     fields={[
-                        { property: 'id', display: 'ID' },
-                        { property: 'state', display: 'Etat' },
-                        { property: 'email', display: 'Email' },
-                        { property: 'roles', display: 'Roles' },
-                        { property: 'firstname', display: 'Prénom' },
-                        { property: 'lastname', display: 'Nom' },
-                        {
-                            property: 'date_of_birth',
-                            display: 'Date de naissance',
-                        },
-                        {
-                            property: 'creation_date',
-                            display: 'Date de création',
-                        },
-                        { property: 'gender', display: 'Genre' },
-                        { property: 'address', display: 'Adresse' },
-                        { property: 'postcode', display: 'Code postal' },
-                        { property: 'citycode', display: 'Ville' },
-                        { property: 'country', display: 'Pays' },
-                        {
-                            property: 'phone_number',
-                            display: 'Numéro de téléphone',
-                        },
-                        { property: 'is_verified', display: 'Vérification' },
+                        'ID',
+                        'Etat',
+                        'Email',
+                        'Roles',
+                        'Prénom',
+                        'Nom',
+                        'Date de naissance',
+                        'Date de création',
+                        'Genre',
+                        'Adresse',
+                        'Code postal',
+                        'Ville',
+                        'Pays',
+                        'Numéro de téléphone',
+                        'Vérification',
                     ]}
-                    customAction={({ entity, property }) => {
-                        if (property === 'roles') {
-                            return (
-                                <div>
-                                    {entity.roles.map((role, index) => (
-                                        <span key={index}>{role}</span>
-                                    ))}
-                                </div>
-                            );
-                        }
-                        if (property === 'state') {
-                            return entity.state ? 'Actif' : 'Inactif';
-                        }
-
-                        if (property === 'is_verified') {
-                            return entity.is_verified
-                                ? 'Vérifié'
-                                : 'Non vérifié';
-                        }
-
-                        if (property === 'creation_date') {
-                            return new Date(
-                                entity.creation_date
-                            ).toLocaleDateString('fr-FR', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                            });
-                        }
-                        if (property === 'date_of_birth') {
-                            return new Date(
-                                entity.creation_date
-                            ).toLocaleDateString('fr-FR', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                            });
-                        }
-
-                        if (property === 'gender') {
-                            return entity.gender.label;
-                        }
-                    }}
                     actions={[
                         {
-                            label: 'Modifier',
-                            color: 'blue',
-                            textColor: 'white',
-                            action: ({ entity }) => {
-                                navigate('/BO/user/edit/' + entity.id);
+                            name: 'Modifier',
+                            action: user =>
+                                navigate('/BO/user/edit/' + user.id),
+                            component: (user, callback, index) => {
+                                return (
+                                    <Button
+                                        color="blue"
+                                        textColor="white"
+                                        borderRadius={'30px'}
+                                        onClick={() => callback(user)}
+                                    >
+                                        Modifier
+                                    </Button>
+                                );
                             },
                         },
                         {
-                            label: 'Supprimer',
-                            color: 'red',
-                            textColor: 'white',
-                            action: ({ entity }) => {
+                            name: 'Supprimer',
+                            action: user => {
                                 if (
                                     confirm(
                                         'Êtes-vous sûr de vouloir supprimer cet utilisateur ?'
                                     )
                                 ) {
-                                    return handleDelete(entity.id);
+                                    return handleDelete(user.id);
                                 }
+                            },
+                            component: (user, callback, index) => {
+                                return (
+                                    <Button
+                                        color="red"
+                                        textColor="white"
+                                        borderRadius={'30px'}
+                                        onClick={() => {
+                                            callback(user);
+                                        }}
+                                    >
+                                        Supprimer
+                                    </Button>
+                                );
                             },
                         },
                         {
-                            label: 'Voir',
-                            action: ({ entity }) => {
-                                navigate('/BO/user/' + entity.id);
-                            },
+                            name: 'Voir',
+                            action: user => navigate('/BO/user/' + user.id),
+                            component: (user, callback, index) => (
+                                <Button
+                                    borderRadius={'30px'}
+                                    onClick={() => callback(user)}
+                                >
+                                    Voir
+                                </Button>
+                            ),
                         },
                     ]}
-                />
+                >
+                    {user => [
+                        { content: user.id },
+                        { content: user.state ? 'Actif' : 'Inactif' },
+                        { content: user.email },
+                        {
+                            content: user.roles.map((role, index) => (
+                                <span key={index}>{role}</span>
+                            )),
+                        },
+                        { content: user.firstname },
+                        { content: user.lastname },
+                        {
+                            content: new Date(
+                                user.dateOfBirth
+                            ).toLocaleDateString('fr-FR', {
+                                year: 'numeric',
+                                month: 'numeric',
+                                day: 'numeric',
+                            }),
+                        },
+                        {
+                            content: new Date(
+                                user.creationDate
+                            ).toLocaleDateString('fr-FR', {
+                                year: 'numeric',
+                                month: 'numeric',
+                                day: 'numeric',
+                            }),
+                        },
+                        { content: user.gender.label },
+                        { content: user.address },
+                        { content: user.postcode },
+                        { content: user.citycode },
+                        { content: user.country },
+                        { content: user.phoneNumber },
+                        {
+                            content: user.isVerified
+                                ? 'Vérifié'
+                                : 'Non vérifié',
+                        },
+                    ]}
+                </Table>
             </div>
+            <Button
+                borderRadius={'30px'}
+                padding={'20px'}
+                icon={'download'}
+            >
+                <CSVLink
+                    filename={"users_exported.csv"}
+                    data={users}>
+                    Exporter les utilisateurs
+                </CSVLink>
+            </Button>
         </Loader>
     );
 }

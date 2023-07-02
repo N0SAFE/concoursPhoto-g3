@@ -1,7 +1,21 @@
-.all{
-    margin-top: 2%;
-    margin-bottom: 1%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.form {
+    &Container {
+        @extend .margin-title;
+    }
+
+    &Wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: $gapBetweenElement;
+    }
+
+    &Row {
+        display: flex;
+        flex-direction: row;
+        gap: $gapBetweenElement;
+
+        @include below(md) {
+            flex-direction: column;
+        }
+    }
 }

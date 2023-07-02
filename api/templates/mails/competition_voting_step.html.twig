@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <p>
+        Bonjour <b>{{ firstname }} {{ lastname }}</b>, le concours "{{ competition_name }}" entre en phase de vote, vous pouvez à présent voter pour la ou les plus belles photographies
+    </p>
+    <a href="{{ base_url_client() }}/competition/{{ competition_id }}/pictures" target="_blank"
+       style="padding: 10px; background-color: black; color: white; text-decoration: none; border-radius: 75px; display: flex;align-self: center; justify-content: center;">
+        Se rediriger vers les photos du concours
+    </a>
+    <u>
+        Il s'agit d'un message automatique, merci de ne pas y répondre.
+    </u>
+    <p>
+        Cordialement,
+        <br>
+        L'équipe de <b>ConcoursPhotos.com</b>
+    </p>
+{% endblock %}

@@ -1,5 +1,15 @@
 # api/config/packages/api_platform.yaml
 api_platform:
+    http_cache:
+        invalidation:
+            enabled: true
+        public: true
+    defaults:
+        pagination_client_items_per_page: true
+        cache_headers:
+            max_age: 0
+            shared_max_age: 3600
+            vary: ['Content-Type', 'Authorization', 'Origin']
     eager_loading:
         force_eager: false
     swagger:
@@ -14,3 +24,6 @@ api_platform:
         json: ['application/json', 'application/ld+json']
         html: ['text/html']
         multipart: ['multipart/form-data']
+    collection:
+        pagination:
+            items_per_page_parameter_name: itemsPerPage

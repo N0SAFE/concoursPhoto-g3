@@ -7,35 +7,44 @@ use App\Repository\MemberOfTheJuryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 
-#[ApiResource]
+#[
+    ApiResource(
+        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        normalizationContext: ['groups' => ['memberOfTheJury:read']]
+    )
+]
 #[ORM\Entity(repositoryClass: MemberOfTheJuryRepository::class)]
 class MemberOfTheJury
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('competition')]
+    #[Groups('memberOfTheJury:read')]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'memberOfTheJuries')]
-    #[Groups('competition')]
+    #[Groups('memberOfTheJury:competition:read')]
     private ?Competition $competition = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
-    private ?\DateTimeInterface $invite_date = null;
+    #[Groups('memberOfTheJury:read')]
+    private ?\DateTimeInterface $inviteDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('competition')]
-    private ?\DateTimeInterface $acceptance_date = null;
+    #[Groups('memberOfTheJury:read')]
+    private ?\DateTimeInterface $acceptanceDate = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('competition')]
+    #[Groups(['memberOfTheJury:read'])]
     private ?string $theFunction = null;
 
     #[ORM\ManyToOne(inversedBy: 'memberOfTheJuries')]
-    #[Groups('competition')]
+    #[Groups('memberOfTheJury:user:read')]
     private ?User $user = null;
 
     public function getId(): ?int
@@ -57,24 +66,24 @@ class MemberOfTheJury
 
     public function getInviteDate(): ?\DateTimeInterface
     {
-        return $this->invite_date;
+        return $this->inviteDate;
     }
 
-    public function setInviteDate(\DateTimeInterface $invite_date): self
+    public function setInviteDate(\DateTimeInterface $inviteDate): self
     {
-        $this->invite_date = $invite_date;
+        $this->inviteDate = $inviteDate;
 
         return $this;
     }
 
     public function getAcceptanceDate(): ?\DateTimeInterface
     {
-        return $this->acceptance_date;
+        return $this->acceptanceDate;
     }
 
-    public function setAcceptanceDate(\DateTimeInterface $acceptance_date): self
+    public function setAcceptanceDate(\DateTimeInterface $acceptanceDate): self
     {
-        $this->acceptance_date = $acceptance_date;
+        $this->acceptanceDate = $acceptanceDate;
 
         return $this;
     }

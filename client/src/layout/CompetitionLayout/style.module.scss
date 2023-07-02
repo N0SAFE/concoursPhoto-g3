@@ -1,85 +1,115 @@
-.competitionContainer {
-    @extend .margin-title;
+.competition {
+    &Container {
+        @extend .margin-title;
 
-    .competitionBanner {
-        .filter {
-            display: flex;
-            gap: $gapBetweenElement;
-            flex-wrap: wrap;
-            padding-bottom: 20px;
-
-            .viewFilter {
-                flex-direction: column;
-                flex: 0 66%;
+        .competitionBanner {
+            .filter {
                 display: flex;
                 gap: $gapBetweenElement;
+                padding-bottom: 20px;
 
-                & > div:last-child {
+                .viewFilter {
+                    flex-direction: column;
+                    flex: 0 66%;
                     display: flex;
                     gap: $gapBetweenElement;
-                }
-            }
+                    width: 66%;
 
-            .viewOrganizer {
-                display: flex;
-                flex: 0 33%;
-                flex-direction: column;
-                justify-content: space-between;
-
-                &One {
-                    padding-top: 20px;
-                    padding-bottom: 10px;
-
-                    & > .titleOrganizer {
-                        & > span {
-                            font-weight: 700;
-                            text-decoration: underline;
-                        }
-                    }
-                }
-
-                &Two {
-                    display: flex;
-
-                    & > div {
+                    & > div:last-child {
                         display: flex;
-                        align-items: center;
-                        flex-direction: row;
+                        gap: $gapBetweenElement;
+                        flex-wrap: wrap;
+                    }
 
-                        & > p {
-                            display: flex;
-                        }
+                    h1 {
+                        @extend .break-long-words;
 
-                        &:first-child {
-                            margin-right: 20px;
+                        @include below(md) {
+                            white-space: normal;
                         }
+                    }
 
-                        &:last-child > p {
-                            margin-right: 10px;
-                        }
+                    @include below(md) {
+                        width: 100%;
                     }
                 }
 
-                &Stats {
+                .viewOrganizer {
                     display: flex;
+                    flex: 0 33%;
+                    flex-direction: column;
+                    justify-content: space-between;
+
+                    @include below(md) {
+                        display: flex;
+                        align-items: end;
+                    }
+
+                    &One {
+                        padding-top: 20px;
+                        padding-bottom: 10px;
+
+                        & > .titleOrganizer {
+                            & > span {
+                                font-weight: 700;
+                                text-decoration: underline;
+                            }
+                        }
+                    }
+
+                    &Two {
+                        display: flex;
+
+                        & > div {
+                            display: flex;
+                            align-items: center;
+                            flex-direction: row;
+
+                            & > p {
+                                display: flex;
+                            }
+
+                            &:first-child {
+                                margin-right: 20px;
+                            }
+
+                            &:last-child > p {
+                                margin-right: 10px;
+                            }
+                        }
+                    }
+
+                    &Stats {
+                        display: flex;
+                    }
+
+                    @include below(md) {
+                        display: flex;
+                        flex-direction: row;
+                    }
+                }
+
+                @include below(md) {
+                    display: flex;
+                    flex-direction: column;
                 }
             }
         }
-    }
 
-    .competitionDescription {
-        display: flex;
-        flex-direction: row;
-        gap: $gapBetweenElement;
-        flex-wrap: wrap;
+        .competitionDescription {
+            display: flex;
+            flex-direction: row;
+            gap: $gapBetweenElement;
+            flex-wrap: wrap;
 
-        & > div:first-child {
-            padding: 20px 0;
-            flex: 0 66%;
-        }
+            & > div:first-child {
+                padding: 20px 0;
+                flex: 0 66%;
+            }
 
-        & > div:last-child {
-            flex: 0 33%;
+            & > div:last-child {
+                flex: 0 33%;
+            }
         }
     }
 }

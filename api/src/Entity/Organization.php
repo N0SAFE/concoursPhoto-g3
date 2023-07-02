@@ -2,105 +2,266 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use App\Controller\FileController;
 use App\Repository\OrganizationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
+use ApiPlatform\Serializer\Filter\GroupFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use Metaclass\FilterBundle\Filter\FilterLogic;
 
-#[ApiResource(normalizationContext: ['groups' => ['organization', 'file']])]
+#[ApiFilter(PropertyFilter::class)]
+#[ApiFilter(FilterLogic::class)]
+#[ApiFilter(BooleanFilter::class)]
+#[
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'organizerName' => 'partial',
+            'citycode' => 'exact',
+            'regionCriteria' => 'partial',
+            'departmentCriteria' => 'partial',
+            'state' => 'exact',
+        ]
+    )
+]
+#[ApiFilter(GroupFilter::class)]
+#[
+    ApiResource(
+        operations: [
+            new GetCollection(),
+            new Get(),
+            new Post(),
+            new Patch(),
+            new Delete(),
+        ],
+        normalizationContext: ['groups' => ['organization:read']],
+        denormalizationContext: [
+            'groups' => ['organization:write', 'organizationLink:write'],
+        ]
+    )
+]
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 class Organization
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['organization', 'competition', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?bool $state = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'competition', 'user:current:read', 'user:read'])]
-    private ?string $organizer_name = null;
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
+    private ?string $organizerName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $address = null;
 
     #[ORM\Column]
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $postcode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $citycode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'user:current:read'])]
-    private ?string $website_url = null;
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
+    private ?string $websiteUrl = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'user:current:read'])]
-    private ?string $number_phone = null;
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
+    private ?string $numberPhone = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     private ?string $country = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizations')]
-    #[Groups(['organization', 'user:current:read'])]
-    private ?OrganizationType $organization_type = null;
+    #[
+        Groups([
+            'organization:organizationType:read',
+            'user:current:read',
+            'organization:write',
+        ])
+    ]
+    private ?OrganizationType $organizationType = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Manage')]
-    #[Groups('competition')]
-    private Collection $users;
+    #[
+        Groups([
+            'organization:admins:read',
+            'organization:admin:read',
+            'organization:write',
+        ])
+    ]
+    private Collection $admins;
 
+    #[Groups(['organization:rents:read', 'organization:write'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Rent::class)]
     private Collection $rents;
 
-    #[Groups(['organization', 'user:current:read'])]
+    #[
+        Groups([
+            'organization:competitions:read',
+            'user:current:read',
+            'organization:write',
+        ])
+    ]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Competition::class)]
     private Collection $competitions;
 
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:sponsors:read', 'user:current:read'])]
     #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Sponsors::class)]
     private Collection $sponsors;
 
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     #[ORM\Column(length: 255)]
-    private ?string $intra_community_vat = null;
+    private ?string $intraCommunityVat = null;
 
-    #[Groups(['organization', 'user:current:read'])]
+    #[Groups(['organization:read', 'user:current:read', 'organization:write'])]
     #[ORM\Column(length: 255)]
-    private ?string $number_siret = null;
+    private ?string $numberSiret = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['organization', 'competition', 'user:current:read'])]
+    #[
+        Groups([
+            'organization:logo:read',
+            'user:current:read',
+            'organization:write',
+        ])
+    ]
     private ?File $logo = null;
 
-    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: OrganizationLink::class)]
+    #[
+        Groups([
+            'organization:read',
+            'organization:organizationLink:read',
+            'organization:organizationLinks:read',
+            'organization:write',
+        ])
+    ]
+    #[
+        ORM\OneToMany(
+            mappedBy: 'organization',
+            targetEntity: OrganizationLink::class,
+            cascade: ['persist', 'remove']
+        )
+    ]
     private Collection $organizationLinks;
+
+    #[Groups(['organization:read', 'user:current:read'])]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $lastUpdateDate = null;
+
+    #[
+        Groups([
+            'organization:organizationVisual:read',
+            'user:current:read',
+            'organization:write',
+        ])
+    ]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?File $organizationVisual = null;
+
+    #[ORM\Column(type: 'json')]
+    #[Groups(['organizattion:read', 'user:current:read'])]
+    private array $regionCriteria = [];
+
+    #[ORM\Column(type: 'json')]
+    #[Groups(['organization:read', 'user:current:read'])]
+    private array $departmentCriteria = [];
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->admins = new ArrayCollection();
         $this->rents = new ArrayCollection();
         $this->competitions = new ArrayCollection();
         $this->sponsors = new ArrayCollection();
         $this->organizationLinks = new ArrayCollection();
+    }
+
+    #[Groups(['organization:read'])]
+    public function getCompetitionCount(): int
+    {
+        return $this->competitions->count();
+    }
+
+    #[Groups(['organization:read'])]
+    public function getActiveCompetitionCount(): int
+    {
+        $count = 0;
+        foreach ($this->competitions as $competition) {
+            if ($competition->getState() != 6) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    #[Groups(['organization:lastCompetition:read'])]
+    public function getLastCompetition(): ?Competition
+    {
+        $competitions = $this->getCompetitions();
+        $lastCompetition = $competitions->reduce(function (
+            $lastCompetition,
+            $competition
+        ) {
+            if (
+                $competition->getCreationDate() >
+                $lastCompetition->getCreationDate()
+            ) {
+                return $competition;
+            }
+            return $lastCompetition;
+        }, $competitions->first());
+        if ($lastCompetition == false) {
+            return null;
+        }
+        return $lastCompetition;
+    }
+
+    #[Groups(['organization:read'])]
+    public function getRentCount(): int
+    {
+        return $this->rents->count();
+    }
+
+    #[Groups(['organization:read'])]
+    public function getSponsorCount(): int
+    {
+        return $this->sponsors->count();
+    }
+
+    #[Groups(['organization:read'])]
+    public function getAdminCount(): int
+    {
+        return $this->admins->count();
     }
 
     public function getId(): ?int
@@ -122,12 +283,12 @@ class Organization
 
     public function getOrganizerName(): ?string
     {
-        return $this->organizer_name;
+        return $this->organizerName;
     }
 
-    public function setOrganizerName(string $organizer_name): self
+    public function setOrganizerName(string $organizerName): self
     {
-        $this->organizer_name = $organizer_name;
+        $this->organizerName = $organizerName;
 
         return $this;
     }
@@ -182,12 +343,12 @@ class Organization
 
     public function getWebsiteUrl(): ?string
     {
-        return $this->website_url;
+        return $this->websiteUrl;
     }
 
-    public function setWebsiteUrl(string $website_url): self
+    public function setWebsiteUrl(string $websiteUrl): self
     {
-        $this->website_url = $website_url;
+        $this->websiteUrl = $websiteUrl;
 
         return $this;
     }
@@ -206,12 +367,12 @@ class Organization
 
     public function getNumberPhone(): ?string
     {
-        return $this->number_phone;
+        return $this->numberPhone;
     }
 
-    public function setNumberPhone(string $number_phone): self
+    public function setNumberPhone(string $numberPhone): self
     {
-        $this->number_phone = $number_phone;
+        $this->numberPhone = $numberPhone;
 
         return $this;
     }
@@ -230,12 +391,13 @@ class Organization
 
     public function getOrganizationType(): ?OrganizationType
     {
-        return $this->organization_type;
+        return $this->organizationType;
     }
 
-    public function setOrganizationType(?OrganizationType $organization_type): self
-    {
-        $this->organization_type = $organization_type;
+    public function setOrganizationType(
+        ?OrganizationType $organizationType
+    ): self {
+        $this->organizationType = $organizationType;
 
         return $this;
     }
@@ -243,24 +405,24 @@ class Organization
     /**
      * @return Collection<int, User>
      */
-    public function getUsers(): Collection
+    public function getAdmins(): Collection
     {
-        return $this->users;
+        return $this->admins;
     }
 
-    public function addUser(User $user): self
+    public function addAdmins(User $user): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
+        if (!$this->admins->contains($user)) {
+            $this->admins->add($user);
             $user->addManage($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeAdmin(User $user): self
     {
-        if ($this->users->removeElement($user)) {
+        if ($this->admins->removeElement($user)) {
             $user->removeManage($this);
         }
 
@@ -359,24 +521,24 @@ class Organization
 
     public function getIntraCommunityVat(): ?string
     {
-        return $this->intra_community_vat;
+        return $this->intraCommunityVat;
     }
 
-    public function setIntraCommunityVat(string $intra_community_vat): self
+    public function setIntraCommunityVat(string $intraCommunityVat): self
     {
-        $this->intra_community_vat = $intra_community_vat;
+        $this->intraCommunityVat = $intraCommunityVat;
 
         return $this;
     }
 
     public function getNumberSiret(): ?string
     {
-        return $this->number_siret;
+        return $this->numberSiret;
     }
 
-    public function setNumberSiret(string $number_siret): self
+    public function setNumberSiret(string $numberSiret): self
     {
-        $this->number_siret = $number_siret;
+        $this->numberSiret = $numberSiret;
 
         return $this;
     }
@@ -401,8 +563,9 @@ class Organization
         return $this->organizationLinks;
     }
 
-    public function addOrganizationLink(OrganizationLink $organizationLink): self
-    {
+    public function addOrganizationLink(
+        OrganizationLink $organizationLink
+    ): self {
         if (!$this->organizationLinks->contains($organizationLink)) {
             $this->organizationLinks->add($organizationLink);
             $organizationLink->setOrganization($this);
@@ -411,14 +574,63 @@ class Organization
         return $this;
     }
 
-    public function removeOrganizationLink(OrganizationLink $organizationLink): self
-    {
+    public function removeOrganizationLink(
+        OrganizationLink $organizationLink
+    ): self {
         if ($this->organizationLinks->removeElement($organizationLink)) {
             // set the owning side to null (unless already changed)
             if ($organizationLink->getOrganization() === $this) {
                 $organizationLink->setOrganization(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastUpdateDate(): ?\DateTimeInterface
+    {
+        return $this->lastUpdateDate;
+    }
+
+    public function setLastUpdateDate(?\DateTimeInterface $lastUpdateDate): self
+    {
+        $this->lastUpdateDate = $lastUpdateDate;
+
+        return $this;
+    }
+
+    public function getOrganizationVisual(): ?File
+    {
+        return $this->organizationVisual;
+    }
+
+    public function setOrganizationVisual(?File $organizationVisual): self
+    {
+        $this->organizationVisual = $organizationVisual;
+
+        return $this;
+    }
+
+    public function getRegionCriteria(): array
+    {
+        return $this->regionCriteria;
+    }
+
+    public function setRegionCriteria(array $regionCriteria): static
+    {
+        $this->regionCriteria = $regionCriteria;
+
+        return $this;
+    }
+
+    public function getDepartmentCriteria(): array
+    {
+        return $this->departmentCriteria;
+    }
+
+    public function setDepartmentCriteria(array $departmentCriteria): static
+    {
+        $this->departmentCriteria = $departmentCriteria;
 
         return $this;
     }

@@ -1,11 +1,11 @@
 import Input from '@/components/atoms/Input';
-import BOForm from '@/components/organisms/BO/Form';
+import Form from '@/components/organisms/BO/Form';
 import useApiFetch from '@/hooks/useApiFetch';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import Button from '@/components/atoms/Button';
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useModal } from '@/contexts/ModalContext';
 import Login from '@/components/organisms/auth/Login';
 
@@ -14,7 +14,7 @@ export default function UserRegister() {
     const { hideModal, setModalContent } = useModal();
 
     const [entityPossibility, setEntityPossibility] = useState({
-        genders: [],
+        gender: [],
         statut: [],
     });
     const [gtc, setGtc] = useState(false);
@@ -47,6 +47,7 @@ export default function UserRegister() {
                 });
             });
     };
+
     const getPersonalstatus = () => {
         return apiFetch('/personal_statuts', {
             method: 'GET',
@@ -64,9 +65,7 @@ export default function UserRegister() {
         const promise = Promise.all([
             getGendersPossibility(),
             getPersonalstatus(),
-        ]).then(([genders, statut]) =>
-            setEntityPossibility({ genders, statut })
-        );
+        ]).then(([gender, statut]) => setEntityPossibility({ gender, statut }));
         toast.promise(promise, {
             pending: 'Chargement des possibilités',
             success: 'Possibilités chargées',
@@ -86,7 +85,7 @@ export default function UserRegister() {
                     d’abord votre compte.
                 </span>
             </div>
-            <BOForm
+            <Form
                 className={style.registerForm}
                 handleSubmit={function () {
                     const promise = new Promise(async (resolve, reject) => {
@@ -103,6 +102,7 @@ export default function UserRegister() {
                             lastname: entity.lastname,
                             roles: ['ROLE_MEMBER'],
                             personalStatut: entity.statut.value,
+                            gender: entity.gender.value,
                             dateOfBirth: entity.dateOfBirth.toISOString(),
                             creationDate: new Date().toISOString(),
                             registrationDate: new Date().toISOString(),
@@ -115,6 +115,7 @@ export default function UserRegister() {
                             data.lastname &&
                             data.dateOfBirth &&
                             data.personalStatut &&
+                            data.gender &&
                             data.email
                         ) {
                             if (!data.plainPassword) {
@@ -172,6 +173,16 @@ export default function UserRegister() {
                 hasSubmit={true}
             >
                 <div>
+                    <Input
+                        type="radioList"
+                        name="genre"
+                        onChange={d => updateEntity('gender', d)}
+                        extra={{
+                            value: entity.gender.value,
+                            options: entityPossibility.gender,
+                        }}
+                        defaultValue={entity.gender}
+                    />
                     <Input
                         type="text"
                         name="Prénom"
@@ -251,14 +262,15 @@ export default function UserRegister() {
                     <div className={style.registerSubmit}>
                         <Button
                             type="submit"
-                            name="Créer mon compte"
                             color={'black'}
                             textColor={'white'}
                             padding={'14px 30px'}
                             border={false}
                             borderRadius={'44px'}
                             width={'245px'}
-                        />
+                        >
+                            Créer mon compte
+                        </Button>
                     </div>
                     <p className={style.registerProposition}>
                         Vous avez déjà un compte ?{' '}
@@ -272,7 +284,7 @@ export default function UserRegister() {
                         </Link>
                     </p>
                 </div>
-            </BOForm>
+            </Form>
         </div>
     );
 }

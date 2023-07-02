@@ -1,28 +1,45 @@
-import Loader from '@/components/atoms/Loader/index.jsx';
 import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import Navlink from '@/components/molecules/Navlink';
 import style from './style.module.scss';
+import { useAuthContext } from '@/contexts/AuthContext.jsx';
 
 const profileRouteList = [
-    { content: 'Mon profil', to: '/me' },
+    { content: 'Mon profil', to: '/' },
     { content: 'Mes préférences', to: '/preference' },
-    { content: 'Mes organisations', to: '/myorganization' },
-    { content: 'Concours créés par mon organisation', to: '/me' },
+    { content: 'Mes organisations', to: '/myorganization', type: 'startwith' },
+    { content: "Concours que j'administre", to: '/administrations' },
     { content: 'Concours auxquels j’ai participé', to: '/participations' },
-    { content: 'Mes publicités', to: '/me' },
 ];
 
 export default function ProfileLayout() {
     const apiFetch = useApiFetch();
+    const { me } = useAuthContext();
     const [gendersPossibility, setGendersPossibility] = useState({
         list: [],
         isLoading: true,
     });
-    const getGendersPossibility = () => {
+    const [notificationTypePossibility, setNotificationTypePossibility] =
+        useState({
+            map: new Map(),
+            isLoading: true,
+        });
+    const [socialNetworksPossibility, setSocialNetworksPossibility] = useState({
+        list: [],
+        isLoading: true,
+    });
+    const meNotificationEnabled = new Map(
+        me.notificationEnabled.map(item => [item.notificationCode, item['@id']])
+    );
+
+    const getGendersPossibility = controller => {
         return apiFetch('/genders', {
+            query: {
+                groups: ['gender:read'],
+            },
             method: 'GET',
+            signal: controller.signal,
         })
             .then(r => r.json())
             .then(data => {
@@ -31,18 +48,67 @@ export default function ProfileLayout() {
                 });
             });
     };
+
+    const getNotificationTypePossibility = controller => {
+        return apiFetch('/notification_types', {
+            method: 'GET',
+            signal: controller.signal,
+        })
+            .then(r => r.json())
+            .then(data => {
+                return data['hydra:member'];
+            });
+    };
+
+    const getSocialNetworks = () => {
+        return apiFetch('/social_networks', {
+            method: 'GET',
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.debug(data);
+                return data['hydra:member'];
+            });
+    };
+
     useEffect(() => {
-        getGendersPossibility().then(data => {
-            setGendersPossibility({ list: data, isLoading: false });
+        const controller = new AbortController();
+        getGendersPossibility(controller).then(genders => {
+            setGendersPossibility({ list: genders, isLoading: false });
         });
+        getNotificationTypePossibility(controller).then(notificationTypes => {
+            const _notificationTypes = new Map(
+                notificationTypes.map(item => [
+                    item.notificationCode,
+                    item['@id'],
+                ])
+            );
+            setNotificationTypePossibility({
+                map: _notificationTypes,
+                isLoading: false,
+            });
+        });
+        getSocialNetworks().then(data => {
+            setSocialNetworksPossibility({ list: data, isLoading: false });
+        });
+
+        return () => {
+            setTimeout(() => controller.abort());
+        };
     }, []);
+
     return (
-        <Loader active={gendersPossibility.isLoading}>
-            <div className={style.profilContainer}>
-                <h1>Mon compte</h1>
-                <Navlink base="/profile" list={profileRouteList} />
-                <Outlet context={{ gendersPossibility }} />
-            </div>
-        </Loader>
+        <div className={style.profilContainer}>
+            <h1>Mon compte</h1>
+            <Navlink base="/profile" list={profileRouteList} />
+            <Outlet
+                context={{
+                    gendersPossibility,
+                    notificationTypePossibility,
+                    meNotificationEnabled,
+                    socialNetworksPossibility,
+                }}
+            />
+        </div>
     );
 }

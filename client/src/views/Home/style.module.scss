@@ -1,35 +1,89 @@
-.homeContainer {
-    @extend .margin-title;
-}
+@import '../../components/molecules/Card/style.module.scss';
 
-.homeBanner {
-    display: flex;
-    align-items: center;
+.home {
+    &Container {
+        @extend .margin-title;
+    }
 
-    & > div {
-        width: 50%;
-
-        &:last-child {
-            justify-content: end;
+    &LastCompetition {
+        & > div {
+            display: flex;
+            gap: $gapBetweenElement;
+            flex-wrap: wrap;
         }
     }
 
-    @include below(xl) {
-        flex-direction: column;
-
-        h1 {
-            font-size: 25px;
-        }
+    &Banner {
+        display: flex;
+        align-items: center;
 
         & > div {
-            display: flex;
-            justify-content: center;
+            width: 50%;
 
             &:last-child {
+                justify-content: end;
+            }
+        }
+
+        @include below(xl) {
+            flex-direction: column;
+
+            h1 {
+                font-size: 25px;
+            }
+
+            & > div {
                 display: flex;
                 justify-content: center;
-                flex-wrap: wrap;
+
+                &:last-child {
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    width: 100%;
+                    margin-bottom: 15px;
+                }
             }
+        }
+    }
+
+    &Icon {
+        cursor: pointer;
+    }
+
+    &Disposition {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        & > div:last-child > div {
+            & > svg {
+                // adapt icon size compared with competition title
+                transform: translateY(3px);
+
+                &:hover {
+                    color: $text-color-primary;
+                    background-color: $background-color-darkgrey;
+                }
+            }
+        }
+    }
+
+    &List {
+        position: relative;
+
+        &NotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &PageNotFound {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 }

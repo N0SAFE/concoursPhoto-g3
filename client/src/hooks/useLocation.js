@@ -1,3 +1,5 @@
+import { is } from 'date-fns/locale';
+
 export default function () {
     async function getCityByCode(code, { limit = 30, controller } = {}) {
         console.debug('https://geo.api.gouv.fr/communes/' + code);
@@ -6,7 +8,9 @@ export default function () {
         })
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -21,7 +25,9 @@ export default function () {
         )
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -33,7 +39,9 @@ export default function () {
         })
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -48,7 +56,9 @@ export default function () {
         )
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -60,7 +70,9 @@ export default function () {
         })
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -75,7 +87,23 @@ export default function () {
         )
             .then(r => r.json())
             .then(d => {
-                d.length = limit;
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
+                return d;
+            });
+    }
+
+    async function getPolygonByCityCode(code, { limit = 30, controller } = {}) {
+        console.debug(`https://geo.api.gouv.fr/communes?code=${code}&fields=contour,centre`);
+        return await fetch(`https://geo.api.gouv.fr/communes?code=${code}&fields=contour,centre`, {
+            signal: controller?.signal,
+        })
+            .then(r => r.json())
+            .then(d => {
+                if (Number.isInteger(limit)) {
+                    d.length = limit;
+                }
                 return d;
             });
     }
@@ -87,5 +115,6 @@ export default function () {
         getDepartmentByName,
         getRegionByName,
         getRegionByCode,
+        getPolygonByCityCode,
     };
 }

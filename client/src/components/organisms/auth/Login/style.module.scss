@@ -1,5 +1,6 @@
 .login {
     &Container {
+        background-color: $background-color-primary;
         @extend .limited-content;
 
         form {
@@ -48,12 +49,15 @@
     }
 
     &Proposition {
-        text-align: center;
         padding-bottom: 15px;
 
         & > a {
             text-decoration: underline;
             color: $background-color-secondary;
+        }
+
+        &Extra {
+            text-align: center;
         }
     }
 }

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <p>
+        Bonjour <b>{{ firstname }} {{ lastname }}</b>, dans 2 jours exactement (le {{ competition_submission_end_date | date('d/m/Y') }}), le concours "{{ competition_name }}" aura clôturée sa phase de soumission, si vous n'avez pas encore soumis de photo, <b>c'est encore le moment !</b>
+    </p>
+    <a href="{{ base_url_client() }}/competition/{{ competition_id }}/pictures" target="_blank"
+       style="padding: 10px; background-color: black; color: white; text-decoration: none; border-radius: 75px; display: flex;align-self: center; justify-content: center;">
+        Se rediriger vers la page des photos du concours
+    </a>
+    <u>
+        Il s'agit d'un message automatique, merci de ne pas y répondre.
+    </u>
+    <p>
+        Cordialement,
+        <br>
+        L'équipe de <b>ConcoursPhotos.com</b>
+    </p>
+{% endblock %}

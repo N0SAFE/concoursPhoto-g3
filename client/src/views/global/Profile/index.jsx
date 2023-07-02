@@ -1,4 +1,4 @@
-import BOForm from '@/components/organisms/BO/Form/index.jsx';
+import Form from '@/components/organisms/BO/Form/index.jsx';
 import Input from '@/components/atoms/Input/index.jsx';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
@@ -16,7 +16,9 @@ import useFilesUploader from '@/hooks/useFilesUploader.js';
 import useApiPath from '@/hooks/useApiPath.js';
 
 export default function Profile() {
-    const { gendersPossibility } = useOutletContext(); // to avoid the loading when we change the page
+    const { refreshUser } = useAuthContext();
+    const { gendersPossibility, socialNetworksPossibility } =
+        useOutletContext(); // to avoid the loading when we change the page
     const [statusPossibility, setStatusPossibility] = useState({
         list: [],
         isLoading: true,
@@ -32,10 +34,10 @@ export default function Profile() {
     const { setModalContent, showModal } = useModal();
     const apiPathComplete = useApiPath();
     const [updatedFile, setUpdatedFile] = useState({
-        picture_profil: me.picture_profil
+        pictureProfil: me.pictureProfil
             ? {
-                  to: apiPathComplete(me.picture_profil.path),
-                  name: me.picture_profil.default_name,
+                  to: apiPathComplete(me.pictureProfil.path),
+                  name: me.pictureProfil.defaultName,
               }
             : null,
     });
@@ -43,15 +45,6 @@ export default function Profile() {
         setUpdatedFile({ ...updatedFile, [key]: value });
     };
     const { deleteFile, uploadFile } = useFilesUploader();
-
-    const profileRouteList = [
-        { content: 'Mon profil', to: '/me' },
-        { content: 'Mes préférences', to: '/preference' },
-        { content: 'Mes organisations', to: '/myorganization' },
-        { content: 'Concours créés par mon organisation', to: '/me' },
-        { content: 'Concours auxquels j’ai participé', to: '/participations' },
-        { content: 'Mes publicités', to: '/me' },
-    ];
 
     const [locationPossibility, updateLocationPossibility] =
         useLocationPosibility(['cities'], {}, { updateOnStart: false });
@@ -78,18 +71,31 @@ export default function Profile() {
         postcode: { label: me.postcode, value: me.postcode },
         gender: { label: me.gender.label, value: me.gender['@id'] },
         statut: {
-            label: me.personal_statut.label,
-            value: me.personal_statut['@id'],
+            label: me.personalStatut.label,
+            value: me.personalStatut['@id'],
         },
-        dateOfBirth: new Date(me.date_of_birth),
+        dateOfBirth: new Date(me.dateOfBirth),
         category: {
-            label: me.photographer_category.label,
-            value: me.photographer_category['@id'],
+            label: me.photographerCategory.label,
+            value: me.photographerCategory['@id'],
         },
-        photographerDescription: me.photographer_description,
-        websiteUrl: me.website_url,
-        socialNetworks: me.socials_networks,
+        photographerDescription: me.photographerDescription,
+        websiteUrl: me.websiteUrl,
+        userLinks: new Map(
+            me.userLinks.map(l => {
+                return [
+                    l?.socialNetworks?.['@id'],
+                    {
+                        user: l.user,
+                        socialNetworks: l?.socialNetworks?.['@id'],
+                        link: l.link,
+                    },
+                ];
+            })
+        ),
     });
+
+    console.debug(entity);
 
     const updateEntity = (key, value) => {
         setEntity({ ...entity, [key]: value });
@@ -174,25 +180,27 @@ export default function Profile() {
         });
     }, [entity.postcode, entity.city]);
 
-    console.log(entity.picture_profil);
-
     return (
-        <Loader active={gendersPossibility.isLoading}>
+        <Loader
+            active={
+                gendersPossibility.isLoading ||
+                socialNetworksPossibility.isLoading
+            }
+            takeInnerContent={true}
+            style={{ borderRadius: '10px' }}
+        >
             <div className={style.formContainer}>
-                <BOForm
+                <Form
                     handleSubmit={async function () {
                         const newLogoId = await (async () => {
-                            if (updatedFile.picture_profil === null) {
+                            if (updatedFile.pictureProfil === null) {
                                 return null;
-                            } else if (updatedFile.picture_profil.file) {
-                                console.log('uploading');
-                                console.log(updatedFile.picture_profil);
+                            } else if (updatedFile.pictureProfil.file) {
                                 return await uploadFile({
-                                    file: updatedFile.picture_profil.file,
+                                    file: updatedFile.pictureProfil.file,
                                 }).then(r => r['@id']);
                             }
                         })();
-                        console.log(newLogoId);
                         const data = {
                             email: entity.email,
                             plainPassword: entity.password || undefined,
@@ -209,7 +217,11 @@ export default function Profile() {
                                 entity.photographerDescription,
                             photographerCategory: entity.category.value,
                             websiteUrl: entity.websiteUrl,
-                            socialsNetworks: entity.socialNetworks,
+                            userLinks: Array.from(entity.userLinks)
+                                .map(([key, value]) => {
+                                    return value;
+                                })
+                                .filter(l => l.link !== ''),
                             country: entity.country,
                             pictureProfil: newLogoId,
                         };
@@ -241,13 +253,15 @@ export default function Profile() {
                                         showModal();
                                         navigate('/');
                                     });
+                                } else {
+                                    refreshUser();
                                 }
                                 if (
-                                    updatedFile.picture_profil === null &&
-                                    entity.picture_profil
+                                    updatedFile.pictureProfil === null &&
+                                    entity.pictureProfil
                                 ) {
                                     deleteFile({
-                                        path: entity.picture_profil['@id'],
+                                        path: entity.pictureProfil['@id'],
                                     });
                                 }
                             });
@@ -270,12 +284,11 @@ export default function Profile() {
                     hasSubmit={true}
                 >
                     <Input
-                        type="file"
-                        name="picture_profil"
-                        label="Logo"
-                        onChange={d => updateFileState('picture_profil', d)}
+                        type="profile_image"
+                        name="pictureProfil"
+                        onChange={d => updateFileState('pictureProfil', d)}
                         extra={{
-                            value: updatedFile.picture_profil,
+                            value: updatedFile.pictureProfil,
                             type: 'image',
                         }}
                     />
@@ -284,7 +297,7 @@ export default function Profile() {
                         name="genre"
                         onChange={d => updateEntity('gender', d)}
                         extra={{
-                            value: entity.gender,
+                            value: entity.gender.value,
                             options: gendersPossibility.list,
                         }}
                     />
@@ -467,7 +480,6 @@ export default function Profile() {
                     <h2>Si vous êtes photographe</h2>
                     <div className={style.formWrapperColumn}>
                         <div className={style.formColumn}>
-                            {' '}
                             <Input
                                 type="textarea"
                                 extra={{ rows: 16 }}
@@ -501,80 +513,47 @@ export default function Profile() {
                             />
                         </div>
                     </div>
-                    <h2>Réseaux sociaux de l’organisation</h2>
-                    <div className={style.formWrapper}>
-                        <div className={style.formColumn}>
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre page Facebook"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre chaîne Youtube"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre page Instagram"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                        </div>
-                        <div className={style.formColumn}>
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre compte Twitter"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre page Linkedin"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                            <Input
-                                type="text"
-                                name="socialNetworks"
-                                label="Votre compte TikTok"
-                                onChange={d =>
-                                    updateEntity('socialNetworks', d)
-                                }
-                                defaultValue={entity.socialNetworks}
-                            />
-                        </div>
+                    <h2>Vos réseaux sociaux</h2>
+                    <div className={style.formSocialNetworks}>
+                        {socialNetworksPossibility.list.map(socialNetwork => {
+                            // socialNetwork.id === 'facebook' || ....
+                            return (
+                                <Input
+                                    type="text"
+                                    name="userLinks"
+                                    label={socialNetwork.label}
+                                    onChange={d => {
+                                        const map = entity.userLinks;
+                                        map.set(socialNetwork['@id'], {
+                                            link: d,
+                                            socialNetworks:
+                                                socialNetwork['@id'],
+                                        });
+                                        updateEntity('userLinks', map);
+                                    }}
+                                    defaultValue={
+                                        entity.userLinks.get(
+                                            socialNetwork['@id']
+                                        )?.link
+                                    }
+                                />
+                            );
+                        })}
                     </div>
                     <div className={style.formSubmit}>
                         <Button
                             type="submit"
-                            name="Mettre à jour"
                             color={'black'}
                             textColor={'white'}
                             padding={'14px 30px'}
                             border={false}
                             borderRadius={'44px'}
                             width={'245px'}
-                        />
+                        >
+                            Mettre à jour
+                        </Button>
                     </div>
-                </BOForm>
+                </Form>
             </div>
         </Loader>
     );

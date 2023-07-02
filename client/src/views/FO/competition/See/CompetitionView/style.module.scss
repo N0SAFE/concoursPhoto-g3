@@ -1,0 +1,39 @@
+.view {
+    &Container {
+        display: flex;
+        flex-direction: row;
+        gap: $gapBetweenElement;
+
+        .description {
+            margin: 15px 0;
+        }
+
+        & > div:first-child {
+            padding: 20px 0;
+            flex: 0 66%;
+        }
+
+        & > div:last-child {
+            flex: 0 33%;
+            justify-content: center;
+        }
+
+        @include below(xl) {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    &Edit {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        button {
+            text-transform: uppercase;
+            font-size: 15px;
+            font-weight: 700;
+        }
+    }
+
+}
