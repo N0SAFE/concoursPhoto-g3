@@ -5,7 +5,6 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use App\Controller\FileController;
 use Metaclass\FilterBundle\Filter\FilterLogic;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
@@ -29,6 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ApiFilter(
         SearchFilter::class,
         properties: [
+            'organization.admins' => 'exact',
             'pictures.user' => 'exact',
             'organization' => 'exact',
             'theme' => 'exact',

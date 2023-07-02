@@ -7,7 +7,7 @@ import Chip from '@/components/atoms/Chip/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import { useNavigate } from 'react-router-dom';
 
-export default function CompetitionParticipation() {
+export default function CompetitionAdministration() {
     const navigate = useNavigate();
     const { me } = useAuthContext();
     const apiFetch = useApiFetch();
@@ -18,21 +18,15 @@ export default function CompetitionParticipation() {
         setIsLoading(true);
         return apiFetch(`/competitions`, {
             query: {
-                'pictures.user': `/users/${me.id}`,
-                groups: [
-                    'competition:pictures:read',
-                    'picture:read',
-                    'picture:user:read',
-                    'user:read',
-                ],
+                'organization.admins': `/users/${me.id}`,
                 properties: [
                     'id',
                     'competitionName',
                     'submissionStartDate',
                     'submissionEndDate',
                     'state',
-                    'resultsDate',
-                    'pictures',
+                    'numberOfParticipants',
+                    'numberOfPictures',
                 ],
             },
             method: 'GET',
@@ -54,6 +48,8 @@ export default function CompetitionParticipation() {
             });
     };
 
+    console.log(userCompetitions)
+
     useEffect(() => {
         const controller = new AbortController();
 
@@ -65,7 +61,7 @@ export default function CompetitionParticipation() {
 
     return (
         <div>
-            <p className={style.participationsCounter}>
+            <p className={style.administrationsCounter}>
                 {userCompetitions.length} concours
             </p>
             <Loader
@@ -83,8 +79,8 @@ export default function CompetitionParticipation() {
                         'Début du concours',
                         'Fin du concours',
                         'Statut',
-                        'Mes photos',
-                        'Résultat',
+                        'Participants',
+                        'Photos',
                     ]}
                 >
                     {function (competition) {
@@ -135,18 +131,8 @@ export default function CompetitionParticipation() {
                                     </Chip>
                                 ),
                             },
-                            {
-                                content: competition.pictures.filter(picture => picture.user.id === me.id).length
-                            },
-                            {
-                                content: new Date(
-                                    competition.resultsDate
-                                ).toLocaleDateString('fr-FR', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                }),
-                            },
+                            { content: competition.numberOfParticipants },
+                            { content: competition.numberOfPictures },
                         ];
                     }}
                 </Table>
