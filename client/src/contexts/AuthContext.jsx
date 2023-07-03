@@ -19,6 +19,10 @@ function AuthProvider(props) {
     const [me, setMe] = useState(null);
     const { getCityByCode, getDepartmentByCode, getRegionByCode } =
         useLocation();
+        
+    async function refreshUser(){
+        retrieveUser(token, refreshToken)
+    }
 
     async function retrieveUser(token, refreshToken, {resetOnRefreshToken = true} = {}) {
         try {
@@ -109,6 +113,7 @@ function AuthProvider(props) {
                 isLogged: function () {
                     return !!me;
                 },
+                refreshUser,
                 me,
                 token,
             }}
