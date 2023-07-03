@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\VoteRepository;
 use Doctrine\DBAL\Types\Types;
@@ -10,11 +12,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Serializer\Filter\GroupFilter;
 
+#[ApiFilter(
+    GroupFilter::class,
+)]
+#[ApiFilter(
+    SearchFilter::class,
+)]
 #[
     ApiResource(
-        operations: [new GetCollection(), new Get(), new Post(), new Patch()],
+        operations: [new GetCollection(), new Get(), new Post(
+            securityPostDenormalize: 'is_granted("VOTE_EDIT", object)',
+            securityPostDenormalizeMessage: 'You have passed the maximum number of votes for a competition.'
+        ), new Patch(), new Delete()],
         normalizationContext: ['groups' => ['vote:read']]
     )
 ]

@@ -1,7 +1,7 @@
 import { useAuthContext } from '@/contexts/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import useAuth from './useAuth.js';
+import useAuth from './useAuthFunction.js';
 import { useModal } from '@/contexts/ModalContext/index.jsx';
 import { getLoginModalContent } from '@/components/organisms/auth/Login/index.jsx';
 
@@ -40,7 +40,7 @@ export default function () {
     const navigate = useNavigate();
     const { setModalContent, showModal } = useModal();
     const { logout } = useAuth();
-    const { checkLogged } = useAuthContext();
+    const { checkLogged, token } = useAuthContext();
 
     return function apiFetch(path, options, { refreshToken = true } = {}) {
         if (!options) {
@@ -50,7 +50,10 @@ export default function () {
             reject(new Error('options must be an object'));
             return;
         }
-        options.credentials = 'include';
+        options.headers = options.headers || {};
+        if (token) {
+            options.headers.Authorization = `Bearer ${token}`;
+        }
         const request = fetch(
             new URL(
                 import.meta.env.VITE_API_URL +
@@ -78,7 +81,7 @@ export default function () {
                             path !== '/token/refresh'
                         ) {
                             const { isLogged } = await checkLogged();
-                            if (!isLogged) {
+                            if (!isLogged()) {
                                 logout().then(() => {
                                     navigate('/');
                                     setModalContent(getLoginModalContent());

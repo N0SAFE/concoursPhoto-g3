@@ -335,10 +335,10 @@ export default function ListCompetition() {
                     <Input
                         className={style.searchBarSelect}
                         type="select"
-                        defaultValue={{ value: null, label: 'Organisateurs actifs uniquement' }}
+                        defaultValue={{ value: null, label: 'Tous' }}
                         extra={{
                             options: [
-                                { value: null, label: 'Organisateurs actifs uniquement' },
+                                { value: null, label: 'Tous' },
                                 { value: true, label: 'actif' },
                                 { value: false, label: 'inactif' },
                             ],

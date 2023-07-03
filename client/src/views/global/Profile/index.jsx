@@ -8,7 +8,7 @@ import { useAuthContext } from '@/contexts/AuthContext.jsx';
 import Button from '@/components/atoms/Button';
 import useLocationPosibility from '@/hooks/useLocationPosibility.js';
 import style from './style.module.scss';
-import useAuth from '@/hooks/useAuth.js';
+import useAuth from '@/hooks/useAuthFunction.js';
 import { useModal } from '@/contexts/ModalContext/index.jsx';
 import Login from '@/components/organisms/auth/Login/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';

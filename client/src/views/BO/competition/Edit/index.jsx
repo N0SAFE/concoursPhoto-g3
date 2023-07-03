@@ -172,6 +172,7 @@ export default function CompetitionEdit() {
         })
             .then(r => r.json())
             .then(async data => {
+                console.debug(data);
                 return await Promise.all([
                     Promise.all(
                         data.cityCriteria.map(c => c && getCityByCode(c))
