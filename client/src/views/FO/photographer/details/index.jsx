@@ -68,13 +68,12 @@ export default function DetailsPhotographer() {
         }
         return () => setTimeout(() => controller.abort());
     }, []);
-    console.log(entity);
 
     return (
         <Loader active={isLoading}>
-            <div className={style.all}>
-                <h1 style={{ textAlign: 'center', marginBottom: '3%' }}>
-                    Fiche du photographe {entity?.firstname} {entity?.lastname}
+            <div className={style.fileContainer}>
+                <h1>
+                    Fiche du photographe : {entity?.firstname} {entity?.lastname}
                 </h1>
                 <BOSee
                     entity={entity}
@@ -98,16 +97,16 @@ export default function DetailsPhotographer() {
                             },
                         },
                         {
-                            display: 'Son adreese mail',
+                            display: 'Adresse mail',
                             name: 'email',
                         },
                         {
-                            display: ' Son numéro de téléphone',
+                            display: ' Numéro de téléphone',
                             name: 'phoneNumber',
                         },
 
                         {
-                            display: 'Sa date de naissance',
+                            display: 'Date de naissance',
                             name: 'dateOfBirth',
                             customData({ entity, property }) {
                                 return new Date(
@@ -146,14 +145,14 @@ export default function DetailsPhotographer() {
                             },
                         },
                         {
-                            display: 'Category du photographe',
+                            display: 'Catégorie(s) du photographe',
                             name: 'photographerCategory',
                             customData({ entity, property }) {
                                 return entity?.photographerCategory?.label;
                             },
                         },
                         {
-                            display: 'Ses resesaux sociaux',
+                            display: 'Réseaux sociaux',
                             name: 'userLinks',
                             customData({ entity, property }) {
                                 return (
@@ -179,7 +178,7 @@ export default function DetailsPhotographer() {
                             name: 'country',
                         },
                         {
-                            display: 'Ses photos',
+                            display: 'Photos postées',
                             name: 'pictures',
                             customData({ entity, property }) {
                                 return entity?.pictures?.map(picture => (

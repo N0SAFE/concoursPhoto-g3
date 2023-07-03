@@ -222,8 +222,12 @@ export default function CompetitionEdit({competition: _competition}) {
                             />
                         </div>
                         <div className={style.competitionModalContentWrapper}>
-                            <Input type="number" label={"Âge minimum requis pour participer*"}
-                                   defaultValue={competition.minAgeCriteria}/>
+                            <Input
+                                type="number"
+                                label={"Âge minimum requis pour participer*"}
+                                defaultValue={competition.minAgeCriteria}
+                                onChange={d => updateCompetition('minAgeCriteria', d)}
+                            />
                             <Input
                                 type="number"
                                 label={"Âge maximum requis pour participer*"}

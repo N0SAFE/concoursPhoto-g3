@@ -46,7 +46,7 @@ class MailProcessCommand extends Command
         foreach ($competitions as $competition) {
             if ($competition->getPublicationDate() >= new \DateTime()) {
                 $notificationType = $this->notificationTypeRepository->findOneBy(
-                    ['notification_code' => 1]
+                    ['notificationCode' => 1]
                 );
                 if (
                     !$competition
@@ -79,8 +79,7 @@ class MailProcessCommand extends Command
 
             if ($competition->getVotingStartDate() < new \DateTime()) {
                 $notificationType = $this->notificationTypeRepository->findOneBy(
-                    ['notification_c
-                    ode' => 2]
+                    ['notificationCode' => 2]
                 );
                 if (
                     !$competition
@@ -114,7 +113,7 @@ class MailProcessCommand extends Command
             // for 48h after a VotingEndDate, we send a mail to all the user who have subscribed to the notification
             if ($competition->getVotingEndDate() < new \DateTime('-48 hours')) {
                 $notificationType = $this->notificationTypeRepository->findOneBy(
-                    ['notification_code' => 3]
+                    ['notificationCode' => 3]
                 );
                 if (
                     !$competition
@@ -149,7 +148,7 @@ class MailProcessCommand extends Command
             // after the results_date, we send a mail to all the user who have subscribed to the notification
             if ($competition->getResultsDate() < new \DateTime()) {
                 $notificationType = $this->notificationTypeRepository->findOneBy(
-                    ['notification_code' => 4]
+                    ['notificationCode' => 4]
                 );
                 if (
                     !$competition
@@ -183,7 +182,7 @@ class MailProcessCommand extends Command
 
             if ($competition->getPublicationDate() >= new \DateTime()) {
                 $notificationType = $this->notificationTypeRepository->findOneBy(
-                    ['notification_code' => 6]
+                    ['notificationCode' => 6]
                 );
                 if (
                     !$competition
@@ -246,7 +245,7 @@ class MailProcessCommand extends Command
 
                 if ($competition->getSubmissionStartDate() < new \DateTime()) {
                     $notificationType = $this->notificationTypeRepository->findOneBy(
-                        ['notification_code' => 7]
+                        ['notificationCode' => 7]
                     );
                     if (
                         !$competition
@@ -289,7 +288,7 @@ class MailProcessCommand extends Command
                     new \DateTime('-48 hours')
                 ) {
                     $notificationType = $this->notificationTypeRepository->findOneBy(
-                        ['notification_code' => 8]
+                        ['notificationCode' => 8]
                     );
                     if (
                         !$competition

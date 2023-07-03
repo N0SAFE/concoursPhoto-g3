@@ -163,7 +163,7 @@ export default function CompetitionEdit() {
                     'theme:read',
                     'competition:competitionVisual:read',
                     'file:read',
-                    'competition:sponsors:read',
+                    'competition:sponsor:read',
                     'sponsor:read',
                 ],
             },

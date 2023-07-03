@@ -286,8 +286,8 @@ export default function ListOrganization() {
                         extra={{
                             options: [
                                 { value: null, label: 'Tous' },
-                                { value: 1, label: 'actif' },
-                                { value: 0, label: 'inactif' },
+                                { value: 1, label: 'Actif' },
+                                { value: 0, label: 'Inactif' },
                             ],
                         }}
                         onChange={t => {
