@@ -9,7 +9,7 @@ import Loader from '@/components/atoms/Loader/index.jsx';
 import style from './style.module.scss';
 
 export default function PubCreate() {
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const apiFetch = useApiFetch();
     const navigate = useNavigate();
 
@@ -42,7 +42,12 @@ export default function PubCreate() {
                     }
                     const promise = apiFetch('/advertising_spaces', {
                         method: 'POST',
-                        body: JSON.stringify(data),
+                        body: JSON.stringify({
+                            locationName: entity.locationName,
+                            heightPx: entity.heightPx,
+                            widthPx: entity.widthPx,
+                            referencePrice: entity.referencePrice,
+                        }),
                         headers: {
                             'Content-Type': 'application/json',
                         },
@@ -74,39 +79,31 @@ export default function PubCreate() {
                 <div className={style.formWrapper}>
                     <Input
                         label="Nom de l'emplacement"
+                        type="text"
                         name="locationName"
                         value={entity.locationName}
-                        onChange={e =>
-                            updateEntityState('locationName', e.target.value)
-                        }
-                        error={errors.locationName}
+                        onChange={e => updateEntityState('locationName', e)}
                     />
                     <Input
                         label="Hauteur en pixel"
+                        type="number"
                         name="heightPx"
                         value={entity.heightPx}
-                        onChange={e =>
-                            updateEntityState('heightPx', e.target.value)
-                        }
-                        error={errors.heightPx}
+                        onChange={e => updateEntityState('heightPx', e)}
                     />
                     <Input
                         label="Largeur en pixel"
+                        type="number"
                         name="widthPx"
                         value={entity.widthPx}
-                        onChange={e =>
-                            updateEntityState('widthPx', e.target.value)
-                        }
-                        error={errors.widthPx}
+                        onChange={e => updateEntityState('widthPx', e)}
                     />
                     <Input
                         label="Prix de référence"
+                        type="number"
                         name="referencePrice"
                         value={entity.referencePrice}
-                        onChange={e =>
-                            updateEntityState('referencePrice', e.target.value)
-                        }
-                        error={errors.referencePrice}
+                        onChange={e => updateEntityState('referencePrice', e)}
                     />
                 </div>
             </Form>

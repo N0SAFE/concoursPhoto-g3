@@ -22,16 +22,6 @@ export default function PubList() {
                 'Content-Type': 'application/json',
             },
         };
-        if (filterState) {
-            params.params = {
-                state: filterState,
-            };
-        }
-        if (filterVerified) {
-            params.params = {
-                isVerified: filterVerified,
-            };
-        }
 
         return apiFetch('/advertising_spaces', {
             query: {
@@ -144,11 +134,6 @@ export default function PubList() {
                     ]}
                 </Table>
             </div>
-            <Button
-                borderRadius={'30px'}
-                padding={'20px'}
-                icon={'download'}
-            ></Button>
         </Loader>
     );
 }
