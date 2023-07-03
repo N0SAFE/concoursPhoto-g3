@@ -157,7 +157,7 @@ export default function MyorganizationAdmin() {
                                         },
                                         {
                                             content: new Date(
-                                                competition.votingEndDate
+                                                competition.resultsDate
                                             ).toLocaleDateString('fr-FR', {
                                                 year: 'numeric',
                                                 month: 'numeric',

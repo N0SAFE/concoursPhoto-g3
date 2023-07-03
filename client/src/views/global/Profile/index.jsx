@@ -279,6 +279,7 @@ export default function Profile() {
                                 success: 'Votre profile a bien été modifié',
                                 error: 'Erreur lors de la modification de votre profil',
                             });
+                            promise.catch(console.log)
                         }
                     }}
                     hasSubmit={true}
