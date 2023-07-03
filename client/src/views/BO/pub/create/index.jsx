@@ -31,15 +31,6 @@ export default function PubCreate() {
                 title="Ajouter une Pub"
                 handleSubmit={async function (e) {
                     e.preventDefault();
-                    const errors = {};
-                    if (!entity.locationName) {
-                        const data = {
-                            locationName: entity.locationName,
-                            heightPx: entity.heightPx,
-                            widthPx: entity.widthPx,
-                            referencePrice: entity.referencePrice,
-                        };
-                    }
                     const promise = apiFetch('/advertising_spaces', {
                         method: 'POST',
                         body: JSON.stringify({
@@ -47,6 +38,7 @@ export default function PubCreate() {
                             heightPx: entity.heightPx,
                             widthPx: entity.widthPx,
                             referencePrice: entity.referencePrice,
+                            state:true
                         }),
                         headers: {
                             'Content-Type': 'application/json',

@@ -16,13 +16,6 @@ export default function PubList() {
     const navigate = useNavigate();
 
     function getPubs(controller) {
-        const params = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-
         return apiFetch('/advertising_spaces', {
             query: {
                 groups: ['advertisingSpace:read'],
@@ -43,6 +36,24 @@ export default function PubList() {
                 return data['hydra:member'];
             });
     }
+    
+    useEffect(() => {
+        const controller = new AbortController();
+        setIsLoading(true);
+        getPubs(controller)
+            .then(() => {
+                setIsLoading(false);
+            })
+            .catch(e => {
+                console.error(e);
+                setIsLoading(false);
+            });
+        return () => {
+            controller.abort();
+        };
+    }, []);
+    
+    console.debug(pubs);
 
     return (
         <Loader active={isLoading}>
@@ -59,7 +70,7 @@ export default function PubList() {
             </div>
             <div className={style.containerList}>
                 <Table
-                    data={pubs}
+                    list={pubs}
                     fields={[
                         'ID',
                         'locationName',
