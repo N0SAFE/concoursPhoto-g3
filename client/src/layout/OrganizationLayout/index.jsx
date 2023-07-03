@@ -9,10 +9,10 @@ import useLocation from '@/hooks/useLocation';
 import Navlink from '@/components/molecules/Navlink/index.jsx';
 
 const organizationRouteList = [
-    { content: 'Présentation', to: '/' },
-    { content: 'Concours photos en cours', to: '/test' },
-    { content: 'Concours photos à venir', to: '' },
-    { content: 'Concours photos terminés', to: '' },
+    { content: 'Présentation', to: '' },
+    { content: 'Concours photos en cours', to: '/in-progress' },
+    { content: 'Concours photos à venir', to: '/coming' },
+    { content: 'Concours photos terminés', to: '/ended' },
 ];
 
 export default function OrganizationLayout() {
@@ -26,8 +26,12 @@ export default function OrganizationLayout() {
         return apiFetch('/organizations/' + organizationid, {
             query: {
                 groups: [
-                    'organization:competition:read',
+                    'organization:read',
+                    'organization:competitions:read',
                     'competition:read',
+                    'competition:theme:read',
+                    'theme:read',
+                    'user:read',
                     'organization:organizationVisual:read',
                     'file:read',
                     'organization:logo:read',

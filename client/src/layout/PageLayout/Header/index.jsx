@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Login from '@/components/organisms/auth/Login';
 import Register from '@/components/organisms/auth/Register';
-import useAuth from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuthFunction';
 import { toast } from 'react-toastify';
 import style from './style.module.scss';
 import logoSite from '@/assets/logo-concoursPhoto.png';
@@ -55,6 +55,20 @@ export default function Header(environment) {
                 },
             ],
         });
+        listLeft.push({
+            type: 'dropdown',
+            title: 'Publicités',
+            links: [
+                {
+                    title: 'Liste des publicités',
+                    to: '/BO/pub',
+                },
+                {
+                    title: "Ajout d'une publicité",
+                    to: '/BO/pub/create',
+                },
+            ],
+        });
     } else {
         listLeft.push({ type: 'classic', title: 'Accueil', to: '/' });
         listLeft.push({
@@ -80,7 +94,8 @@ export default function Header(environment) {
     }
 
     if (environment.environment === 'backoffice') {
-        if (isLogged) {
+        console.log(isLogged())
+        if (isLogged()) {
             listRight.push({
                 type: 'dropdown',
                 title: 'Mon compte',
@@ -109,7 +124,7 @@ export default function Header(environment) {
             });
         }
     } else {
-        if (isLogged) {
+        if (isLogged()) {
             listRight.push({
                 type: 'button',
                 title: 'Mon compte',

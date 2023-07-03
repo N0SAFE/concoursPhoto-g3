@@ -1,4 +1,3 @@
-import useAuth from '@/hooks/useAuth.js';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Input from '@/components/atoms/Input';
@@ -9,10 +8,11 @@ import style from './style.module.scss';
 import { Link } from 'react-router-dom';
 import { useModal } from '@/contexts/ModalContext';
 import Register from '@/components/organisms/auth/Register';
+import useAuthFunction from '@/hooks/useAuthFunction.js';
 
 export default function Login({ forceRedirect }) {
     const { setModalContent, hideModal } = useModal();
-    const { login } = useAuth();
+    const { login } = useAuthFunction();
     const navigate = useNavigate();
 
     const [password, setPassword] = useState('');
@@ -43,7 +43,7 @@ export default function Login({ forceRedirect }) {
                     const promise = login({
                         identifier: identifier,
                         password: password,
-                    }).then(function (me) {
+                    }).then(function ({me}) {
                         if (forceRedirect) {
                             navigate(forceRedirect);
                             return;

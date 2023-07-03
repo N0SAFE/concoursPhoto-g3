@@ -5,11 +5,3 @@ gesdinet_jwt_refresh_token:
     user_identity_field: email
     firewall: api
     token_parameter_name: refreshToken
-    cookie:
-        same_site: none
-        enabled: true
-        path: / # default value
-        domain: null # default value
-        http_only: true # default value
-        secure: true
-        remove_token_from_body: true # default value

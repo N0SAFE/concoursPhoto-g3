@@ -64,12 +64,13 @@ export default function () {
 
     return (
         <Loader active={isLoading}>
-            <div className={style.all}>
+            <div className={style.fileContainer}>
+                <h1>Fiche de l'organisation</h1>
                 <BOSee
                     entity={entity}
                     properties={[
                         {
-                            display: 'Nom',
+                            display: "Nom de l'organisation",
                             name: 'organizerName',
                         },
                         {
@@ -85,7 +86,7 @@ export default function () {
                             name: 'postcode',
                         },
                         {
-                            display: 'pays',
+                            display: 'Pays',
                             name: 'country',
                         },
                         {
@@ -93,11 +94,11 @@ export default function () {
                             name: 'numberPhone',
                         },
                         {
-                            display: 'Email',
+                            display: 'Adresse mail',
                             name: 'email',
                         },
                         {
-                            display: 'Numero de SIRET',
+                            display: 'Numéro de SIRET',
                             name: 'numberSiret',
                         },
                         {
@@ -133,7 +134,7 @@ export default function () {
                             },
                         },
                         {
-                            display: 'Competitions',
+                            display: 'Competition(s)',
                             name: 'competitions',
                             customData: ({ entity }) => {
                                 return entity?.competitions

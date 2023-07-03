@@ -83,15 +83,30 @@ export default function OrganizationList() {
     return (
         <Loader active={isLoading}>
             <div className={style.container}>
-                <h1>Liste des organisations</h1>
-                <Button
-                    color="green"
-                    textColor="white"
-                    borderRadius={'30px'}
-                    onClick={() => navigate('/BO/organization/create')}
-                >
-                    Créer une organisation
-                </Button>
+                <div>
+                    <h1>Liste des organisations</h1>
+                    <Button
+                        color="green"
+                        textColor="white"
+                        borderRadius={'30px'}
+                        onClick={() => navigate('/BO/organization/create')}
+                    >
+                        Créer une organisation
+                    </Button>
+                </div>
+                <div>
+                    <Button
+                        borderRadius={'30px'}
+                        padding={'20px'}
+                        icon={'download'}
+                    >
+                        <CSVLink
+                            filename={"organizations_exported.csv"}
+                            data={organizations}>
+                            Exporter les organisations
+                        </CSVLink>
+                    </Button>
+                </div>
             </div>
             <div className={style.containerList}>
                 <Table
@@ -204,17 +219,6 @@ export default function OrganizationList() {
                     ]}
                 </Table>
             </div>
-            <Button
-                borderRadius={'30px'}
-                padding={'20px'}
-                icon={'download'}
-            >
-                <CSVLink
-                    filename={"organizations_exported.csv"}
-                    data={organizations}>
-                    Exporter les organisations
-                </CSVLink>
-            </Button>
         </Loader>
     );
 }

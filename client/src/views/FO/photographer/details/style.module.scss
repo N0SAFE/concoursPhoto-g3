@@ -1,0 +1,9 @@
+.fileContainer {
+    @extend .margin-title;
+
+    & > div > div > div {
+        display: flex;
+        align-items: center;
+        gap: $gapBetweenElement;
+    }
+}

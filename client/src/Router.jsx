@@ -42,8 +42,13 @@ import ProfileMyorganizationMiddleware from './middleware/ProfileMyorganizationM
 import CompetitionMiddleware from './middleware/CompetitionMiddleware.jsx';
 import OrganizationLayout from './layout/OrganizationLayout/index.jsx';
 import ListCompetition from './views/FO/competition/details/index.jsx';
-import CompetitionAdministration from "@/views/global/Profile/administration";
+import CompetitionAdministration from '@/views/global/Profile/administration';
+import PubCreate from './views/BO/pub/create/index.jsx';
+import PubList from './views/BO/pub/list/index.jsx';
+import CompetitionInProgress from '@/views/FO/organization/See/CompetitionInProgress/index.jsx';
 import DetailsPhotographer from './views/FO/photographer/details/index.jsx';
+import CompetitionComing from '@/views/FO/organization/See/CompetitionComing/index.jsx';
+import CompetitionEnded from '@/views/FO/organization/See/CompetitionEnded/index.jsx';
 
 function Router() {
     return (
@@ -79,6 +84,10 @@ function Router() {
                         <Route path=":id" element={<CompetitionSee />} />
                         <Route path="create" element={<CompetitionCreate />} />
                         <Route path="edit/:id" element={<CompetitionEdit />} />
+                    </Route>
+                    <Route path="pub">
+                        <Route path="" element={<PubList />} />
+                        <Route path="create" element={<PubCreate />} />
                     </Route>
                 </Route>
             </Route>
@@ -139,6 +148,15 @@ function Router() {
                     element={<OrganizationLayout />}
                 >
                     <Route path="" element={<OrganisationDetails />}></Route>
+                    <Route
+                        path="in-progress"
+                        element={<CompetitionInProgress />}
+                    ></Route>
+                    <Route
+                        path="coming"
+                        element={<CompetitionComing />}
+                    ></Route>
+                    <Route path="ended" element={<CompetitionEnded />}></Route>
                 </Route>
 
                 <Route path="photographer">
@@ -156,7 +174,6 @@ function Router() {
                     path="competitiondetails"
                     element={<ListCompetition />}
                 ></Route>
-
                 <Route
                     path="/competition/:id"
                     element={<CompetitionMiddleware />}

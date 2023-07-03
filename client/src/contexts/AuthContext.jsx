@@ -3,17 +3,24 @@ import useLocation from '@/hooks/useLocation.js';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext({
+    clearToken: () => {},
+    setToken: () => {},
+    isLogged: () => false,
+    me: null,
     token: null,
 });
 
 function AuthProvider(props) {
-    const [isLogged, setIsLogged] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [token, setToken] = useState(localStorage.getItem('token') || null);
+    const [refreshToken, setRefreshToken] = useState(
+        localStorage.getItem('refreshToken') || null
+    );
     const [me, setMe] = useState(null);
     const { getCityByCode, getDepartmentByCode, getRegionByCode } =
         useLocation();
 
-    async function refreshUser(controller) {
+    async function retrieveUser(token, refreshToken, {resetOnRefreshToken = true} = {}) {
         try {
             const whoami = await fetch(
                 new URL(import.meta.env.VITE_API_URL + '/whoami').href,
@@ -23,17 +30,22 @@ function AuthProvider(props) {
                         'Content-Type': 'application/json',
                     },
                     credentials: 'include',
-                    signal: controller?.signal,
+                    headers: token
+                        ? {
+                              Authorization: `Bearer ${token}`,
+                          }
+                        : {},
                 }
             );
             const data = await whoami.json().then(async d => {
+                console.log(d)
                 return {
                     ...d,
                     city: await getCityByCode(d.citycode),
                 };
             });
+            console.log(data);
             setMe(data);
-            setIsLogged(true);
             console.group('AuthContext');
             console.debug('isLogged: ', true);
             console.debug('me: ', data);
@@ -41,7 +53,6 @@ function AuthProvider(props) {
             return { isLogged: true, me: data };
         } catch (e) {
             console.error(e);
-            setIsLogged(false);
             setMe(null);
             console.group('AuthContext');
             console.debug('isLogged: ', false);
@@ -51,53 +62,56 @@ function AuthProvider(props) {
         }
     }
 
-    function checkLogged(controller) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const response = await fetch(
-                    new URL(import.meta.env.VITE_API_URL + '/token/refresh')
-                        .href,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
-                        signal: controller?.signal,
-                    }
-                );
-                if (response.ok) {
-                    refreshUser(controller).then(function ({ isLogged, me }) {
-                        resolve({ isLogged, me });
-                    });
-                    return;
-                } else {
-                    setIsLogged(false);
-                    setMe(null);
-                    console.group('AuthContext');
-                    console.debug('isLogged: ', false);
-                    console.debug('me: ', null);
-                    console.groupEnd();
-                    resolve({ isLogged: false, me: null });
-                    return;
-                }
-            } catch (error) {
-                reject(error);
-            }
-        });
-    }
+    const updateToken = async (token, refreshToken) => {
+        
+        if (token) {
+            localStorage.setItem('token', token);
+            localStorage.setItem('refreshToken', refreshToken);
+        } else {
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+        }
+
+        console.log('updateToken', token);
+        console.log('updateRefreshToken', refreshToken);
+        if (token) {
+            setIsLoading(true);
+            return await retrieveUser(token, refreshToken).then(ret => {
+                setIsLoading(false);
+                return ret;
+            });
+        } else {
+            setIsLoading(false);
+            setMe(null);
+            console.log("no token, don't retrieve user");
+            return { isLogged: false, me: null };
+        }
+    };
+
 
     useEffect(() => {
-        const controller = new AbortController();
-        checkLogged(controller).then(() => {
-            setIsLoading(false);
-        });
-        return () => controller.abort();
+        updateToken(token, refreshToken);
     }, []);
+
+    console.log('AuthContext', me);
 
     return (
         <AuthContext.Provider
-            value={{ isLogged, checkLogged, me, refreshUser }}
+            value={{
+                clearToken: () => {
+                    setToken(null);
+                    return updateToken(null);
+                },
+                setToken: token => {
+                    setToken(token);
+                    return updateToken(token);
+                },
+                isLogged: function () {
+                    return !!me;
+                },
+                me,
+                token,
+            }}
         >
             {isLoading ? <Loader active={true} /> : props.children}
         </AuthContext.Provider>

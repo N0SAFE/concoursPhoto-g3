@@ -180,11 +180,17 @@ export default function ListCompetition() {
                     'numberOfParticipants',
                     'numberOfPictures',
                     'id',
+                    'theme',
+                    'organizers',
+                    'resultsDate'
                 ],
                 groups: [
                     'file:read',
                     'competition:read',
                     'competition:competitionVisual:read',
+                    'competition:theme:read',
+                    'theme:read',
+                    'user:read',
                 ],
                 and: {
                     and: [
@@ -329,10 +335,10 @@ export default function ListCompetition() {
                     <Input
                         className={style.searchBarSelect}
                         type="select"
-                        defaultValue={{ value: null, label: 'Organisateurs actifs uniquement' }}
+                        defaultValue={{ value: null, label: 'Tous' }}
                         extra={{
                             options: [
-                                { value: null, label: 'Organisateurs actifs uniquement' },
+                                { value: null, label: 'Tous' },
                                 { value: true, label: 'actif' },
                                 { value: false, label: 'inactif' },
                             ],
@@ -530,6 +536,12 @@ export default function ListCompetition() {
                     defaultItemPerPage={itemsPerPage}
                     isLoading={cardLoading}
                     renderItem={function (competition) {
+                        const organizer = competition.organizers.map(
+                            user => user.firstname + ' ' + user.lastname || null
+                        );
+                        const themes = competition?.theme.map(
+                            item => item.label
+                        );
                         return (
                             <Card
                                 idContent={competition.id}
@@ -538,6 +550,11 @@ export default function ListCompetition() {
                                 }}
                                 title={competition.competitionName}
                                 imagePath={competition.competitionVisual.path}
+                                filters={[
+                                    ...organizer,
+                                    ...themes,
+                                    competition.state ? 'En cours' : 'Terminé',
+                                ].filter(i => i !== null)}
                                 stats={[
                                     {
                                         name: competition.numberOfParticipants,
@@ -552,6 +569,13 @@ export default function ListCompetition() {
                                         icon: 'like',
                                     },
                                 ]}
+                                finalDate={new Date(
+                                    competition.resultsDate
+                                ).toLocaleDateString('fr-FR', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
                                 orientation={
                                     cardDisposition === 'grid'
                                         ? 'vertical'

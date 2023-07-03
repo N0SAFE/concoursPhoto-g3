@@ -34,6 +34,7 @@ use Metaclass\FilterBundle\Filter\FilterLogic;
             'regionCriteria' => 'partial',
             'departmentCriteria' => 'partial',
             'state' => 'exact',
+            'admins' => 'exact',
         ]
     )
 ]
@@ -409,7 +410,6 @@ class Organization
     {
         return $this->admins;
     }
-
     public function addAdmins(User $user): self
     {
         if (!$this->admins->contains($user)) {
