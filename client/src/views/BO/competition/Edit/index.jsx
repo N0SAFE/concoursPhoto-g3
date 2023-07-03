@@ -84,6 +84,7 @@ export default function CompetitionEdit() {
         cityCriteria: [],
         departmentCriteria: [],
         regionCriteria: [],
+        isPromoted: null,
     });
 
     const updateEntityState = (key, value) => {
@@ -229,6 +230,7 @@ export default function CompetitionEdit() {
                         regionCriteria: regions
                             .map(r => r && { label: r.nom, value: r.code })
                             .filter(r => r),
+                        isPromoted: data.isPromoted,
                     };
                     const _updatedFile = {
                         competitionVisual: data.competitionVisual
@@ -372,6 +374,7 @@ export default function CompetitionEdit() {
                                 ),
                                 countryCriteria: ['FRANCE'],
                                 endowments: entity.endowments,
+                                isPromoted: entity.isPromoted,
                             };
                             const res = await apiFetch(
                                 `/competitions/${competitionId}`,
@@ -431,7 +434,6 @@ export default function CompetitionEdit() {
                         defaultValue={entity.state}
                         extra={{ require: true }}
                     />
-
                     <Input
                         type="text"
                         name="name"
@@ -440,7 +442,6 @@ export default function CompetitionEdit() {
                         defaultValue={entity.name}
                         extra={{ require: true }}
                     />
-
                     <Input
                         type="file"
                         name="visual"
@@ -789,6 +790,14 @@ export default function CompetitionEdit() {
                             value: entity.sponsors,
                         }}
                         onChange={d => updateEntityState('sponsors', d)}
+                    />
+                    <Input
+                        type="checkbox"
+                        name="isPromoted"
+                        label="Mis en avant"
+                        onChange={d => updateEntityState('isPromoted', d)}
+                        defaultValue={entity.isPromoted}
+                        extra={{ require: true }}
                     />
                 </div>
             </Form>

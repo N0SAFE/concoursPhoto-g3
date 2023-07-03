@@ -113,6 +113,7 @@ export default function CompetitionsList() {
                         'Date de publication',
                         'Date de commencement',
                         'Date de début de vote',
+                        'Mise en avant',
                     ]}
                     actions={[
                         {
@@ -175,20 +176,20 @@ export default function CompetitionsList() {
                         },
                     ]}
                 >
-                    {user => [
-                        { content: user.id },
+                    {competition => [
+                        { content: competition.id },
                         {
-                            content: user.stateLabel,
+                            content: competition.stateLabel,
                         },
-                        { content: user.competitionName },
+                        { content: competition.competitionName },
                         {
-                            content: user.description,
+                            content: competition.description,
                         },
-                        { content: user.rules },
-                        { content: user.endowments },
+                        { content: competition.rules },
+                        { content: competition.endowments },
                         {
                             content: new Date(
-                                user.creationDate
+                                competition.creationDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',
@@ -197,7 +198,7 @@ export default function CompetitionsList() {
                         },
                         {
                             content: new Date(
-                                user.publicationDate
+                                competition.publicationDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',
@@ -206,7 +207,7 @@ export default function CompetitionsList() {
                         },
                         {
                             content: new Date(
-                                user.submissionStartDate
+                                competition.submissionStartDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',
@@ -215,13 +216,16 @@ export default function CompetitionsList() {
                         },
                         {
                             content: new Date(
-                                user.votingStartDate
+                                competition.votingStartDate
                             ).toLocaleDateString('fr-FR', {
                                 year: 'numeric',
                                 month: 'numeric',
                                 day: 'numeric',
                             }),
                         },
+                        { content: competition.isPromoted
+                                ? 'Oui'
+                                : 'Non', },
                     ]}
                 </Table>
             </div>

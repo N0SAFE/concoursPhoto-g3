@@ -117,7 +117,6 @@ class Organization
     #[
         Groups([
             'organization:admins:read',
-            'organization:admin:read',
             'organization:write',
         ])
     ]

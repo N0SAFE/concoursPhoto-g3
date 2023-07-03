@@ -68,6 +68,8 @@ export default function CompetitionCreate() {
         cityCriteria: [],
         departmentCriteria: [],
         regionCriteria: [],
+        isPromoted: null,
+        numberOfMaxPictures: null,
     });
 
     const updateEntityState = (key, value) => {
@@ -234,6 +236,10 @@ export default function CompetitionCreate() {
                                 regionCriteria: [entity.regionCriteria.value],
                                 countryCriteria: ['FRANCE'],
                                 endowments: entity.endowments,
+                                isPromoted: entity.isPromoted,
+                                numberOfMaxPictures: parseInt(
+                                    entity.numberOfMaxPictures
+                                ),
                             };
                             console.debug('data', data);
                             const res = await apiFetch('/competitions', {
@@ -258,7 +264,7 @@ export default function CompetitionCreate() {
                     });
 
                     promise.then(function () {
-                        navigate('/BO/organization');
+                        navigate('/BO/competition');
                     });
                     toast.promise(promise, {
                         pending: 'Création du concours',
@@ -386,6 +392,13 @@ export default function CompetitionCreate() {
                         label="Nombre maximum de votes"
                         onChange={d => updateEntityState('numberOfMaxVotes', d)}
                         defaultValue={entity.numberOfMaxVotes}
+                    />
+                    <Input
+                        type="number"
+                        name="numberOfMaxPictures"
+                        label="Nombre maximum de photos"
+                        onChange={d => updateEntityState('numberOfMaxPictures', d)}
+                        defaultValue={entity.numberOfMaxPictures}
                     />
                     <Input
                         type="number"
@@ -575,6 +588,13 @@ export default function CompetitionCreate() {
                                 menuPlacement: 'top',
                             }}
                             onChange={d => updateEntityState('themes', d)}
+                        />
+                        <Input
+                            type="checkbox"
+                            name="isPromoted"
+                            label="Mis en avant"
+                            onChange={d => updateEntityState('isPromoted', d)}
+                            defaultValue={entity.isPromoted}
                         />
                     </div>
                 </div>
