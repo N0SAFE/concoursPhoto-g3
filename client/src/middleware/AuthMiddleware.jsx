@@ -11,7 +11,7 @@ export default function AuthMiddleware({ roles }) {
     return (
         <GuardedRoute
             verify={({ isLogged, me }) => {
-                if (!isLogged) {
+                if (!isLogged()) {
                     return false;
                 }
                 if (Array.isArray(roles)) {

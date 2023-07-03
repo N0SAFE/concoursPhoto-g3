@@ -12,7 +12,7 @@ security:
                 property: email
     firewalls:
         login:
-            pattern: ^/login
+            pattern: ^/login_check
             stateless: true
             json_login:
                 username_path: email

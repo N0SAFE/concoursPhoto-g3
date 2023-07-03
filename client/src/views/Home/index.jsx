@@ -194,7 +194,7 @@ export default function Home() {
                         alt: "Photo de la page d'accueil",
                     }}
                     boxSingleContents={promotedCompetitions.map(competition => {
-                        return competition.competitionVisual.path;
+                        return competition?.competitionVisual?.path || "image-not-found.png";
                     })}
                     boxUp={{
                         type: 'picture',
@@ -226,7 +226,7 @@ export default function Home() {
                                 }}
                                 idContent={competition.id}
                                 title={competition.competitionName}
-                                imagePath={competition.competitionVisual.path}
+                                imagePath={competition?.competitionVisual?.path || "image-not-found.png"}
                                 filters={[
                                     ...organizer,
                                     ...themes,

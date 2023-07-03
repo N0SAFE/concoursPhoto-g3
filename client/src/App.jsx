@@ -9,7 +9,7 @@ import { Helmet } from 'react-helmet';
 import useApiPath from './hooks/useApiPath.js';
 
 function App() {
-    const apiFetch = useApiPath();
+    const apiPath = useApiPath();
     return (
         <>
             <Helmet>
@@ -17,7 +17,7 @@ function App() {
                 <link
                     type="image/svg+xml"
                     rel="icon"
-                    href={apiFetch('logo-concoursPhoto-little.svg')}
+                    href={apiPath('logo-concoursPhoto-little.svg')}
                 />
             </Helmet>
             <AuthProvider>
