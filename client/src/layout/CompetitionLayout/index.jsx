@@ -255,7 +255,7 @@ export default function CompetitionLayout() {
                                         <p>
                                             Fin le{' '}
                                             {new Date(
-                                                entity.votingEndDate
+                                                entity.resultsDate
                                             ).toLocaleDateString('fr-FR', {
                                                 year: 'numeric',
                                                 month: 'long',
