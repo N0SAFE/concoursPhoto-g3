@@ -109,6 +109,7 @@ export default function UserRegister() {
                             country: 'FRANCE',
                             isVerified: false,
                             plainPassword: entity.password || undefined,
+                            active: true
                         };
                         if (
                             data.firstname &&

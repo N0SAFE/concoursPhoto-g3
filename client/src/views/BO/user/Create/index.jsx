@@ -36,7 +36,7 @@ export default function UserCreate() {
     });
 
     const [entity, setEntity] = useState({
-        state: false,
+        active: false,
         email: '',
         password: '',
         passwordConfirm: '',
@@ -159,7 +159,7 @@ export default function UserCreate() {
                             );
                         });
                     const data = {
-                        state: entity.state,
+                        active: entity.active,
                         email: entity.email,
                         plainPassword: entity.password || undefined,
                         firstname: entity.firstname,
@@ -276,7 +276,7 @@ export default function UserCreate() {
                         name="state"
                         label="Actif"
                         defaultValue={entity.state}
-                        onChange={d => updateEntityState('state', d)}
+                        onChange={d => updateEntityState('active', d)}
                     />
                     <Input
                         type="tel"
