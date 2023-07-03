@@ -32,13 +32,14 @@ function AuthProvider(props) {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                    headers: token
+                        ...token
                         ? {
                               Authorization: `Bearer ${token}`,
                           }
-                        : {},
+                        : {}
+                        
+                    },
+                    credentials: 'include',
                 }
             );
             const data = await whoami.json().then(async d => {
