@@ -9,8 +9,8 @@ import style from './style.module.scss';
 import useLocation from '@/hooks/useLocation.js';
 import { useOutletContext } from 'react-router-dom';
 import Loader from '@/components/atoms/Loader/index.jsx';
-import useFilesUploader from "@/hooks/useFilesUploader.js";
-import useApiPath from "@/hooks/useApiPath.js";
+import useFilesUploader from '@/hooks/useFilesUploader.js';
+import useApiPath from '@/hooks/useApiPath.js';
 
 export default function Myorganization() {
     const { idOrganisation, selectedOrganisation } = useOutletContext();
@@ -22,9 +22,9 @@ export default function Myorganization() {
     const [updatedFile, setUpdatedFile] = useState({
         logo: organisation.logo
             ? {
-                to: apiPathComplete(organisation.logo.path),
-                name: organisation.logo.defaultName,
-            }
+                  to: apiPathComplete(organisation.logo.path),
+                  name: organisation.logo.defaultName,
+              }
             : null,
     });
 
@@ -155,14 +155,18 @@ export default function Myorganization() {
     }, [selectedOrganisation]);
 
     return (
-        <Loader active={socialNetworksPossibility.isLoading} takeInnerContent={true} style={{borderRadius: '10px'}}>
+        <Loader
+            active={socialNetworksPossibility.isLoading}
+            takeInnerContent={true}
+            style={{ borderRadius: '10px' }}
+        >
             <div className={style.formContainer}>
                 <Form
                     handleSubmit={async function () {
                         const promise = new Promise(async (resolve, reject) => {
                             if (!gtc) {
-                                toast.error("Vous devez déclarer !");
-                                reject("Vous devez déclarer !");
+                                toast.error('Vous devez déclarer !');
+                                reject('Vous devez déclarer !');
                                 return;
                             }
                             const newLogoId = await (async () => {
@@ -171,7 +175,7 @@ export default function Myorganization() {
                                 } else if (updatedFile.logo.file) {
                                     return await uploadFile({
                                         file: updatedFile.logo.file,
-                                    }).then((r) => r["@id"]);
+                                    }).then(r => r['@id']);
                                 }
                             })();
 
@@ -183,45 +187,58 @@ export default function Myorganization() {
                                 address: organisation.address,
                                 citycode: organisation._city?.value,
                                 postcode: organisation._postcode?.value,
-                                intraCommunityVat: organisation.intraCommunityVat,
+                                intraCommunityVat:
+                                    organisation.intraCommunityVat,
                                 numberSiret: organisation.numberSiret,
                                 country: organisation.country,
-                                organizationType: organisation.organizationType.value,
+                                organizationType:
+                                    organisation.organizationType.value,
                                 description: organisation.description,
                                 logo: newLogoId,
-                                organizationLinks: Array.from(organisation.organizationLinks)
+                                organizationLinks: Array.from(
+                                    organisation.organizationLinks
+                                )
                                     .map(([key, value]) => {
                                         return value;
                                     })
-                                    .filter((l) => l.link !== ""),
+                                    .filter(l => l.link !== ''),
                             };
 
-                            const apiPromise = apiFetch(`/organizations/${organisation.id}`, {
-                                method: "PATCH",
-                                body: JSON.stringify(data),
-                                headers: {
-                                    "Content-Type": "application/merge-patch+json",
-                                },
-                            })
-                                .then((r) => r.json())
-                                .then((data) => {
+                            const apiPromise = apiFetch(
+                                `/organizations/${organisation.id}`,
+                                {
+                                    method: 'PATCH',
+                                    body: JSON.stringify(data),
+                                    headers: {
+                                        'Content-Type':
+                                            'application/merge-patch+json',
+                                    },
+                                }
+                            )
+                                .then(r => r.json())
+                                .then(data => {
                                     console.debug(data);
-                                    if (data["@type"] === "hydra:Error") {
+                                    if (data['@type'] === 'hydra:Error') {
                                         console.error(data);
                                         throw new Error(data.description);
                                     }
-                                    if (updatedFile.logo === null && organisation.logo) {
+                                    if (
+                                        updatedFile.logo === null &&
+                                        organisation.logo
+                                    ) {
                                         deleteFile({
-                                            path: organisation.logo["@id"],
+                                            path: organisation.logo['@id'],
                                         });
                                     }
                                 });
 
-                            toast.promise(apiPromise, {
-                                pending: "Modification en cours",
-                                success: "Votre organisation a bien été modifiée",
-                                error: "Erreur lors de la modification de votre organisation",
-                            })
+                            toast
+                                .promise(apiPromise, {
+                                    pending: 'Modification en cours',
+                                    success:
+                                        'Votre organisation a bien été modifiée',
+                                    error: 'Erreur lors de la modification de votre organisation',
+                                })
                                 .then(resolve)
                                 .catch(reject);
                         });
@@ -251,7 +268,7 @@ export default function Myorganization() {
                                 onChange={d =>
                                     updateOrganization('organizerName', d)
                                 }
-                                extra={{value: organisation.organizerName}}
+                                extra={{ value: organisation.organizerName }}
                             />
                             <Input
                                 type="select"
@@ -272,21 +289,25 @@ export default function Myorganization() {
                                 name="email"
                                 label="Email"
                                 onChange={d => updateOrganization('email', d)}
-                                extra={{value: organisation.email}}
+                                extra={{ value: organisation.email }}
                             />
                             <Input
                                 type="text"
                                 name="numberPhone"
                                 label="Numéro de téléphone"
-                                onChange={d => updateOrganization('numberPhone', d)}
-                                extra={{value: organisation.numberPhone}}
+                                onChange={d =>
+                                    updateOrganization('numberPhone', d)
+                                }
+                                extra={{ value: organisation.numberPhone }}
                             />
                             <Input
                                 type="text"
                                 name="websiteUrl"
                                 label="Site web"
-                                onChange={d => updateOrganization('websiteUrl', d)}
-                                extra={{value: organisation.websiteUrl}}
+                                onChange={d =>
+                                    updateOrganization('websiteUrl', d)
+                                }
+                                extra={{ value: organisation.websiteUrl }}
                             />
                         </div>
                         <div className={style.formColumn}>
@@ -295,7 +316,7 @@ export default function Myorganization() {
                                 name="address"
                                 label="Adresse"
                                 onChange={d => updateOrganization('address', d)}
-                                extra={{value: organisation.address}}
+                                extra={{ value: organisation.address }}
                             />
                             <div className={style.formRow}>
                                 <Input
@@ -304,20 +325,23 @@ export default function Myorganization() {
                                     label="Ville"
                                     extra={{
                                         isLoading:
-                                        organisation.locationPossibilityIsLoading,
+                                            organisation.locationPossibilityIsLoading,
                                         value: organisation._city,
                                         isClearable: true,
                                         required: true,
                                         options: citiesPossibility,
                                         multiple: false,
-                                        onInputChange: (cityName, {action}) => {
+                                        onInputChange: (
+                                            cityName,
+                                            { action }
+                                        ) => {
                                             if (action === 'menu-close') {
                                                 updateLocationPossibility({
                                                     id: 'city',
                                                     args: {
                                                         codeCity:
-                                                        organisation._city
-                                                            ?.value,
+                                                            organisation._city
+                                                                ?.value,
                                                         city: '',
                                                     },
                                                 });
@@ -325,7 +349,7 @@ export default function Myorganization() {
                                             if (action === 'input-change') {
                                                 updateLocationPossibility({
                                                     id: 'city',
-                                                    args: {city: cityName},
+                                                    args: { city: cityName },
                                                 });
                                             }
                                         },
@@ -334,10 +358,11 @@ export default function Myorganization() {
                                                 id: 'city',
                                                 args: {
                                                     codeCity:
-                                                    organisation._city?.value,
+                                                        organisation._city
+                                                            ?.value,
                                                     postcode:
-                                                    organisation._postcode
-                                                        ?.value,
+                                                        organisation._postcode
+                                                            ?.value,
                                                 },
                                             });
                                         },
@@ -349,7 +374,8 @@ export default function Myorganization() {
                                             args: {
                                                 codeCity: d?.value,
                                                 postcode:
-                                                organisation._postcode?.value,
+                                                    organisation._postcode
+                                                        ?.value,
                                             },
                                         });
                                     }}
@@ -365,14 +391,18 @@ export default function Myorganization() {
                                         required: true,
                                         options: postalCodesPossibility,
                                         multiple: false,
-                                        onInputChange: (_postcode, {action}) => {
+                                        onInputChange: (
+                                            _postcode,
+                                            { action }
+                                        ) => {
                                             if (action === 'menu-close') {
                                                 updateLocationPossibility({
                                                     id: 'city',
                                                     args: {
                                                         postcode:
-                                                        organisation._postcode
-                                                            ?.value,
+                                                            organisation
+                                                                ._postcode
+                                                                ?.value,
                                                     },
                                                 });
                                             }
@@ -382,7 +412,9 @@ export default function Myorganization() {
                                             ) {
                                                 updateLocationPossibility({
                                                     id: 'city',
-                                                    args: {postcode: _postcode},
+                                                    args: {
+                                                        postcode: _postcode,
+                                                    },
                                                 });
                                             }
                                         },
@@ -391,10 +423,11 @@ export default function Myorganization() {
                                                 id: 'city',
                                                 args: {
                                                     codeCity:
-                                                    organisation._city?.value,
+                                                        organisation._city
+                                                            ?.value,
                                                     postcode:
-                                                    organisation._postcode
-                                                        ?.value,
+                                                        organisation._postcode
+                                                            ?.value,
                                                 },
                                             });
                                         },
@@ -404,7 +437,8 @@ export default function Myorganization() {
                                         updateLocationPossibility({
                                             id: 'city',
                                             args: {
-                                                codeCity: organisation._city?.value,
+                                                codeCity:
+                                                    organisation._city?.value,
                                                 postcode: d?.value,
                                             },
                                         });
@@ -416,24 +450,33 @@ export default function Myorganization() {
                                     type="text"
                                     name="country"
                                     label="Pays"
-                                    onChange={d => updateOrganization('country', d)}
-                                    extra={{value: organisation.country}}
+                                    onChange={d =>
+                                        updateOrganization('country', d)
+                                    }
+                                    extra={{ value: organisation.country }}
                                 />
                                 <Input
                                     type="text"
                                     name="intraCommunityVat"
                                     label="Numéro de TVA"
                                     onChange={d =>
-                                        updateOrganization('intraCommunityVat', d)
+                                        updateOrganization(
+                                            'intraCommunityVat',
+                                            d
+                                        )
                                     }
-                                    defaultValue={organisation.intraCommunityVat}
+                                    defaultValue={
+                                        organisation.intraCommunityVat
+                                    }
                                 />
                                 <Input
                                     type="text"
                                     name="numberSiret"
                                     label="Numéro de SIRET"
-                                    onChange={d => updateOrganization('numberSiret', d)}
-                                    extra={{value: organisation.numberSiret}}
+                                    onChange={d =>
+                                        updateOrganization('numberSiret', d)
+                                    }
+                                    extra={{ value: organisation.numberSiret }}
                                 />
                             </div>
                         </div>
@@ -443,7 +486,10 @@ export default function Myorganization() {
                         <Input
                             type="textarea"
                             name="description"
-                            extra={{rows: 16, value: organisation.description}}
+                            extra={{
+                                rows: 16,
+                                value: organisation.description,
+                            }}
                             label="Description"
                             onChange={d => updateOrganization('country', d)}
                         />
@@ -452,20 +498,31 @@ export default function Myorganization() {
                     <div className={style.formSocialNetworks}>
                         {socialNetworksPossibility.list.map(socialNetwork => {
                             // socialNetwork.id === 'facebook' || ....
-                            return (<Input
-                                type="text"
-                                name="organizationLinks"
-                                label={socialNetwork.label}
-                                onChange={d => {
-                                    const map = organisation.organizationLinks
-                                    map.set(socialNetwork['@id'], {
-                                        link: d,
-                                        socialNetworks: socialNetwork['@id'],
-                                    })
-                                    updateOrganization('organizationLinks', map)
-                                }}
-                                defaultValue={organisation.organizationLinks.get(socialNetwork['@id'])?.link}
-                            />)
+                            return (
+                                <Input
+                                    type="text"
+                                    name="organizationLinks"
+                                    label={socialNetwork.label}
+                                    onChange={d => {
+                                        const map =
+                                            organisation.organizationLinks;
+                                        map.set(socialNetwork['@id'], {
+                                            link: d,
+                                            socialNetworks:
+                                                socialNetwork['@id'],
+                                        });
+                                        updateOrganization(
+                                            'organizationLinks',
+                                            map
+                                        );
+                                    }}
+                                    defaultValue={
+                                        organisation.organizationLinks.get(
+                                            socialNetwork['@id']
+                                        )?.link
+                                    }
+                                />
+                            );
                         })}
                     </div>
                     <div className={style.formRules}>
@@ -475,8 +532,9 @@ export default function Myorganization() {
                             defaultValue={gtc}
                         />
                         <p>
-                            Je déclare exercer un mandat ou une fonction qui m’octroie
-                            le droit d’administrer cette organisation et de publier des jeux concours en son nom
+                            Je déclare exercer un mandat ou une fonction qui
+                            m’octroie le droit d’administrer cette organisation
+                            et de publier des jeux concours en son nom
                         </p>
                     </div>
                     <div className={style.formSubmit}>

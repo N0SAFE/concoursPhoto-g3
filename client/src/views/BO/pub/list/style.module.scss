@@ -1,0 +1,11 @@
+.container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    @extend .margin-title;
+
+    &List {
+        overflow-x: scroll;
+    }
+}

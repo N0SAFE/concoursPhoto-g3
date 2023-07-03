@@ -1,3 +1,4 @@
+import Button from '@/components/atoms/Button';
 import Chip from '@/components/atoms/Chip/index.jsx';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
@@ -30,7 +31,11 @@ export default function () {
                 page: page,
                 itemsPerPage: itemsPerPage,
                 admins: [me['@id']],
-                groups: ['organization:admins:read', 'user:read', "organization:organizationLinks:read"],
+                groups: [
+                    'organization:admins:read',
+                    'user:read',
+                    'organization:organizationLinks:read',
+                ],
             },
             method: 'GET',
             params: {
@@ -85,6 +90,10 @@ export default function () {
                         {data?.totalItems} organisations dont je suis l’un des
                         administrateurs
                     </p>
+                    <Button onClick={() => navigate('/createorganization')}>
+                        Créer une organisation
+                    </Button>
+
                     <Pagination
                         defaultCurrentPage={page}
                         defaultItemPerPage={itemsPerPage}

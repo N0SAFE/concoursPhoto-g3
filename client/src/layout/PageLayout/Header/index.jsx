@@ -55,6 +55,20 @@ export default function Header(environment) {
                 },
             ],
         });
+        listLeft.push({
+            type: 'dropdown',
+            title: 'Publicités',
+            links: [
+                {
+                    title: 'Liste des publicités',
+                    to: '/BO/pub',
+                },
+                {
+                    title: "Ajout d'une publicité",
+                    to: '/BO/pub/create',
+                },
+            ],
+        });
     } else {
         listLeft.push({ type: 'classic', title: 'Accueil', to: '/' });
         listLeft.push({
