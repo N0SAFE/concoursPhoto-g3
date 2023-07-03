@@ -42,11 +42,17 @@ function AuthProvider(props) {
                 }
             );
             const data = await whoami.json().then(async d => {
-                console.log(d)
-                return {
+                try {
+                    return {
                     ...d,
                     city: await getCityByCode(d.citycode),
                 };
+                }catch(e){
+                    return {
+                        ...d, 
+                        city: {}
+                    }
+                }
             });
             console.log(data);
             setMe(data);
