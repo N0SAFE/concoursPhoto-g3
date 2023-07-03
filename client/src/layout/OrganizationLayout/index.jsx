@@ -26,6 +26,7 @@ export default function OrganizationLayout() {
         return apiFetch('/organizations/' + organizationid, {
             query: {
                 groups: [
+                    'organization:admins:read',
                     'organization:read',
                     'organization:competitions:read',
                     'competition:read',

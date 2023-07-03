@@ -13,7 +13,7 @@ const myorganizationRouteList = [
     { content: 'Identité & coordonnées', to: '' },
     { content: 'Administrateurs', to: '/admin' },
     { content: 'Concours', to: '/competition' },
-    { content: 'Publicités', to: '/pub' },
+    { content: 'Publicités', to: '/advertising' },
 ];
 
 export default function () {
@@ -80,7 +80,13 @@ export default function () {
     return (
         <div className={style.container}>
             <div className={style.navlinkContainer}>
-                <Button onClick={() => navigate('/profile/myorganization')}>
+                <Button
+                    borderRadius={'30px'}
+                    padding={'20px'}
+                    icon={'arrow-thin-left'}
+                    iconPosition={'left'}
+                    onClick={() => navigate('/profile/myorganization')}
+                >
                     Retour
                 </Button>
                 <Navlink
@@ -99,7 +105,7 @@ export default function () {
                     <Input
                         type="select"
                         name="organisation"
-                        label="Sélectionner une organisation"
+                        label="Autres organisations"
                         extra={{
                             options: me.Manage.map(function ({
                                 organizerName,

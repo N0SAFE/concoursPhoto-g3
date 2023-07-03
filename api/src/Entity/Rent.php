@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Repository\RentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,6 +15,15 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiFilter(PropertyFilter::class)]
+#[
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'organization.rents' => 'exact',
+        ]
+    )
+]
 #[
     ApiResource(
         operations: [new GetCollection(), new Get(), new Post(), new Patch()],
@@ -28,7 +40,7 @@ class Rent
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'rents')]
-    #[Groups(['rent:organization:read'])]
+    #[Groups(['rent:organization:read', 'rent:read'])]
     private ?Organization $organization = null;
 
     #[ORM\ManyToOne(inversedBy: 'rents')]

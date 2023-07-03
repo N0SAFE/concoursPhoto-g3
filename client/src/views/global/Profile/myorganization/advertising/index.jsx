@@ -8,7 +8,7 @@ import useApiFetch from '@/hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 
-export default function MyorganizationAdmin() {
+export default function MyorganizationAdvertising() {
     const apiFetch = useApiFetch();
     const [searchParams, setSearchParams] = useSearchParams({});
     const { showModal, setModalContent } = useModal();
@@ -23,15 +23,21 @@ export default function MyorganizationAdmin() {
     const [pageLoading, setPageLoading] = useState(true);
     const [controller, setController] = useState(new AbortController());
 
-    const getCompetiiton = async (page, itemsPerPage) => {
+    const getAdvertising = async (page, itemsPerPage) => {
         setPageLoading(true);
-        apiFetch('/competitions', {
+        apiFetch('/rents', {
             method: 'GET',
             query: {
-                organization: '/organizations/' + idOrganisation,
                 page: page,
                 itemsPerPage: itemsPerPage,
-                groups: ['competition:organization:read'],
+                'organization.rents': `/organizations/${idOrganisation}`,
+                groups: [
+                    'rent:organization:read',
+                    'organization:read',
+                    'rent:advertising:read',
+                    'advertising:read',
+                    'advertisingSpace:read',
+                ],
             },
             signal: controller.signal,
         })
@@ -54,7 +60,7 @@ export default function MyorganizationAdmin() {
     }
 
     useEffect(() => {
-        getCompetiiton(page, itemsPerPage);
+        getAdvertising(page, itemsPerPage);
         return function () {
             setModalContent(null);
         };
@@ -81,8 +87,6 @@ export default function MyorganizationAdmin() {
         }
     }, [searchParams]);
 
-    console.log(pageLoading);
-
     return (
         <>
             <Pagination
@@ -107,10 +111,12 @@ export default function MyorganizationAdmin() {
                             <Table
                                 list={data}
                                 fields={[
-                                    'Nom du concours',
+                                    'Nom de l’emplacement de la publicité',
                                     'Début',
                                     'Fin',
                                     'Statut',
+                                    'Affichages',
+                                    'Clics'
                                 ]}
                                 onLineClick={function (competition) {
                                     setSearchParams({
@@ -120,9 +126,9 @@ export default function MyorganizationAdmin() {
                                     });
                                 }}
                             >
-                                {competition => {
+                                {advertising => {
                                     const stateColor = (function () {
-                                        switch (competition.state) {
+                                        switch (advertising.state) {
                                             case 1:
                                                 return '#FFA800';
                                             case 2:
@@ -144,11 +150,11 @@ export default function MyorganizationAdmin() {
                                     return [
                                         {
                                             content:
-                                                competition.competitionName,
+                                                advertising.altTag,
                                         },
                                         {
                                             content: new Date(
-                                                competition.submissionStartDate
+                                                advertising.startDate
                                             ).toLocaleDateString('fr-FR', {
                                                 year: 'numeric',
                                                 month: 'numeric',
@@ -157,7 +163,7 @@ export default function MyorganizationAdmin() {
                                         },
                                         {
                                             content: new Date(
-                                                competition.votingEndDate
+                                                advertising.endDate
                                             ).toLocaleDateString('fr-FR', {
                                                 year: 'numeric',
                                                 month: 'numeric',
@@ -169,10 +175,16 @@ export default function MyorganizationAdmin() {
                                                 <Chip
                                                     backgroundColor={stateColor}
                                                 >
-                                                    {competition.stateLabel}
+                                                    {advertising.stateLabel}
                                                 </Chip>
                                             ),
                                         },
+                                        {
+                                            content: advertising.views,
+                                        },
+                                        {
+                                            content: advertising.numberOfClicks,
+                                        }
                                     ];
                                 }}
                             </Table>
@@ -197,7 +209,7 @@ export default function MyorganizationAdmin() {
                         borderRadius: '2rem',
                     }}
                 >
-                    Ajouter un concours
+                    Ajouter une publicité
                 </Button>
             </div>
         </>

@@ -14,7 +14,7 @@ export default function MyorganizationAdmin() {
     const { idOrganisation, selectedOrganisation } = useOutletContext();
     
     const [page, setPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(20);
+    const [itemsPerPage, setItemsPerPage] = useState(9);
     const [data, setData] = useState({
         member: [],
         paginationOptions: {},
