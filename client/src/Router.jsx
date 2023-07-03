@@ -47,8 +47,9 @@ import PubCreate from './views/BO/pub/create/index.jsx';
 import PubList from './views/BO/pub/list/index.jsx';
 import CompetitionInProgress from '@/views/FO/organization/See/CompetitionInProgress/index.jsx';
 import DetailsPhotographer from './views/FO/photographer/details/index.jsx';
-import CompetitionComing from '@/views/FO/organization/See/CompetitionComing/index.jsx';
-import CompetitionEnded from '@/views/FO/organization/See/CompetitionEnded/index.jsx';
+import CompetitionComing from "@/views/FO/organization/See/CompetitionComing/index.jsx";
+import CompetitionEnded from "@/views/FO/organization/See/CompetitionEnded/index.jsx";
+import MyorganizationAdvertising from "@/views/global/Profile/myorganization/advertising/index.jsx";
 
 function Router() {
     return (
@@ -121,7 +122,7 @@ function Router() {
                                         path="competition"
                                         element={<MyorganizationCompetiton />}
                                     />
-                                    <Route path="pub" element={<div />} />
+                                    <Route path="advertising" element={<MyorganizationAdvertising />} />
                                 </Route>
                             </Route>
                         </Route>
@@ -135,7 +136,6 @@ function Router() {
                         />
                     </Route>
                 </Route>
-
                 <Route
                     path="/createcompetition"
                     element={<CreateCompetitions />}
@@ -148,24 +148,16 @@ function Router() {
                     element={<OrganizationLayout />}
                 >
                     <Route path="" element={<OrganisationDetails />}></Route>
-                    <Route
-                        path="in-progress"
-                        element={<CompetitionInProgress />}
-                    ></Route>
-                    <Route
-                        path="coming"
-                        element={<CompetitionComing />}
-                    ></Route>
+                    <Route path="in-progress" element={<CompetitionInProgress />}></Route>
+                    <Route path="coming" element={<CompetitionComing />}></Route>
                     <Route path="ended" element={<CompetitionEnded />}></Route>
                 </Route>
-
                 <Route path="photographer">
                     <Route path="" element={<PhotographerList />} />
                 </Route>
                 <Route path="photographer/:id">
                     <Route path="" element={<DetailsPhotographer />} />
                 </Route>
-
                 <Route
                     path="/createorganization"
                     element={<CreateOrganization />}

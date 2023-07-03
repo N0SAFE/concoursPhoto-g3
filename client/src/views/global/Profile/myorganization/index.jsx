@@ -7,6 +7,7 @@ import { useAuthContext } from '@/contexts/AuthContext.jsx';
 import useApiFetch from '@/hooks/useApiFetch.js';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import style from './style.module.scss';
 
 export default function () {
     const navigate = useNavigate();
@@ -68,7 +69,7 @@ export default function () {
                 takeInnerContent={true}
                 style={{ borderRadius: '10px', minHeight: '600px' }}
             >
-                <p style={{ fontWeight: 600 }}>
+                <p className={style.infoPresentation}>
                     Ce menu est destiné uniquement aux membres qui souhaitent
                     créer la fiche d’une ou plusieurs organisations qu’ils
                     représentent légalement pour publier un concours.
@@ -78,15 +79,8 @@ export default function () {
                     indispensable pour créer ensuite un concours photo en son
                     nom.
                 </p>
-                <div
-                    style={{
-                        display: 'flex',
-                        gap: '20px',
-                        flexDirection: 'column',
-                        marginTop: '30px',
-                    }}
-                >
-                    <p style={{ marginLeft: '15px' }}>
+                <div className={style.infoContent}>
+                    <p>
                         {data?.totalItems} organisations dont je suis l’un des
                         administrateurs
                     </p>

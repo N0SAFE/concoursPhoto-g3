@@ -35,6 +35,7 @@ use Metaclass\FilterBundle\Filter\FilterLogic;
             'departmentCriteria' => 'partial',
             'state' => 'exact',
             'admins' => 'exact',
+            'rents' => 'exact'
         ]
     )
 ]
@@ -117,7 +118,6 @@ class Organization
     #[
         Groups([
             'organization:admins:read',
-            'organization:admin:read',
             'organization:write',
         ])
     ]

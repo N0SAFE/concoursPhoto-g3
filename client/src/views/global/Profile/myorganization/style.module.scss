@@ -1,0 +1,16 @@
+.info {
+    &Presentation {
+        font-weight: 600;
+    }
+
+    &Content {
+        display: flex;
+        gap: $gapBetweenElement;
+        flex-direction: column;
+        margin-top: 30px;
+
+        p {
+            margin-left: 15px;
+        }
+    }
+}
