@@ -4,14 +4,16 @@ import Chip from '@/components/atoms/Chip';
 import Navlink from '@/components/molecules/Navlink';
 import Pagination from '@/components/molecules/Pagination/index.jsx';
 import { useEffect, useState } from 'react';
-import useApiFetch from '@/hooks/useApiFetch.js';
+import useApiFetch, { queryListSymbol } from '@/hooks/useApiFetch.js';
 import Loader from '@/components/atoms/Loader/index.jsx';
 import useApiPath from '@/hooks/useApiPath.js';
 import Picture from '@/components/atoms/Picture/index.jsx';
-import Button from "@/components/atoms/Button/index.jsx";
-import {useModal} from "@/contexts/ModalContext/index.jsx";
-import CompetitionPicturesAdd from "@/components/organisms/Modals/competition/CompetitionPicturesAdd.jsx";
-import {useAuthContext} from "@/contexts/AuthContext.jsx";
+import Button from '@/components/atoms/Button/index.jsx';
+import { useModal } from '@/contexts/ModalContext/index.jsx';
+import CompetitionPicturesAdd from '@/components/organisms/Modals/competition/CompetitionPicturesAdd.jsx';
+import { useAuthContext } from '@/contexts/AuthContext.jsx';
+import { toast } from 'react-toastify';
+import Login from '@/components/organisms/auth/Login';
 
 export default function () {
     const apiPath = useApiPath();
@@ -40,10 +42,13 @@ export default function () {
                     'picture:user:read',
                     'picture:file:read',
                     'file:read',
+                    'picture:userVote:read',
+                    'vote:read',
                 ],
                 properties: {
                     user: ['lastname', 'firstname'],
                     file: ['path', 'pictureName'],
+                    [queryListSymbol]: ['hasBeenVoted', 'userVote'],
                 },
             },
             method: 'GET',
@@ -63,6 +68,62 @@ export default function () {
                 setIsPageLoading(false);
                 setIsLoading(false);
             });
+    };
+
+    const handleVote = async (
+        pictureId,
+        { hasBeenVoted, voteInstance } = {}
+    ) => {
+        if (!me) {
+            toast.error('Vous devez être connecté pour voter');
+            setModalContent(<Login forceRedirect={false} />);
+            showModal();
+            return;
+        }
+        if (hasBeenVoted) {
+            console.log(voteInstance);
+            const promise = apiFetch(`/votes/${voteInstance.id}`, {
+                headers: {
+                    'Content-Type': 'application/ld+json',
+                },
+                method: 'DELETE',
+            });
+
+            toast.promise(promise, {
+                pending: 'Suppression du vote...',
+                success: 'Vote supprimé !',
+                error: 'Erreur lors de la suppression du vote',
+            });
+
+            promise.then(() => {
+                getPictures(page, itemsPerPage);
+            });
+
+            return await promise;
+        } else {
+            const promise = apiFetch(`/votes`, {
+                headers: {
+                    'Content-Type': 'application/ld+json',
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    picture: pictureId,
+                    user: me['@id'],
+                }),
+            });
+
+            toast.promise(promise, {
+                pending: 'Envoi du vote...',
+                success: 'Vote enregistré !',
+                error: "Erreur lors de l'envoi du vote",
+            });
+
+            promise.then(() => {
+                getPictures(page, itemsPerPage);
+            });
+
+            return await promise;
+        }
     };
 
     const competitionRouteList = [
@@ -179,12 +240,32 @@ export default function () {
                                                             }
                                                         </Chip>
                                                         <Chip
-                                                            iconColor={'white'}
+                                                            iconColor={
+                                                                picture.hasBeenVoted
+                                                                    ? 'blue'
+                                                                    : 'white'
+                                                            }
                                                             color={'white'}
                                                             backgroundColor={
                                                                 '#A8A8A8'
                                                             }
                                                             icon={'like'}
+                                                            onClick={() => {
+                                                                console.log(
+                                                                    picture
+                                                                );
+                                                                handleVote(
+                                                                    picture[
+                                                                        '@id'
+                                                                    ],
+                                                                    {
+                                                                        hasBeenVoted:
+                                                                            picture.hasBeenVoted,
+                                                                        voteInstance:
+                                                                            picture.userVote,
+                                                                    }
+                                                                );
+                                                            }}
                                                         >
                                                             Voter
                                                         </Chip>
@@ -193,16 +274,26 @@ export default function () {
                                             </div>
                                         ))}
                                         {me && (
-                                            <div className={style.picturesSubmission}>
+                                            <div
+                                                className={
+                                                    style.picturesSubmission
+                                                }
+                                            >
                                                 <Button
-                                                    textColor={"white"}
-                                                    color={"black"}
+                                                    textColor={'white'}
+                                                    color={'black'}
                                                     borderRadius={'30px'}
                                                     padding={'20px'}
                                                     iconPosition={'left'}
-                                                    onClick={(e) => {
+                                                    onClick={e => {
                                                         e.preventDefault();
-                                                        setModalContent(<CompetitionPicturesAdd competition={competition} />);
+                                                        setModalContent(
+                                                            <CompetitionPicturesAdd
+                                                                competition={
+                                                                    competition
+                                                                }
+                                                            />
+                                                        );
                                                         showModal();
                                                     }}
                                                 >

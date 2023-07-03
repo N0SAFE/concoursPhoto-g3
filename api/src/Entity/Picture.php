@@ -77,9 +77,39 @@ class Picture
     #[Groups('picture:file:read')]
     private ?File $file = null;
 
+    #[Groups('picture:read')]
+    private bool $hasBeenVoted = false;
+    
+    #[Groups('picture:userVote:read')]
+    private ?Vote $userVote = null;
+
     public function __construct()
     {
         $this->votes = new ArrayCollection();
+    }
+
+    public function getHasBeenVoted(): bool
+    {
+        return $this->hasBeenVoted;
+    }
+
+    public function setHasBeenVoted(bool $hasBeenVoted): self
+    {
+        $this->hasBeenVoted = $hasBeenVoted;
+
+        return $this;
+    }
+
+    public function getUserVote(): ?Vote
+    {
+        return $this->userVote;
+    }
+
+    public function setUserVote(?Vote $userVote): self
+    {
+        $this->userVote = $userVote;
+
+        return $this;
     }
 
     public function getId(): ?int

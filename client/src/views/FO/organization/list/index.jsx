@@ -282,10 +282,10 @@ export default function ListOrganization() {
                     <Input
                         className={style.searchBarSelect}
                         type="select"
-                        defaultValue={{ value: null, label: 'Concours actifs uniquement' }}
+                        defaultValue={{ value: null, label: 'Tous' }}
                         extra={{
                             options: [
-                                { value: null, label: 'Concours actifs uniquement' },
+                                { value: null, label: 'Tous' },
                                 { value: 1, label: 'actif' },
                                 { value: 0, label: 'inactif' },
                             ],
