@@ -35,6 +35,7 @@ use Metaclass\FilterBundle\Filter\FilterLogic;
             'departmentCriteria' => 'partial',
             'state' => 'exact',
             'admins' => 'exact',
+            'rents' => 'exact'
         ]
     )
 ]
